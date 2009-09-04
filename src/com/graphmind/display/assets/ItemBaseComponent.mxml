@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="168" height="18"
+	cornerRadius="5" 
+	fontWeight="normal" xmlns:assets="com.graphmind.display.assets.*">
+	
+	<mx:Script>
+		<![CDATA[
+			[Embed(source='assets/images/add.png')]
+			[Bindable]
+			public var image_add:Class;
+			[Embed(source='assets/images/anchor.png')]
+			[Bindable]
+			public var image_anchor:Class;
+			[Embed(source='assets/images/bullet_add.png')]
+			[Bindable]
+			public var image_bullet:Class;
+		]]>
+	</mx:Script>
+	
+	<mx:states>
+		<mx:State name="edit_title">
+			<mx:RemoveChild target="{title_label}"/>
+			<mx:AddChild creationPolicy="all" position="lastChild">
+				<mx:TextInput width="138" height="18" id="title_new" 
+					focusAlpha="0"
+					paddingTop="0"
+					paddingBottom="0"
+					paddingLeft="0"
+					paddingRight="0"
+					 fontSize="8"/>
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
+	
+	<mx:Label x="0" y="0" text="Label" width="138" id="title_label" color="#DDDDDD"/>
+	
+	<mx:Image x="140" y="1" 
+		source="{image_add}" 
+		width="16" height="16" 
+		id="icon_add"
+		visible="false"/>
+		
+	<mx:Image x="122" y="1" source="{image_anchor}" 
+		width="16" height="16" 
+		id="icon_anchor"
+		visible="false"/>
+		
+	<mx:Image x="152" y="1" source="{image_bullet}" 
+		id="icon_has_child" 
+		visible="false"/>
+	
+</mx:Canvas>

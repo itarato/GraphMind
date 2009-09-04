@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" height="18" width="72">
+	
+	<mx:states>
+		<mx:State name="show_loader_types">
+
+			<mx:AddChild position="lastChild" creationPolicy="all">
+				<mx:Image x="54" y="0" source="assets/images/delete.png" click="this.currentState='';"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild" creationPolicy="all">
+				<mx:Image x="36" y="0" source="assets/images/page_white_add.png" id="type_node"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild" creationPolicy="all">
+				<mx:Image x="18" y="0" source="assets/images/page_white.png" id="type_item"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild" creationPolicy="all">
+				<mx:Image x="0" y="0" source="assets/images/page_white_text.png" id="type_view"/>
+			</mx:AddChild>
+			<mx:RemoveChild target="{icon_add}"/>
+			
+		</mx:State>
+	</mx:states>
+	<mx:Script>
+		<![CDATA[
+			import com.graphmind.util.Log;
+			import com.graphmind.StageManager;
+			
+		]]>
+	</mx:Script>
+
+
+	
+</mx:Canvas>

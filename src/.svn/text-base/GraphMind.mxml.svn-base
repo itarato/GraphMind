@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+	applicationComplete="init();">
+	
+		
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.SystemManager;
+			import com.graphmind.net.UniqueItemLoader;
+			import com.graphmind.net.SiteConnection;
+			import mx.states.State;
+			import mx.effects.easing.Linear;
+			import com.graphmind.util.Log;
+			import com.graphmind.ViewsManager;
+			import com.graphmind.data.ViewsCollection;
+			import com.graphmind.StageManager;
+		
+			import mx.effects.easing.Bounce;
+		
+			import com.graphmind.GraphMindManager;
+			
+			
+			/**
+			 * Triggered event when the application is ready.
+			 */
+			private function init():void {
+				// Init managers
+				StageManager.getInstance().initStage(this);
+				GraphMindManager.getInstance().initGraphMind();
+				
+				Log.info('GrapMind started.');
+				
+				// Remove base context menu items (not perfect, though)
+				var cm:ContextMenu = new ContextMenu();
+				cm.hideBuiltInItems();
+				MovieClip(systemManager).contextMenu = cm;
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:states>
+		<mx:State name="load_view_state">
+			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
+			<mx:SetProperty name="visible" target="{desktop_wrapper}" value="false"/>
+			<mx:SetProperty target="{panelMain}" name="visible" value="false"/>
+			<mx:AddChild position="lastChild" creationPolicy="all">
+				<mx:Panel width="700" height="400" 
+					layout="absolute" horizontalCenter="0" verticalCenter="0" 
+					title="Attach view"
+					id="panelLoadView">
+					<mx:DataGrid x="10" y="10" width="260" height="340"
+						dataProvider="{ViewsCollection.collection}"
+						itemClick="StageManager.getInstance().onDataGridItemClick_loadViewState(event);"
+						id="view_views_datagrid">
+						<mx:columns>
+							<mx:DataGridColumn headerText="ID"   dataField="siteConnectionID" width="30"/>
+							<mx:DataGridColumn headerText="Name" dataField="name"/>
+							<mx:DataGridColumn headerText="type" dataField="baseTable" width="60"/>
+						</mx:columns>
+					</mx:DataGrid>
+					<mx:Form x="278" y="10" width="392" height="340">
+						<mx:FormHeading label="View parameters" width="240"/>
+						<mx:FormItem label="Name">
+							<mx:TextInput id="view_name"/>
+						</mx:FormItem>
+						<mx:FormItem label="Arguments">
+							<mx:TextInput id="view_arguments"/>
+						</mx:FormItem>
+						<mx:FormItem label="Fields">
+							<mx:TextInput id="view_fields"/>
+						</mx:FormItem>
+						<mx:FormItem label="Offset">
+							<mx:TextInput id="view_offset" text="0"/>
+						</mx:FormItem>
+						<mx:FormItem label="Limit">
+							<mx:TextInput id="view_limit" text="10"/>
+						</mx:FormItem>
+						<mx:ControlBar>
+							<mx:Button label="Submit" click="StageManager.getInstance().onLoadViewSubmitClick(event);"/>
+							<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"/>
+						</mx:ControlBar>
+					</mx:Form>
+				</mx:Panel>
+			</mx:AddChild>
+		</mx:State>
+		
+		<mx:State name="load_item_state">
+			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
+			<mx:SetProperty name="visible" target="{desktop_wrapper}" value="false"/>
+			<mx:SetProperty target="{panelMain}" name="visible" value="false"/>
+			<mx:AddChild position="lastChild" creationPolicy="all">
+				<mx:Panel horizontalCenter="0" verticalCenter="0"
+					id="panelLoadItem"
+					layout="absolute" width="400" height="300" title="Load unique item">
+					<mx:Form x="10" y="10" width="360" height="240">
+						<mx:FormHeading label="Item parameters" width="316"/>
+						<mx:FormItem label="Source">
+							<mx:ComboBox dataProvider="{SiteConnection.connections}" 
+								labelField="shortName"
+								id="item_source"/>
+						</mx:FormItem>
+						<mx:FormItem label="Item type">
+							<mx:ComboBox dataProvider="{UniqueItemLoader.itemTypes}" id="item_type"/>
+						</mx:FormItem>
+						<mx:FormItem label="ID">
+							<mx:TextInput id="item_id"/>
+						</mx:FormItem>
+						<mx:ControlBar>
+							<mx:Button label="Submit" 
+								click="StageManager.getInstance().onLoadItemSubmitClick(event);"/>
+							<mx:Button label="Cancel" 
+								click="StageManager.getInstance().onLoadItemCancelClick(event);"/>
+						</mx:ControlBar>
+					</mx:Form>
+					
+				</mx:Panel>
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
+	
+	<mx:Canvas right="10" top="10" bottom="10" left="258" id="desktop_wrapper">
+		<mx:Canvas id="desktop" width="3000" height="2000"/>
+	</mx:Canvas>
+
+	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
+		
+	<!-- Debug textarea -->
+	<!--
+	<mx:TextArea right="10" bottom="40" top="10" width="200" id="debugTextarea" 
+		backgroundAlpha="0"
+		borderThickness="0"
+		color="#FFFFFF"/>
+	-->
+	<!-- END textarea -->
+	
+	<mx:Panel width="240" 
+		layout="absolute" 
+		title="Dasboard" 
+		left="10" top="10" bottom="10" 
+		id="panelMain">
+	
+		<mx:Accordion width="100%" top="0" bottom="0" left="0">
+			<mx:Canvas label="Attributes" width="100%" height="100%">
+			
+				<mx:DataGrid width="100%" 
+					dataProvider="{StageManager.getInstance().selectedNodeData}" 
+					top="0" bottom="190" left="0"
+					id="attributesDataGrid">
+					<mx:click>
+						<![CDATA[
+							if (attributesDataGrid.selectedItem) {
+								attributes_update_param.text = attributesDataGrid.selectedItem.key;
+								attributes_update_value.text = attributesDataGrid.selectedItem.value;
+							} 
+						]]>
+					</mx:click>
+					<mx:columns>
+						<mx:DataGridColumn headerText="Key" dataField="key" width="90"/>
+						<mx:DataGridColumn headerText="Value" dataField="value"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<mx:Button label="Add or update" left="10" bottom="10" 
+					click="StageManager.getInstance().onAddOrUpdateClick(event);"
+					tabIndex="22"/>
+				<mx:Label text="Value" left="10" bottom="108"/>
+				<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" width="198"/>
+				<mx:Label text="Parameter" left="10" bottom="164"/>
+				<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" width="198" height="60"/>
+				<mx:Button label="Remove"
+					tabIndex="23"
+					click="StageManager.getInstance().onRemoveAttributeClick(event);" left="125" bottom="10"/>
+				
+			</mx:Canvas>
+			<mx:Canvas label="Connections" width="100%" height="100%">
+					
+				<!-- Connect to new Drupal site form -->
+				<mx:TextInput id="connectFormURL" x="10" width="162" bottom="152" text="http://" tabIndex="10"/>
+				<mx:TextInput id="connectFormUsername" x="10" width="162" bottom="96" tabIndex="11"/>
+				<mx:TextInput id="connectFormPassword" x="10" width="162" bottom="40" displayAsPassword="true" tabIndex="12"/>
+				<mx:Button x="10" label="Add new site" bottom="10" 
+					click="StageManager.getInstance().onConnectFormSubmit();" 
+					id="button1"
+					tabIndex="3"/>
+				<mx:Label x="10" text="Password:" bottom="70" id="label3"/>
+				<mx:Label x="10" text="Username:" bottom="126" id="label2"/>
+				<mx:Label x="10" text="URL.:" bottom="182" id="label1"/>
+				<mx:DataGrid width="100%" top="0" bottom="208" left="0"
+					dataProvider="{SiteConnection.connections}">
+					<mx:columns>
+						<mx:DataGridColumn headerText="ID" dataField="id" width="30"/>
+						<mx:DataGridColumn headerText="Name" dataField="shortName"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<!-- END form -->
+			
+			</mx:Canvas>
+			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%">
+			
+				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
+				<mx:Button x="10" y="10" label="Save and export"
+					click="StageManager.getInstance().onExportClick(event);"/>
+				
+			</mx:Canvas>
+		</mx:Accordion>
+		
+	</mx:Panel>
+
+	
+</mx:Application>
