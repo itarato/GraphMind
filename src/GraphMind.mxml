@@ -16,6 +16,10 @@
 			import com.graphmind.StageManager;
 		
 			import mx.effects.easing.Bounce;
+			
+			[Embed(source='assets/images/draganddrop.png')]
+			[Bindable]
+			private var image_dragAndDrop:Class;
 		
 			import com.graphmind.GraphMindManager;
 			
@@ -120,10 +124,6 @@
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
-	
-	<mx:Canvas right="10" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true">
-		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true"/>
-	</mx:Canvas>
 
 	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
 		
@@ -207,6 +207,13 @@
 		</mx:Accordion>
 		
 	</mx:Panel>
-
+	
+	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
+	
+	<mx:Canvas right="10" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true"
+		mouseUp="StageManager.getInstance().closeDragAndDrop();"
+		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();">
+		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true"/>
+	</mx:Canvas>	
 	
 </mx:Application>

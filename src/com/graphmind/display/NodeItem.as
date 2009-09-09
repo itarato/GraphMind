@@ -1,5 +1,6 @@
 package com.graphmind.display
 {
+	import com.graphmind.GraphMindManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.display.assets.ItemBaseComponent;
@@ -20,13 +21,14 @@ package com.graphmind.display
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	import mx.core.UIComponent;
 	
 	//public class NodeItem extends DraggableItem {
 	public class NodeItem extends DisplayItem {
 		
 		public static const WIDTH:int = 160;
-		public static const HEIGHT:int = 18;
+		public static const HEIGHT:int = 20;
 		public static const MARGIN_RIGHT:int = 32;
 		public static const MARGIN_BOTTOM:int = 4;
 		
@@ -51,7 +53,9 @@ package com.graphmind.display
 			
 			_initAttachEvents();
 			
-			_initCreateContextMenu();
+			if (GraphMindManager.getInstance().isEditable()) {
+				_initCreateContextMenu();
+			}
 		}
 		
 		private function _initDisplayElements():void {
@@ -65,7 +69,7 @@ package com.graphmind.display
 			this._displayComponent.title_label.text = this._nodeItemData.title;
 			
 			this._background.graphics.beginFill(getTypeColor(), .4);
-			this._background.graphics.drawRoundRect(0, 0, 160, 18, 10, 10);
+			this._background.graphics.drawRoundRect(0, 0, 160, 20, 10, 10);
 			this._background.graphics.endFill();
 		
 			_hasPath = _nodeItemData.getDrupalPath().length > 0;
@@ -74,16 +78,22 @@ package com.graphmind.display
 		}
 			
 		private function _initAttachEvents():void {
+			if (GraphMindManager.getInstance().isEditable()) {
+				this._displayComponent.title_label.doubleClickEnabled = true;
+				this._displayComponent.title_label.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
+				this._displayComponent.title_new.addEventListener(KeyboardEvent.KEY_UP, onNewTitleKeyUp);
+				this._displayComponent.title_new.addEventListener(FocusEvent.FOCUS_OUT, onNewTitleFocusOut);
+				this._displayComponent.icon_add.addEventListener(MouseEvent.CLICK, onLoadNodeClick);
+				
+				this._displayComponent.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+				this._displayComponent.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp);
+			}
+			
 			this._displayComponent.addEventListener(MouseEvent.CLICK, onClick);
 			this._displayComponent.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this._displayComponent.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-			this._displayComponent.title_label.doubleClickEnabled = true;
-			this._displayComponent.title_label.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
-			this._displayComponent.title_new.addEventListener(KeyboardEvent.KEY_UP, onNewTitleKeyUp);
-			this._displayComponent.title_new.addEventListener(FocusEvent.FOCUS_OUT, onNewTitleFocusOut);
-			this._displayComponent.icon_has_child.addEventListener(MouseEvent.CLICK, onIconHasChildClick);
-			this._displayComponent.icon_add.addEventListener(MouseEvent.CLICK, onLoadNodeClick);
 			this._displayComponent.icon_anchor.addEventListener(MouseEvent.CLICK, onIconAnchorClick);
+			this._displayComponent.icon_has_child.addEventListener(MouseEvent.CLICK, onIconHasChildClick);
 		}
 
 		private function _initCreateContextMenu():void {
@@ -106,6 +116,17 @@ package com.graphmind.display
 			}
 			
 			_displayComponent.contextMenu = contextMenu;
+		}
+		
+		private function onMouseDown(event:MouseEvent):void {
+			StageManager.getInstance().prepaireDragAndDrop();
+		}
+		
+		private function onMouseUp(event:MouseEvent):void {
+			if ((!StageManager.getInstance().isPrepairedDragAndDrop) && StageManager.getInstance().isDragAndDrop) {
+				NodeItem.move(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
+				StageManager.getInstance().closeDragAndDrop();
+			}
 		}
 		
 		private function onAddNodeSelect(event:ContextMenuEvent):void {
@@ -148,6 +169,7 @@ package com.graphmind.display
 		}
 		
 		private function onMouseOver(event:MouseEvent):void {
+			trace('over');
 			_mouseSelectionTimeout = setTimeout(selectNode, 400);
 			_displayComponent.icon_add.visible = true;
 			_displayComponent.icon_anchor.visible = true && _hasPath;
@@ -156,7 +178,12 @@ package com.graphmind.display
 		private function onMouseOut(event:MouseEvent):void {
 			clearTimeout(_mouseSelectionTimeout);
 			_displayComponent.icon_add.visible = false;
-			_displayComponent.icon_anchor.visible = false ;
+			_displayComponent.icon_anchor.visible = false;
+			
+			if (StageManager.getInstance().isPrepairedDragAndDrop) {
+				StageManager.getInstance().openDragAndDrop(this);
+				//trace(StageManager.getInstance().isPrepairedDragAndDrop.toString());
+			}
 		}
 		
 		private function onDoubleClick(event:MouseEvent):void {
@@ -393,6 +420,36 @@ package com.graphmind.display
 		
 		public function dataDelete(param:String):void {
 			_nodeItemData.dataDelete(param);
+		}
+		
+		public function isChild(node:NodeItem):Boolean {
+			for each (var child:NodeItem in _childs) {
+				if (child == node) {
+					return true;
+				}
+				if (child.isChild(node)) return true;
+			}
+			
+			return false;
+		}
+		
+		public static function move(source:NodeItem, target:NodeItem):void {
+			// @TODO validation !!!
+			// No parent can detach child.
+			if (!source || !source._parentNode) return;
+			// Target is an ascendant of the source.
+			if (source.isChild(target)) return;
+			// Source is equal to target
+			if (source == target) return;
+			
+			var childIDX:int = source._parentNode._childs.getItemIndex(source);
+			if (childIDX >= 0) {
+				source._parentNode._childs.removeItemAt(childIDX);
+			}
+			var sourceParentNode:NodeItem = source._parentNode;
+			target.addNodeChild(source);
+			sourceParentNode._displayComponent.icon_has_child.visible = sourceParentNode._childs.length > 0;
+			StageManager.getInstance().refreshNodePositions();
 		}
 	}
 }

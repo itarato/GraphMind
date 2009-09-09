@@ -104,5 +104,9 @@ package com.graphmind
 			Alert.show('GraphMind data is saved.', 'GraphMind notice');
 		}
 
+		public function isEditable():Boolean {
+			return Application.application.parameters.isEditable || false;
+		}
+
 	}
 }

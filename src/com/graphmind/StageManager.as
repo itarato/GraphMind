@@ -17,7 +17,6 @@ package com.graphmind
 	import mx.core.Application;
 	import mx.core.UIComponent;
 	import mx.events.ListEvent;
-	import mx.events.StateChangeEvent;
 	import mx.rpc.events.ResultEvent;
 	
 	public class StageManager
@@ -28,6 +27,9 @@ package com.graphmind
 		private var _application:GraphMind = null;
 		public var lastSelectedNode:NodeItem = null;
 		public var baseNode:NodeItem = null;
+		public var dragAndDrop_sourceNodeItem:NodeItem;
+		public var isDragAndDrop:Boolean = false;
+		public var isPrepairedDragAndDrop:Boolean = false;
 		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
 		
@@ -272,6 +274,33 @@ package com.graphmind
 			} catch (e:Error) {
 				
 			}
+		}
+		
+		public function onDragAndDropImageMouseUp(event:MouseEvent):void {
+			stage.dragAndDrop_shape.visible = false;
+			stage.dragAndDrop_shape.x = -stage.dragAndDrop_shape.width;
+			stage.dragAndDrop_shape.y = -stage.dragAndDrop_shape.height;
+		}
+		
+		public function prepaireDragAndDrop():void {
+			isPrepairedDragAndDrop = true;
+		}
+		
+		public function openDragAndDrop(source:NodeItem):void {
+			isPrepairedDragAndDrop = false;
+			isDragAndDrop = true;
+			StageManager.getInstance().dragAndDrop_sourceNodeItem = source;
+			StageManager.getInstance().stage.dragAndDrop_shape.visible = true;
+			StageManager.getInstance().stage.dragAndDrop_shape.x = StageManager.getInstance().stage.mouseX - StageManager.getInstance().stage.dragAndDrop_shape.width / 2;
+			StageManager.getInstance().stage.dragAndDrop_shape.y = StageManager.getInstance().stage.mouseY - StageManager.getInstance().stage.dragAndDrop_shape.height / 2;
+			StageManager.getInstance().stage.dragAndDrop_shape.startDrag(false);
+		}
+		
+		public function closeDragAndDrop():void {
+			isDragAndDrop = false;
+			isPrepairedDragAndDrop = false;
+			stage.dragAndDrop_shape.visible = false;
+			dragAndDrop_sourceNodeItem = null;
 		}
 		
 	}
