@@ -72,7 +72,7 @@ package com.graphmind.display
 			this._background.graphics.drawRoundRect(0, 0, 160, 20, 10, 10);
 			this._background.graphics.endFill();
 		
-			_hasPath = _nodeItemData.getDrupalPath().length > 0;
+			_hasPath = _nodeItemData.getPath().length > 0;
 			
 			this.buttonMode = true;
 		}
@@ -233,7 +233,7 @@ package com.graphmind.display
 		}
 		
 		private function onIconAnchorClick(event:MouseEvent):void {
-			var ur:URLRequest = new URLRequest(_nodeItemData.getDrupalPath());
+			var ur:URLRequest = new URLRequest(_nodeItemData.getPath());
 			navigateToURL(ur, '_blank');
 		}
 		

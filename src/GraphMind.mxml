@@ -20,6 +20,9 @@
 			[Embed(source='assets/images/draganddrop.png')]
 			[Bindable]
 			private var image_dragAndDrop:Class;
+			[Embed(source='assets/images/disk.png')]
+			[Bindable]
+			private var image_disk:Class;
 		
 			import com.graphmind.GraphMindManager;
 			
@@ -125,8 +128,6 @@
 		</mx:State>
 	</mx:states>
 
-	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
-		
 	<!-- Debug textarea -->
 	<!--
 	<mx:TextArea right="10" bottom="40" top="10" width="200" id="debugTextarea" 
@@ -143,7 +144,7 @@
 		id="panelMain">
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0">
-			<mx:Canvas label="Attributes" width="100%" height="100%">
+			<mx:Canvas label="Attributes" width="100%" height="100%" visible="false">
 			
 				<mx:DataGrid width="100%" 
 					dataProvider="{StageManager.getInstance().selectedNodeData}" 
@@ -199,9 +200,14 @@
 			</mx:Canvas>
 			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%">
 			
-				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
-				<mx:Button x="10" y="10" label="Save and export"
-					click="StageManager.getInstance().onExportClick(event);"/>
+				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="100" bottom="0"/>
+				<mx:Button x="10" y="10" label="Save"
+					click="StageManager.getInstance().onSaveClick();"
+					icon="{image_disk}"/>
+				<mx:Button x="10" y="40" label="Export to FreeMind"
+					click="StageManager.getInstance().onExportClick();"/>
+				<mx:Button x="10" y="70" label="Dump XML"
+					click="StageManager.getInstance().onDumpClick();"/>
 				
 			</mx:Canvas>
 		</mx:Accordion>
@@ -216,4 +222,6 @@
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true"/>
 	</mx:Canvas>	
 	
+	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
+		
 </mx:Application>

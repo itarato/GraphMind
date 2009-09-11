@@ -11,6 +11,7 @@ package com.graphmind
 	
 	import flash.display.StageDisplayState;
 	import flash.events.MouseEvent;
+	import flash.net.FileReference;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -78,8 +79,10 @@ package com.graphmind
 			itemData.title = result.result.title;
 			var nodeItem:NodeItem = new NodeItem(itemData);
 			
-			if (result.result.body_value.toString().length > 0) {
-				var importedBaseNode:NodeItem = ImportManager.getInstance().importMapFromString(baseNode, result.result.body_value);
+			// @WTF sometimes body_value is the right value, sometimes not
+			var body:String = result.result.body.toString();
+			if (body.length > 0) {
+				var importedBaseNode:NodeItem = ImportManager.getInstance().importMapFromString(baseNode, body);
 				addChildToStage(importedBaseNode);
 				baseNode = importedBaseNode;
 			} else {
@@ -89,14 +92,7 @@ package com.graphmind
 			
 			refreshNodePositions();
 		}		
-		
-//		/**
-//		 * Event handler when state is changed.
-//		 */
-//		public function onCurrentStateChange(event:StateChangeEvent):void {
-//			Log.info('state changed');
-//		}
-		
+				
 		public function onDataGridItemClick_baseState(event:ListEvent):void {
 			if (event.itemRenderer.data is ViewsCollection) {
 				(event.itemRenderer.data as ViewsCollection).handleDataGridSelection();
@@ -237,9 +233,19 @@ package com.graphmind
 			baseNode.refreshChildNodePosition();
 		}
 		
-		public function onExportClick(event:MouseEvent):void {
-			var mm:String = GraphMindManager.getInstance().save();
-			stage.freemindExportTextarea.text = mm;
+		public function onSaveClick():void {
+			GraphMindManager.getInstance().save();
+		}
+		
+		public function onDumpClick():void {
+			stage.freemindExportTextarea.text = GraphMindManager.getInstance().exportToFreeMindFormat();
+		}
+		
+		public function onExportClick():void {
+			var mm:String = GraphMindManager.getInstance().exportToFreeMindFormat();
+			var fr:FileReference = new FileReference();
+			//fr.save(mm);
+			Alert.show('Implement later');
 		}
 		
 		public function onAddOrUpdateClick(event:MouseEvent):void {

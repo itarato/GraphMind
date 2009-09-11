@@ -17,6 +17,7 @@ package com.graphmind.data {
 		public var source:SiteConnection = SiteConnection.createSiteConnection();
 		public var type:String = NORMAL;
 		public var id:uint = NodeItemData.id++;
+		public var link:String = '';
 		protected var _drupalID:int;
 		
 		// FreeMind data
@@ -87,7 +88,9 @@ package com.graphmind.data {
 			}
 		}
 		
-		public function getDrupalPath():String {
+		public function getPath():String {
+			if (link.length > 0) return link;
+			
 			if (source && source.url && getDrupalID()) {
 				var url:String = source.url.toString().replace(/services\/amfphp/gi, '');
 				switch (type) {

@@ -105,7 +105,7 @@ package com.graphmind
 		}
 
 		public function isEditable():Boolean {
-			return Application.application.parameters.isEditable || false;
+			return Application.application.parameters.isEditable || true;
 		}
 
 	}
