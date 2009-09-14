@@ -47,7 +47,6 @@
 		]]>
 	</mx:Script>
 	
-	
 	<mx:states>
 		<mx:State name="load_view_state">
 			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
@@ -143,7 +142,7 @@
 		left="10" top="10" bottom="10" 
 		id="panelMain">
 	
-		<mx:Accordion width="100%" top="0" bottom="0" left="0">
+		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all">
 			<mx:Canvas label="Attributes" width="100%" height="100%" visible="false">
 			
 				<mx:DataGrid width="100%" 
@@ -175,6 +174,12 @@
 					click="StageManager.getInstance().onRemoveAttributeClick(event);" left="125" bottom="10"/>
 				
 			</mx:Canvas>
+			<mx:Canvas label="Node info" width="100%" height="100%" horizontalScrollPolicy="off">
+				<mx:RichTextEditor title="Node title" width="100%" height="240" left="0" top="0"
+					id="nodeLabelRTE">
+				</mx:RichTextEditor>
+				<mx:Button x="10" y="248" label="Save node title" click="StageManager.getInstance().onNodeLabelRTESave();"/>
+			</mx:Canvas>
 			<mx:Canvas label="Connections" width="100%" height="100%">
 					
 				<!-- Connect to new Drupal site form -->
@@ -200,13 +205,13 @@
 			</mx:Canvas>
 			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%">
 			
-				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="100" bottom="0"/>
+				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
 				<mx:Button x="10" y="10" label="Save"
 					click="StageManager.getInstance().onSaveClick();"
 					icon="{image_disk}"/>
-				<mx:Button x="10" y="40" label="Export to FreeMind"
-					click="StageManager.getInstance().onExportClick();"/>
-				<mx:Button x="10" y="70" label="Dump XML"
+				<!--<mx:Button x="10" y="70" label="Export to FreeMind"
+					click="StageManager.getInstance().onExportClick();"/>-->
+				<mx:Button x="122" y="10" label="Dump XML"
 					click="StageManager.getInstance().onDumpClick();"/>
 				
 			</mx:Canvas>

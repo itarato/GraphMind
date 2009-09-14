@@ -10,7 +10,7 @@ package com.graphmind.util {
 		
 		public static function drawConnection(target:UIComponent, fromNode:NodeItem,  toNode:NodeItem):void {
 			target.graphics.lineStyle(2, 0x333333);
-			var pFrom:Point = new Point(fromNode.x + NodeItem.WIDTH, fromNode.y + NodeItem.HEIGHT / 2);
+			var pFrom:Point = new Point(fromNode.x + fromNode.getWidth(), fromNode.y + NodeItem.HEIGHT / 2);
 			var pTo:Point   = new Point(toNode.x, toNode.y + NodeItem.HEIGHT / 2);
 			target.graphics.moveTo((pFrom.x + pTo.x) / 2, (pFrom.y + pTo.y) / 2);
 			//target.graphics.lineTo();

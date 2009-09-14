@@ -11,7 +11,6 @@ package com.graphmind
 	
 	import flash.display.StageDisplayState;
 	import flash.events.MouseEvent;
-	import flash.net.FileReference;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -23,6 +22,21 @@ package com.graphmind
 	public class StageManager
 	{
 		private static var _instance:StageManager = null;
+		
+		public static var icons:Array = [
+			"Mail", "down", "forward", "help", "password", "attach", "edit", 
+			"freemind_butterfly", "hourglass", "pencil", "back", "encrypted", 
+			"full-0", "idea", "penguin", "bell", "family", "full-1", "info", 
+			"prepare", "bookmark", "fema", "full-2", "kaddressbook", "redo", 
+			"broken-line", "female1", "full-3", "kmail", "smiley-angry", "button_cancel", 
+			"female2", "full-4", "knotify", "smiley-neutral", "button_ok", "flag-black", 
+			"full-5", "korn", "smiley-oh", "calendar", "flag-blue", "full-6", "ksmiletris", 
+			"smily_bad", "clanbomber", "flag-green", "full-7", "launch", "stop-sign", 
+			"clock", "flag-orange", "full-8", "licq", "stop", "clock2", "flag-pink", 
+			"full-9", "list", "up", "closed", "flag-yellow", "go", " male1", "wizard", 
+			"decrypted", "flag", "gohome", "male2", "xmag", "desktop_new", "folder", 
+			"group", "messagebox_warning", "yes"
+		];
 		
 		// The stage object
 		private var _application:GraphMind = null;
@@ -55,6 +69,9 @@ package com.graphmind
 			
 			// Scroll mindmap canvas to center
 			_application.desktop_wrapper.verticalScrollPosition = 800;
+			stage.nodeLabelRTE.colorPicker.selectedColor = 0xFFFFFF;
+			stage.nodeLabelRTE.textArea.setStyle('backgroundColor', '#647177');
+			stage.nodeLabelRTE.textArea.setStyle('color', '#FFFFFF');
 		}
 		
 		/**
@@ -243,8 +260,14 @@ package com.graphmind
 		
 		public function onExportClick():void {
 			var mm:String = GraphMindManager.getInstance().exportToFreeMindFormat();
-			var fr:FileReference = new FileReference();
+			//var fr:FileReference = new FileReference();
 			//fr.save(mm);
+			//fr.sa
+			//fr.c
+			//var f
+			//var fr:FileReference = new FileReference();
+			//fr.browse();
+			//FileReference().
 			Alert.show('Implement later');
 		}
 		
@@ -307,6 +330,15 @@ package com.graphmind
 			isPrepairedDragAndDrop = false;
 			stage.dragAndDrop_shape.visible = false;
 			dragAndDrop_sourceNodeItem = null;
+		}
+		
+		public function onNodeLabelRTESave():void {
+			if (!lastSelectedNode) {
+				Alert.show("Please, select a node first.", "Graphmind");
+				return;
+			}
+			
+			lastSelectedNode.title = stage.nodeLabelRTE.htmlText;
 		}
 		
 	}

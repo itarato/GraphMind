@@ -32,6 +32,7 @@ package com.graphmind
 		 */
 		private function getBaseDrupalURL():String {
 			Log.info('Host url: ' + Application.application.parameters.basePath);
+			//return 'http://pronovix.net/services/amfphp';
 			return Application.application.parameters.basePath || 'http://localhost/drupal_services/?q=services/amfphp';
 		}
 		
@@ -40,6 +41,7 @@ package com.graphmind
 		 */
 		public function getHostNodeID():int {
 			Log.info("Host nid: " + Application.application.parameters.nid);
+			//return 163;
 			return Application.application.parameters.nid || 155;
 		}
 		

@@ -31,6 +31,7 @@ package com.graphmind.display
 		public static const HEIGHT:int = 20;
 		public static const MARGIN_RIGHT:int = 32;
 		public static const MARGIN_BOTTOM:int = 4;
+		public static const ICON_WIDTH:int = 20;
 		
 		protected var _displayComponent:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connections:UIComponent = new UIComponent();
@@ -40,7 +41,8 @@ package com.graphmind.display
 		protected var _isForcedCollapsed:Boolean = false;
 		protected var _parentNode:NodeItem = null;
 		protected var _background:Sprite = new Sprite();
-		protected var _hasPath:Boolean = false;		
+		protected var _hasPath:Boolean = false;
+		protected var _icons:ArrayCollection = new ArrayCollection();
 		
 		
 		private var _mouseSelectionTimeout:uint;
@@ -66,7 +68,7 @@ package com.graphmind.display
 			_connections.graphics.lineStyle(2, 0x333333, 1);
 			StageManager.getInstance().stage.desktop.addChild(_connections);
 			
-			this._displayComponent.title_label.text = this._nodeItemData.title;
+			this._displayComponent.title_label.htmlText = this._nodeItemData.title;
 			
 			this._background.graphics.beginFill(getTypeColor(), .4);
 			this._background.graphics.drawRoundRect(0, 0, 160, 20, 10, 10);
@@ -194,7 +196,7 @@ package com.graphmind.display
 		private function onNewTitleKeyUp(event:KeyboardEvent):void {
 			if (event.keyCode == Keyboard.ENTER) {
 				_displayComponent.currentState = '';
-				_nodeItemData.title = _displayComponent.title_label.text = _displayComponent.title_new.text;
+				title = _displayComponent.title_new.text;
 				StageManager.getInstance().stage.setFocus();
 			} else if (event.keyCode == Keyboard.ESCAPE) {
 				_displayComponent.currentState = '';
@@ -304,7 +306,7 @@ package com.graphmind.display
 			for each (var child:NodeItem in _childs) {
 				var childNum:int = child.childSubtreeWidth();
 				//Log.info('childC: ' + childNum);
-				child.x = x + NodeItem.WIDTH + NodeItem.MARGIN_RIGHT;
+				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
 				child.y = currentY + (childNum * (NodeItem.HEIGHT + NodeItem.MARGIN_BOTTOM)) / 2; 
 				child.refreshChildNodePosition();
 				
@@ -348,6 +350,11 @@ package com.graphmind.display
 			}
 			_displayComponent.title_label.setStyle('fontWeight', 'bold');
 			_displayComponent.title_label.setStyle('color', '#FFFFFF');
+			
+			StageManager.getInstance().stage.nodeLabelRTE.text = _displayComponent.title_label.text;
+			StageManager.getInstance().stage.nodeLabelRTE.textArea.setStyle('backgroundColor', getTypeColor());
+			
+			_displayComponent.title_new.text = _displayComponent.title_label.text;
 		}
 		
 		public function unselectNode():void {
@@ -361,7 +368,8 @@ package com.graphmind.display
 				'MODIFIED="' + _nodeItemData.modified  + '" ' + 
 				'ID="ID_'    + _nodeItemData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
-				'TEXT="'     + _nodeItemData.title     + '">' + "\n";
+				'TEXT="'     + encodeURIComponent(_nodeItemData.title) + '">' + "\n";
+				//Alert.show(output);
 			
 			var attributes:Object = Object(_nodeItemData.data);
 			if (_nodeItemData.source) {
@@ -450,6 +458,18 @@ package com.graphmind.display
 			target.addNodeChild(source);
 			sourceParentNode._displayComponent.icon_has_child.visible = sourceParentNode._childs.length > 0;
 			StageManager.getInstance().refreshNodePositions();
+		}
+		
+		public function getWidth():int {
+			return WIDTH + _icons.length * ICON_WIDTH;
+		}
+		
+		public function addIcon():void {
+			
+		}
+		
+		public function set title(title:String):void {
+			_nodeItemData.title = _displayComponent.title_label.htmlText = title;
 		}
 	}
 }

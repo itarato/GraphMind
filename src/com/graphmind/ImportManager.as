@@ -50,7 +50,7 @@ package com.graphmind
 			);
 			nodeItemData.created  = Number(nodeXML.@CREATED);
 			nodeItemData.modified = Number(nodeXML.@MODIFIED);
-			nodeItemData.title    = String(nodeXML.@TEXT);
+			nodeItemData.title    = unescape(String(nodeXML.@TEXT));
 			nodeItemData.id       = parseInt(String(nodeXML.@ID).replace("ID_", ""));
 			var nodeItem:NodeItem = new NodeItem(nodeItemData);
 			

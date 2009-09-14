@@ -156,7 +156,7 @@ package com.graphmind
 					requestData.success(_result.result, requestData);
 				},
 				function(error:FaultEvent):void {
-					Alert.show("Views cannot load: " + requestData.viewsData.view_name, "GraphMind");
+					Alert.show("Views cannot load: " + requestData.viewsData.view_name + requestData.viewsData.parent.source + error, "GraphMind");
 				}
 			).send(
 				requestData.viewsData.parent.sourceSessionID,
