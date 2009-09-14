@@ -179,6 +179,10 @@
 					id="nodeLabelRTE">
 				</mx:RichTextEditor>
 				<mx:Button x="10" y="248" label="Save node title" click="StageManager.getInstance().onNodeLabelRTESave();"/>
+				<mx:Label x="10" y="288" text="External link"/>
+				<mx:HRule x="10" y="278" width="198"/>
+				<mx:TextInput x="10" y="314" width="198" id="link"/>
+				<mx:Button x="10" y="344" label="Save link" click="StageManager.getInstance().onSaveLink();"/>
 			</mx:Canvas>
 			<mx:Canvas label="Connections" width="100%" height="100%">
 					

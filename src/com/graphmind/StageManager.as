@@ -333,13 +333,24 @@ package com.graphmind
 		}
 		
 		public function onNodeLabelRTESave():void {
-			if (!lastSelectedNode) {
-				Alert.show("Please, select a node first.", "Graphmind");
-				return;
-			}
+			if (!checkLastSelectedNodeIsExists()) return;
 			
 			lastSelectedNode.title = stage.nodeLabelRTE.htmlText;
 		}
 		
+		public function onSaveLink():void {
+			if (!checkLastSelectedNodeIsExists()) return;
+			
+			lastSelectedNode.link = stage.link.text;
+		}
+		
+		public function checkLastSelectedNodeIsExists():Boolean {
+			if (!lastSelectedNode) {
+				Alert.show("Please, select a node first.", "Graphmind");
+				return false;
+			}
+			
+			return true;
+		}
 	}
 }

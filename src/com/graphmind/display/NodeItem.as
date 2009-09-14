@@ -21,7 +21,6 @@ package com.graphmind.display
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
-	import mx.controls.Alert;
 	import mx.core.UIComponent;
 	
 	//public class NodeItem extends DraggableItem {
@@ -355,6 +354,8 @@ package com.graphmind.display
 			StageManager.getInstance().stage.nodeLabelRTE.textArea.setStyle('backgroundColor', getTypeColor());
 			
 			_displayComponent.title_new.text = _displayComponent.title_label.text;
+			
+			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
 		}
 		
 		public function unselectNode():void {
@@ -470,6 +471,11 @@ package com.graphmind.display
 		
 		public function set title(title:String):void {
 			_nodeItemData.title = _displayComponent.title_label.htmlText = title;
+		}
+		
+		public function set link(link:String):void {
+			_nodeItemData.link = link;
+			_displayComponent.icon_anchor.visible = _hasPath = link.length > 0;
 		}
 	}
 }
