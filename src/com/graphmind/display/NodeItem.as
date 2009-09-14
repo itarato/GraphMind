@@ -21,6 +21,7 @@ package com.graphmind.display
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	import mx.core.UIComponent;
 	
 	//public class NodeItem extends DraggableItem {
@@ -125,7 +126,12 @@ package com.graphmind.display
 		
 		private function onMouseUp(event:MouseEvent):void {
 			if ((!StageManager.getInstance().isPrepairedDragAndDrop) && StageManager.getInstance().isDragAndDrop) {
-				NodeItem.move(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
+				
+				if (this.mouseX / this.getWidth() > (1 - this.mouseY / HEIGHT)) {
+					NodeItem.move(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
+				} else {
+					NodeItem.moveToPrevSibling(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
+				}
 				StageManager.getInstance().closeDragAndDrop();
 			}
 		}
@@ -242,9 +248,11 @@ package com.graphmind.display
 			this._childs.addItem(node);
 			Log.info('new child: ' + this._childs.length);
 			StageManager.getInstance().addChildToStage(node);
+			node._parentNode = this;
+			
+			// Update display
 			this.uncollapseChilds();
 			this._displayComponent.icon_has_child.visible = true;
-			node._parentNode = this;
 		}
 		
 		public function collapse():void {
@@ -370,7 +378,6 @@ package com.graphmind.display
 				'ID="ID_'    + _nodeItemData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
 				'TEXT="'     + encodeURIComponent(_nodeItemData.title) + '">' + "\n";
-				//Alert.show(output);
 			
 			var attributes:Object = Object(_nodeItemData.data);
 			if (_nodeItemData.source) {
@@ -442,24 +449,56 @@ package com.graphmind.display
 			return false;
 		}
 		
-		public static function move(source:NodeItem, target:NodeItem):void {
+		public static function move(source:NodeItem, target:NodeItem):Boolean {
 			// @TODO validation !!!
 			// No parent can detach child.
-			if (!source || !source._parentNode) return;
+			if (!source || !source._parentNode || !target) return false;
 			// Target is an ascendant of the source.
-			if (source.isChild(target)) return;
+			if (source.isChild(target)) return false;
 			// Source is equal to target
-			if (source == target) return;
+			if (source == target) return false;
 			
-			var childIDX:int = source._parentNode._childs.getItemIndex(source);
-			if (childIDX >= 0) {
-				source._parentNode._childs.removeItemAt(childIDX);
-			}
-			var sourceParentNode:NodeItem = source._parentNode;
+			// Remove source from parents childs
+			source.removeFromPatentsChilds();
+			// Add source to target
 			target.addNodeChild(source);
-			sourceParentNode._displayComponent.icon_has_child.visible = sourceParentNode._childs.length > 0;
+			// Refresh display
 			StageManager.getInstance().refreshNodePositions();
+			
+			return true;
 		}
+		
+		public static function moveToPrevSibling(source:NodeItem, target:NodeItem):void {
+			if (move(source, target._parentNode)) {
+				var siblingIDX:int = target._parentNode._childs.getItemIndex(target);
+				if (siblingIDX == -1) {
+					Alert.show('ERROR');
+					return;
+				}
+				
+				for (var i:int = target._parentNode._childs.length - 1; i > siblingIDX; i--) {
+					//target._parentNode._childs.setItemAt(target._parentNode._childs.getItemAt(i - 1), i);
+					target._parentNode._childs[i] = target._parentNode._childs[i - 1];
+				}
+				
+				target._parentNode._childs.setItemAt(source, siblingIDX);
+				
+				StageManager.getInstance().refreshNodePositions();
+			}
+		}
+		
+		private function removeFromPatentsChilds():void {
+			// Fix source's old parent's has_child icon
+			var parentNode:NodeItem = _parentNode;
+			
+			var childIDX:int = _parentNode._childs.getItemIndex(this);
+			if (childIDX >= 0) {
+				this._parentNode._childs.removeItemAt(childIDX);
+			}
+			
+			parentNode._displayComponent.icon_has_child.visible = parentNode._childs.length > 0;
+		}
+			
 		
 		public function getWidth():int {
 			return WIDTH + _icons.length * ICON_WIDTH;
