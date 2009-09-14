@@ -89,6 +89,8 @@ package com.graphmind.display
 				
 				this._displayComponent.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 				this._displayComponent.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp);
+				
+				this._displayComponent.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 			}
 			
 			this._displayComponent.addEventListener(MouseEvent.CLICK, onClick);
@@ -133,6 +135,21 @@ package com.graphmind.display
 					NodeItem.moveToPrevSibling(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
 				}
 				StageManager.getInstance().closeDragAndDrop();
+				
+				_displayComponent.insertLeft.visible = false;
+				_displayComponent.insertUp.visible = false;
+			}
+		}
+		
+		private function onMouseMove(event:MouseEvent):void {
+			if ((!StageManager.getInstance().isPrepairedDragAndDrop) && StageManager.getInstance().isDragAndDrop) {
+				if (this.mouseX / this.getWidth() > (1 - this.mouseY / HEIGHT)) {
+					_displayComponent.insertLeft.visible = true;
+					_displayComponent.insertUp.visible = false;
+				} else {
+					_displayComponent.insertLeft.visible = false;
+					_displayComponent.insertUp.visible = true;
+				}
 			}
 		}
 		
@@ -191,6 +208,9 @@ package com.graphmind.display
 				StageManager.getInstance().openDragAndDrop(this);
 				//trace(StageManager.getInstance().isPrepairedDragAndDrop.toString());
 			}
+			
+			_displayComponent.insertLeft.visible = false;
+			_displayComponent.insertUp.visible = false;
 		}
 		
 		private function onDoubleClick(event:MouseEvent):void {
@@ -355,8 +375,7 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			_displayComponent.title_label.setStyle('fontWeight', 'bold');
-			_displayComponent.title_label.setStyle('color', '#FFFFFF');
+			_displayComponent.selection.visible = true;
 			
 			StageManager.getInstance().stage.nodeLabelRTE.text = _displayComponent.title_label.text;
 			StageManager.getInstance().stage.nodeLabelRTE.textArea.setStyle('backgroundColor', getTypeColor());
@@ -367,8 +386,7 @@ package com.graphmind.display
 		}
 		
 		public function unselectNode():void {
-			_displayComponent.title_label.setStyle('fontWeight', 'normal');
-			_displayComponent.title_label.setStyle('color', '#DDDDDD');
+			_displayComponent.selection.visible = false;
 		}
 		
 		public function exportToFreeMindFormat():String {

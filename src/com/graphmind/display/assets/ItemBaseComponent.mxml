@@ -15,6 +15,15 @@
 			[Embed(source='assets/images/bullet_add.png')]
 			[Bindable]
 			public var image_bullet:Class;
+			[Embed(source='assets/images/selectionLight.png')]
+			[Bindable]
+			public var image_selection:Class;
+			[Embed(source='assets/images/insertUp.png')]
+			[Bindable]
+			public var image_insertUp:Class;
+			[Embed(source='assets/images/insertLeft.png')]
+			[Bindable]
+			public var image_insertLeft:Class;
 		]]>
 	</mx:Script>
 	
@@ -32,6 +41,11 @@
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
+		
+	<mx:Image source="{image_selection}" x="0" y="0" id="selection" visible="false"/>
+	
+	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
+	<mx:Image source="{image_insertLeft}" x="158" id="insertLeft" visible="false"/>
 	
 	<mx:Label x="2" y="1" text="Label" width="138" id="title_label" color="#DDDDDD" fontSize="11"/>
 	
