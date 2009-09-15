@@ -51,7 +51,7 @@ package com.graphmind.data {
 					title = data.comments_subject || data.title || data.comments_title || '';
 					break;
 				case FILE:
-					title = data.files_filename || '';
+					title = data.files_filename || data.filename || '';
 					break;
 				case TERM:
 					title = data.term_data_name || '';
