@@ -377,7 +377,7 @@ package com.graphmind.display
 			}
 			_displayComponent.selection.visible = true;
 			
-			StageManager.getInstance().stage.nodeLabelRTE.text = _displayComponent.title_label.text;
+			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
 			StageManager.getInstance().stage.nodeLabelRTE.textArea.setStyle('backgroundColor', getTypeColor());
 			
 			_displayComponent.title_new.text = _displayComponent.title_label.text;
@@ -390,26 +390,45 @@ package com.graphmind.display
 		}
 		
 		public function exportToFreeMindFormat():String {
+			//var titleIsHTML:Boolean = _displayComponent.title_label.text != _displayComponent.title_label.htmlText;
+			var titleIsHTML:Boolean = _nodeItemData.title.toString().indexOf('<') >= 0;
+			
+			// Bade node information
 			var output:String = '<node ' + 
 				'CREATED="'  + _nodeItemData.created   + '" ' + 
 				'MODIFIED="' + _nodeItemData.modified  + '" ' + 
 				'ID="ID_'    + _nodeItemData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
-				'TEXT="'     + encodeURIComponent(_nodeItemData.title) + '">' + "\n";
+				(titleIsHTML ? '' : 'TEXT="' + encodeURIComponent(_nodeItemData.title) + '" ') + 
+				(_nodeItemData.getPath().toString().length > 0 ? ('LINK="' + encodeURIComponent(_nodeItemData.getPath()) + '"') : '') + 
+				">\n";
 			
-			var attributes:Object = Object(_nodeItemData.data);
-			if (_nodeItemData.source) {
-				attributes.__site_url      = escape(_nodeItemData.source.url);
-				attributes.__site_username = escape(_nodeItemData.source.username);
+			if (titleIsHTML) {
+				output = output + "<richcontent TYPE=\"NODE\"><html><head></head><body>" + 
+					_nodeItemData.title + 
+					"</body></html></richcontent>";
 			}
-			attributes.__node_type = _nodeItemData.type;
-			for (var key:* in attributes) {
+			
+			var key:*;
+			for (key in _nodeItemData.data) {
 				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(_nodeItemData.data[key]) + '"/>' + "\n";
 			}
 			
+			var attributes_confidental:Object = {};
+			if (_nodeItemData.source) {
+				attributes_confidental.__site_url      = escape(_nodeItemData.source.url);
+				attributes_confidental.__site_username = escape(_nodeItemData.source.username);
+			}
+			attributes_confidental.__node_type = _nodeItemData.type;
+			for (key in attributes_confidental) {
+				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(attributes_confidental[key]) + '"/>' + "\n";
+			}
+			
+			// Add childs
 			for each (var child:NodeItem in _childs) {
 				output = output + child.exportToFreeMindFormat();
 			}
+			
 			return output + '</node>' + "\n";
 		}
 		

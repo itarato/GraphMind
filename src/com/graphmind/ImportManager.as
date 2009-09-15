@@ -35,6 +35,17 @@ package com.graphmind
 				}
 			}
 			
+			// Load html node title, if you can
+			XML.ignoreWhitespace = true;
+			XML.prettyIndent = 0;
+			var htmlTitle:String = '';
+			if (nodeXML.child('richcontent')[0]) {
+				htmlTitle = nodeXML.child('richcontent')[0].html.body.children();
+				htmlTitle = htmlTitle.replace(/\n/gi, '');
+			}
+			// Normal title
+			var rawTitle:String  = unescape(String(nodeXML.@TEXT));
+			
 			var sc:SiteConnection = null;
 			if (information.hasOwnProperty('__site_url') && information.hasOwnProperty('__site_username')) {
 				sc = SiteConnection.createSiteConnection(
@@ -50,8 +61,9 @@ package com.graphmind
 			);
 			nodeItemData.created  = Number(nodeXML.@CREATED);
 			nodeItemData.modified = Number(nodeXML.@MODIFIED);
-			nodeItemData.title    = unescape(String(nodeXML.@TEXT));
+			nodeItemData.title    = rawTitle.length > 0 ? rawTitle : htmlTitle;
 			nodeItemData.id       = parseInt(String(nodeXML.@ID).replace("ID_", ""));
+			nodeItemData.link     = decodeURIComponent(String(nodeXML.@LINK));
 			var nodeItem:NodeItem = new NodeItem(nodeItemData);
 			
 			var nodeChilds:XMLList = nodeXML.elements('node');
@@ -61,8 +73,6 @@ package com.graphmind
 			}
 			
 			if (nodeXML.@FOLDED == 'true') {
-				// @TODO implement manualCollapsed functionality.
-				// Now it won't collapse branches because later node addings will open the whole tree.
 				nodeItem.collapse();
 			}
 			
