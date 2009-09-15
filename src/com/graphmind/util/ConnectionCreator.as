@@ -9,7 +9,7 @@ package com.graphmind.util {
 	public class ConnectionCreator {
 		
 		public static function drawConnection(target:UIComponent, fromNode:NodeItem,  toNode:NodeItem):void {
-			target.graphics.lineStyle(2, 0x333333);
+			target.graphics.lineStyle(2, 0x777777);
 			var pFrom:Point = new Point(fromNode.x + fromNode.getWidth(), fromNode.y + NodeItem.HEIGHT / 2);
 			var pTo:Point   = new Point(toNode.x, toNode.y + NodeItem.HEIGHT / 2);
 			target.graphics.moveTo((pFrom.x + pTo.x) / 2, (pFrom.y + pTo.y) / 2);

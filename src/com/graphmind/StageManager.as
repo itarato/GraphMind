@@ -69,9 +69,7 @@ package com.graphmind
 			
 			// Scroll mindmap canvas to center
 			_application.desktop_wrapper.verticalScrollPosition = 800;
-			stage.nodeLabelRTE.colorPicker.selectedColor = 0xFFFFFF;
-			stage.nodeLabelRTE.textArea.setStyle('backgroundColor', '#647177');
-			stage.nodeLabelRTE.textArea.setStyle('color', '#FFFFFF');
+			stage.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 		}
 		
 		/**

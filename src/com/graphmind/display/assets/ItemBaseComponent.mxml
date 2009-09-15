@@ -47,7 +47,7 @@
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
 	<mx:Image source="{image_insertLeft}" x="158" id="insertLeft" visible="false"/>
 	
-	<mx:Label x="2" y="1" text="Label" width="138" id="title_label" color="#DDDDDD" fontSize="11"/>
+	<mx:Label x="2" y="1" text="Label" width="138" id="title_label" fontSize="11"/>
 	
 	<mx:Image x="140" y="2" 
 		source="{image_add}" 

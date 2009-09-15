@@ -70,7 +70,7 @@ package com.graphmind.display
 			
 			this._displayComponent.title_label.htmlText = this._nodeItemData.title;
 			
-			this._background.graphics.beginFill(getTypeColor(), .4);
+			this._background.graphics.beginFill(getTypeColor(), .2);
 			this._background.graphics.drawRoundRect(0, 0, 160, 20, 10, 10);
 			this._background.graphics.endFill();
 		
@@ -378,7 +378,6 @@ package com.graphmind.display
 			_displayComponent.selection.visible = true;
 			
 			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
-			StageManager.getInstance().stage.nodeLabelRTE.textArea.setStyle('backgroundColor', getTypeColor());
 			
 			_displayComponent.title_new.text = _displayComponent.title_label.text;
 			
