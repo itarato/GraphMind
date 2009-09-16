@@ -45,6 +45,10 @@ package com.graphmind
 			return Application.application.parameters.nid || 155;
 		}
 		
+		public function getIconPath():String {
+			return Application.application.parameters.iconDir || 'http://localhost/drupal_services/sites/default/modules/graphmind_service/graphmind/icons/';
+		}
+		
 		/**
 		 * Init manager
 		 */

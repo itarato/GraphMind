@@ -66,6 +66,11 @@ package com.graphmind
 			nodeItemData.link     = decodeURIComponent(String(nodeXML.@LINK));
 			var nodeItem:NodeItem = new NodeItem(nodeItemData);
 			
+			for each (var iconsXML:XML in nodeXML.elements('icon')) {
+				nodeItem.addIcon(GraphMindManager.getInstance().getIconPath() + iconsXML.@BUILTIN + '.png');
+			}
+			nodeItem.refactorNodeBody();
+			
 			var nodeChilds:XMLList = nodeXML.elements('node');
 			for each (var childXML:XML in nodeChilds) {
 				var childNode:NodeItem = buildGrapMindNode(childXML);

@@ -6,6 +6,7 @@ package com.graphmind.display
 	import com.graphmind.display.assets.ItemBaseComponent;
 	import com.graphmind.util.ConnectionCreator;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.StringUtility;
 	
 	import flash.display.Sprite;
 	import flash.events.ContextMenuEvent;
@@ -22,16 +23,18 @@ package com.graphmind.display
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
+	import mx.controls.Image;
 	import mx.core.UIComponent;
 	
 	//public class NodeItem extends DraggableItem {
 	public class NodeItem extends DisplayItem {
 		
 		public static const WIDTH:int = 160;
+		public static const MC_WIDTH:int = 168;
 		public static const HEIGHT:int = 20;
 		public static const MARGIN_RIGHT:int = 32;
 		public static const MARGIN_BOTTOM:int = 4;
-		public static const ICON_WIDTH:int = 20;
+		public static const ICON_WIDTH:int = 18;
 		
 		protected var _displayComponent:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connections:UIComponent = new UIComponent();
@@ -69,14 +72,12 @@ package com.graphmind.display
 			StageManager.getInstance().stage.desktop.addChild(_connections);
 			
 			this._displayComponent.title_label.htmlText = this._nodeItemData.title;
-			
-			this._background.graphics.beginFill(getTypeColor(), .2);
-			this._background.graphics.drawRoundRect(0, 0, 160, 20, 10, 10);
-			this._background.graphics.endFill();
 		
 			_hasPath = _nodeItemData.getPath().length > 0;
 			
 			this.buttonMode = true;
+			
+			this.refactorNodeBody();
 		}
 			
 		private function _initAttachEvents():void {
@@ -423,6 +424,10 @@ package com.graphmind.display
 				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(attributes_confidental[key]) + '"/>' + "\n";
 			}
 			
+			for each (var icon:* in _icons) {
+				output = output + '<icon BUILTIN="' + StringUtility.iconUrlToIconName((icon as Image).source.toString()) + '"/>' + "\n";
+			}
+			
 			// Add childs
 			for each (var child:NodeItem in _childs) {
 				output = output + child.exportToFreeMindFormat();
@@ -540,9 +545,45 @@ package com.graphmind.display
 			return WIDTH + _icons.length * ICON_WIDTH;
 		}
 		
-		public function addIcon():void {
+		public function addIcon(source:String):void {
+			// Getting the normal icon name only
+			var iconName:String = StringUtility.iconUrlToIconName(source);
 			
-		}
+			// @TODO check if exists
+			var icon:Image = new Image();
+			icon.source = source;
+			icon.y = 2;
+			_displayComponent.addChild(icon);
+			_icons.addItem(icon);
+			icon.addEventListener(MouseEvent.CLICK, removeIcon);
+ 		}
+ 		
+ 		public function removeIcon(event:MouseEvent):void {
+ 			var iconIDX:int = _icons.getItemIndex(event.currentTarget as Image);
+ 			if (iconIDX == -1) return;
+ 			_icons.removeItemAt(iconIDX);
+ 			_displayComponent.removeChild(event.currentTarget as Image);
+ 			refactorNodeBody();
+ 		}
+ 		
+ 		public function refactorNodeBody():void {
+ 			for (var idx:* in _icons) {
+ 				Image(_icons[idx]).x = ICON_WIDTH * idx + 158;
+ 			}
+ 			
+ 			var leftOffset:int = _icons.length * ICON_WIDTH;
+ 				
+ 			this._background.graphics.clear();		
+			this._background.graphics.beginFill(getTypeColor(), .2);
+			this._background.graphics.drawRoundRect(0, 0, WIDTH + leftOffset, HEIGHT, 10, 10);
+			this._background.graphics.endFill();
+			
+			this._displayComponent.width = MC_WIDTH + leftOffset;
+			this._displayComponent.icon_has_child.x = 152 + leftOffset;
+			this._displayComponent.insertLeft.x = 158 + leftOffset;
+			
+			this.refreshChildNodePosition();
+ 		}
 		
 		public function set title(title:String):void {
 			_nodeItemData.title = _displayComponent.title_label.htmlText = title;

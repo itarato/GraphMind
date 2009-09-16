@@ -26,6 +26,22 @@
 			[Bindable]
 			private var image_disk:Class;
 		
+			[Bindable]
+			public static var icons:Array = [
+				"Mail", "down", "forward", "help", "password", "attach", "edit", 
+				"freemind_butterfly", "hourglass", "pencil", "back", "encrypted", 
+				"full-0", "idea", "penguin", "bell", "family", "full-1", "info", 
+				"prepare", "bookmark", "fema", "full-2", "kaddressbook", "redo", 
+				"broken-line", "female1", "full-3", "kmail", "smiley-angry", "button_cancel", 
+				"female2", "full-4", "knotify", "smiley-neutral", "button_ok", "flag-black", 
+				"full-5", "korn", "smiley-oh", "calendar", "flag-blue", "full-6", "ksmiletris", 
+				"smily_bad", "clanbomber", "flag-green", "full-7", "launch", "stop-sign", 
+				"clock", "flag-orange", "full-8", "licq", "stop", "clock2", "flag-pink", 
+				"full-9", "list", "up", "closed", "flag-yellow", "go", "male1", "wizard", 
+				"decrypted", "flag", "gohome", "male2", "xmag", "desktop_new", "folder", 
+				"group", "messagebox_warning", "yes"
+			];
+			
 			import com.graphmind.GraphMindManager;
 			
 			
@@ -185,6 +201,7 @@
 				<mx:HRule x="10" y="278" width="198"/>
 				<mx:TextInput x="10" y="314" width="198" id="link"/>
 				<mx:Button x="10" y="344" label="Save link" click="StageManager.getInstance().onSaveLink();"/>
+				<mx:HRule x="10" y="374" width="198"/>
 			</mx:Canvas>
 			<mx:Canvas label="Connections" width="100%" height="100%">
 					
@@ -227,11 +244,19 @@
 	
 	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
 	
-	<mx:Canvas right="10" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true"
+	<mx:Canvas right="55" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true"
 		mouseUp="StageManager.getInstance().closeDragAndDrop();"
 		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();">
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true"/>
-	</mx:Canvas>	
+	</mx:Canvas>
+	
+	<mx:Canvas right="10" width="35" top="10" bottom="10" horizontalScrollPolicy="off" id="icon_outer_container">
+		<mx:VBox>
+			<mx:Repeater dataProvider="{icons}" id="icon_repeater">
+				<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" click="StageManager.getInstance().onIconClick(event);"/>
+			</mx:Repeater>
+		</mx:VBox>
+	</mx:Canvas>
 	
 	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
 		

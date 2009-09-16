@@ -14,6 +14,7 @@ package com.graphmind
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
+	import mx.controls.Image;
 	import mx.core.Application;
 	import mx.core.UIComponent;
 	import mx.events.ListEvent;
@@ -23,20 +24,6 @@ package com.graphmind
 	{
 		private static var _instance:StageManager = null;
 		
-		public static var icons:Array = [
-			"Mail", "down", "forward", "help", "password", "attach", "edit", 
-			"freemind_butterfly", "hourglass", "pencil", "back", "encrypted", 
-			"full-0", "idea", "penguin", "bell", "family", "full-1", "info", 
-			"prepare", "bookmark", "fema", "full-2", "kaddressbook", "redo", 
-			"broken-line", "female1", "full-3", "kmail", "smiley-angry", "button_cancel", 
-			"female2", "full-4", "knotify", "smiley-neutral", "button_ok", "flag-black", 
-			"full-5", "korn", "smiley-oh", "calendar", "flag-blue", "full-6", "ksmiletris", 
-			"smily_bad", "clanbomber", "flag-green", "full-7", "launch", "stop-sign", 
-			"clock", "flag-orange", "full-8", "licq", "stop", "clock2", "flag-pink", 
-			"full-9", "list", "up", "closed", "flag-yellow", "go", " male1", "wizard", 
-			"decrypted", "flag", "gohome", "male2", "xmag", "desktop_new", "folder", 
-			"group", "messagebox_warning", "yes"
-		];
 		
 		// The stage object
 		private var _application:GraphMind = null;
@@ -349,6 +336,14 @@ package com.graphmind
 			}
 			
 			return true;
+		}
+		
+		public function onIconClick(event:MouseEvent):void {
+			if (!checkLastSelectedNodeIsExists()) return;
+			
+			var source:String = (event.currentTarget as Image).source.toString();
+			lastSelectedNode.addIcon(source);
+			lastSelectedNode.refactorNodeBody();
 		}
 	}
 }

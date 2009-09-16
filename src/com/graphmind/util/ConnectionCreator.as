@@ -13,7 +13,6 @@ package com.graphmind.util {
 			var pFrom:Point = new Point(fromNode.x + fromNode.getWidth(), fromNode.y + NodeItem.HEIGHT / 2);
 			var pTo:Point   = new Point(toNode.x, toNode.y + NodeItem.HEIGHT / 2);
 			target.graphics.moveTo((pFrom.x + pTo.x) / 2, (pFrom.y + pTo.y) / 2);
-			//target.graphics.lineTo();
 			target.graphics.curveTo(
 				pFrom.x + (pTo.x - pFrom.x) / 4,
 				pFrom.y,
