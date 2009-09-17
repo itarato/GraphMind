@@ -10,8 +10,6 @@ package com.graphmind
 	public class GraphMindManager
 	{
 		private static var _instance:GraphMindManager = null;
-		// Prefix for node attributes necessary for import
-		public static const EXPORT_ATTRIBUTE_SPECIAL_MARKUP:String = '__';
 		
 		// Base site connection
 		public var baseSiteConnection:SiteConnection;

@@ -28,11 +28,7 @@ package com.graphmind
 			var attributes:Object = {};
 			var information:Object = {};
 			for each (var attribute:XML in nodeXML.child('attribute')) {
-				if (String(attribute.@NAME).substring(0, GraphMindManager.EXPORT_ATTRIBUTE_SPECIAL_MARKUP.length) != GraphMindManager.EXPORT_ATTRIBUTE_SPECIAL_MARKUP) {
-					attributes[attribute.@NAME] = unescape(attribute.@VALUE);
-				} else {
-					information[attribute.@NAME] = unescape(attribute.@VALUE);
-				}
+				attributes[attribute.@NAME] = unescape(attribute.@VALUE);
 			}
 			
 			// Load html node title, if you can
@@ -47,16 +43,16 @@ package com.graphmind
 			var rawTitle:String  = unescape(String(nodeXML.@TEXT));
 			
 			var sc:SiteConnection = null;
-			if (information.hasOwnProperty('__site_url') && information.hasOwnProperty('__site_username')) {
+			if (nodeXML.site) {
 				sc = SiteConnection.createSiteConnection(
-					unescape(information.__site_url),
-					unescape(information.__site_username)
+					unescape(nodeXML.site.@URL),
+					unescape(nodeXML.site.@USERNAME)
 				);
 			}
 			
 			var nodeItemData:NodeItemData = new NodeItemData(
 				attributes,
-				information.hasOwnProperty('__node_type') ? unescape(information.__node_type) : NodeItemData.NORMAL,
+				nodeXML.@TYPE ? nodeXML.@TYPE : NodeItemData.NORMAL,
 				sc || SiteConnection.createSiteConnection()
 			);
 			nodeItemData.created  = Number(nodeXML.@CREATED);

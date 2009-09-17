@@ -404,7 +404,8 @@ package com.graphmind.display
 				'ID="ID_'    + _nodeItemData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
 				(titleIsHTML ? '' : 'TEXT="' + encodeURIComponent(_nodeItemData.title) + '" ') + 
-				(_nodeItemData.getPath().toString().length > 0 ? ('LINK="' + encodeURIComponent(_nodeItemData.getPath()) + '"') : '') + 
+				(_nodeItemData.getPath().toString().length > 0 ? ('LINK="' + encodeURIComponent(_nodeItemData.getPath()) + '" ') : '') + 
+				'TYPE="' + _nodeItemData.type + '" ' +
 				">\n";
 			
 			if (titleIsHTML) {
@@ -418,14 +419,8 @@ package com.graphmind.display
 				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(_nodeItemData.data[key]) + '"/>' + "\n";
 			}
 			
-			var attributes_confidental:Object = {};
 			if (_nodeItemData.source) {
-				attributes_confidental.__site_url      = escape(_nodeItemData.source.url);
-				attributes_confidental.__site_username = escape(_nodeItemData.source.username);
-			}
-			attributes_confidental.__node_type = _nodeItemData.type;
-			for (key in attributes_confidental) {
-				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(attributes_confidental[key]) + '"/>' + "\n";
+				output = output + '<site URL="' + escape(_nodeItemData.source.url) + '" USERNAME="' + escape(_nodeItemData.source.username) + '"/>' + "\n";
 			}
 			
 			for each (var icon:* in _icons) {
