@@ -245,14 +245,6 @@ package com.graphmind
 		
 		public function onExportClick():void {
 			var mm:String = GraphMindManager.getInstance().exportToFreeMindFormat();
-			//var fr:FileReference = new FileReference();
-			//fr.save(mm);
-			//fr.sa
-			//fr.c
-			//var f
-			//var fr:FileReference = new FileReference();
-			//fr.browse();
-			//FileReference().
 			Alert.show('Implement later');
 		}
 		

@@ -125,6 +125,7 @@ package com.graphmind.display
 		
 		private function onMouseDown(event:MouseEvent):void {
 			StageManager.getInstance().prepaireDragAndDrop();
+			event.stopImmediatePropagation();
 		}
 		
 		private function onMouseUp(event:MouseEvent):void {
@@ -274,6 +275,8 @@ package com.graphmind.display
 			// Update display
 			this.uncollapseChilds();
 			this._displayComponent.icon_has_child.visible = true;
+			
+			updateTime();
 		}
 		
 		public function collapse():void {
@@ -555,7 +558,10 @@ package com.graphmind.display
 			icon.y = 2;
 			_displayComponent.addChild(icon);
 			_icons.addItem(icon);
-			icon.addEventListener(MouseEvent.CLICK, removeIcon);
+			icon.doubleClickEnabled = true;
+			icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
+			
+			updateTime();
  		}
  		
  		public function removeIcon(event:MouseEvent):void {
@@ -564,6 +570,8 @@ package com.graphmind.display
  			_icons.removeItemAt(iconIDX);
  			_displayComponent.removeChild(event.currentTarget as Image);
  			refactorNodeBody();
+ 			
+ 			updateTime();
  		}
  		
  		public function refactorNodeBody():void {
@@ -587,11 +595,16 @@ package com.graphmind.display
 		
 		public function set title(title:String):void {
 			_nodeItemData.title = _displayComponent.title_label.htmlText = title;
+			updateTime();
 		}
 		
 		public function set link(link:String):void {
 			_nodeItemData.link = link;
 			_displayComponent.icon_anchor.visible = _hasPath = link.length > 0;
+		}
+		
+		public function updateTime():void {
+			_nodeItemData.modified = (new Date()).time;
 		}
 	}
 }

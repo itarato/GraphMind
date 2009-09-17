@@ -24,6 +24,7 @@ package com.graphmind.net
 		 */
 		public static function createRPC(ns:String, func:String, dest:String, url:String, success:Function, error:Function = null):AbstractOperation {
 			var ro:RemoteObject = new RemoteObject(dest);
+			ro.showBusyCursor = true;
 			ro.endpoint = url;
 			ro.source = ns;
 			ro.addEventListener(FaultEvent.FAULT, (error == null) ? onErrorRPCConnection : error);
