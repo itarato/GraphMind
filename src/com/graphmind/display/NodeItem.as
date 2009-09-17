@@ -111,7 +111,8 @@ package com.graphmind.display
 				{title: 'Add Drupal item', event: onAddDrupalItemSelect, 	separator: false},
 				{title: 'Add Views list',  event: onAddViewsListSelect,  	separator: false},
 				{title: 'Remove node',     event: onRemoveNodeSelect,       separator: true},
-				{title: 'Remove childs',   event: onRemoveNodeChildsSelect, separator: false}
+				{title: 'Remove childs',   event: onRemoveNodeChildsSelect, separator: false},
+				{title: 'Open subtree',    event: onOpenSubtree,            separator: true}
 			];
 			
 			for each (var cmData:Object in cms) {
@@ -298,12 +299,12 @@ package com.graphmind.display
 			uncollapseChilds();
 		}
 		
-		public function uncollapseChilds():void {
+		public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
 			this._isCollapsed = false;
 			for each (var nodeItem:NodeItem in _childs) {
 				nodeItem.visible = true;
-				if (!nodeItem._isForcedCollapsed) {
-					nodeItem.uncollapseChilds();
+				if (!nodeItem._isForcedCollapsed || forceOpenSubtree) {
+					nodeItem.uncollapseChilds(forceOpenSubtree);
 				}
 			}
 			StageManager.getInstance().refreshNodePositions();
@@ -605,6 +606,11 @@ package com.graphmind.display
 		
 		public function updateTime():void {
 			_nodeItemData.modified = (new Date()).time;
+			StageManager.getInstance().isChanged = true;
+		}
+		
+		public function onOpenSubtree(event:ContextMenuEvent):void {
+			uncollapseChilds(true);
 		}
 	}
 }

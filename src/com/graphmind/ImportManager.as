@@ -81,6 +81,7 @@ package com.graphmind
 				nodeItem.collapse();
 			}
 			
+			StageManager.getInstance().isChanged = false;
 			return nodeItem;
 		}
 

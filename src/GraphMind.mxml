@@ -28,18 +28,30 @@
 		
 			[Bindable]
 			public static var icons:Array = [
-				"Mail", "down", "forward", "help", "password", "attach", "edit", 
-				"freemind_butterfly", "hourglass", "pencil", "back", "encrypted", 
-				"full-0", "idea", "penguin", "bell", "family", "full-1", "info", 
-				"prepare", "bookmark", "fema", "full-2", "kaddressbook", "redo", 
-				"broken-line", "female1", "full-3", "kmail", "smiley-angry", "button_cancel", 
-				"female2", "full-4", "knotify", "smiley-neutral", "button_ok", "flag-black", 
-				"full-5", "korn", "smiley-oh", "calendar", "flag-blue", "full-6", "ksmiletris", 
-				"smily_bad", "clanbomber", "flag-green", "full-7", "launch", "stop-sign", 
-				"clock", "flag-orange", "full-8", "licq", "stop", "clock2", "flag-pink", 
-				"full-9", "list", "up", "closed", "flag-yellow", "go", "male1", "wizard", 
-				"decrypted", "flag", "gohome", "male2", "xmag", "desktop_new", "folder", 
-				"group", "messagebox_warning", "yes"
+				"Mail", "yes", "help", "stop", "prepare",  "go",
+				
+				"down", "forward", "back", "up", 
+				
+				"full-0", "full-1", "full-2", "full-3", "full-4", "full-5", "full-6", "full-7", "full-8", "full-9", 
+				  
+				"ksmiletris", "smiley-angry", "smily_bad", "smiley-neutral", "smiley-oh", 
+				
+				"female1", "female2", "male1", "male2", 
+				
+				"kmail", "broken-line", "button_cancel", "button_ok", 
+				
+				"flag-black",  "flag-orange", "flag", "flag-yellow", "flag-blue", "flag-green", "flag-pink",
+				
+				"password", "attach", "edit", 
+				"freemind_butterfly", "hourglass", "pencil", "encrypted", 
+				"idea", "penguin", "bell", "family", "info", 
+				"bookmark", "fema", "kaddressbook", "redo", 
+				"korn", "calendar", "knotify", 
+				"clanbomber", "launch", "stop-sign", 
+				"clock", "licq", "clock2", 
+				"list", "closed", "wizard", 
+				"decrypted", "gohome", "xmag", "desktop_new", "folder", 
+				"group", "messagebox_warning"
 			];
 			
 			import com.graphmind.GraphMindManager;
@@ -251,7 +263,8 @@
 		horizontalScrollPolicy="off">
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true" 
 			mouseDown="desktop.startDrag();"
-			mouseUp="desktop.stopDrag();"/>
+			mouseUp="desktop.stopDrag();">
+		</mx:Canvas>
 	</mx:Canvas>
 	
 	<mx:Canvas right="10" width="35" top="10" bottom="10" horizontalScrollPolicy="off" id="icon_outer_container">
@@ -263,5 +276,7 @@
 	</mx:Canvas>
 	
 	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
+	<mx:LinkButton x="344" y="10" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#880000"
+		visible="{StageManager.getInstance().isChanged}"/>
 		
 </mx:Application>

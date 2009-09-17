@@ -33,6 +33,8 @@ package com.graphmind
 		public var isDragAndDrop:Boolean = false;
 		public var isPrepairedDragAndDrop:Boolean = false;
 		[Bindable]
+		public var isChanged:Boolean = false;
+		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
 		
 		public function StageManager() {
