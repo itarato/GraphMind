@@ -258,7 +258,8 @@
 	<!-- Mindmap editor area -->
 	<mx:Canvas right="55" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true"
 		mouseUp="StageManager.getInstance().closeDragAndDrop();"
-		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();">
+		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
+		mouseOut="StageManager.getInstance().isDesktopDragged = false;">
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true" 
 			mouseDown="StageManager.getInstance().onDragDesktopStart();"
 			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
