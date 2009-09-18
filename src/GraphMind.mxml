@@ -7,6 +7,7 @@
 		
 	<mx:Script>
 		<![CDATA[
+			import nl.demonsters.debugger.MonsterDebugger;
 			import mx.managers.SystemManager;
 			import com.graphmind.net.UniqueItemLoader;
 			import com.graphmind.net.SiteConnection;
@@ -244,8 +245,6 @@
 				<mx:Button x="10" y="10" label="Save"
 					click="StageManager.getInstance().onSaveClick();"
 					icon="{image_disk}"/>
-				<!--<mx:Button x="10" y="70" label="Export to FreeMind"
-					click="StageManager.getInstance().onExportClick();"/>-->
 				<mx:Button x="122" y="10" label="Dump XML"
 					click="StageManager.getInstance().onDumpClick();"/>
 				
@@ -256,17 +255,19 @@
 	
 	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
 	
+	<!-- Mindmap editor area -->
 	<mx:Canvas right="55" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true"
 		mouseUp="StageManager.getInstance().closeDragAndDrop();"
-		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
-		verticalScrollPolicy="off"
-		horizontalScrollPolicy="off">
+		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();">
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true" 
-			mouseDown="desktop.startDrag();"
-			mouseUp="desktop.stopDrag();">
+			mouseDown="StageManager.getInstance().onDragDesktopStart();"
+			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
+			mouseMove="StageManager.getInstance().onDragDesktop(event);">
 		</mx:Canvas>
 	</mx:Canvas>
+	<!-- END mindmap editor -->
 	
+	<!-- Icons -->
 	<mx:Canvas right="10" width="35" top="10" bottom="10" horizontalScrollPolicy="off" id="icon_outer_container">
 		<mx:VBox>
 			<mx:Repeater dataProvider="{icons}" id="icon_repeater">
@@ -274,6 +275,7 @@
 			</mx:Repeater>
 		</mx:VBox>
 	</mx:Canvas>
+	<!-- END icons -->
 	
 	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
 	<mx:LinkButton x="344" y="10" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#880000"

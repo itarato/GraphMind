@@ -7,6 +7,7 @@ package com.graphmind
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.temp.TempViewLoadData;
+	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.Log;
 	
 	import flash.display.StageDisplayState;
@@ -32,6 +33,8 @@ package com.graphmind
 		public var dragAndDrop_sourceNodeItem:NodeItem;
 		public var isDragAndDrop:Boolean = false;
 		public var isPrepairedDragAndDrop:Boolean = false;
+		public var isDesktopDragged:Boolean = false;
+		private var _desktopDragInfo:DesktopDragInfo = new DesktopDragInfo();
 		[Bindable]
 		public var isChanged:Boolean = false;
 		[Bindable]
@@ -54,10 +57,10 @@ package com.graphmind
 		public function initStage(application:GraphMind):void {
 			this._application = application;
 			
-			//this._application.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onCurrentStateChange);
-			
 			// Scroll mindmap canvas to center
-			_application.desktop_wrapper.verticalScrollPosition = 800;
+			_application.desktop_wrapper.verticalScrollPosition = (stage.desktop.height - stage.desktop_wrapper.height) / 2;
+			
+			// Node title RTE editor's default color
 			stage.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 		}
 		
@@ -338,6 +341,23 @@ package com.graphmind
 			var source:String = (event.currentTarget as Image).source.toString();
 			lastSelectedNode.addIcon(source);
 			lastSelectedNode.refactorNodeBody();
+		}
+		
+		public function onDragDesktopStart():void {
+			isDesktopDragged = true;
+			_desktopDragInfo.oldVPos = stage.desktop_wrapper.mouseY;
+			_desktopDragInfo.oldHPos = stage.desktop_wrapper.mouseX;
+			_desktopDragInfo.oldScrollbarVPos = stage.desktop_wrapper.verticalScrollPosition;
+			_desktopDragInfo.oldScrollbarHPos = stage.desktop_wrapper.horizontalScrollPosition;
+		}
+		
+		public function onDragDesktop(event:MouseEvent):void {
+			if (isDesktopDragged) {
+				var deltaV:Number = stage.desktop_wrapper.mouseY - _desktopDragInfo.oldVPos;
+				var deltaH:Number = stage.desktop_wrapper.mouseX - _desktopDragInfo.oldHPos;
+				stage.desktop_wrapper.verticalScrollPosition   = _desktopDragInfo.oldScrollbarVPos - deltaV;
+				stage.desktop_wrapper.horizontalScrollPosition = _desktopDragInfo.oldScrollbarHPos - deltaH;
+			}
 		}
 	}
 }
