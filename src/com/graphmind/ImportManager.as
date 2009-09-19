@@ -77,6 +77,10 @@ package com.graphmind
 				nodeItem.collapse();
 			}
 			
+			if (nodeXML.elements('cloud').length() == 1) {
+				nodeItem.toggleCloud();
+			}
+			
 			StageManager.getInstance().isChanged = false;
 			return nodeItem;
 		}

@@ -4,8 +4,8 @@ package com.graphmind.display
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.display.assets.ItemBaseComponent;
-	import com.graphmind.util.ConnectionCreator;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
 	
 	import flash.display.Sprite;
@@ -35,17 +35,21 @@ package com.graphmind.display
 		public static const MARGIN_RIGHT:int = 32;
 		public static const MARGIN_BOTTOM:int = 4;
 		public static const ICON_WIDTH:int = 18;
+		public static const CLOUD_MARGIN:int = 8;
+		public static const CLOUD_PADDING:int = 6;
 		
 		protected var _displayComponent:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connections:UIComponent = new UIComponent();
 		protected var _nodeItemData:NodeItemData;
 		protected var _childs:ArrayCollection = new ArrayCollection();
-		protected var _isCollapsed:Boolean = false;
+		public var isCollapsed:Boolean = false;
 		protected var _isForcedCollapsed:Boolean = false;
 		protected var _parentNode:NodeItem = null;
 		protected var _background:Sprite = new Sprite();
 		protected var _hasPath:Boolean = false;
 		protected var _icons:ArrayCollection = new ArrayCollection();
+		protected var _isCloud:Boolean = false;
+		protected var _cloud:UIComponent = new UIComponent();
 		
 		
 		private var _mouseSelectionTimeout:uint;
@@ -70,6 +74,7 @@ package com.graphmind.display
 			
 			_connections.graphics.lineStyle(2, 0x333333, 1);
 			StageManager.getInstance().stage.desktop.addChild(_connections);
+			StageManager.getInstance().stage.desktop_cloud.addChild(_cloud);
 			
 			this._displayComponent.title_label.htmlText = this._nodeItemData.title;
 		
@@ -112,7 +117,8 @@ package com.graphmind.display
 				{title: 'Add Views list',  event: onAddViewsListSelect,  	separator: false},
 				{title: 'Remove node',     event: onRemoveNodeSelect,       separator: true},
 				{title: 'Remove childs',   event: onRemoveNodeChildsSelect, separator: false},
-				{title: 'Open subtree',    event: onOpenSubtree,            separator: true}
+				{title: 'Open subtree',    event: onOpenSubtree,            separator: true},
+				{title: 'Toggle cloud',    event: toggleCloudWithRefresh,   separator: false}
 			];
 			
 			for each (var cmData:Object in cms) {
@@ -187,7 +193,7 @@ package com.graphmind.display
 		}
 		
 		private function onIconHasChildClick(event:MouseEvent):void {
-			if (!this._isCollapsed) {
+			if (!this.isCollapsed) {
 				collapse();
 			} else {
 				uncollapse();
@@ -267,6 +273,10 @@ package com.graphmind.display
 			navigateToURL(ur, '_blank');
 		}
 		
+		public function get childs():ArrayCollection {
+			return _childs;
+		}
+		
 		public function addNodeChild(node:NodeItem):void {
 			this._childs.addItem(node);
 			Log.info('new child: ' + this._childs.length);
@@ -286,7 +296,7 @@ package com.graphmind.display
 		}
 		
 		public function collapseChilds():void {
-			this._isCollapsed = true;
+			this.isCollapsed = true;
 			for each (var nodeItem:NodeItem in _childs) {
 				nodeItem.visible = false;
 				nodeItem.collapseChilds();
@@ -300,7 +310,7 @@ package com.graphmind.display
 		}
 		
 		public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
-			this._isCollapsed = false;
+			this.isCollapsed = false;
 			for each (var nodeItem:NodeItem in _childs) {
 				nodeItem.visible = true;
 				if (!nodeItem._isForcedCollapsed || forceOpenSubtree) {
@@ -315,15 +325,18 @@ package com.graphmind.display
 		 * @return int
 		 */
 		private function childSubtreeWidth():int {
-			if (_childs.length == 0 || _isCollapsed) {
-				return 1;
+			var width:int = 0;
+			if (_childs.length == 0 || isCollapsed) {
+				width = HEIGHT + MARGIN_BOTTOM;
 			} else {
-				var sum:int = 0;
 				for each (var child:NodeItem in _childs) {
-					sum += child.childSubtreeWidth();
+					width += child.childSubtreeWidth();
 				}
-				return sum;
 			}
+			
+			if (_isCloud) width += 2 * CLOUD_MARGIN;
+			
+			return width;
 		}
 		
 		/**
@@ -334,19 +347,29 @@ package com.graphmind.display
 			
 			var totalChildWidth:int = childSubtreeWidth();
 			//Log.info('totalC: ' + totalChildWidth);
-			var currentY:int = y - (totalChildWidth * (NodeItem.HEIGHT + NodeItem.MARGIN_BOTTOM)) / 2;
+			var currentY:int = y - totalChildWidth / 2;
+			
+			if (_isCloud) currentY += CLOUD_MARGIN;
+			
 			for each (var child:NodeItem in _childs) {
-				var childNum:int = child.childSubtreeWidth();
+				var subtreeWidth:int = child.childSubtreeWidth();
 				//Log.info('childC: ' + childNum);
 				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
-				child.y = currentY + (childNum * (NodeItem.HEIGHT + NodeItem.MARGIN_BOTTOM)) / 2; 
+				child.y = currentY + subtreeWidth / 2; 
 				child.refreshChildNodePosition();
 				
-				if (!_isCollapsed) {
-					ConnectionCreator.drawConnection(_connections, this, child);
+				if (!isCollapsed) {
+					NodeGraphicsHelper.drawConnection(_connections, this, child);
 				}
-				currentY += childNum * (NodeItem.HEIGHT + NodeItem.MARGIN_BOTTOM);
+				currentY += subtreeWidth;
 			}
+			
+			if (_isCloud) {
+				toggleCloud();
+				toggleCloud();
+			}
+			
+			_cloud.visible = !_parentNode || !_parentNode.isCollapsed;
 		}
 		
 		private function getTypeColor():uint {
@@ -425,6 +448,10 @@ package com.graphmind.display
 			
 			for each (var icon:* in _icons) {
 				output = output + '<icon BUILTIN="' + StringUtility.iconUrlToIconName((icon as Image).source.toString()) + '"/>' + "\n";
+			}
+			
+			if (_isCloud) {
+				output = output + '<cloud/>' + "\n";
 			}
 			
 			// Add childs
@@ -566,6 +593,7 @@ package com.graphmind.display
  			_icons.removeItemAt(iconIDX);
  			_displayComponent.removeChild(event.currentTarget as Image);
  			refactorNodeBody();
+ 			refreshParentTree();
  			
  			updateTime();
  		}
@@ -606,6 +634,40 @@ package com.graphmind.display
 		
 		public function onOpenSubtree(event:ContextMenuEvent):void {
 			uncollapseChilds(true);
+		}
+		
+		public function toggleCloud(forceRedraw:Boolean = false):void {
+			if (!_isCloud) {
+				_isCloud = true;
+				NodeGraphicsHelper.drawCloud(this, _cloud);
+			} else {
+				_isCloud = false;
+				_cloud.graphics.clear();
+			}
+			
+			if (forceRedraw) StageManager.getInstance().refreshNodePositions();
+		}
+		
+		public function toggleCloudWithRefresh(event:ContextMenuEvent):void {
+			toggleCloud(true);
+		}
+		
+		public function getBoundingPoints():Array {
+			return [
+				[x - CLOUD_PADDING, y - CLOUD_PADDING],
+				[x + getWidth() + CLOUD_PADDING, y - CLOUD_PADDING],
+				[x + getWidth() + CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING],
+				[x - CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING]
+			];
+		}
+		
+		public function refreshParentTree():void {
+			if (_isCloud) {
+				toggleCloud();
+				toggleCloud();
+			}
+			
+			if (_parentNode) _parentNode.refreshParentTree();
 		}
 	}
 }

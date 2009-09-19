@@ -341,6 +341,7 @@ package com.graphmind
 			var source:String = (event.currentTarget as Image).source.toString();
 			lastSelectedNode.addIcon(source);
 			lastSelectedNode.refactorNodeBody();
+			lastSelectedNode.refreshParentTree();
 		}
 		
 		public function onDragDesktopStart():void {
@@ -358,6 +359,12 @@ package com.graphmind
 				stage.desktop_wrapper.verticalScrollPosition   = _desktopDragInfo.oldScrollbarVPos - deltaV;
 				stage.desktop_wrapper.horizontalScrollPosition = _desktopDragInfo.oldScrollbarHPos - deltaH;
 			}
+		}
+		
+		public function onToggleCloudClick():void {
+			if (!checkLastSelectedNodeIsExists()) return;
+			
+			lastSelectedNode.toggleCloud(true);
 		}
 	}
 }
