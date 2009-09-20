@@ -603,10 +603,14 @@ package com.graphmind.display
 		}
 		
 		public function addIcon(source:String):void {
+			// Icon is already exists
+			for each (var ico:Image in _icons) {
+				if (ico.source == source) return;
+			}
+			
 			// Getting the normal icon name only
 			var iconName:String = StringUtility.iconUrlToIconName(source);
 			
-			// @TODO check if exists
 			var icon:Image = new Image();
 			icon.source = source;
 			icon.y = 2;
