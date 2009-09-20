@@ -6,6 +6,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import com.graphmind.display.NodeItem;
 			[Embed(source='assets/images/add.png')]
 			[Bindable]
 			public var image_add:Class;
@@ -45,22 +46,22 @@
 	<mx:Image source="{image_selection}" x="0" y="0" id="selection" visible="false"/>
 	
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
-	<mx:Image source="{image_insertLeft}" x="158" id="insertLeft" visible="false"/>
+	<mx:Image source="{image_insertLeft}" x="{NodeItem.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
-	<mx:Label x="2" y="1" text="Label" width="138" id="title_label" fontSize="11"/>
+	<mx:Label x="2" y="1" text="Label" width="{NodeItem.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"/>
 	
-	<mx:Image x="140" y="2" 
+	<mx:Image x="{NodeItem.ICON_ADD_DEFAULT_X}" y="2" 
 		source="{image_add}" 
 		width="16" height="16" 
 		id="icon_add"
 		visible="false"/>
 		
-	<mx:Image x="122" y="2" source="{image_anchor}" 
+	<mx:Image x="{NodeItem.ICON_ANCHOR_DEFAULT_X}" y="2" source="{image_anchor}" 
 		width="16" height="16" 
 		id="icon_anchor"
 		visible="false"/>
 		
-	<mx:Image x="152" y="2" source="{image_bullet}" 
+	<mx:Image x="{NodeItem.ICON_BULLET_DEFAULT_X}" y="2" source="{image_bullet}" 
 		id="icon_has_child" 
 		visible="false"/>
 	

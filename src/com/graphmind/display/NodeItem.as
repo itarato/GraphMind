@@ -25,6 +25,7 @@ package com.graphmind.display
 	import mx.controls.Alert;
 	import mx.controls.Image;
 	import mx.core.UIComponent;
+	import mx.events.FlexEvent;
 	
 	//public class NodeItem extends DraggableItem {
 	public class NodeItem extends DisplayItem {
@@ -37,6 +38,17 @@ package com.graphmind.display
 		public static const ICON_WIDTH:int = 18;
 		public static const CLOUD_MARGIN:int = 8;
 		public static const CLOUD_PADDING:int = 6;
+		[Bindable]
+		public static var TITLE_DEFAULT_WIDTH:int = 120;
+		public static var TITLE_MAX_WIDTH:int = 220;
+		[Bindable]
+		public static var ICON_ADD_DEFAULT_X:int = 140;
+		[Bindable]
+		public static var ICON_ANCHOR_DEFAULT_X:int = 122;
+		[Bindable]
+		public static var ICON_BULLET_DEFAULT_X:int = 152;
+		[Bindable]
+		public static var ICON_INSERT_LEFT_DEFAULT_X:int = 158;
 		
 		protected var _displayComponent:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connections:UIComponent = new UIComponent();
@@ -97,6 +109,8 @@ package com.graphmind.display
 				this._displayComponent.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp);
 				
 				this._displayComponent.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				
+				this._displayComponent.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onTitleUpdateComplete);
 			}
 			
 			this._displayComponent.addEventListener(MouseEvent.CLICK, onClick);
@@ -412,6 +426,9 @@ package com.graphmind.display
 			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
 			
 			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
+			trace('measured: ' + _displayComponent.title_label.measuredWidth);
+			trace('width: ' + _displayComponent.title_label.width);
+			trace('explicit: ' + _displayComponent.title_label.explicitWidth);
 		}
 		
 		public function unselectNode():void {
@@ -570,7 +587,19 @@ package com.graphmind.display
 			
 		
 		public function getWidth():int {
-			return WIDTH + _icons.length * ICON_WIDTH;
+			return WIDTH + _getIconsExtraWidth() + _getTitleExtraWidth(); 
+		}
+		
+		private function _getTitleExtraWidth():int {
+			return _displayComponent.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
+				0 :
+				(_displayComponent.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
+					TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH :
+					_displayComponent.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
+		}
+		
+		private function _getIconsExtraWidth():int {
+			return _icons.length * ICON_WIDTH;
 		}
 		
 		public function addIcon(source:String):void {
@@ -601,11 +630,12 @@ package com.graphmind.display
  		}
  		
  		public function refactorNodeBody():void {
+ 			var titleExtraWidth:int = _getTitleExtraWidth();
  			for (var idx:* in _icons) {
- 				Image(_icons[idx]).x = ICON_WIDTH * idx + 158;
+ 				Image(_icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + 158;
  			}
  			
- 			var leftOffset:int = _icons.length * ICON_WIDTH;
+ 			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
  				
  			this._background.graphics.clear();		
 			this._background.graphics.beginFill(getTypeColor(), .2);
@@ -613,8 +643,11 @@ package com.graphmind.display
 			this._background.graphics.endFill();
 			
 			this._displayComponent.width = MC_WIDTH + leftOffset;
-			this._displayComponent.icon_has_child.x = 152 + leftOffset;
-			this._displayComponent.insertLeft.x = 158 + leftOffset;
+			this._displayComponent.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
+			this._displayComponent.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
+			this._displayComponent.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
+			this._displayComponent.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
+			this._displayComponent.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
 			
 			this.refreshChildNodePosition();
  		}
@@ -622,6 +655,12 @@ package com.graphmind.display
 		public function set title(title:String):void {
 			_nodeItemData.title = _displayComponent.title_label.htmlText = title;
 			updateTime();
+		}
+		
+		public function onTitleUpdateComplete(event:FlexEvent):void {
+			refactorNodeBody();
+			refreshChildNodePosition();
+			refreshParentTree();
 		}
 		
 		public function set link(link:String):void {

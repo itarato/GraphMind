@@ -49,12 +49,12 @@ package com.graphmind.util {
 					p0.x - points[idx][0],
 					p0.y - points[idx][1]
 				);
-				trace('angle: ' + angle);
+				//trace('angle: ' + angle);
 				if (!orderedPoints.hasOwnProperty('angle_' + angle) || isBiggerDistance(p0, orderedPoints['angle_' + angle], points[idx])) {
 					orderedPoints['angle_' + angle] = points[idx];
 				}
 			}
-			trace(orderedPoints);
+			//trace(orderedPoints);
 			
 			var stack:Array = [];
 			var j:int = 0;
@@ -64,7 +64,7 @@ package com.graphmind.util {
 				stack.push(orderedPoints['angle_' + i]);
 				j++;
 			}
-			trace(i);
+			//trace(i);
 			
 			for (var k:int = i; k <= 180; k++) {
 				if (!orderedPoints.hasOwnProperty('angle_' + k)) continue;
@@ -76,12 +76,12 @@ package com.graphmind.util {
 				stack.push(orderedPoints['angle_' + k]);
 			}
 			
-			trace('result');
+			//trace('result');
 			target.graphics.lineStyle(1, 0x0072B9, .3);
 			target.graphics.beginFill(0x0072B9, .1);
 			target.graphics.moveTo(stack[0][0], stack[0][1]);
 			for each (var p:Array in stack) {
-				trace(p);
+				//trace(p);
 				target.graphics.lineTo(p[0], p[1]);
 			}
 			target.graphics.lineTo(stack[0][0], stack[0][1]);
