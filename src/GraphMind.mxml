@@ -83,6 +83,7 @@
 			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
 			<mx:SetProperty name="visible" target="{desktop_wrapper}" value="false"/>
 			<mx:SetProperty target="{panelMain}" name="visible" value="false"/>
+			<mx:SetProperty target="{icon_outer_container}" name="visible" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<mx:Panel width="700" height="400" 
 					layout="absolute" horizontalCenter="0" verticalCenter="0" 
@@ -116,8 +117,10 @@
 							<mx:TextInput id="view_limit" text="10"/>
 						</mx:FormItem>
 						<mx:ControlBar>
-							<mx:Button label="Submit" click="StageManager.getInstance().onLoadViewSubmitClick(event);"/>
-							<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"/>
+							<mx:Button label="Submit" click="StageManager.getInstance().onLoadViewSubmitClick(event);"
+								icon="@Embed(source='assets/images/accept.png')"/>
+							<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"
+								icon="@Embed(source='assets/images/cancel.png')"/>
 						</mx:ControlBar>
 					</mx:Form>
 				</mx:Panel>
@@ -128,6 +131,7 @@
 			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
 			<mx:SetProperty name="visible" target="{desktop_wrapper}" value="false"/>
 			<mx:SetProperty target="{panelMain}" name="visible" value="false"/>
+			<mx:SetProperty target="{icon_outer_container}" name="visible" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<mx:Panel horizontalCenter="0" verticalCenter="0"
 					id="panelLoadItem"
@@ -147,9 +151,11 @@
 						</mx:FormItem>
 						<mx:ControlBar>
 							<mx:Button label="Submit" 
-								click="StageManager.getInstance().onLoadItemSubmitClick(event);"/>
+								click="StageManager.getInstance().onLoadItemSubmitClick(event);"
+								icon="@Embed(source='assets/images/accept.png')"/>
 							<mx:Button label="Cancel" 
-								click="StageManager.getInstance().onLoadItemCancelClick(event);"/>
+								click="StageManager.getInstance().onLoadItemCancelClick(event);"
+								icon="@Embed(source='assets/images/cancel.png')"/>
 						</mx:ControlBar>
 					</mx:Form>
 					
@@ -174,7 +180,8 @@
 		id="panelMain">
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all">
-			<mx:Canvas label="Attributes" width="100%" height="100%" visible="false">
+			<mx:Canvas label="Attributes" width="100%" height="100%" visible="false"
+				icon="@Embed(source='assets/images/table.png')">
 			
 				<mx:DataGrid width="100%" 
 					dataProvider="{StageManager.getInstance().selectedNodeData}" 
@@ -193,31 +200,35 @@
 						<mx:DataGridColumn headerText="Value" dataField="value"/>
 					</mx:columns>
 				</mx:DataGrid>
-				<mx:Button label="Add or update" left="10" bottom="10" 
+				<mx:Button label="Save" left="10" bottom="10" 
 					click="StageManager.getInstance().onAddOrUpdateClick(event);"
-					tabIndex="22"/>
+					tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
 				<mx:Label text="Value" left="10" bottom="108"/>
 				<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" width="198"/>
 				<mx:Label text="Parameter" left="10" bottom="164"/>
 				<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" width="198" height="60"/>
 				<mx:Button label="Remove"
 					tabIndex="23"
-					click="StageManager.getInstance().onRemoveAttributeClick(event);" left="125" bottom="10"/>
+					click="StageManager.getInstance().onRemoveAttributeClick(event);" left="90" bottom="10" icon="@Embed(source='assets/images/delete.png')"/>
 				
 			</mx:Canvas>
-			<mx:Canvas label="Node info" width="100%" height="100%" horizontalScrollPolicy="off">
+			<mx:Canvas label="Node info" width="100%" height="100%" horizontalScrollPolicy="off"
+				icon="@Embed(source='assets/images/cog.png')">
 				<mx:RichTextEditor title="Node title" width="100%" height="240" left="0" top="0"
 					id="nodeLabelRTE">
 				</mx:RichTextEditor>
-				<mx:Button x="10" y="248" label="Save node title" click="StageManager.getInstance().onNodeLabelRTESave();"/>
+				<mx:Button x="10" y="248" label="Save node title" click="StageManager.getInstance().onNodeLabelRTESave();" icon="@Embed(source='assets/images/pencil.png')"/>
 				<mx:Label x="10" y="288" text="External link"/>
 				<mx:HRule x="10" y="278" width="198"/>
 				<mx:TextInput x="10" y="314" width="198" id="link"/>
-				<mx:Button x="10" y="344" label="Save link" click="StageManager.getInstance().onSaveLink();"/>
+				<mx:Button x="10" y="344" label="Save link" click="StageManager.getInstance().onSaveLink();" icon="@Embed(source='assets/images/anchor.png')"/>
 				<mx:HRule x="10" y="374" width="198"/>
-				<mx:LinkButton x="10" y="384" label="Toggle cloud" click="{StageManager.getInstance().onToggleCloudClick();}"/>
+				<mx:Button x="10" y="384" label="Toggle cloud" icon="@Embed(source='assets/images/weather_clouds.png')">
+					<mx:click>{StageManager.getInstance().onToggleCloudClick();}</mx:click>
+				</mx:Button>
 			</mx:Canvas>
-			<mx:Canvas label="Connections" width="100%" height="100%">
+			<mx:Canvas label="Connections" width="100%" height="100%"
+				icon="@Embed(source='assets/images/connect.png')">
 					
 				<!-- Connect to new Drupal site form -->
 				<mx:TextInput id="connectFormURL" x="10" width="162" bottom="152" text="http://" tabIndex="10"/>
@@ -226,7 +237,7 @@
 				<mx:Button x="10" label="Add new site" bottom="10" 
 					click="StageManager.getInstance().onConnectFormSubmit();" 
 					id="button1"
-					tabIndex="3"/>
+					tabIndex="3" icon="@Embed(source='assets/images/world_add.png')"/>
 				<mx:Label x="10" text="Password:" bottom="70" id="label3"/>
 				<mx:Label x="10" text="Username:" bottom="126" id="label2"/>
 				<mx:Label x="10" text="URL.:" bottom="182" id="label1"/>
@@ -240,14 +251,16 @@
 				<!-- END form -->
 			
 			</mx:Canvas>
-			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%">
+			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%"
+				icon="@Embed(source='assets/images/disk.png')">
 			
 				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
 				<mx:Button x="10" y="10" label="Save"
 					click="StageManager.getInstance().onSaveClick();"
-					icon="{image_disk}"/>
-				<mx:Button x="122" y="10" label="Dump XML"
-					click="StageManager.getInstance().onDumpClick();"/>
+					icon="@Embed(source='assets/images/disk.png')"/>
+				<mx:Button x="104" y="10" label="Dump XML"
+					click="StageManager.getInstance().onDumpClick();"
+					icon="@Embed(source='assets/images/tag.png')"/>
 				
 			</mx:Canvas>
 		</mx:Accordion>
