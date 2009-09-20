@@ -202,7 +202,7 @@ package com.graphmind.display
 		}
 		
 		private function onClick(event:MouseEvent):void {
-			Log.info('node-click');
+			//Log.info('node-click');
 			selectNode();
 		}
 		
@@ -216,7 +216,6 @@ package com.graphmind.display
 		}
 		
 		private function onMouseOver(event:MouseEvent):void {
-			trace('over');
 			_mouseSelectionTimeout = setTimeout(selectNode, 400);
 			_displayComponent.icon_add.visible = true;
 			_displayComponent.icon_anchor.visible = true && _hasPath;
@@ -262,7 +261,7 @@ package com.graphmind.display
 		
 		private function onItemLoaderSelectorClick(event:MouseEvent):void {
 			event.stopPropagation();
-			Log.info('click on node: ' + this._nodeItemData.title); 
+			//Log.info('click on node: ' + this._nodeItemData.title); 
 			selectNode();
 			StageManager.getInstance().stage.view_arguments.text = _nodeItemData.getDrupalID();
 		}
@@ -295,7 +294,7 @@ package com.graphmind.display
 		
 		public function addNodeChild(node:NodeItem):void {
 			this._childs.addItem(node);
-			Log.info('new child: ' + this._childs.length);
+			//Log.info('new child: ' + this._childs.length);
 			StageManager.getInstance().addChildToStage(node);
 			node._parentNode = this;
 			
@@ -406,7 +405,7 @@ package com.graphmind.display
 		}
 		
 		public function selectNode():void {
-			Log.info(_nodeItemData.source.url);
+			//Log.info(_nodeItemData.source.url);
 			
 			if (!isSelected()) setFocus();
 			
@@ -426,9 +425,6 @@ package com.graphmind.display
 			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
 			
 			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
-			trace('measured: ' + _displayComponent.title_label.measuredWidth);
-			trace('width: ' + _displayComponent.title_label.width);
-			trace('explicit: ' + _displayComponent.title_label.explicitWidth);
 		}
 		
 		public function unselectNode():void {
