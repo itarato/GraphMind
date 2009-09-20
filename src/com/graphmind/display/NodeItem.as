@@ -224,6 +224,7 @@ package com.graphmind.display
 		
 		private function onDoubleClick(event:MouseEvent):void {
 			_displayComponent.currentState = 'edit_title';
+			_displayComponent.title_new.text = _displayComponent.title_label.text;
 			_displayComponent.title_new.setFocus();
 		}
 		
@@ -234,6 +235,7 @@ package com.graphmind.display
 				StageManager.getInstance().stage.setFocus();
 			} else if (event.keyCode == Keyboard.ESCAPE) {
 				_displayComponent.currentState = '';
+				_displayComponent.title_new.text = _displayComponent.title_label.text;
 			}
 		}
 		
@@ -392,6 +394,8 @@ package com.graphmind.display
 		public function selectNode():void {
 			Log.info(_nodeItemData.source.url);
 			
+			if (!isSelected()) setFocus();
+			
 			if (StageManager.getInstance().lastSelectedNode) {
 				StageManager.getInstance().lastSelectedNode.unselectNode();
 			}
@@ -406,8 +410,6 @@ package com.graphmind.display
 			_displayComponent.selection.visible = true;
 			
 			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
-			
-			_displayComponent.title_new.text = _displayComponent.title_label.text;
 			
 			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
 		}
@@ -650,6 +652,7 @@ package com.graphmind.display
 		
 		public function toggleCloudWithRefresh(event:ContextMenuEvent):void {
 			toggleCloud(true);
+			updateTime();
 		}
 		
 		public function getBoundingPoints():Array {
@@ -668,6 +671,10 @@ package com.graphmind.display
 			}
 			
 			if (_parentNode) _parentNode.refreshParentTree();
+		}
+		
+		public function isSelected():Boolean {
+			return StageManager.getInstance().lastSelectedNode == this;
 		}
 	}
 }

@@ -266,7 +266,7 @@
 		<mx:Canvas id="desktop_cloud" width="3000" height="2000"/>
 		
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true" 
-			mouseDown="StageManager.getInstance().onDragDesktopStart();"
+			mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
 			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
 			mouseMove="StageManager.getInstance().onDragDesktop(event);">
 		</mx:Canvas>
