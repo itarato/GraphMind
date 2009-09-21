@@ -175,7 +175,7 @@
 	
 	<mx:Panel width="240" 
 		layout="absolute" 
-		title="Dasboard" 
+		title="Dashboard" 
 		left="10" top="10" bottom="10" 
 		id="panelMain">
 	
