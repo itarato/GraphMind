@@ -13,9 +13,12 @@
 			[Embed(source='assets/images/anchor.png')]
 			[Bindable]
 			public var image_anchor:Class;
-			[Embed(source='assets/images/bullet_add.png')]
+			[Embed(source='assets/images/node_uncollapse.gif')]
 			[Bindable]
-			public var image_bullet:Class;
+			public var image_node_uncollapse:Class;
+			[Embed(source='assets/images/node_collapse.gif')]
+			[Bindable]
+			public var image_node_collapse:Class;
 			[Embed(source='assets/images/selectionLight.png')]
 			[Bindable]
 			public var image_selection:Class;
@@ -59,8 +62,8 @@
 		id="icon_anchor"
 		visible="false"/>
 		
-	<mx:Image x="{NodeItem.ICON_BULLET_DEFAULT_X}" y="2" source="{image_bullet}" 
+	<mx:Image x="{NodeItem.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 
 		visible="false"/>
-	
+		
 </mx:Canvas>

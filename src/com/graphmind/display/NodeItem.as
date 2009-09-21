@@ -30,10 +30,10 @@ package com.graphmind.display
 	
 	public class NodeItem extends DisplayItem {
 		
-		public static const WIDTH_DEFAULT:int = 160;
+		public static const WIDTH_DEFAULT:int = 162;
 		public static const WIDTH_MC_DEFAULT:int = 168;
 		public static const HEIGHT:int = 20;
-		public static const MARGIN_RIGHT:int = 32;
+		public static const MARGIN_RIGHT:int = 34;
 		public static const MARGIN_BOTTOM:int = 4;
 		public static const ICON_WIDTH:int = 18;
 		public static const CLOUD_MARGIN:int = 8;
@@ -46,23 +46,24 @@ package com.graphmind.display
 		[Bindable]
 		public static var ICON_ANCHOR_DEFAULT_X:int = 122;
 		[Bindable]
-		public static var ICON_BULLET_DEFAULT_X:int = 152;
+		public static var ICON_BULLET_DEFAULT_X:int = WIDTH_DEFAULT - 4;
 		[Bindable]
-		public static var ICON_INSERT_LEFT_DEFAULT_X:int = 158;
+		public static var ICON_INSERT_LEFT_DEFAULT_X:int = WIDTH_DEFAULT - 2;
 		
-		protected var _displayComponent:ItemBaseComponent = new ItemBaseComponent();
-		protected var _connections:UIComponent = new UIComponent();
+		protected var _displayComp:ItemBaseComponent = new ItemBaseComponent();
+		protected var _connectionComp:UIComponent 	 = new UIComponent();
 		protected var _nodeItemData:NodeItemData;
-		protected var _childs:ArrayCollection = new ArrayCollection();
-		public var isCollapsed:Boolean = false;
-		protected var _isForcedCollapsed:Boolean = false;
-		protected var _parentNode:NodeItem = null;
-		protected var _background:Sprite = new Sprite();
-		protected var _hasPath:Boolean = false;
-		protected var _icons:ArrayCollection = new ArrayCollection();
-		protected var _isCloud:Boolean = false;
-		protected var _cloud:UIComponent = new UIComponent();
+		protected var _childs:ArrayCollection 		 = new ArrayCollection();
+		protected var _isCollapsed:Boolean 		 	 = false;
+		protected var _isForcedCollapsed:Boolean 	 = false;
+		protected var _parentNode:NodeItem 			 = null;
+		protected var _backgroundComp:Sprite 		 = new Sprite();
+		protected var _hasPath:Boolean 				 = false;
+		protected var _icons:ArrayCollection		 = new ArrayCollection();
+		protected var _isCloud:Boolean				 = false;
+		protected var _cloudComp:UIComponent		 = new UIComponent();
 		
+		// Display effects
 		private static var _nodeDropShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x888888, 1, 1, 1);
 		private static var _nodeGlowFilter:GlowFilter = new GlowFilter(0x0072B9, .8, 6, 6);
 		private static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, .8, 20, 20, 2, 1, true); 
@@ -89,15 +90,15 @@ package com.graphmind.display
 				_initCreateContextMenu();
 			}
 			
-			this.addChild(_background);
+			this.addChild(_backgroundComp);
 			
-			this.addChild(_displayComponent);
+			this.addChild(_displayComp);
 			
-			_connections.graphics.lineStyle(2, 0x333333, 1);
-			StageManager.getInstance().stage.desktop.addChild(_connections);
-			StageManager.getInstance().stage.desktop_cloud.addChild(_cloud);
+			_connectionComp.graphics.lineStyle(2, 0x333333, 1);
+			StageManager.getInstance().stage.desktop.addChild(_connectionComp);
+			StageManager.getInstance().stage.desktop_cloud.addChild(_cloudComp);
 			
-			this._displayComponent.title_label.htmlText = this._nodeItemData.title;
+			this._displayComp.title_label.htmlText = this._nodeItemData.title;
 		
 			_hasPath = _nodeItemData.getPath().length > 0;
 			
@@ -108,25 +109,26 @@ package com.graphmind.display
 			
 		private function _initAttachEvents():void {
 			if (GraphMindManager.getInstance().isEditable()) {
-				this._displayComponent.title_label.doubleClickEnabled = true;
-				this._displayComponent.title_label.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
-				this._displayComponent.title_new.addEventListener(KeyboardEvent.KEY_UP, onNewTitleKeyUp);
-				this._displayComponent.title_new.addEventListener(FocusEvent.FOCUS_OUT, onNewTitleFocusOut);
-				this._displayComponent.icon_add.addEventListener(MouseEvent.CLICK, onLoadNodeClick);
+				this._displayComp.title_label.doubleClickEnabled = true;
+				this._displayComp.title_label.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
+				this._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onTitleUpdateComplete);
 				
-				this._displayComponent.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-				this._displayComponent.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp);
+				this._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP, onNewTitleKeyUp);
+				this._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT, onNewTitleFocusOut);
 				
-				this._displayComponent.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				this._displayComp.icon_add.addEventListener(MouseEvent.CLICK, onLoadNodeClick);
 				
-				this._displayComponent.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onTitleUpdateComplete);
+				this._displayComp.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+				this._displayComp.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp);
+				this._displayComp.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 			}
 			
-			this._displayComponent.addEventListener(MouseEvent.CLICK, onClick);
-			this._displayComponent.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
-			this._displayComponent.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-			this._displayComponent.icon_anchor.addEventListener(MouseEvent.CLICK, onIconAnchorClick);
-			this._displayComponent.icon_has_child.addEventListener(MouseEvent.CLICK, onIconHasChildClick);
+			this._displayComp.addEventListener(MouseEvent.CLICK, onClick);
+			this._displayComp.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
+			this._displayComp.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+			
+			this._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK, onIconAnchorClick);
+			this._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK, onIconHasChildClick);
 		}
 
 		private function _initCreateContextMenu():void {
@@ -150,7 +152,7 @@ package com.graphmind.display
 				contextMenu.customItems.push(cmi);
 			}
 			
-			_displayComponent.contextMenu = contextMenu;
+			_displayComp.contextMenu = contextMenu;
 		}
 		
 		private function onMouseDown(event:MouseEvent):void {
@@ -168,19 +170,19 @@ package com.graphmind.display
 				}
 				StageManager.getInstance().closeDragAndDrop();
 				
-				_displayComponent.insertLeft.visible = false;
-				_displayComponent.insertUp.visible = false;
+				_displayComp.insertLeft.visible = false;
+				_displayComp.insertUp.visible = false;
 			}
 		}
 		
 		private function onMouseMove(event:MouseEvent):void {
 			if ((!StageManager.getInstance().isPrepairedDragAndDrop) && StageManager.getInstance().isDragAndDrop) {
 				if (this.mouseX / this.getWidth() > (1 - this.mouseY / HEIGHT)) {
-					_displayComponent.insertLeft.visible = true;
-					_displayComponent.insertUp.visible = false;
+					_displayComp.insertLeft.visible = true;
+					_displayComp.insertUp.visible = false;
 				} else {
-					_displayComponent.insertLeft.visible = false;
-					_displayComponent.insertUp.visible = true;
+					_displayComp.insertLeft.visible = false;
+					_displayComp.insertUp.visible = true;
 				}
 			}
 		}
@@ -216,7 +218,7 @@ package com.graphmind.display
 		}
 		
 		private function onIconHasChildClick(event:MouseEvent):void {
-			if (!this.isCollapsed) {
+			if (!this._isCollapsed) {
 				collapse();
 			} else {
 				uncollapse();
@@ -226,45 +228,45 @@ package com.graphmind.display
 		
 		private function onMouseOver(event:MouseEvent):void {
 			_mouseSelectionTimeout = setTimeout(selectNode, 400);
-			_displayComponent.icon_add.visible = true;
-			_displayComponent.icon_anchor.visible = true && _hasPath;
+			_displayComp.icon_add.visible = true;
+			_displayComp.icon_anchor.visible = true && _hasPath;
 		}
 		
 		private function onMouseOut(event:MouseEvent):void {
 			clearTimeout(_mouseSelectionTimeout);
-			_displayComponent.icon_add.visible = false;
-			_displayComponent.icon_anchor.visible = false;
+			_displayComp.icon_add.visible = false;
+			_displayComp.icon_anchor.visible = false;
 			
 			if (StageManager.getInstance().isPrepairedDragAndDrop) {
 				StageManager.getInstance().openDragAndDrop(this);
 				//trace(StageManager.getInstance().isPrepairedDragAndDrop.toString());
 			}
 			
-			_displayComponent.insertLeft.visible = false;
-			_displayComponent.insertUp.visible = false;
+			_displayComp.insertLeft.visible = false;
+			_displayComp.insertUp.visible = false;
 		}
 		
 		private function onDoubleClick(event:MouseEvent):void {
-			_displayComponent.currentState = 'edit_title';
-			_displayComponent.title_new.text = _displayComponent.title_label.text;
-			_displayComponent.title_new.setFocus();
+			_displayComp.currentState = 'edit_title';
+			_displayComp.title_new.text = _displayComp.title_label.text;
+			_displayComp.title_new.setFocus();
 		}
 		
 		private function onNewTitleKeyUp(event:KeyboardEvent):void {
 			if (event.keyCode == Keyboard.ENTER) {
-				_displayComponent.currentState = '';
-				title = _displayComponent.title_new.text;
+				_displayComp.currentState = '';
+				title = _displayComp.title_new.text;
 				StageManager.getInstance().stage.setFocus();
 			} else if (event.keyCode == Keyboard.ESCAPE) {
-				_displayComponent.currentState = '';
-				_displayComponent.title_new.text = _displayComponent.title_label.text;
+				_displayComp.currentState = '';
+				_displayComp.title_new.text = _displayComp.title_label.text;
 			}
 		}
 		
 		private function onNewTitleFocusOut(event:FocusEvent):void {
 			// @TODO this is a duplication of the onNewTitleKeyUp() (above)
-			_displayComponent.currentState = '';
-			_nodeItemData.title = _displayComponent.title_label.text = _displayComponent.title_new.text;
+			_displayComp.currentState = '';
+			_nodeItemData.title = _displayComp.title_label.text = _displayComp.title_new.text;
 			StageManager.getInstance().stage.setFocus();
 		}
 		
@@ -309,7 +311,7 @@ package com.graphmind.display
 			
 			// Update display
 			this.uncollapseChilds();
-			this._displayComponent.icon_has_child.visible = true;
+			this._displayComp.icon_has_child.visible = true;
 			
 			updateTime();
 		}
@@ -320,7 +322,8 @@ package com.graphmind.display
 		}
 		
 		public function collapseChilds():void {
-			this.isCollapsed = true;
+			_isCollapsed = true;
+			_displayComp.icon_has_child.source = _displayComp.image_node_uncollapse;
 			for each (var nodeItem:NodeItem in _childs) {
 				nodeItem.visible = false;
 				nodeItem.collapseChilds();
@@ -334,7 +337,8 @@ package com.graphmind.display
 		}
 		
 		public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
-			this.isCollapsed = false;
+			_isCollapsed = false;
+			_displayComp.icon_has_child.source = _displayComp.image_node_collapse;
 			for each (var nodeItem:NodeItem in _childs) {
 				nodeItem.visible = true;
 				if (!nodeItem._isForcedCollapsed || forceOpenSubtree) {
@@ -350,7 +354,7 @@ package com.graphmind.display
 		 */
 		private function childSubtreeWidth():int {
 			var width:int = 0;
-			if (_childs.length == 0 || isCollapsed) {
+			if (_childs.length == 0 || _isCollapsed) {
 				width = HEIGHT + MARGIN_BOTTOM;
 			} else {
 				for each (var child:NodeItem in _childs) {
@@ -367,7 +371,7 @@ package com.graphmind.display
 		 * Position child items.
 		 */
 		public function refreshChildNodePosition():void {
-			this._connections.graphics.clear();
+			this._connectionComp.graphics.clear();
 			
 			var totalChildWidth:int = childSubtreeWidth();
 			var currentY:int = y - totalChildWidth / 2;
@@ -380,8 +384,8 @@ package com.graphmind.display
 				child.y = currentY + subtreeWidth / 2; 
 				child.refreshChildNodePosition();
 				
-				if (!isCollapsed) {
-					NodeGraphicsHelper.drawConnection(_connections, this, child);
+				if (!_isCollapsed) {
+					NodeGraphicsHelper.drawConnection(_connectionComp, this, child);
 				}
 				currentY += subtreeWidth;
 			}
@@ -391,7 +395,7 @@ package com.graphmind.display
 				toggleCloud();
 			}
 			
-			_cloud.visible = !_parentNode || !_parentNode.isCollapsed;
+			_cloudComp.visible = !_parentNode || !_parentNode._isCollapsed;
 		}
 		
 		private function getTypeColor():uint {
@@ -407,7 +411,7 @@ package com.graphmind.display
 				case NodeItemData.TERM:
 					return 0xD9EFC2;
 				default:
-					return 0xCFCFCF;
+					return 0xDFD9D1;
 			}
 		}
 		
@@ -426,15 +430,15 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
+			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
 			
 			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
 			
-			_background.filters = [_nodeInnerGlowFilter, _nodeGlowFilter];
+			_backgroundComp.filters = [_nodeInnerGlowFilter, _nodeGlowFilter];
 		}
 		
 		public function unselectNode():void {
-			_background.filters = [_nodeDropShadow];
+			_backgroundComp.filters = [_nodeDropShadow];
 		}
 		
 		public function exportToFreeMindFormat():String {
@@ -503,7 +507,7 @@ package com.graphmind.display
 			kill();
 			if (_parentNode) {
 				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
-				_parentNode._displayComponent.icon_has_child.visible = _parentNode._childs.length > 0;
+				_parentNode._displayComp.icon_has_child.visible = _parentNode._childs.length > 0;
 			}
 			StageManager.getInstance().refreshNodePositions();
 		}
@@ -513,14 +517,14 @@ package com.graphmind.display
 				var child:NodeItem = _childs.removeItemAt(0) as NodeItem;
 				child.kill();
 			}
-			_displayComponent.icon_has_child.visible = false;
+			_displayComp.icon_has_child.visible = false;
 		}
 		
 		private function kill():void {
 			removeNodeChilds();
-			_displayComponent.parent.removeChild(_displayComponent);
-			_connections.parent.removeChild(_connections);
-			_cloud.parent.removeChild(_cloud);
+			_displayComp.parent.removeChild(_displayComp);
+			_connectionComp.parent.removeChild(_connectionComp);
+			_cloudComp.parent.removeChild(_cloudComp);
 			parent.removeChild(this);
 		}
 		
@@ -584,7 +588,7 @@ package com.graphmind.display
 				this._parentNode._childs.removeItemAt(childIDX);
 			}
 			
-			parentNode._displayComponent.icon_has_child.visible = parentNode._childs.length > 0;
+			parentNode._displayComp.icon_has_child.visible = parentNode._childs.length > 0;
 		}
 			
 		
@@ -593,11 +597,11 @@ package com.graphmind.display
 		}
 		
 		private function _getTitleExtraWidth():int {
-			return _displayComponent.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
+			return _displayComp.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
 				0 :
-				(_displayComponent.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
+				(_displayComp.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
 					TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH :
-					_displayComponent.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
+					_displayComp.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
 		}
 		
 		private function _getIconsExtraWidth():int {
@@ -616,7 +620,7 @@ package com.graphmind.display
 			var icon:Image = new Image();
 			icon.source = source;
 			icon.y = 2;
-			_displayComponent.addChild(icon);
+			_displayComp.addChild(icon);
 			_icons.addItem(icon);
 			icon.doubleClickEnabled = true;
 			icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
@@ -628,7 +632,7 @@ package com.graphmind.display
  			var iconIDX:int = _icons.getItemIndex(event.currentTarget as Image);
  			if (iconIDX == -1) return;
  			_icons.removeItemAt(iconIDX);
- 			_displayComponent.removeChild(event.currentTarget as Image);
+ 			_displayComp.removeChild(event.currentTarget as Image);
  			refactorNodeBody();
  			refreshParentTree();
  			
@@ -643,25 +647,25 @@ package com.graphmind.display
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
  				
- 			this._background.graphics.clear();		
-			this._background.graphics.beginFill(getTypeColor());
-			this._background.graphics.drawRoundRect(0, 0, WIDTH_DEFAULT + leftOffset, HEIGHT, 10, 10);
-			this._background.graphics.endFill();
+ 			this._backgroundComp.graphics.clear();		
+			this._backgroundComp.graphics.beginFill(getTypeColor());
+			this._backgroundComp.graphics.drawRoundRect(0, 0, WIDTH_DEFAULT + leftOffset, HEIGHT, 10, 10);
+			this._backgroundComp.graphics.endFill();
 			
-			this._background.filters = [_nodeDropShadow];
+			this._backgroundComp.filters = [_nodeDropShadow];
 			
-			this._displayComponent.width = WIDTH_MC_DEFAULT + leftOffset;
-			this._displayComponent.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
-			this._displayComponent.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
-			this._displayComponent.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
-			this._displayComponent.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
-			this._displayComponent.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
+			this._displayComp.width = WIDTH_MC_DEFAULT + leftOffset;
+			this._displayComp.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
+			this._displayComp.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
+			this._displayComp.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
+			this._displayComp.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
+			this._displayComp.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
 			
 			this.refreshChildNodePosition();
  		}
 		
 		public function set title(title:String):void {
-			_nodeItemData.title = _displayComponent.title_label.htmlText = title;
+			_nodeItemData.title = _displayComp.title_label.htmlText = title;
 			updateTime();
 		}
 		
@@ -673,7 +677,7 @@ package com.graphmind.display
 		
 		public function set link(link:String):void {
 			_nodeItemData.link = link;
-			_displayComponent.icon_anchor.visible = _hasPath = link.length > 0;
+			_displayComp.icon_anchor.visible = _hasPath = link.length > 0;
 		}
 		
 		public function updateTime():void {
@@ -688,10 +692,10 @@ package com.graphmind.display
 		public function toggleCloud(forceRedraw:Boolean = false):void {
 			if (!_isCloud) {
 				_isCloud = true;
-				NodeGraphicsHelper.drawCloud(this, _cloud);
+				NodeGraphicsHelper.drawCloud(this, _cloudComp);
 			} else {
 				_isCloud = false;
-				_cloud.graphics.clear();
+				_cloudComp.graphics.clear();
 			}
 			
 			if (forceRedraw) StageManager.getInstance().refreshNodePositions();
@@ -722,6 +726,10 @@ package com.graphmind.display
 		
 		public function isSelected():Boolean {
 			return StageManager.getInstance().lastSelectedNode == this;
+		}
+		
+		public function isCollapsed():Boolean {
+			return _isCollapsed;
 		}
 		
 	}

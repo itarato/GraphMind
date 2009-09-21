@@ -135,7 +135,7 @@ package com.graphmind.util {
 			
 			points = points.concat(node.getBoundingPoints());
 			
-			if (!node.isCollapsed) {
+			if (!node.isCollapsed()) {
 				for each (var child:NodeItem in node.childs) {
 					points = points.concat(getSubtreePointsInOrdered(child));
 				}
