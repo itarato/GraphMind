@@ -71,7 +71,6 @@ package com.graphmind.display
 			this._nodeItemData = viewItem;
 			
 			_initDisplayElements();
-			
 			_initAttachEvents();
 			
 			if (GraphMindManager.getInstance().isEditable()) {
@@ -715,5 +714,6 @@ package com.graphmind.display
 		public function isSelected():Boolean {
 			return StageManager.getInstance().lastSelectedNode == this;
 		}
+		
 	}
 }

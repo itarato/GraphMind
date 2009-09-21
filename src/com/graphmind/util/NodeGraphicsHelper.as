@@ -68,13 +68,65 @@ package com.graphmind.util {
 			}
 			
 			// Drawing
-			target.graphics.lineStyle(1, 0x0072B9, .3);
+			target.graphics.lineStyle(1, 0x0072B9, 1);
 			target.graphics.beginFill(0x0072B9, .1);
-			target.graphics.moveTo(stack[0][0], stack[0][1]);
-			for each (var p:Array in stack) {
-				target.graphics.lineTo(p[0], p[1]);
+			var v0:Array = [];
+			var v1:Array = [];
+			var p_cutter_right:Array = [];
+			var p_cutter_left:Array  = [];
+			var radius:Number = 10;
+			target.graphics.moveTo(
+				(stack[stack.length - 1][0] + stack[0][0]) / 2,
+				(stack[stack.length - 1][1] + stack[0][1]) / 2
+			);
+			
+			for (var pi:* in stack) {
+				if (pi == 0) {
+					v0 = [[stack[pi][0], stack[pi][1]], [stack[pi + 1][0], stack[pi + 1][1]]];
+					v1 = [[stack[pi][0], stack[pi][1]], [stack[stack.length - 1][0], stack[stack.length - 1][1]]];
+					p_cutter_left = [
+						(stack[stack.length - 1][0] + stack[pi][0]) / 2,
+						(stack[stack.length - 1][1] + stack[pi][1]) / 2
+					];
+					p_cutter_right = [
+						(stack[pi + 1][0] + stack[pi][0]) / 2,
+						(stack[pi + 1][1] + stack[pi][1]) / 2
+					];
+				} else if (pi == stack.length - 1) {
+					v0 = [[stack[pi][0], stack[pi][1]], [stack[0][0], stack[0][1]]];
+					v1 = [[stack[pi][0], stack[pi][1]], [stack[pi - 1][0], stack[pi - 1][1]]];
+					p_cutter_left = [
+						(stack[pi - 1][0] + stack[pi][0]) / 2,
+						(stack[pi - 1][1] + stack[pi][1]) / 2
+					];
+					p_cutter_right = [
+						(stack[0][0] + stack[pi][0]) / 2,
+						(stack[0][1] + stack[pi][1]) / 2
+					];
+				} else {
+					v0 = [[stack[pi][0], stack[pi][1]], [stack[pi + 1][0], stack[pi + 1][1]]];
+					v1 = [[stack[pi][0], stack[pi][1]], [stack[pi - 1][0], stack[pi - 1][1]]];
+					p_cutter_left = [
+						(stack[pi - 1][0] + stack[pi][0]) / 2,
+						(stack[pi - 1][1] + stack[pi][1]) / 2
+					];
+					p_cutter_right = [
+						(stack[pi + 1][0] + stack[pi][0]) / 2,
+						(stack[pi + 1][1] + stack[pi][1]) / 2
+					];
+				}
+				
+				// curve sandbox
+				var anchors:Array = convexHull_angleHalfCut(v0, v1, 10);
+				target.graphics.curveTo(
+					anchors[1][0], anchors[1][1],
+					stack[pi][0], stack[pi][1]
+				);
+				target.graphics.curveTo(
+					anchors[0][0], anchors[0][1],
+					p_cutter_right[0], p_cutter_right[1]
+				);
 			}
-			target.graphics.lineTo(stack[0][0], stack[0][1]);
 			target.graphics.endFill();
 		}
 		
@@ -133,6 +185,43 @@ package com.graphmind.util {
 			}
 			return orderedPoints;
 		}
+		
+		private static function convexHull_angleHalfCut(v1:Array, v2:Array, length:Number):Array {
+			// Relatice choords
+			var rx1:Number = v1[1][0] - v1[0][0];
+			var ry1:Number = v1[1][1] - v1[0][1];
+			var rx2:Number = v2[1][0] - v2[0][0];
+			var ry2:Number = v2[1][1] - v2[0][1];
+			trace('r1: ' + rx1 + ':' + ry1);
+			trace('r2: ' + rx2 + ':' + ry2);
+			
+			// Vector lengths
+			var l1:Number = Math.sqrt(Math.pow(rx1, 2) + Math.pow(ry1, 2));
+			var l2:Number = Math.sqrt(Math.pow(rx2, 2) + Math.pow(ry2, 2));
+			var scale:Number = l1 / l2;
+			
+			rx2 *= scale;
+			ry2 *= scale;
+			trace('scale; ' + scale);
+			trace('new r2: ' + rx2 + ':' + ry2);
+			
+			// Half cutter vector
+			var hcx:Number = (rx1 + rx2) / 2;
+			var hcy:Number = (ry1 + ry2) / 2;
+			var hcl:Number = Math.sqrt(Math.pow(hcx, 2) + Math.pow(hcy, 2));
+			trace('hc: ' + hcx + ':' + hcy);
+			
+			var hc_scale:Number = length / hcl;
+			trace('hc scale: ' + hc_scale);
+			var normal_hc_left:Array = [-hc_scale * hcy + v1[0][0], hc_scale * hcx + v1[0][1]];
+			var normal_hc_right:Array = [hc_scale * hcy + v1[0][0], -hc_scale * hcx + v1[0][1]];
+			
+			trace(normal_hc_left);
+			trace(normal_hc_right);
+			
+			return [normal_hc_left, normal_hc_right];
+		}
+		
 	}
 	
 }
