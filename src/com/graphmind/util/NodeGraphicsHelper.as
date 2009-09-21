@@ -68,7 +68,7 @@ package com.graphmind.util {
 			}
 			
 			// Drawing
-			target.graphics.lineStyle(1, 0x0072B9, 1);
+			target.graphics.lineStyle(1, 0x0072B9, .3);
 			target.graphics.beginFill(0x0072B9, .1);
 			var v0:Array = [];
 			var v1:Array = [];

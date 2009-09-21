@@ -38,13 +38,11 @@
 					paddingBottom="0"
 					paddingLeft="0"
 					paddingRight="0"
-					fontSize="8"/>
+					fontSize="10"/>
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
 		
-	<mx:Image source="{image_selection}" x="0" y="0" id="selection" visible="false"/>
-	
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
 	<mx:Image source="{image_insertLeft}" x="{NodeItem.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	

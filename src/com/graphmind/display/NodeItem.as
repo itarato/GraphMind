@@ -4,7 +4,6 @@ package com.graphmind.display
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.display.assets.ItemBaseComponent;
-	import com.graphmind.util.Log;
 	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
 	
@@ -13,6 +12,8 @@ package com.graphmind.display
 	import flash.events.FocusEvent;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
+	import flash.filters.GlowFilter;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.ui.ContextMenu;
@@ -27,11 +28,10 @@ package com.graphmind.display
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
 	
-	//public class NodeItem extends DraggableItem {
 	public class NodeItem extends DisplayItem {
 		
-		public static const WIDTH:int = 160;
-		public static const MC_WIDTH:int = 168;
+		public static const WIDTH_DEFAULT:int = 160;
+		public static const WIDTH_MC_DEFAULT:int = 168;
 		public static const HEIGHT:int = 20;
 		public static const MARGIN_RIGHT:int = 32;
 		public static const MARGIN_BOTTOM:int = 4;
@@ -63,22 +63,32 @@ package com.graphmind.display
 		protected var _isCloud:Boolean = false;
 		protected var _cloud:UIComponent = new UIComponent();
 		
+		private static var _nodeDropShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x888888, 1, 1, 1);
+		private static var _nodeGlowFilter:GlowFilter = new GlowFilter(0x0072B9, .8, 6, 6);
+		private static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, .8, 20, 20, 2, 1, true); 
 		
 		private var _mouseSelectionTimeout:uint;
-		
+
+		/**
+		 * Constructor
+		 */
 		public function NodeItem(viewItem:NodeItemData) {
+			// Init super class
 			super();
+			// Attach data object
 			this._nodeItemData = viewItem;
-			
+			// Init display elements
 			_initDisplayElements();
+			// Init events
 			_initAttachEvents();
-			
-			if (GraphMindManager.getInstance().isEditable()) {
-				_initCreateContextMenu();
-			}
 		}
 		
 		private function _initDisplayElements():void {
+			// Context menu 
+			if (GraphMindManager.getInstance().isEditable()) {
+				_initCreateContextMenu();
+			}
+			
 			this.addChild(_background);
 			
 			this.addChild(_displayComponent);
@@ -360,14 +370,12 @@ package com.graphmind.display
 			this._connections.graphics.clear();
 			
 			var totalChildWidth:int = childSubtreeWidth();
-			//Log.info('totalC: ' + totalChildWidth);
 			var currentY:int = y - totalChildWidth / 2;
 			
 			if (_isCloud) currentY += CLOUD_MARGIN;
 			
 			for each (var child:NodeItem in _childs) {
 				var subtreeWidth:int = child.childSubtreeWidth();
-				//Log.info('childC: ' + childNum);
 				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
 				child.y = currentY + subtreeWidth / 2; 
 				child.refreshChildNodePosition();
@@ -389,23 +397,22 @@ package com.graphmind.display
 		private function getTypeColor():uint {
 			switch (this._nodeItemData.type) {
 				case NodeItemData.NODE:
-					return 0x00345F;
+					return 0xC2D7EF;
 				case NodeItemData.COMMENT:
-					return 0x3A5F00;
+					return 0xC2EFD9;
 				case NodeItemData.USER:
-					return 0x5F0039;
+					return 0xEFD2C2;
 				case NodeItemData.FILE:
-					return 0x5F5F41;
+					return 0xE9C2EF;
 				case NodeItemData.TERM:
-					return 0x9F1333;
+					return 0xD9EFC2;
 				default:
-					return 0x333333;
+					return 0xCFCFCF;
 			}
 		}
 		
 		public function selectNode():void {
-			//Log.info(_nodeItemData.source.url);
-			
+			// Not to lose focus from textfield
 			if (!isSelected()) setFocus();
 			
 			if (StageManager.getInstance().lastSelectedNode) {
@@ -419,15 +426,15 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			_displayComponent.selection.visible = true;
-			
 			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComponent.title_label.htmlText;
 			
 			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
+			
+			_background.filters = [_nodeInnerGlowFilter, _nodeGlowFilter];
 		}
 		
 		public function unselectNode():void {
-			_displayComponent.selection.visible = false;
+			_background.filters = [_nodeDropShadow];
 		}
 		
 		public function exportToFreeMindFormat():String {
@@ -493,10 +500,7 @@ package com.graphmind.display
 		}
 		
 		private function remove():void {
-			removeNodeChilds();
-			_displayComponent.parent.removeChild(_displayComponent);
-			_connections.parent.removeChild(_connections);
-			parent.removeChild(this);
+			kill();
 			if (_parentNode) {
 				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
 				_parentNode._displayComponent.icon_has_child.visible = _parentNode._childs.length > 0;
@@ -507,12 +511,17 @@ package com.graphmind.display
 		private function removeNodeChilds():void {
 			while (_childs.length > 0) {
 				var child:NodeItem = _childs.removeItemAt(0) as NodeItem;
-				child._displayComponent.parent.removeChild(child._displayComponent);
-				child._connections.parent.removeChild(child._connections);
-				child.removeNodeChilds();
-				child.parent.removeChild(child);
+				child.kill();
 			}
 			_displayComponent.icon_has_child.visible = false;
+		}
+		
+		private function kill():void {
+			removeNodeChilds();
+			_displayComponent.parent.removeChild(_displayComponent);
+			_connections.parent.removeChild(_connections);
+			_cloud.parent.removeChild(_cloud);
+			parent.removeChild(this);
 		}
 		
 		public function dataDelete(param:String):void {
@@ -531,7 +540,6 @@ package com.graphmind.display
 		}
 		
 		public static function move(source:NodeItem, target:NodeItem):Boolean {
-			// @TODO validation !!!
 			// No parent can detach child.
 			if (!source || !source._parentNode || !target) return false;
 			// Target is an ascendant of the source.
@@ -558,7 +566,6 @@ package com.graphmind.display
 				}
 				
 				for (var i:int = target._parentNode._childs.length - 1; i > siblingIDX; i--) {
-					//target._parentNode._childs.setItemAt(target._parentNode._childs.getItemAt(i - 1), i);
 					target._parentNode._childs[i] = target._parentNode._childs[i - 1];
 				}
 				
@@ -582,7 +589,7 @@ package com.graphmind.display
 			
 		
 		public function getWidth():int {
-			return WIDTH + _getIconsExtraWidth() + _getTitleExtraWidth(); 
+			return WIDTH_DEFAULT + _getIconsExtraWidth() + _getTitleExtraWidth(); 
 		}
 		
 		private function _getTitleExtraWidth():int {
@@ -637,11 +644,13 @@ package com.graphmind.display
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
  				
  			this._background.graphics.clear();		
-			this._background.graphics.beginFill(getTypeColor(), .2);
-			this._background.graphics.drawRoundRect(0, 0, WIDTH + leftOffset, HEIGHT, 10, 10);
+			this._background.graphics.beginFill(getTypeColor());
+			this._background.graphics.drawRoundRect(0, 0, WIDTH_DEFAULT + leftOffset, HEIGHT, 10, 10);
 			this._background.graphics.endFill();
 			
-			this._displayComponent.width = MC_WIDTH + leftOffset;
+			this._background.filters = [_nodeDropShadow];
+			
+			this._displayComponent.width = WIDTH_MC_DEFAULT + leftOffset;
 			this._displayComponent.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
 			this._displayComponent.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
 			this._displayComponent.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
