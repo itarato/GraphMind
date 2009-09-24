@@ -276,11 +276,11 @@
 		mouseOut="StageManager.getInstance().isDesktopDragged = false;">
 		
 		<!-- sublayer for cloud grapics -->
-		<mx:Canvas id="desktop_cloud" width="3000" height="2000"
+		<mx:Canvas id="desktop_cloud" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
 			scaleX="{desktop_scale.value/100}"
 			scaleY="{desktop_scale.value/100}"/>
 		
-		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true" 
+		<mx:Canvas id="desktop" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
 			mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
 			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
 			mouseMove="StageManager.getInstance().onDragDesktop(event);"

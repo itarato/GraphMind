@@ -24,7 +24,8 @@ package com.graphmind
 	public class StageManager
 	{
 		private static var _instance:StageManager = null;
-		
+		[Bindable]
+		public static var DEFAULT_DESKTOP_HEIGHT:int = 2000;
 		
 		// The stage object
 		private var _application:GraphMind = null;
@@ -236,7 +237,7 @@ package com.graphmind
 		public function refreshNodePositions():void {
 			if (!baseNode) return;
 			baseNode.x = 0;
-			baseNode.y = stage.desktop.height >> 1;
+			baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
 			baseNode.refreshChildNodePosition();
 		}
 		
