@@ -39,7 +39,7 @@ package com.graphmind
 		 */
 		public function getHostNodeID():int {
 			Log.info("Host nid: " + Application.application.parameters.nid);
-			//return 163;
+			//return 198;
 			return Application.application.parameters.nid || 155;
 		}
 		

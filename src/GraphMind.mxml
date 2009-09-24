@@ -276,13 +276,16 @@
 		mouseOut="StageManager.getInstance().isDesktopDragged = false;">
 		
 		<!-- sublayer for cloud grapics -->
-		<mx:Canvas id="desktop_cloud" width="3000" height="2000"/>
+		<mx:Canvas id="desktop_cloud" width="3000" height="2000"
+			scaleX="{desktop_scale.value/100}"
+			scaleY="{desktop_scale.value/100}"/>
 		
 		<mx:Canvas id="desktop" width="3000" height="2000" focusEnabled="true" 
 			mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
 			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
-			mouseMove="StageManager.getInstance().onDragDesktop(event);">
-		</mx:Canvas>
+			mouseMove="StageManager.getInstance().onDragDesktop(event);"
+			scaleX="{desktop_scale.value/100}"
+			scaleY="{desktop_scale.value/100}"/>
 	</mx:Canvas>
 	<!-- END mindmap editor -->
 	
@@ -299,5 +302,11 @@
 	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
 	<mx:LinkButton x="344" y="10" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#880000"
 		visible="{StageManager.getInstance().isChanged}"/>
+	
+	<mx:HSlider x="400" y="10" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
+		value="100"
+		id="desktop_scale"/>
+	
+	<mx:Label x="560" y="12" text="{desktop_scale.value + '%'}"/>
 		
 </mx:Application>
