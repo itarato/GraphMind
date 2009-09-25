@@ -210,6 +210,13 @@ package com.graphmind
 				Alert.show('Zero result.');
 			}
 			for each (var nodeData:Object in list) {
+				// @TODO update or append checkbox for the panel?
+				var similarNode:NodeItem = requestData.nodeItem.getEqualChild(nodeData, requestData.viewsData.parent.baseTable)
+				if (similarNode) {
+					similarNode.updateDrupalItem_result(nodeData, null);
+					continue;
+				}
+				
 				var nodeItemData:NodeItemData = new NodeItemData(
 					nodeData, 
 					requestData.viewsData.parent.baseTable, 

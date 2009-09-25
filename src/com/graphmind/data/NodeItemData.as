@@ -73,20 +73,7 @@ package com.graphmind.data {
 		public function getDrupalID():String {
 			if (_drupalID) return _drupalID.toString();
 			
-			switch (type) {
-				case NODE:
-					return data.nid || data.id || data.node_id || '';
-				case USER:
-					return data.userid || data.uid || data.id || data.users_id || '';
-				case COMMENT:
-					return data.cid || data.id || data.comments_id || '';
-				case FILE:
-					return data.fid || ''; 
-				case TERM:
-					return data.tid || '';
-				default:
-					return '';
-			}
+			return getDrupalIDFromData(type, data);
 		}
 		
 		public function getPath():String {
@@ -117,6 +104,28 @@ package com.graphmind.data {
 				}
 			}
 			data = new_data;
+		}
+		
+		public function equalTo(attributes:Object, nodeType:String):Boolean {
+			// @TODO add node source site filtering
+			return nodeType == type && getDrupalIDFromData(nodeType, attributes) == getDrupalID();
+		}
+		
+		public static function getDrupalIDFromData(type:String, data:Object):String {
+			switch (type) {
+				case NODE:
+					return data.nid || data.id || data.node_id || '';
+				case USER:
+					return data.userid || data.uid || data.id || data.users_id || '';
+				case COMMENT:
+					return data.cid || data.id || data.comments_id || '';
+				case FILE:
+					return data.fid || ''; 
+				case TERM:
+					return data.tid || '';
+				default:
+					return '';
+			}
 		}
 		
 	}

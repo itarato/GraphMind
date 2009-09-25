@@ -754,7 +754,6 @@ package com.graphmind.display
 		}
 		
 		public function updateDrupalItem_result(result:Object, tild:TempItemLoadData):void {
-			//trace(result);
 			for (var key:* in result) {
 				_nodeItemData.data[key] = result[key];
 			}
@@ -771,5 +770,11 @@ package com.graphmind.display
 			_backgroundComp.filters = (effect == EFFECT_NORMAL) ? [_nodeDropShadow] : [_nodeInnerGlowFilter, _nodeGlowFilter];
 		}
 		
+		public function getEqualChild(data:Object, type:String):NodeItem {
+			for each (var child:NodeItem in _childs) {
+				if (child._nodeItemData.equalTo(data, type)) return child;
+			}
+			return null;
+		}
 	}
 }
