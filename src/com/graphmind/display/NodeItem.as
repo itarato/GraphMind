@@ -1,9 +1,11 @@
 package com.graphmind.display
 {
+	import com.graphmind.ConnectionManager;
 	import com.graphmind.GraphMindManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.display.assets.ItemBaseComponent;
+	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
 	
@@ -49,6 +51,9 @@ package com.graphmind.display
 		public static var ICON_BULLET_DEFAULT_X:int = WIDTH_DEFAULT - 4;
 		[Bindable]
 		public static var ICON_INSERT_LEFT_DEFAULT_X:int = WIDTH_DEFAULT - 2;
+		
+		private static const EFFECT_NORMAL:int = 0;
+		private static const EFFECT_HIGHLIGHT:int = 1;
 		
 		protected var _displayComp:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connectionComp:UIComponent 	 = new UIComponent();
@@ -145,6 +150,10 @@ package com.graphmind.display
 				{title: 'Open subtree',    event: onOpenSubtree,            separator: true},
 				{title: 'Toggle cloud',    event: toggleCloudWithRefresh,   separator: false}
 			];
+			
+			if (NodeItemData.updatableTypes.indexOf(_nodeItemData.type) >= 0) {
+				cms.push({title: 'Update node', event: onUpdateNodeSelect, separator: false});
+			}
 			
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
@@ -419,6 +428,7 @@ package com.graphmind.display
 			// Not to lose focus from textfield
 			if (!isSelected()) setFocus();
 			
+			// @TODO mystery bug steal highlight somethimes from nodes
 			if (StageManager.getInstance().lastSelectedNode) {
 				StageManager.getInstance().lastSelectedNode.unselectNode();
 			}
@@ -434,11 +444,11 @@ package com.graphmind.display
 			
 			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
 			
-			_backgroundComp.filters = [_nodeInnerGlowFilter, _nodeGlowFilter];
+			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
 		
 		public function unselectNode():void {
-			_backgroundComp.filters = [_nodeDropShadow];
+			_setBackgroundEffect(EFFECT_NORMAL);
 		}
 		
 		public function exportToFreeMindFormat():String {
@@ -652,7 +662,7 @@ package com.graphmind.display
 			this._backgroundComp.graphics.drawRoundRect(0, 0, WIDTH_DEFAULT + leftOffset, HEIGHT, 10, 10);
 			this._backgroundComp.graphics.endFill();
 			
-			this._backgroundComp.filters = [_nodeDropShadow];
+			_setBackgroundEffect(isSelected() ? EFFECT_HIGHLIGHT : EFFECT_NORMAL);
 			
 			this._displayComp.width = WIDTH_MC_DEFAULT + leftOffset;
 			this._displayComp.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
@@ -730,6 +740,35 @@ package com.graphmind.display
 		
 		public function isCollapsed():Boolean {
 			return _isCollapsed;
+		}
+	
+		public function onUpdateNodeSelect(event:ContextMenuEvent):void {
+			updateDrupalItem();
+		}
+		
+		public function updateDrupalItem():void {
+			var tild:TempItemLoadData = new TempItemLoadData();
+			tild.nodeItemData = _nodeItemData;
+			tild.success = updateDrupalItem_result;
+			ConnectionManager.getInstance().itemLoad(tild);
+		}
+		
+		public function updateDrupalItem_result(result:Object, tild:TempItemLoadData):void {
+			//trace(result);
+			for (var key:* in result) {
+				_nodeItemData.data[key] = result[key];
+			}
+			_nodeItemData.title = null;
+			_updateTitleLabel();
+			selectNode();
+		}
+		
+		private function _updateTitleLabel():void {
+			_displayComp.title_label.text = _nodeItemData.title;
+		}
+		
+		private function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
+			_backgroundComp.filters = (effect == EFFECT_NORMAL) ? [_nodeDropShadow] : [_nodeInnerGlowFilter, _nodeGlowFilter];
 		}
 		
 	}

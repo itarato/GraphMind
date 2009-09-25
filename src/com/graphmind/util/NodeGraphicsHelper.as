@@ -192,8 +192,6 @@ package com.graphmind.util {
 			var ry1:Number = v1[1][1] - v1[0][1];
 			var rx2:Number = v2[1][0] - v2[0][0];
 			var ry2:Number = v2[1][1] - v2[0][1];
-			trace('r1: ' + rx1 + ':' + ry1);
-			trace('r2: ' + rx2 + ':' + ry2);
 			
 			// Vector lengths
 			var l1:Number = Math.sqrt(Math.pow(rx1, 2) + Math.pow(ry1, 2));
@@ -202,22 +200,15 @@ package com.graphmind.util {
 			
 			rx2 *= scale;
 			ry2 *= scale;
-			trace('scale; ' + scale);
-			trace('new r2: ' + rx2 + ':' + ry2);
 			
 			// Half cutter vector
 			var hcx:Number = (rx1 + rx2) / 2;
 			var hcy:Number = (ry1 + ry2) / 2;
 			var hcl:Number = Math.sqrt(Math.pow(hcx, 2) + Math.pow(hcy, 2));
-			trace('hc: ' + hcx + ':' + hcy);
 			
 			var hc_scale:Number = length / hcl;
-			trace('hc scale: ' + hc_scale);
 			var normal_hc_left:Array = [-hc_scale * hcy + v1[0][0], hc_scale * hcx + v1[0][1]];
 			var normal_hc_right:Array = [hc_scale * hcy + v1[0][0], -hc_scale * hcx + v1[0][1]];
-			
-			trace(normal_hc_left);
-			trace(normal_hc_right);
 			
 			return [normal_hc_left, normal_hc_right];
 		}

@@ -12,6 +12,7 @@ package com.graphmind.data {
 		public static const NORMAL:String  = 'normal';
 		public static const FILE:String    = 'files';
 		public static const TERM:String    = 'term_data';
+		public static const updatableTypes:Array = [FILE, NODE, USER];
 		
 		public var data:Object;
 		public var source:SiteConnection = SiteConnection.createSiteConnection();
@@ -117,6 +118,6 @@ package com.graphmind.data {
 			}
 			data = new_data;
 		}
-
+		
 	}
 }
