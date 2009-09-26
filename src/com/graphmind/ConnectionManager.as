@@ -162,7 +162,7 @@ package com.graphmind
 				requestData.viewsData.parent.sourceSessionID,
 				requestData.viewsData.view_name,
 				requestData.viewsData.fields,
-				requestData.viewsData.args,
+				[requestData.viewsData.args],
 				requestData.viewsData.offset,
 				requestData.viewsData.limit
 			);
