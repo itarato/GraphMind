@@ -116,7 +116,6 @@ package com.graphmind.display
 			if (GraphMindManager.getInstance().isEditable()) {
 				this._displayComp.title_label.doubleClickEnabled = true;
 				this._displayComp.title_label.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
-				this._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onTitleUpdateComplete);
 				
 				this._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP, onNewTitleKeyUp);
 				this._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT, onNewTitleFocusOut);
@@ -131,6 +130,8 @@ package com.graphmind.display
 			this._displayComp.addEventListener(MouseEvent.CLICK, onClick);
 			this._displayComp.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this._displayComp.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+			
+			this._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onTitleUpdateComplete);
 			
 			this._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK, onIconAnchorClick);
 			this._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK, onIconHasChildClick);
@@ -237,7 +238,7 @@ package com.graphmind.display
 		
 		private function onMouseOver(event:MouseEvent):void {
 			_mouseSelectionTimeout = setTimeout(selectNode, 400);
-			_displayComp.icon_add.visible = true;
+			_displayComp.icon_add.visible = true && GraphMindManager.getInstance().isEditable();
 			_displayComp.icon_anchor.visible = true && _hasPath;
 		}
 		
@@ -632,8 +633,10 @@ package com.graphmind.display
 			icon.y = 2;
 			_displayComp.addChild(icon);
 			_icons.addItem(icon);
-			icon.doubleClickEnabled = true;
-			icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
+			if (GraphMindManager.getInstance().isEditable()) {
+				icon.doubleClickEnabled = true;
+				icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
+			}
 			
 			updateTime();
  		}

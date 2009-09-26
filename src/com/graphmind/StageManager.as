@@ -80,6 +80,8 @@ package com.graphmind
 		 * Load base node - stage 2.
 		 */
 		private function _loadBaseNode_stage_node_loaded(result:ResultEvent):void {
+			GraphMindManager.getInstance().setEditMode(result.result.graphmindEditable == '1');
+			
 			// ! Removed original data object: result.result.
 			// This caused a mailformed export string.
 			var itemData:NodeItemData = new NodeItemData({}, NodeItemData.NODE, GraphMindManager.getInstance().baseSiteConnection);

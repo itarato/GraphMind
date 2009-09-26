@@ -162,6 +162,17 @@
 				</mx:Panel>
 			</mx:AddChild>
 		</mx:State>
+		
+		<mx:State name="only_view_mode">
+			<mx:SetProperty name="visible" target="{panelMain}" value="false"/>
+			<mx:SetProperty name="visible" target="{saveLinkButton}" value="false"/>
+			<mx:SetProperty name="visible" target="{icon_outer_container}" value="false"/>
+			<mx:SetStyle target="{desktop_wrapper}" name="left" value="10"/>
+			<mx:SetStyle target="{desktop_wrapper}" name="right" value="10"/>
+			<mx:SetStyle target="{fullScreenLinkButton}" name="left" value="10"/>
+			<mx:SetStyle target="{desktop_scale}" name="left" value="96"/>
+			<mx:SetStyle target="{desktopScaleLabel}" name="left" value="256"/>
+		</mx:State>
 	</mx:states>
 
 	<!-- Debug textarea -->
@@ -299,14 +310,17 @@
 	</mx:Canvas>
 	<!-- END icons -->
 	
-	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"/>
+	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"
+		id="fullScreenLinkButton"/>
 	<mx:LinkButton x="344" y="10" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#880000"
-		visible="{StageManager.getInstance().isChanged}"/>
+		visible="{StageManager.getInstance().isChanged}"
+		id="saveLinkButton"/>
 	
 	<mx:HSlider x="400" y="10" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
 		value="100"
 		id="desktop_scale"/>
 	
-	<mx:Label x="560" y="12" text="{desktop_scale.value + '%'}"/>
+	<mx:Label x="560" y="12" text="{desktop_scale.value + '%'}"
+		id="desktopScaleLabel"/>
 		
 </mx:Application>

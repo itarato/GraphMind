@@ -13,6 +13,7 @@ package com.graphmind
 		
 		// Base site connection
 		public var baseSiteConnection:SiteConnection;
+		private var _isEditable:Boolean = false;
 		
 		public function GraphMindManager() {}
 		
@@ -110,7 +111,16 @@ package com.graphmind
 		}
 
 		public function isEditable():Boolean {
-			return Application.application.parameters.isEditable || true;
+			trace('GET');
+			return _isEditable;
+		}
+		
+		public function setEditMode(editable:Boolean):void {
+			trace('* SET *');
+			_isEditable = editable;
+			if (!editable) {
+				StageManager.getInstance().stage.currentState = 'only_view_mode';
+			}
 		}
 
 	}
