@@ -537,6 +537,7 @@ package com.graphmind.display
 			_connectionComp.parent.removeChild(_connectionComp);
 			_cloudComp.parent.removeChild(_cloudComp);
 			parent.removeChild(this);
+			StageManager.getInstance().isChanged = true;
 		}
 		
 		public function dataDelete(param:String):void {
