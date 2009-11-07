@@ -137,7 +137,7 @@ package com.graphmind
 		 */
 		public function nodeLoad(nid:int, sc:SiteConnection, sucecss:Function):void {
 			RPCServiceHelper.createRPC('node', 'get', 'amfphp', sc.url, sucecss, function(error:FaultEvent):void{
-				Alert.show("Node " + nid + " is not exists.", "GraphMind");
+				Alert.show("Node " + nid + " is not exists or needs permission.", "GraphMind");
 			}).send(sc.sessionID, nid);
 		}
 		// END of node load ///////////
