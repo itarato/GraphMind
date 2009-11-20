@@ -25,6 +25,7 @@ package com.graphmind
 		}
 		
 		public function buildGrapMindNode(nodeXML:XML):NodeItem {
+			// @TODO write node checking - if those are exist
 			var attributes:Object = {};
 			var information:Object = {};
 			for each (var attribute:XML in nodeXML.child('attribute')) {

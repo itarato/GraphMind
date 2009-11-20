@@ -90,8 +90,15 @@ package com.graphmind
 			var nodeItem:NodeItem = new NodeItem(itemData);
 			
 			// @WTF sometimes body_value is the right value, sometimes not
+			var is_valid_mm_xml:Boolean = false;
 			var body:String = result.result.body.toString();
 			if (body.length > 0) {
+				var xmlData:XML = new XML(body);
+				var nodes:XML = xmlData.child('node')[0];
+				is_valid_mm_xml = nodes !== null;
+			}
+				
+			if (is_valid_mm_xml) {
 				var importedBaseNode:NodeItem = ImportManager.getInstance().importMapFromString(baseNode, body);
 				addChildToStage(importedBaseNode);
 				baseNode = importedBaseNode;

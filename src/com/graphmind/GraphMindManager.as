@@ -39,7 +39,7 @@ package com.graphmind
 		 */
 		public function getHostNodeID():int {
 			Log.info("Host nid: " + Application.application.parameters.nid);
-			return Application.application.parameters.nid || 155;
+			return Application.application.parameters.nid || 182;
 		}
 		
 		public function getIconPath():String {
