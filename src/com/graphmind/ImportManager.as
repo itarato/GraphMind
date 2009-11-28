@@ -60,7 +60,7 @@ package com.graphmind
 			nodeItemData.modified = Number(nodeXML.@MODIFIED);
 			nodeItemData.title    = rawTitle.length > 0 ? rawTitle : htmlTitle;
 			nodeItemData.id       = parseInt(String(nodeXML.@ID).replace("ID_", ""));
-			nodeItemData.link     = decodeURIComponent(String(nodeXML.@LINK));
+			nodeItemData.link     = unescape(String(nodeXML.@LINK));
 			var nodeItem:NodeItem = new NodeItem(nodeItemData);
 			
 			for each (var iconsXML:XML in nodeXML.elements('icon')) {

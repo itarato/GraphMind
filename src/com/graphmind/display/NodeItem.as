@@ -462,8 +462,8 @@ package com.graphmind.display
 				'MODIFIED="' + _nodeItemData.modified  + '" ' + 
 				'ID="ID_'    + _nodeItemData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
-				(titleIsHTML ? '' : 'TEXT="' + encodeURIComponent(_nodeItemData.title) + '" ') + 
-				(_nodeItemData.getPath().toString().length > 0 ? ('LINK="' + encodeURIComponent(_nodeItemData.getPath()) + '" ') : '') + 
+				(titleIsHTML ? '' : 'TEXT="' + escape(_nodeItemData.title) + '" ') + 
+				(_nodeItemData.getPath().toString().length > 0 ? ('LINK="' + escape(_nodeItemData.getPath()) + '" ') : '') + 
 				'TYPE="' + _nodeItemData.type + '" ' +
 				">\n";
 			
