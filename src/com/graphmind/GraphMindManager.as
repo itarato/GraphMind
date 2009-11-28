@@ -7,6 +7,8 @@ package com.graphmind
 	import mx.core.Application;
 	import mx.rpc.events.ResultEvent;
 	
+	import nl.demonsters.debugger.MonsterDebugger;
+	
 	public class GraphMindManager
 	{
 		private static var _instance:GraphMindManager = null;
@@ -14,6 +16,7 @@ package com.graphmind
 		// Base site connection
 		public var baseSiteConnection:SiteConnection;
 		private var _isEditable:Boolean = false;
+		private var lastSaved:Number = new Date().time;
 		
 		public function GraphMindManager() {}
 		
@@ -93,7 +96,8 @@ package com.graphmind
 			var mm:String = exportToFreeMindFormat();
 			ConnectionManager.getInstance().saveGraphMind(
 				getHostNodeID(),
-				mm, 
+				mm,
+				lastSaved,
 				baseSiteConnection, 
 				_save_stage_saved
 			);
@@ -105,7 +109,14 @@ package com.graphmind
 		 * Save event is done.
 		 */
 		private function _save_stage_saved(result:ResultEvent):void {
-			Alert.show('GraphMind data is saved.', 'GraphMind notice');
+			//MonsterDebugger.trace(this, result.result);
+			if (result.result == '1') {
+				Alert.show('GraphMind data is saved.', 'GraphMind notice');
+				lastSaved = new Date().time;
+			} else {
+				Alert.show('This content has been modified by another user, changes cannot be saved.', 'GraphMind alert');
+				// @TODO prevent later savings
+			}
 		}
 
 		public function isEditable():Boolean {

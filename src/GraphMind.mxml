@@ -62,6 +62,8 @@
 			 * Triggered event when the application is ready.
 			 */
 			private function init():void {
+				var md:MonsterDebugger = new MonsterDebugger(this);
+				
 				// Init managers
 				StageManager.getInstance().initStage(this);
 				GraphMindManager.getInstance().initGraphMind();

@@ -196,7 +196,7 @@ package com.graphmind
 		/**
 		 * Save (export) the state of the map in an MM (FreeMind) format.
 		 */
-		public function saveGraphMind(nid:int, mm:String, sc:SiteConnection, success:Function):void {
+		public function saveGraphMind(nid:int, mm:String, lastSaveTimestamp:Number, sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC(
 				'graphmind', 
 				'saveGraphMind',
@@ -206,7 +206,7 @@ package com.graphmind
 				function(error:FaultEvent):void {
 					Alert.show("Saving is failed.", "Error");
 				}
-			).send(sc.sessionID, nid, mm);
+			).send(sc.sessionID, nid, mm, lastSaveTimestamp / 1000);
 		}
 		// END exporting //////////////
 		
