@@ -74,9 +74,9 @@ package com.graphmind.net
 		
 		public function toString():String {
 			return "Site connection:\n" + 
-				"\turl: " + _url + "\n" +
-				"\tsessid: " + _sessionID + "\n" + 
-				"\tusername: " + _username;
+				"- Url: " + _url + "\n" +
+				"- Sessid: " + _sessionID + "\n" + 
+				"- Username: " + ((_username == null) ? 'undefined' : _username);
 		}
 		
 

@@ -37,7 +37,12 @@ package com.graphmind
 		 */
 		public function connectToDrupal(url:String, success:Function):void {
 			RPCServiceHelper.createRPC('system', 'connect', 'amfphp', url, success, function(error:FaultEvent):void{
-				Alert.show('Network error: cannot connect to site ' + url + "\n" + error);
+				alertErrorMessage(
+					'Network error: cannot connect to site: ' + url,
+					'wrong connection info (url) or missing AMFPHP library or wrong AMFPHP|Services version or wrong Services authentication method (only Session auth needs)',
+					null,
+					error.toString() 
+				);
 			}).send(); 
 		}
 		
@@ -46,7 +51,7 @@ package com.graphmind
 		 */
 		public function logout(sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC('user', 'logout', 'amfphp', sc.url, success, function(error:FaultEvent):void{
-				Alert.show("Network error: cannot logout with user\n" + sc);
+				alertErrorMessage('Network error: cannot logout with user', 'graphmind error', sc.toString(), error.toString());
 			}).send(sc.sessionID);
 		}
 		
@@ -55,7 +60,7 @@ package com.graphmind
 		 */
 		public function login(sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC('user', 'login', 'amfphp', sc.url, success, function(error:FaultEvent):void{
-				Alert.show("Network error: cannot login with user\n" + sc);
+				alertErrorMessage('Network error: cannot login with user', 'missing user permissions', sc.toString(), error.toString());
 			}).send(sc.sessionID, sc.username, sc.password);
 		}
 		
@@ -64,7 +69,7 @@ package com.graphmind
 		 */
 		public function getViews(sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC('graphmind', 'getViews', 'amfphp', sc.url, success, function(error:FaultEvent):void{
-				Alert.show("Network error: cannot get views list\n" + sc);
+				alertErrorMessage('Network error: cannot get views list', 'missing permission', sc.toString(), error.toString());
 			}).send(sc.sessionID);
 		}
 		
@@ -137,7 +142,12 @@ package com.graphmind
 		 */
 		public function nodeLoad(nid:int, sc:SiteConnection, sucecss:Function):void {
 			RPCServiceHelper.createRPC('node', 'get', 'amfphp', sc.url, sucecss, function(error:FaultEvent):void{
-				Alert.show("Node " + nid + " is not exists or needs permission.", "GraphMind");
+				alertErrorMessage(
+					'Node cannot loaded: ' + nid,
+					'node is not exists or needs permission',
+					sc.toString(),
+					error.toString() 
+				);
 			}).send(sc.sessionID, nid);
 		}
 		// END of node load ///////////
@@ -156,7 +166,12 @@ package com.graphmind
 					requestData.success(_result.result, requestData);
 				},
 				function(error:FaultEvent):void {
-					Alert.show("Views cannot load: " + requestData.viewsData.view_name + requestData.viewsData.parent.source + error, "GraphMind");
+					alertErrorMessage(
+						"Views cannot loaded: " + requestData.viewsData.view_name,
+						"no permission for this operation", 
+						requestData.viewsData.parent.source.toString(), 
+						error.toString()
+					);
 				}
 			).send(
 				requestData.viewsData.parent.sourceSessionID,
@@ -183,7 +198,12 @@ package com.graphmind
 					requestData.success(_result.result, requestData);
 				},
 				function(error:FaultEvent):void {
-					Alert.show("Item cannot loaded: " + requestData.nodeItemData.type + ":" + requestData.nodeItemData.getDrupalID(), "GraphMind"); 
+					alertErrorMessage(
+						'Item cannot loaded. Type:' + requestData.nodeItemData.type + ' Id:' + requestData.nodeItemData.getDrupalID(),
+						'no permission or missing object',
+						requestData.nodeItemData.source.toString(),
+						error.toString()
+					);
 				} 
 			).send(
 				requestData.nodeItemData.source.sessionID,
@@ -204,11 +224,29 @@ package com.graphmind
 				sc.url,
 				success,
 				function(error:FaultEvent):void {
-					Alert.show("Saving is failed.", "Error");
+					alertErrorMessage('Saving is failed.', 'network connection error', sc.toString(), error.toString());
 				}
 			).send(sc.sessionID, nid, mm, lastSaveTimestamp / 1000);
 		}
 		// END exporting //////////////
+		
+		
+		/**
+		 * Print a user friendly dialog box.
+		 * 
+		 * @param string msg - basic error message
+		 * @param string details - short reason or tips
+		 * @param string connectionInfo - connection info (url, username, sessid)
+		 * @param string error - detailed error message from the event object
+		 */
+		public function alertErrorMessage(msg:String, details:String, connectionInfo:String = null, error:String = null):void {
+			Alert.show(
+				msg + 
+				"\nDetails: " +	details + 
+				(connectionInfo != null ? ("\n\nConnection: " + connectionInfo) : '') + 
+				(error != null ? ("\n\nMsg: " + error) : ''), 
+			'Graphmind warning');
+		}
 		
 	}
 }
