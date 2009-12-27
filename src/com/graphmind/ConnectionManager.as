@@ -176,7 +176,8 @@ package com.graphmind
 			).send(
 				requestData.viewsData.parent.sourceSessionID,
 				requestData.viewsData.view_name,
-				requestData.viewsData.fields,
+				// Fields are not supported in Services for D6
+				null, //requestData.viewsData.fields.toString().split(','),
 				[requestData.viewsData.args],
 				requestData.viewsData.offset,
 				requestData.viewsData.limit

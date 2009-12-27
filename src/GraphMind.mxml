@@ -109,9 +109,9 @@
 						<mx:FormItem label="Arguments">
 							<mx:TextInput id="view_arguments"/>
 						</mx:FormItem>
-						<mx:FormItem label="Fields">
+						<!--<mx:FormItem label="Fields">
 							<mx:TextInput id="view_fields"/>
-						</mx:FormItem>
+						</mx:FormItem>-->
 						<mx:FormItem label="Offset">
 							<mx:TextInput id="view_offset" text="0"/>
 						</mx:FormItem>
@@ -119,7 +119,7 @@
 							<mx:TextInput id="view_limit" text="10"/>
 						</mx:FormItem>
 						<mx:ControlBar>
-							<mx:Button label="Submit" click="StageManager.getInstance().onLoadViewSubmitClick(event);"
+							<mx:Button label="Submit" click="{StageManager.getInstance().onLoadViewSubmitClick(event);}"
 								icon="@Embed(source='assets/images/accept.png')"/>
 							<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"
 								icon="@Embed(source='assets/images/cancel.png')"/>

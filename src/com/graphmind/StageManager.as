@@ -163,7 +163,8 @@ package com.graphmind
 			//var viewsList:ViewsList = new ViewsList();
 			var viewsData:ViewsList = new ViewsList();
 			viewsData.args   	= stage.view_arguments.text;
-			viewsData.fields 	= stage.view_fields.text;
+			// Fields are not supported in Services for D6
+			// viewsData.fields 	= stage.view_fields.text;
 			viewsData.limit     = parseInt(stage.view_limit.text);
 			viewsData.offset    = parseInt(stage.view_offset.text);
 			viewsData.view_name = stage.view_name.text;
