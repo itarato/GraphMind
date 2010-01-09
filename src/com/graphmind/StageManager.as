@@ -263,7 +263,7 @@ package com.graphmind
 		}
 		
 		public function onDumpClick():void {
-			stage.freemindExportTextarea.text = GraphMindManager.getInstance().exportToFreeMindFormat();
+			stage.node_save_panel.freemindExportTextarea.text = GraphMindManager.getInstance().exportToFreeMindFormat();
 		}
 		
 		public function onExportClick():void {

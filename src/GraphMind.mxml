@@ -193,22 +193,10 @@
 		id="panelMain">
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all">
-			<components:NodeInfo        id="node_info_panel"/>
-			<components:NodeAttributes  id="node_attributes_panel" />
+			<components:NodeInfo        id="node_info_panel"        />
+			<components:NodeAttributes  id="node_attributes_panel"  />
 			<components:NodeConnections id="node_connections_panel" />
-			
-			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%"
-				icon="@Embed(source='assets/images/disk.png')">
-			
-				<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
-				<mx:Button x="10" y="10" label="Save"
-					click="StageManager.getInstance().onSaveClick();"
-					icon="@Embed(source='assets/images/disk.png')"/>
-				<mx:Button x="104" y="10" label="Dump XML"
-					click="StageManager.getInstance().onDumpClick();"
-					icon="@Embed(source='assets/images/tag.png')"/>
-				
-			</mx:Canvas>
+			<components:NodeSave        id="node_save_panel"        />
 		</mx:Accordion>
 		
 	</mx:Panel>
