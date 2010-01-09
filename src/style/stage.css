@@ -1,0 +1,18 @@
+/* CSS file */
+
+/* Ritch text editor */
+RichTextEditor {
+	borderAlpha: 0;
+	dropShadowEnabled: false;
+	borderStyle: none;
+}
+
+.toolPanel {
+	 border-color: #0174BB;
+	 border-alpha: 1;
+	 color: #FFFFFF;
+}
+
+.toolPanelAccordion {
+	color: #333333;
+}

@@ -2,8 +2,10 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
 	applicationComplete="init();"
 	backgroundColor="#FFFFFF"
-	color="#333333" xmlns:components="components.*">
+	color="#333333" 
+	xmlns:components="components.*">
 	
+	<mx:Style source="style/stage.css" />
 		
 	<mx:Script>
 		<![CDATA[
@@ -62,7 +64,7 @@
 			 * Triggered event when the application is ready.
 			 */
 			private function init():void {
-				var md:MonsterDebugger = new MonsterDebugger(this);
+//				var md:MonsterDebugger = new MonsterDebugger(this);
 				
 				// Init managers
 				StageManager.getInstance().initStage(this);
@@ -88,6 +90,7 @@
 			<mx:SetProperty target="{icon_outer_container}" name="visible" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<mx:Panel width="700" height="400" 
+					styleName="toolPanel"
 					layout="absolute" horizontalCenter="0" verticalCenter="0" 
 					title="Attach view"
 					id="panelLoadView">
@@ -190,9 +193,10 @@
 		layout="absolute" 
 		title="Dashboard" 
 		left="10" top="10" bottom="10" 
-		id="panelMain">
+		id="panelMain"
+		styleName="toolPanel">
 	
-		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all">
+		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" styleName="toolPanelAccordion">
 			<components:NodeInfo        id="node_info_panel"        />
 			<components:NodeAttributes  id="node_attributes_panel"  />
 			<components:NodeConnections id="node_connections_panel" />
