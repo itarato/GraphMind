@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
 	applicationComplete="init();"
 	backgroundColor="#FFFFFF"
-	color="#333333">
+	color="#333333" xmlns:components="components.*">
 	
 		
 	<mx:Script>
@@ -193,21 +193,7 @@
 		id="panelMain">
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all">
-			<mx:Canvas label="Node info" width="100%" height="100%" horizontalScrollPolicy="off"
-				icon="@Embed(source='assets/images/cog.png')">
-				<mx:RichTextEditor title="Node title" width="100%" height="240" left="0" top="0"
-					id="nodeLabelRTE">
-				</mx:RichTextEditor>
-				<mx:Button x="10" y="248" label="Save node title" click="StageManager.getInstance().onNodeLabelRTESave();" icon="@Embed(source='assets/images/pencil.png')"/>
-				<mx:Label x="10" y="288" text="External link"/>
-				<mx:HRule x="10" y="278" width="198"/>
-				<mx:TextInput x="10" y="314" width="198" id="link"/>
-				<mx:Button x="10" y="344" label="Save link" click="StageManager.getInstance().onSaveLink();" icon="@Embed(source='assets/images/anchor.png')"/>
-				<mx:HRule x="10" y="374" width="198"/>
-				<mx:Button x="10" y="384" label="Toggle cloud" icon="@Embed(source='assets/images/weather_clouds.png')">
-					<mx:click>{StageManager.getInstance().onToggleCloudClick();}</mx:click>
-				</mx:Button>
-			</mx:Canvas>
+			<components:NodeInfo id="node_info_panel"/>
 			<mx:Canvas label="Attributes" width="100%" height="100%" visible="false"
 				icon="@Embed(source='assets/images/table.png')">
 			

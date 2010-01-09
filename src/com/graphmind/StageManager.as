@@ -62,7 +62,7 @@ package com.graphmind
 			_application.desktop_wrapper.verticalScrollPosition = (stage.desktop.height - stage.desktop_wrapper.height) / 2;
 			
 			// Node title RTE editor's default color
-			stage.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
+			stage.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 		}
 		
 		/**
@@ -335,13 +335,13 @@ package com.graphmind
 		public function onNodeLabelRTESave():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.title = stage.nodeLabelRTE.htmlText;
+			lastSelectedNode.title = stage.node_info_panel.nodeLabelRTE.htmlText;
 		}
 		
 		public function onSaveLink():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.link = stage.link.text;
+			lastSelectedNode.link = stage.node_info_panel.link.text;
 		}
 		
 		public function checkLastSelectedNodeIsExists():Boolean {

@@ -441,9 +441,9 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			StageManager.getInstance().stage.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
+			StageManager.getInstance().stage.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
 			
-			StageManager.getInstance().stage.link.text = _nodeItemData.getPath();
+			StageManager.getInstance().stage.node_info_panel.link.text = _nodeItemData.getPath();
 			
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
