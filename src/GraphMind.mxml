@@ -193,63 +193,10 @@
 		id="panelMain">
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all">
-			<components:NodeInfo id="node_info_panel"/>
-			<mx:Canvas label="Attributes" width="100%" height="100%" visible="false"
-				icon="@Embed(source='assets/images/table.png')">
+			<components:NodeInfo        id="node_info_panel"/>
+			<components:NodeAttributes  id="node_attributes_panel" />
+			<components:NodeConnections id="node_connections_panel" />
 			
-				<mx:DataGrid width="100%" 
-					dataProvider="{StageManager.getInstance().selectedNodeData}" 
-					top="0" bottom="190" left="0"
-					id="attributesDataGrid">
-					<mx:click>
-						<![CDATA[
-							if (attributesDataGrid.selectedItem) {
-								attributes_update_param.text = attributesDataGrid.selectedItem.key;
-								attributes_update_value.text = attributesDataGrid.selectedItem.value;
-							} 
-						]]>
-					</mx:click>
-					<mx:columns>
-						<mx:DataGridColumn headerText="Key" dataField="key" width="90"/>
-						<mx:DataGridColumn headerText="Value" dataField="value"/>
-					</mx:columns>
-				</mx:DataGrid>
-				<mx:Button label="Save" left="10" bottom="10" 
-					click="StageManager.getInstance().onAddOrUpdateClick(event);"
-					tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
-				<mx:Label text="Value" left="10" bottom="108"/>
-				<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" width="198"/>
-				<mx:Label text="Parameter" left="10" bottom="164"/>
-				<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" width="198" height="60"/>
-				<mx:Button label="Remove"
-					tabIndex="23"
-					click="StageManager.getInstance().onRemoveAttributeClick(event);" left="90" bottom="10" icon="@Embed(source='assets/images/delete.png')"/>
-				
-			</mx:Canvas>
-			<mx:Canvas label="Connections" width="100%" height="100%"
-				icon="@Embed(source='assets/images/connect.png')">
-					
-				<!-- Connect to new Drupal site form -->
-				<mx:TextInput id="connectFormURL" x="10" width="162" bottom="152" text="http://" tabIndex="10"/>
-				<mx:TextInput id="connectFormUsername" x="10" width="162" bottom="96" tabIndex="11"/>
-				<mx:TextInput id="connectFormPassword" x="10" width="162" bottom="40" displayAsPassword="true" tabIndex="12"/>
-				<mx:Button x="10" label="Add new site" bottom="10" 
-					click="StageManager.getInstance().onConnectFormSubmit();" 
-					id="button1"
-					tabIndex="3" icon="@Embed(source='assets/images/world_add.png')"/>
-				<mx:Label x="10" text="Password:" bottom="70" id="label3"/>
-				<mx:Label x="10" text="Username:" bottom="126" id="label2"/>
-				<mx:Label x="10" text="URL.:" bottom="182" id="label1"/>
-				<mx:DataGrid width="100%" top="0" bottom="208" left="0"
-					dataProvider="{SiteConnection.connections}">
-					<mx:columns>
-						<mx:DataGridColumn headerText="ID" dataField="id" width="30"/>
-						<mx:DataGridColumn headerText="Name" dataField="shortName"/>
-					</mx:columns>
-				</mx:DataGrid>
-				<!-- END form -->
-			
-			</mx:Canvas>
 			<mx:Canvas label="Save (export to FreeMind)" width="100%" height="100%"
 				icon="@Embed(source='assets/images/disk.png')">
 			

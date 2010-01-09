@@ -133,9 +133,9 @@ package com.graphmind
 		 */
 		public function onConnectFormSubmit():void {
 			var sc:SiteConnection = SiteConnection.createSiteConnection(
-				_application.connectFormURL.text,
-				_application.connectFormUsername.text,
-				_application.connectFormPassword.text
+				_application.node_connections_panel.connectFormURL.text,
+				_application.node_connections_panel.connectFormUsername.text,
+				_application.node_connections_panel.connectFormPassword.text
 			);
 			ConnectionManager.getInstance().connectToSite(sc);
 		}
@@ -274,19 +274,19 @@ package com.graphmind
 		public function onAddOrUpdateClick(event:MouseEvent):void {
 			if (!lastSelectedNode) baseNode.selectNode();
 			
-			lastSelectedNode.data[stage.attributes_update_param.text] = stage.attributes_update_value.text;
+			lastSelectedNode.data[stage.node_attributes_panel.attributes_update_param.text] = stage.node_attributes_panel.attributes_update_value.text;
 			lastSelectedNode.selectNode();
 			
-			stage.attributes_update_param.text = stage.attributes_update_value.text = '';
+			stage.node_attributes_panel.attributes_update_param.text = stage.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
 		public function onRemoveAttributeClick(event:MouseEvent):void {
-			if (!lastSelectedNode || stage.attributes_update_param.text.length == 0) return;
+			if (!lastSelectedNode || stage.node_attributes_panel.attributes_update_param.text.length == 0) return;
 			
-			lastSelectedNode.dataDelete(stage.attributes_update_param.text);
+			lastSelectedNode.dataDelete(stage.node_attributes_panel.attributes_update_param.text);
 			lastSelectedNode.selectNode();
 			
-			stage.attributes_update_param.text = stage.attributes_update_value.text = '';
+			stage.node_attributes_panel.attributes_update_param.text = stage.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
 		public function toggleFullScreen():void {
