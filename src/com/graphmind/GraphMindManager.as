@@ -120,12 +120,10 @@ package com.graphmind
 		}
 
 		public function isEditable():Boolean {
-			trace('GET');
 			return _isEditable;
 		}
 		
 		public function setEditMode(editable:Boolean):void {
-			trace('* SET *');
 			_isEditable = editable;
 			if (!editable) {
 				StageManager.getInstance().stage.currentState = 'only_view_mode';

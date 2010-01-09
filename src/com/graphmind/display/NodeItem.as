@@ -228,6 +228,7 @@ package com.graphmind.display
 		}
 		
 		private function onIconHasChildClick(event:MouseEvent):void {
+			StageManager.getInstance().isChanged = true;
 			if (!this._isCollapsed) {
 				collapse();
 			} else {

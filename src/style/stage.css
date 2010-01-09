@@ -31,3 +31,10 @@ RichTextEditor {
 Button {
 	fillColors: #CCCCCC, #CCCCCC, #CCCCCC, #CCCCCC;
 }
+
+/* Preview window */
+Canvas.previewWindow {
+	border-color: #555555;
+	border-thickness: 1;
+	border-style: solid;
+}

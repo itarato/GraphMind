@@ -212,11 +212,11 @@
 				mouseOut="StageManager.getInstance().isDesktopDragged = false;">
 				
 				<!-- sublayer for cloud grapics -->
-				<mx:Canvas id="desktop_cloud" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
+				<mx:Canvas id="desktop_cloud" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
 					scaleX="{desktop_scale.value/100}"
 					scaleY="{desktop_scale.value/100}"/>
 				
-				<mx:Canvas id="desktop" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
+				<mx:Canvas id="desktop" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
 					mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
 					mouseUp="StageManager.getInstance().isDesktopDragged = false;"
 					mouseMove="StageManager.getInstance().onDragDesktop(event);"
@@ -224,6 +224,12 @@
 					scaleY="{desktop_scale.value/100}"/>
 			</mx:Canvas>
 			<!-- END mindmap editor -->
+			
+			<!-- Preview window -->
+			<mx:Canvas styleName="previewWindow" bottom="18" right="18" width="182" height="122" alpha="1" blendMode="{BlendMode.DIFFERENCE}">
+				<mx:UIComponent id="previewWindow" width="180" height="120"/>
+			</mx:Canvas>
+			<!-- END Preview window -->
 			
 			<mx:Canvas height="30" left="0" right="0" top="0"
 				backgroundAlpha="0.5"

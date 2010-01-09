@@ -10,8 +10,12 @@ package com.graphmind
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.Log;
 	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.StageDisplayState;
 	import flash.events.MouseEvent;
+	import flash.utils.clearTimeout;
+	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -26,6 +30,8 @@ package com.graphmind
 		private static var _instance:StageManager = null;
 		[Bindable]
 		public static var DEFAULT_DESKTOP_HEIGHT:int = 2000;
+		[Bindable]
+		public static var DEFAULT_DESKTOP_WIDTH:int = 3000;
 		
 		// The stage object
 		private var _application:GraphMind = null;
@@ -37,9 +43,13 @@ package com.graphmind
 		public var isDesktopDragged:Boolean = false;
 		private var _desktopDragInfo:DesktopDragInfo = new DesktopDragInfo();
 		[Bindable]
-		public var isChanged:Boolean = false;
+		private var _isChanged:Boolean = false;
 		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
+		
+		private var previewBitmapData:BitmapData = new BitmapData(2880, 2000, true);
+		private var previewBitmap:Bitmap = new Bitmap(previewBitmapData);
+		private var previewTimer:uint;
 		
 		public function StageManager() {
 		}
@@ -63,6 +73,11 @@ package com.graphmind
 			
 			// Node title RTE editor's default color
 			stage.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
+			
+			// Preview window init
+			previewBitmap.width = 180;
+			previewBitmap.height = 120;
+			stage.previewWindow.addChild(previewBitmap);
 		}
 		
 		/**
@@ -256,6 +271,7 @@ package com.graphmind
 			baseNode.x = 0;
 			baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
 			baseNode.refreshChildNodePosition();
+			refreshPreviewWindow();
 		}
 		
 		public function onSaveClick():void {
@@ -383,6 +399,27 @@ package com.graphmind
 			if (!checkLastSelectedNodeIsExists()) return;
 			
 			lastSelectedNode.toggleCloud(true);
+		}
+		
+		public function refreshPreviewWindow():void {
+			// Timeout can help on performance
+			clearTimeout(previewTimer);
+			previewTimer = setTimeout(function():void {
+				previewBitmapData = new BitmapData(2880, 2000, false, 0x333333);
+				previewBitmap.bitmapData = previewBitmapData;
+				previewBitmapData.draw(stage.desktop_cloud);
+				previewBitmapData.draw(stage.desktop);
+				trace('refresh');
+			}, 400);
+		}
+		
+		public function set isChanged(changed:Boolean):void {
+			_isChanged = changed;
+		}
+		
+		[Bindable]
+		public function get isChanged():Boolean {
+			return _isChanged;
 		}
 	}
 }
