@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" label="Connections" width="100%" height="100%"
+	icon="@Embed(source='assets/images/connect.png')">
+
+	<mx:Script>
+		<![CDATA[
+			import com.graphmind.StageManager;
+			import com.graphmind.net.SiteConnection;
+		]]>
+	</mx:Script>
+					
+	<!-- Connect to new Drupal site form -->
+	<mx:TextInput id="connectFormURL" x="10" width="162" bottom="152" text="http://" tabIndex="10"/>
+	<mx:TextInput id="connectFormUsername" x="10" width="162" bottom="96" tabIndex="11"/>
+	<mx:TextInput id="connectFormPassword" x="10" width="162" bottom="40" displayAsPassword="true" tabIndex="12"/>
+	<mx:Button x="10" label="Add new site" bottom="10" 
+		click="StageManager.getInstance().onConnectFormSubmit();" 
+		id="button1"
+		tabIndex="3" icon="@Embed(source='assets/images/world_add.png')"/>
+	<mx:Label x="10" text="Password:" bottom="70" id="label3"/>
+	<mx:Label x="10" text="Username:" bottom="126" id="label2"/>
+	<mx:Label x="10" text="URL.:" bottom="182" id="label1"/>
+	<mx:DataGrid width="100%" top="0" bottom="208" left="0"
+		dataProvider="{SiteConnection.connections}">
+		<mx:columns>
+			<mx:DataGridColumn headerText="ID" dataField="id" width="30"/>
+			<mx:DataGridColumn headerText="Name" dataField="shortName"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<!-- END form -->
+			
+</mx:Canvas>

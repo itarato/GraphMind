@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" label="Attributes" width="100%" height="100%" visible="false"
+	icon="@Embed(source='assets/images/table.png')">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.graphmind.StageManager;
+		]]>
+	</mx:Script>
+			
+	<mx:DataGrid width="100%" 
+		dataProvider="{StageManager.getInstance().selectedNodeData}" 
+		top="0" bottom="190" left="0"
+		id="attributesDataGrid">
+		<mx:click>
+			<![CDATA[
+				if (attributesDataGrid.selectedItem) {
+					attributes_update_param.text = attributesDataGrid.selectedItem.key;
+					attributes_update_value.text = attributesDataGrid.selectedItem.value;
+				} 
+			]]>
+		</mx:click>
+		<mx:columns>
+			<mx:DataGridColumn headerText="Key" dataField="key" width="90"/>
+			<mx:DataGridColumn headerText="Value" dataField="value"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Button label="Save" left="10" bottom="10" 
+		click="StageManager.getInstance().onAddOrUpdateClick(event);"
+		tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
+	<mx:Label text="Value" left="10" bottom="108"/>
+	<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" width="198"/>
+	<mx:Label text="Parameter" left="10" bottom="164"/>
+	<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" width="198" height="60"/>
+	<mx:Button label="Remove"
+		tabIndex="23"
+		click="StageManager.getInstance().onRemoveAttributeClick(event);" left="90" bottom="10" icon="@Embed(source='assets/images/delete.png')"/>
+				
+</mx:Canvas>
