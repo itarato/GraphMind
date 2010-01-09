@@ -24,5 +24,10 @@ RichTextEditor {
 	padding-top: 4;
 	padding-bottom: 4;
 	padding-left: 4;
-	border-thickness: 0;
+	border-color: #333333;
+}
+
+/* Button global style */
+Button {
+	fillColors: #CCCCCC, #CCCCCC, #CCCCCC, #CCCCCC;
 }

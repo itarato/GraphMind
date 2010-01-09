@@ -84,10 +84,7 @@
 	
 	<mx:states>
 		<mx:State name="load_view_state">
-			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
-			<mx:SetProperty name="visible" target="{desktop_wrapper}" value="false"/>
-			<mx:SetProperty target="{panelMain}" name="visible" value="false"/>
-			<mx:SetProperty target="{icon_outer_container}" name="visible" value="false"/>
+			<mx:SetProperty name="visible" target="{mainHBox}" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<mx:Panel width="700" height="400" 
 					styleName="toolPanel"
@@ -133,15 +130,12 @@
 		</mx:State>
 		
 		<mx:State name="load_item_state">
-			<mx:SetProperty name="visible" target="{desktop}" value="false"/>
-			<mx:SetProperty name="visible" target="{desktop_wrapper}" value="false"/>
-			<mx:SetProperty target="{panelMain}" name="visible" value="false"/>
-			<mx:SetProperty target="{icon_outer_container}" name="visible" value="false"/>
+			<mx:SetProperty name="visible" target="{mainHBox}" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<mx:Panel horizontalCenter="0" verticalCenter="0"
 					id="panelLoadItem"
-					layout="absolute" width="400" height="300" title="Load unique item">
-					<mx:Form x="10" y="10" width="360" height="240">
+					layout="absolute" width="600" height="300" title="Load unique item">
+					<mx:Form left="10" top="10" right="10" height="240">
 						<mx:FormHeading label="Item parameters" width="316"/>
 						<mx:FormItem label="Source">
 							<mx:ComboBox dataProvider="{SiteConnection.connections}" 
@@ -188,17 +182,20 @@
 		color="#FFFFFF"/>
 	-->
 	<!-- END textarea -->
+
+	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
 	
-	<mx:HDividedBox width="100%" height="100%">
+	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<mx:Canvas width="240" height="100%" styleName="toolPanel">
 		
-			<mx:Canvas id="panelMain" width="100%" height="100%">
+			<mx:Canvas id="panelMain" width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
 			
 				<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" 
 					styleName="toolPanelAccordion"
 					headerStyleName="toolPanelAccordionHeader">
 					<components:NodeInfo        id="node_info_panel"        />
 					<components:NodeAttributes  id="node_attributes_panel"  />
+					<components:NodeIcons       id="icon_outer_container"   />
 					<components:NodeConnections id="node_connections_panel" />
 					<components:NodeSave        id="node_save_panel"        />
 				</mx:Accordion>
@@ -208,10 +205,8 @@
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%">
 
-			<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
-			
 			<!-- Mindmap editor area -->
-			<mx:Canvas right="45" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
+			<mx:Canvas right="0" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
 				mouseUp="StageManager.getInstance().closeDragAndDrop();"
 				mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
 				mouseOut="StageManager.getInstance().isDesktopDragged = false;">
@@ -229,16 +224,6 @@
 					scaleY="{desktop_scale.value/100}"/>
 			</mx:Canvas>
 			<!-- END mindmap editor -->
-			
-			<!-- Icons -->
-			<mx:Canvas right="0" width="35" top="30" bottom="0" horizontalScrollPolicy="off" id="icon_outer_container">
-				<mx:VBox>
-					<mx:Repeater dataProvider="{icons}" id="icon_repeater">
-						<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" click="StageManager.getInstance().onIconClick(event);"/>
-					</mx:Repeater>
-				</mx:VBox>
-			</mx:Canvas>
-			<!-- END icons -->
 			
 			<mx:Canvas height="30" left="0" right="0" top="0"
 				backgroundAlpha="0.5"
