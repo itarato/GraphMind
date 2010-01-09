@@ -10,9 +10,9 @@
 	</mx:Script>
 					
 	<!-- Connect to new Drupal site form -->
-	<mx:TextInput id="connectFormURL" x="10" width="162" bottom="152" text="http://" tabIndex="10"/>
-	<mx:TextInput id="connectFormUsername" x="10" width="162" bottom="96" tabIndex="11"/>
-	<mx:TextInput id="connectFormPassword" x="10" width="162" bottom="40" displayAsPassword="true" tabIndex="12"/>
+	<mx:TextInput id="connectFormURL" left="10" right="10" bottom="152" text="http://" tabIndex="10"/>
+	<mx:TextInput id="connectFormUsername" left="10" right="10" bottom="96" tabIndex="11"/>
+	<mx:TextInput id="connectFormPassword" left="10" right="10" bottom="40" displayAsPassword="true" tabIndex="12"/>
 	<mx:Button x="10" label="Add new site" bottom="10" 
 		click="StageManager.getInstance().onConnectFormSubmit();" 
 		id="button1"

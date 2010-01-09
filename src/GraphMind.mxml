@@ -189,65 +189,79 @@
 	-->
 	<!-- END textarea -->
 	
-	<mx:Panel width="240" 
-		layout="absolute" 
-		title="Dashboard" 
-		left="10" top="10" bottom="10" 
-		id="panelMain"
-		styleName="toolPanel">
-	
-		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" styleName="toolPanelAccordion">
-			<components:NodeInfo        id="node_info_panel"        />
-			<components:NodeAttributes  id="node_attributes_panel"  />
-			<components:NodeConnections id="node_connections_panel" />
-			<components:NodeSave        id="node_save_panel"        />
-		</mx:Accordion>
+	<mx:HDividedBox width="100%" height="100%">
+		<mx:Canvas width="240" height="100%" styleName="toolPanel">
 		
-	</mx:Panel>
-	
-	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
-	
-	<!-- Mindmap editor area -->
-	<mx:Canvas right="55" top="10" bottom="10" left="258" id="desktop_wrapper" focusEnabled="true"
-		mouseUp="StageManager.getInstance().closeDragAndDrop();"
-		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
-		mouseOut="StageManager.getInstance().isDesktopDragged = false;">
-		
-		<!-- sublayer for cloud grapics -->
-		<mx:Canvas id="desktop_cloud" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
-			scaleX="{desktop_scale.value/100}"
-			scaleY="{desktop_scale.value/100}"/>
-		
-		<mx:Canvas id="desktop" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
-			mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
-			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
-			mouseMove="StageManager.getInstance().onDragDesktop(event);"
-			scaleX="{desktop_scale.value/100}"
-			scaleY="{desktop_scale.value/100}"/>
-	</mx:Canvas>
-	<!-- END mindmap editor -->
-	
-	<!-- Icons -->
-	<mx:Canvas right="10" width="35" top="10" bottom="10" horizontalScrollPolicy="off" id="icon_outer_container">
-		<mx:VBox>
-			<mx:Repeater dataProvider="{icons}" id="icon_repeater">
-				<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" click="StageManager.getInstance().onIconClick(event);"/>
-			</mx:Repeater>
-		</mx:VBox>
-	</mx:Canvas>
-	<!-- END icons -->
-	
-	<mx:LinkButton left="258" y="10" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"
-		id="fullScreenLinkButton"/>
-	<mx:LinkButton x="344" y="10" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#880000"
-		visible="{StageManager.getInstance().isChanged}"
-		id="saveLinkButton"/>
-	
-	<mx:HSlider x="400" y="10" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
-		value="100"
-		id="desktop_scale"/>
-	
-	<mx:Label x="560" y="12" text="{desktop_scale.value + '%'}"
-		id="desktopScaleLabel"/>
+			<mx:Canvas id="panelMain" width="100%" height="100%">
+			
+				<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" 
+					styleName="toolPanelAccordion"
+					headerStyleName="toolPanelAccordionHeader">
+					<components:NodeInfo        id="node_info_panel"        />
+					<components:NodeAttributes  id="node_attributes_panel"  />
+					<components:NodeConnections id="node_connections_panel" />
+					<components:NodeSave        id="node_save_panel"        />
+				</mx:Accordion>
+				
+			</mx:Canvas>
+
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%">
+
+			<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
+			
+			<!-- Mindmap editor area -->
+			<mx:Canvas right="45" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
+				mouseUp="StageManager.getInstance().closeDragAndDrop();"
+				mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
+				mouseOut="StageManager.getInstance().isDesktopDragged = false;">
+				
+				<!-- sublayer for cloud grapics -->
+				<mx:Canvas id="desktop_cloud" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
+					scaleX="{desktop_scale.value/100}"
+					scaleY="{desktop_scale.value/100}"/>
+				
+				<mx:Canvas id="desktop" width="3000" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
+					mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
+					mouseUp="StageManager.getInstance().isDesktopDragged = false;"
+					mouseMove="StageManager.getInstance().onDragDesktop(event);"
+					scaleX="{desktop_scale.value/100}"
+					scaleY="{desktop_scale.value/100}"/>
+			</mx:Canvas>
+			<!-- END mindmap editor -->
+			
+			<!-- Icons -->
+			<mx:Canvas right="0" width="35" top="30" bottom="0" horizontalScrollPolicy="off" id="icon_outer_container">
+				<mx:VBox>
+					<mx:Repeater dataProvider="{icons}" id="icon_repeater">
+						<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" click="StageManager.getInstance().onIconClick(event);"/>
+					</mx:Repeater>
+				</mx:VBox>
+			</mx:Canvas>
+			<!-- END icons -->
+			
+			<mx:Canvas height="30" left="0" right="0" top="0"
+				backgroundAlpha="0.5"
+				backgroundColor="0x000000"
+				color="0xFFFFFF">
+				<mx:HBox paddingTop="4" paddingLeft="4">
+					<mx:LinkButton top="4" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"
+						id="fullScreenLinkButton"/>
+					
+					<mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
+						value="100"
+						id="desktop_scale"/>
+					
+					<mx:Label paddingTop="2" text="{desktop_scale.value + '%'}"
+						id="desktopScaleLabel"/>
+						
+					<mx:LinkButton top="4" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#FFDBA1"
+						visible="{StageManager.getInstance().isChanged}"
+						id="saveLinkButton"/>
+				</mx:HBox>
+			</mx:Canvas>
+			
+		</mx:Canvas>
+	</mx:HDividedBox>
 		
 </mx:Application>

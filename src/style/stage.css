@@ -7,12 +7,22 @@ RichTextEditor {
 	borderStyle: none;
 }
 
-.toolPanel {
-	 border-color: #0174BB;
-	 border-alpha: 1;
-	 color: #FFFFFF;
-}
-
+/* Main accordion panels */
 .toolPanelAccordion {
 	color: #333333;
+}
+
+/* Header style name for accordion menu */
+.toolPanelAccordionHeader {
+	fill-colors: #0174BB, #00598F;
+	fill-alphas: 1, 1;
+	color: #FFFFFF;
+	selected-fill-colors: #555555, #333333;
+	selection-color: #FFFFFF;
+	highlightAlphas: 0, 0;
+	textRollOverColor: #FFDBA1;
+	padding-top: 4;
+	padding-bottom: 4;
+	padding-left: 4;
+	border-thickness: 0;
 }
