@@ -2,6 +2,7 @@ package com.graphmind.display
 {
 	import com.graphmind.ConnectionManager;
 	import com.graphmind.GraphMindManager;
+	import com.graphmind.PluginManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.display.assets.ItemBaseComponent;
@@ -156,9 +157,18 @@ package com.graphmind.display
 				cms.push({title: 'Update node', event: onUpdateNodeSelect, separator: false});
 			}
 			
+			// Extend context menu items by Plugin provided menu items
+			PluginManager.alter('node_context_menu', {data: cms});
+			
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
-				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
+				cmi.addEventListener(
+					ContextMenuEvent.MENU_ITEM_SELECT, 
+					function(_event:ContextMenuEvent):void {
+						selectNode();
+						cmData.event(_event);
+					}
+				);
 				contextMenu.customItems.push(cmi);
 			}
 			
@@ -198,17 +208,14 @@ package com.graphmind.display
 		}
 		
 		private function onAddNodeSelect(event:ContextMenuEvent):void {
-			selectNode();
 			loadNode();
 		}
 		
 		private function onAddDrupalItemSelect(event:ContextMenuEvent):void {
-			selectNode();
 			loadItem();
 		}
 		
 		private function onAddViewsListSelect(event:ContextMenuEvent):void {
-			selectNode();
 			StageManager.getInstance().stage.view_arguments.text = _nodeItemData.getDrupalID();
 			loadViews();
 		}
@@ -223,7 +230,6 @@ package com.graphmind.display
 		}
 		
 		private function onClick(event:MouseEvent):void {
-			//Log.info('node-click');
 			selectNode();
 		}
 		
@@ -780,6 +786,10 @@ package com.graphmind.display
 				if (child._nodeItemData.equalTo(data, type)) return child;
 			}
 			return null;
+		}
+		
+		public static function getLastSelectedNode():NodeItem {
+			return StageManager.getInstance().lastSelectedNode;
 		}
 	}
 }

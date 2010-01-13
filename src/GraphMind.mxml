@@ -19,6 +19,9 @@
 			import com.graphmind.ViewsManager;
 			import com.graphmind.data.ViewsCollection;
 			import com.graphmind.StageManager;
+			
+			// Load plugins
+			import plugins.*;
 		
 			import mx.effects.easing.Bounce;
 			

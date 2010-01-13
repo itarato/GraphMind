@@ -7,7 +7,7 @@ package com.graphmind
 	import mx.core.Application;
 	import mx.rpc.events.ResultEvent;
 	
-	import nl.demonsters.debugger.MonsterDebugger;
+	import plugins.*;
 	
 	public class GraphMindManager
 	{
@@ -54,7 +54,11 @@ package com.graphmind
 		 */
 		public function initGraphMind():void {
 			baseSiteConnection = SiteConnection.createSiteConnection(getBaseDrupalURL());
+			
 			ConnectionManager.getInstance().connectToDrupal(baseSiteConnection.url, _init_GM_stage_connected);
+			
+			// Init plugins.
+			PluginManager.initPlugins(Application.application.parameters.plugins ? String(Application.application.parameters.plugins).split(',') : []);
 		}
 		
 		/**
