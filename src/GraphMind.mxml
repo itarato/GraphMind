@@ -163,14 +163,8 @@
 		</mx:State>
 		
 		<mx:State name="only_view_mode">
-			<mx:SetProperty name="visible" target="{panelMain}" value="false"/>
+			<mx:RemoveChild target="{toolPanel}"/>
 			<mx:SetProperty name="visible" target="{saveLinkButton}" value="false"/>
-			<mx:SetProperty name="visible" target="{icon_outer_container}" value="false"/>
-			<mx:SetStyle target="{desktop_wrapper}" name="left" value="10"/>
-			<mx:SetStyle target="{desktop_wrapper}" name="right" value="10"/>
-			<mx:SetStyle target="{fullScreenLinkButton}" name="left" value="10"/>
-			<mx:SetStyle target="{desktop_scale}" name="left" value="96"/>
-			<mx:SetStyle target="{desktopScaleLabel}" name="left" value="256"/>
 		</mx:State>
 	</mx:states>
 
@@ -186,7 +180,7 @@
 	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
 	
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
-		<mx:Canvas width="240" height="100%" styleName="toolPanel">
+		<mx:Canvas width="240" height="100%" styleName="toolPanel" id="toolPanel">
 		
 			<mx:Canvas id="panelMain" width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
 			
