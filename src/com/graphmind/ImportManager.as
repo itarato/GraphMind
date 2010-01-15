@@ -82,7 +82,7 @@ package com.graphmind
 				nodeItem.toggleCloud();
 			}
 			
-			StageManager.getInstance().isChanged = false;
+			StageManager.getInstance().isTreeChanged = false;
 			return nodeItem;
 		}
 

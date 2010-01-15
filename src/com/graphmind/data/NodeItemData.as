@@ -106,6 +106,10 @@ package com.graphmind.data {
 			data = new_data;
 		}
 		
+		public function dataAdd(attribute:String, value:String):void {
+			data[attribute] = value;
+		}
+		
 		public function equalTo(attributes:Object, nodeType:String):Boolean {
 			// @TODO add node source site filtering
 			return nodeType == type && getDrupalIDFromData(nodeType, attributes) == getDrupalID();

@@ -43,25 +43,32 @@ package com.graphmind
 		private static var _instance:StageManager = null;
 		[Bindable]
 		public static var DEFAULT_DESKTOP_HEIGHT:int = 2000;
+		// Flash Player 9 can handle maximum 2880 pixel width BitmapData:
+		// http://livedocs.adobe.com/flex/3/langref/flash/display/BitmapData.html#BitmapData().
 		[Bindable]
-		public static var DEFAULT_DESKTOP_WIDTH:int = 3000;
+		public static var DEFAULT_DESKTOP_WIDTH:int = 2880;
 		
-		// The stage object
-		public var lastSelectedNode:NodeItem = null;
-		public var baseNode:NodeItem = null;
-		public var dragAndDrop_sourceNodeItem:NodeItem;
-		public var isDragAndDrop:Boolean = false;
-		public var isPrepairedDragAndDrop:Boolean = false;
-		public var isDesktopDragged:Boolean = false;
+		// @TODO select base node when it's ready
+		// TODO add timer for normal stage refresh
+		public var activeNode:NodeItem = null;
+		public var baseNode:NodeItem   = null;
+		
+		public var dragAndDrop_sourceNode:NodeItem;
+		public var isNodeDragAndDrop:Boolean = false;
+		public var isPrepairedNodeDragAndDrop:Boolean = false;
+		
+		private var isDesktopDragged:Boolean = false;
 		private var _desktopDragInfo:DesktopDragInfo = new DesktopDragInfo();
+		
 		[Bindable]
-		private var _isChanged:Boolean = false;
+		private var _isTreeChanged:Boolean = false;
 		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
 		
-		private var previewBitmapData:BitmapData = new BitmapData(2880, 2000, true);
-		private var previewBitmap:Bitmap = new Bitmap(previewBitmapData);
-		private var previewTimer:uint;
+		// Preview window.
+		private var _previewBitmapData:BitmapData = new BitmapData(2880, 2000, true);
+		private var _previewBitmap:Bitmap = new Bitmap(_previewBitmapData);
+		private var _previewTimer:uint;
 		
 		public static function getInstance():StageManager {
 			if (_instance == null) {
@@ -82,9 +89,9 @@ package com.graphmind
 			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 			
 			// Preview window init
-			previewBitmap.width = 180;
-			previewBitmap.height = 120;
-			GraphMind.instance.mindmapCanvas.previewWindow.addChild(previewBitmap);
+			_previewBitmap.width = 180;
+			_previewBitmap.height = 120;
+			GraphMind.instance.mindmapCanvas.previewWindow.addChild(_previewBitmap);
 			
 			// Remove base context menu items (not perfect, though)
 			var cm:ContextMenu = new ContextMenu();
@@ -191,7 +198,7 @@ package com.graphmind
 			
 			var loaderData:TempViewLoadData = new TempViewLoadData();
 			loaderData.viewsData = viewsData;
-			loaderData.nodeItem = lastSelectedNode;
+			loaderData.nodeItem = activeNode;
 			loaderData.success  = onViewsItemsLoadSuccess;
 			
 			ConnectionManager.getInstance().viewListLoad(loaderData);
@@ -209,7 +216,7 @@ package com.graphmind
 		/**
 		 * Event on submitting item loading panel.
 		 */
-		public function onLoadItemSubmitClick(event:MouseEvent):void {
+		public function onClick_LoadItemSubmit():void {
 			var nodeItemData:NodeItemData = new NodeItemData(
 				{},
 				GraphMind.instance.panelLoadDrupalItem.item_type.selectedItem.data,
@@ -218,7 +225,7 @@ package com.graphmind
 			nodeItemData.drupalID = parseInt(GraphMind.instance.panelLoadDrupalItem.item_id.text);
 			
 			var loaderData:TempItemLoadData = new TempItemLoadData();
-			loaderData.nodeItem = lastSelectedNode;
+			loaderData.nodeItem = activeNode;
 			loaderData.nodeItemData = nodeItemData;
 			loaderData.success = onItemLoadSuccess;
 			
@@ -230,7 +237,7 @@ package com.graphmind
 		/**
 		 * Event for on item loader cancel.
 		 */
-		public function onLoadItemCancelClick(event:MouseEvent):void {
+		public function onClick_LoadItemCancel():void {
 			GraphMind.instance.currentState = '';
 		}
 		
@@ -283,7 +290,7 @@ package com.graphmind
 			refreshPreviewWindow();
 		}
 		
-		public function onSaveClick():void {
+		public function onClick_SaveGraphmindButton():void {
 			GraphMindManager.getInstance().save();
 		}
 		
@@ -296,25 +303,47 @@ package com.graphmind
 			Alert.show('Implement later');
 		}
 		
-		public function onAddOrUpdateClick(event:MouseEvent):void {
-			if (!lastSelectedNode) baseNode.selectNode();
+		public function onClick_NodeAttributeAddOrUpdateButton():void {
+			updateNodeAttribute(
+				activeNode,
+				GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text,
+				GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text
+			);
+		}
+		
+		public function updateNodeAttribute(node:NodeItem, attribute:String, value:String):void {
+			if (!node || !attribute) return;
 			
-			lastSelectedNode.data[GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text] = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text;
-			lastSelectedNode.selectNode();
+			node.dataAdd(attribute, value);
+			node.selectNode();
 			
 			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
-		public function onRemoveAttributeClick():void {
-			if (!lastSelectedNode || GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text.length == 0) return;
+		public function onClick_NodeAttributeRemoveButton():void {
+			removeNodeAttribute(activeNode, GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
+		}
+		
+		/**
+		 * Remove a node's attribute.
+		 */
+		public function removeNodeAttribute(node:NodeItem, attribute:String):void {
+			if (!node || attribute.length == 0) return;
 			
-			lastSelectedNode.dataDelete(GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
-			lastSelectedNode.selectNode();
+			node.dataDelete(attribute);
+			node.selectNode();
 			
 			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
-		public function toggleFullScreen():void {
+		public function onClick_FullscreenButton():void {
+			toggleFullscreenMode();
+		}
+		
+		/**
+		 * Toggle fullscreen mode.
+		 */
+		private function toggleFullscreenMode():void {
 			try {
 				
 				switch (Application.application.stage.displayState) {
@@ -325,9 +354,7 @@ package com.graphmind
 						Application.application.stage.displayState = StageDisplayState.FULL_SCREEN;
 						break;
 				}
-			} catch (e:Error) {
-				
-			}
+			} catch (e:Error) {}
 		}
 		
 		public function onDragAndDropImageMouseUp(event:MouseEvent):void {
@@ -337,40 +364,66 @@ package com.graphmind
 		}
 		
 		public function prepaireDragAndDrop():void {
-			isPrepairedDragAndDrop = true;
+			isPrepairedNodeDragAndDrop = true;
 		}
 		
 		public function openDragAndDrop(source:NodeItem):void {
-			isPrepairedDragAndDrop = false;
-			isDragAndDrop = true;
-			StageManager.getInstance().dragAndDrop_sourceNodeItem = source;
+			isPrepairedNodeDragAndDrop = false;
+			isNodeDragAndDrop = true;
+			StageManager.getInstance().dragAndDrop_sourceNode = source;
 			GraphMind.instance.dragAndDrop_shape.visible = true;
 			GraphMind.instance.dragAndDrop_shape.x = GraphMind.instance.mouseX - GraphMind.instance.dragAndDrop_shape.width / 2;
 			GraphMind.instance.dragAndDrop_shape.y = GraphMind.instance.mouseY - GraphMind.instance.dragAndDrop_shape.height / 2;
 			GraphMind.instance.dragAndDrop_shape.startDrag(false);
 		}
 		
-		public function closeDragAndDrop():void {
-			isDragAndDrop = false;
-			isPrepairedDragAndDrop = false;
+		public function onMouseUp_MindmapStage():void {
+			closeNodeDragAndDrop();
+		}
+		
+		public function onMouseDownOutside_MindmapStage():void {
+			closeNodeDragAndDrop();
+		}
+		
+		public function onMouseOut_MindmapStage():void {
+			closeDesktopDragAndDrop();
+		}
+		
+		public function onMouseUp_InnerMindmapStage():void {
+			closeDesktopDragAndDrop();
+		}
+		
+		/**
+		 * Finishes drag and drop session for a node.
+		 */
+		private function closeNodeDragAndDrop():void {
+			isNodeDragAndDrop = false;
+			isPrepairedNodeDragAndDrop = false;
 			GraphMind.instance.dragAndDrop_shape.visible = false;
-			dragAndDrop_sourceNodeItem = null;
+			dragAndDrop_sourceNode = null;
+		}
+		
+		/**
+		 * Finishes drag and drop session for the mindmap area.
+		 */
+		private function closeDesktopDragAndDrop():void {
+			StageManager.getInstance().isDesktopDragged = false;
 		}
 		
 		public function onNodeLabelRTESave():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.title = GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText;
+			activeNode.title = GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText;
 		}
 		
 		public function onSaveLink():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.link = GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text;
+			activeNode.link = GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text;
 		}
 		
 		public function checkLastSelectedNodeIsExists():Boolean {
-			if (!lastSelectedNode) {
+			if (!activeNode) {
 				Alert.show("Please, select a node first.", "Graphmind");
 				return false;
 			}
@@ -382,20 +435,34 @@ package com.graphmind
 			if (!checkLastSelectedNodeIsExists()) return;
 			
 			var source:String = (event.currentTarget as Image).source.toString();
-			lastSelectedNode.addIcon(source);
-			lastSelectedNode.refactorNodeBody();
-			lastSelectedNode.refreshParentTree();
+			activeNode.addIcon(source);
+			activeNode.refactorNodeBody();
+			activeNode.refreshParentTree();
 		}
 		
-		public function onDragDesktopStart():void {
+		public function onMouseDown_InnerMindmapStage():void {
+			startNodeDragAndDrop();
+		}
+		
+		public function onMouseMove_InnerMindmapStage():void {
+			doNodeDragAndDrop();
+		}
+		
+		/**
+		 * Start the dragged node's drag and drop session.
+		 */
+		private function startNodeDragAndDrop():void {
+			GraphMind.instance.mindmapCanvas.desktop.setFocus();
+			
 			isDesktopDragged = true;
+			
 			_desktopDragInfo.oldVPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseY;
 			_desktopDragInfo.oldHPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseX;
 			_desktopDragInfo.oldScrollbarVPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition;
 			_desktopDragInfo.oldScrollbarHPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.horizontalScrollPosition;
 		}
 		
-		public function onDragDesktop(event:MouseEvent):void {
+		private function doNodeDragAndDrop():void {
 			if (isDesktopDragged) {
 				var deltaV:Number = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseY - _desktopDragInfo.oldVPos;
 				var deltaH:Number = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseX - _desktopDragInfo.oldHPos;
@@ -407,28 +474,28 @@ package com.graphmind
 		public function onToggleCloudClick():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.toggleCloud(true);
+			activeNode.toggleCloud(true);
 		}
 		
 		public function refreshPreviewWindow():void {
 			// Timeout can help on performance
-			clearTimeout(previewTimer);
-			previewTimer = setTimeout(function():void {
-				previewBitmapData = new BitmapData(2880, 2000, false, 0x333333);
-				previewBitmap.bitmapData = previewBitmapData;
-				previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
-				previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
-				trace('refresh');
+			clearTimeout(_previewTimer);
+			_previewTimer = setTimeout(function():void {
+				_previewBitmapData = new BitmapData(2880, 2000, false, 0x333333);
+				_previewBitmap.bitmapData = _previewBitmapData;
+				_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
+				_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
+				Log.debug('Preview window refreshed.');
 			}, 400);
 		}
 		
-		public function set isChanged(changed:Boolean):void {
-			_isChanged = changed;
+		public function set isTreeChanged(changed:Boolean):void {
+			_isTreeChanged = changed;
 		}
 		
 		[Bindable]
-		public function get isChanged():Boolean {
-			return _isChanged;
+		public function get isTreeChanged():Boolean {
+			return _isTreeChanged;
 		}
 	}
 }

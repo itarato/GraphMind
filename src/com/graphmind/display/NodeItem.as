@@ -5,10 +5,11 @@ package com.graphmind.display
 	import com.graphmind.PluginManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
-	import components.ItemBaseComponent;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
+	
+	import components.ItemBaseComponent;
 	
 	import flash.display.Sprite;
 	import flash.events.ContextMenuEvent;
@@ -181,14 +182,14 @@ package com.graphmind.display
 		}
 		
 		private function onMouseUp(event:MouseEvent):void {
-			if ((!StageManager.getInstance().isPrepairedDragAndDrop) && StageManager.getInstance().isDragAndDrop) {
+			if ((!StageManager.getInstance().isPrepairedNodeDragAndDrop) && StageManager.getInstance().isNodeDragAndDrop) {
 				
 				if (this.mouseX / this.getWidth() > (1 - this.mouseY / HEIGHT)) {
-					NodeItem.move(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
+					NodeItem.move(StageManager.getInstance().dragAndDrop_sourceNode, this);
 				} else {
-					NodeItem.moveToPrevSibling(StageManager.getInstance().dragAndDrop_sourceNodeItem, this);
+					NodeItem.moveToPrevSibling(StageManager.getInstance().dragAndDrop_sourceNode, this);
 				}
-				StageManager.getInstance().closeDragAndDrop();
+				StageManager.getInstance().onMouseUp_MindmapStage();
 				
 				_displayComp.insertLeft.visible = false;
 				_displayComp.insertUp.visible = false;
@@ -196,7 +197,7 @@ package com.graphmind.display
 		}
 		
 		private function onMouseMove(event:MouseEvent):void {
-			if ((!StageManager.getInstance().isPrepairedDragAndDrop) && StageManager.getInstance().isDragAndDrop) {
+			if ((!StageManager.getInstance().isPrepairedNodeDragAndDrop) && StageManager.getInstance().isNodeDragAndDrop) {
 				if (this.mouseX / this.getWidth() > (1 - this.mouseY / HEIGHT)) {
 					_displayComp.insertLeft.visible = true;
 					_displayComp.insertUp.visible = false;
@@ -234,7 +235,7 @@ package com.graphmind.display
 		}
 		
 		private function onIconHasChildClick(event:MouseEvent):void {
-			StageManager.getInstance().isChanged = true;
+			StageManager.getInstance().isTreeChanged = true;
 			if (!this._isCollapsed) {
 				collapse();
 			} else {
@@ -254,7 +255,7 @@ package com.graphmind.display
 			_displayComp.icon_add.visible = false;
 			_displayComp.icon_anchor.visible = false;
 			
-			if (StageManager.getInstance().isPrepairedDragAndDrop) {
+			if (StageManager.getInstance().isPrepairedNodeDragAndDrop) {
 				StageManager.getInstance().openDragAndDrop(this);
 				//trace(StageManager.getInstance().isPrepairedDragAndDrop.toString());
 			}
@@ -432,15 +433,20 @@ package com.graphmind.display
 			}
 		}
 		
+		/**
+		 * Select a single node on the mindmap stage.
+		 * Only one node can be active at a time.
+		 * Accessing to this node: StageManager.getInstance().activeNode():NodeItem.
+		 */
 		public function selectNode():void {
 			// Not to lose focus from textfield
 			if (!isSelected()) setFocus();
 			
 			// @TODO mystery bug steal highlight somethimes from nodes
-			if (StageManager.getInstance().lastSelectedNode) {
-				StageManager.getInstance().lastSelectedNode.unselectNode();
+			if (StageManager.getInstance().activeNode) {
+				StageManager.getInstance().activeNode.unselectNode();
 			}
-			StageManager.getInstance().lastSelectedNode = this;
+			StageManager.getInstance().activeNode = this;
 			StageManager.getInstance().selectedNodeData = new ArrayCollection();
 			for (var key:* in _nodeItemData.data) {
 				StageManager.getInstance().selectedNodeData.addItem({
@@ -449,8 +455,9 @@ package com.graphmind.display
 				});
 			}
 			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
-			
 			GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text = _nodeItemData.getPath();
+			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
+			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 			
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
@@ -551,7 +558,11 @@ package com.graphmind.display
 			_connectionComp.parent.removeChild(_connectionComp);
 			_cloudComp.parent.removeChild(_cloudComp);
 			parent.removeChild(this);
-			StageManager.getInstance().isChanged = true;
+			StageManager.getInstance().isTreeChanged = true;
+		}
+		
+		public function dataAdd(attribute:String, value:String):void {
+			_nodeItemData.dataAdd(attribute, value);
 		}
 		
 		public function dataDelete(param:String):void {
@@ -719,7 +730,7 @@ package com.graphmind.display
 		
 		public function updateTime():void {
 			_nodeItemData.modified = (new Date()).time;
-			StageManager.getInstance().isChanged = true;
+			StageManager.getInstance().isTreeChanged = true;
 		}
 		
 		public function onOpenSubtree(event:ContextMenuEvent):void {
@@ -764,7 +775,7 @@ package com.graphmind.display
 		}
 		
 		public function isSelected():Boolean {
-			return StageManager.getInstance().lastSelectedNode == this;
+			return StageManager.getInstance().activeNode == this;
 		}
 		
 		public function isCollapsed():Boolean {
@@ -808,7 +819,7 @@ package com.graphmind.display
 		}
 		
 		public static function getLastSelectedNode():NodeItem {
-			return StageManager.getInstance().lastSelectedNode;
+			return StageManager.getInstance().activeNode;
 		}
 		
 		public function parentNode():NodeItem {

@@ -102,7 +102,7 @@ package com.graphmind
 				baseSiteConnection, 
 				_save_stage_saved
 			);
-			StageManager.getInstance().isChanged = false;
+			StageManager.getInstance().isTreeChanged = false;
 			return mm;
 		}
 		

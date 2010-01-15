@@ -106,7 +106,7 @@
 			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="left" value="10"/>
 			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="right" value="10"/>
 			<mx:SetStyle target="{mindmapCanvas.fullScreenLinkButton}" name="left" value="10"/>
-			<mx:SetStyle target="{mindmapCanvas.desktop_scale}" name="left" value="96"/>
+			<mx:SetStyle target="{mindmapCanvas.desktopScaleHSlider}" name="left" value="96"/>
 			<mx:SetStyle target="{mindmapCanvas.desktopScaleLabel}" name="left" value="256"/>
 		</mx:State>
 	</mx:states>

@@ -28,10 +28,10 @@
 		</mx:FormItem>
 		<mx:ControlBar>
 			<mx:Button label="Submit" 
-				click="StageManager.getInstance().onLoadItemSubmitClick(event);"
+				click="{StageManager.getInstance().onClick_LoadItemSubmit();}"
 				icon="@Embed(source='assets/images/accept.png')"/>
 			<mx:Button label="Cancel" 
-				click="StageManager.getInstance().onLoadItemCancelClick(event);"
+				click="{StageManager.getInstance().onClick_LoadItemCancel();}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>
