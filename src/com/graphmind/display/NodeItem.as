@@ -672,6 +672,9 @@ package com.graphmind.display
 				icon.doubleClickEnabled = true;
 				icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
 			}
+		
+			refactorNodeBody();
+			refreshParentTree();
 			
 			updateTime();
  		}

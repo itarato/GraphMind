@@ -14,7 +14,7 @@
 	<mx:TextInput id="connectFormUsername" left="10" right="10" bottom="96" tabIndex="11"/>
 	<mx:TextInput id="connectFormPassword" left="10" right="10" bottom="40" displayAsPassword="true" tabIndex="12"/>
 	<mx:Button x="10" label="Add new site" bottom="10" 
-		click="{StageManager.getInstance().onConnectFormSubmit();}" 
+		click="{StageManager.getInstance().onClick_AddNewSiteConnectionButton();}" 
 		id="button1"
 		tabIndex="3" icon="@Embed(source='assets/images/world_add.png')"/>
 	<mx:Label x="10" text="Password:" bottom="70" id="label3"/>

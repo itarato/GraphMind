@@ -144,19 +144,10 @@ package com.graphmind
 			refreshNodePositions();
 		}		
 				
-		public function onDataGridItemClick_baseState(event:ListEvent):void {
-			if (event.itemRenderer.data is ViewsCollection) {
-				(event.itemRenderer.data as ViewsCollection).handleDataGridSelection();
-			} else {
-				Log.warning('onDataGridItemClick_baseState event is not ViewsCollection.');
-			}
-		}
-		
 		/**
 		 * Select a views from datagrid on the views load panel.
 		 */
-		public function onDataGridItemClick_loadViewState(event:ListEvent):void {
-			Log.info('onDataGridItemClick_loadViewState');
+		public function onItemClick_LoadViewDataGrid(event:ListEvent):void {
 			var selectedViewsCollection:ViewsCollection = event.itemRenderer.data as ViewsCollection;
 			
 			GraphMind.instance.panelLoadView.view_name.text = selectedViewsCollection.name;
@@ -165,7 +156,7 @@ package com.graphmind
 		/**
 		 * Event handler for
 		 */
-		public function onConnectFormSubmit():void {
+		public function onClick_AddNewSiteConnectionButton():void {
 			var sc:SiteConnection = SiteConnection.createSiteConnection(
 				GraphMind.instance.mindmapToolsPanel.node_connections_panel.connectFormURL.text,
 				GraphMind.instance.mindmapToolsPanel.node_connections_panel.connectFormUsername.text,
@@ -173,7 +164,7 @@ package com.graphmind
 			);
 			ConnectionManager.getInstance().connectToSite(sc);
 		}
-		
+				
 		/**
 		 * Add new element to the editor canvas.
 		 */
@@ -185,21 +176,32 @@ package com.graphmind
 		/**
 		 * Event for clicking on the view load panel.
 		 */
-		public function onLoadViewSubmitClick(event:MouseEvent):void {
-			//var viewsList:ViewsList = new ViewsList();
+		public function onClick_LoadViewsSubmitButton():void {
+			loadAndAttachViewsList(
+				activeNode,
+				GraphMind.instance.panelLoadView.view_arguments.text,
+				parseInt(GraphMind.instance.panelLoadView.view_limit.text),
+				parseInt(GraphMind.instance.panelLoadView.view_offset.text),
+				GraphMind.instance.panelLoadView.view_name.text,
+				GraphMind.instance.panelLoadView.view_views_datagrid.selectedItem as ViewsCollection,
+				onViewsItemsLoadSuccess
+			);
+		}
+		
+		public function loadAndAttachViewsList(node:NodeItem, args:String, limit:int, offset:int, viewName:String, viewsInfo:ViewsCollection, onSuccess:Function):void {
 			var viewsData:ViewsList = new ViewsList();
-			viewsData.args   	= GraphMind.instance.panelLoadView.view_arguments.text;
+			viewsData.args   	= args;
 			// Fields are not supported in Services for D6
 			// viewsData.fields 	= stage.view_fields.text;
-			viewsData.limit     = parseInt(GraphMind.instance.panelLoadView.view_limit.text);
-			viewsData.offset    = parseInt(GraphMind.instance.panelLoadView.view_offset.text);
-			viewsData.view_name = GraphMind.instance.panelLoadView.view_name.text;
-			viewsData.parent    = GraphMind.instance.panelLoadView.view_views_datagrid.selectedItem as ViewsCollection;
+			viewsData.limit     = limit;
+			viewsData.offset    = offset;
+			viewsData.view_name = viewName;
+			viewsData.parent    = viewsInfo;
 			
 			var loaderData:TempViewLoadData = new TempViewLoadData();
 			loaderData.viewsData = viewsData;
-			loaderData.nodeItem = activeNode;
-			loaderData.success  = onViewsItemsLoadSuccess;
+			loaderData.nodeItem = node;
+			loaderData.success  = onSuccess;
 			
 			ConnectionManager.getInstance().viewListLoad(loaderData);
 			
@@ -209,7 +211,7 @@ package com.graphmind
 		/**
 		 * Event on cancelling views load panel.
 		 */
-		public function onLoadViewCancelClick(event:MouseEvent):void {
+		public function onClick_LoadViewsCancelButton():void {
 			GraphMind.instance.currentState = '';
 		}
 		
@@ -243,7 +245,7 @@ package com.graphmind
 		
 		public function onViewsItemsLoadSuccess(list:Array, requestData:TempViewLoadData):void {
 			if (list.length == 0) {
-				Alert.show('Zero result.');
+				Alert.show('Result is empty.');
 			}
 			for each (var nodeData:Object in list) {
 				// @TODO update or append checkbox for the panel?
@@ -294,13 +296,8 @@ package com.graphmind
 			GraphMindManager.getInstance().save();
 		}
 		
-		public function onDumpClick():void {
+		public function onClick_DumpFreemindXMLButton():void {
 			GraphMind.instance.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = GraphMindManager.getInstance().exportToFreeMindFormat();
-		}
-		
-		public function onExportClick():void {
-			var mm:String = GraphMindManager.getInstance().exportToFreeMindFormat();
-			Alert.show('Implement later');
 		}
 		
 		public function onClick_NodeAttributeAddOrUpdateButton():void {
@@ -357,7 +354,7 @@ package com.graphmind
 			} catch (e:Error) {}
 		}
 		
-		public function onDragAndDropImageMouseUp(event:MouseEvent):void {
+		public function onMouseUp_DragAndDropImage():void {
 			GraphMind.instance.dragAndDrop_shape.visible = false;
 			GraphMind.instance.dragAndDrop_shape.x = -GraphMind.instance.dragAndDrop_shape.width;
 			GraphMind.instance.dragAndDrop_shape.y = -GraphMind.instance.dragAndDrop_shape.height;
@@ -410,34 +407,38 @@ package com.graphmind
 			StageManager.getInstance().isDesktopDragged = false;
 		}
 		
-		public function onNodeLabelRTESave():void {
-			if (!checkLastSelectedNodeIsExists()) return;
+		public function onClick_RTESaveButton():void {
+			if (!isActiveNodeExists()) return;
 			
 			activeNode.title = GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText;
 		}
 		
-		public function onSaveLink():void {
-			if (!checkLastSelectedNodeIsExists()) return;
+		public function onClick_SaveNodeLink():void {
+			if (!isActiveNodeExists()) return;
 			
 			activeNode.link = GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text;
 		}
 		
-		public function checkLastSelectedNodeIsExists():Boolean {
+		/**
+		 * Check if there is any node selected.
+		 */
+		public function isActiveNodeExists(showError:Boolean = false):Boolean {
 			if (!activeNode) {
-				Alert.show("Please, select a node first.", "Graphmind");
+				if (showError) Alert.show("Please, select a node first.", "Graphmind");
 				return false;
 			}
 			
 			return true;
 		}
 		
-		public function onIconClick(event:MouseEvent):void {
-			if (!checkLastSelectedNodeIsExists()) return;
+		public function onClick_Icon(event:MouseEvent):void {
+			addIconToNode(event.currentTarget as Image);
+		}
+		
+		public function addIconToNode(icon:Image):void {
+			if (!isActiveNodeExists()) return;
 			
-			var source:String = (event.currentTarget as Image).source.toString();
-			activeNode.addIcon(source);
-			activeNode.refactorNodeBody();
-			activeNode.refreshParentTree();
+			activeNode.addIcon(icon.source.toString());
 		}
 		
 		public function onMouseDown_InnerMindmapStage():void {
@@ -471,8 +472,8 @@ package com.graphmind
 			}
 		}
 		
-		public function onToggleCloudClick():void {
-			if (!checkLastSelectedNodeIsExists()) return;
+		public function onClick_ToggleCloudButton():void {
+			if (!isActiveNodeExists()) return;
 			
 			activeNode.toggleCloud(true);
 		}
