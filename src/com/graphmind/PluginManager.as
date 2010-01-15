@@ -20,7 +20,7 @@ package com.graphmind {
 		 * 
 		 * @param array plugins
 		 */
-		public static function initPlugins():void {
+		public static function init():void {
 			var plugin_array:Array = Application.application.parameters.plugins ? String(Application.application.parameters.plugins).split(',') : []
 			PluginManager._plugins = plugin_array ? plugin_array : [];
 		}

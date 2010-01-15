@@ -74,7 +74,7 @@ package com.graphmind
 		/**
 		 * Initialize stage.
 		 */
-		public function initStage():void {
+		public function init():void {
 			// Scroll mindmap canvas to center
 			GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition = (GraphMind.instance.mindmapCanvas.desktop.height - GraphMind.instance.mindmapCanvas.desktop_wrapper.height) / 2;
 			

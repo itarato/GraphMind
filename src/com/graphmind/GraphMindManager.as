@@ -52,7 +52,7 @@ package com.graphmind
 		/**
 		 * Init manager
 		 */
-		public function initGraphMind():void {
+		public function init():void {
 			baseSiteConnection = SiteConnection.createSiteConnection(getBaseDrupalURL());
 			
 			ConnectionManager.getInstance().connectToDrupal(baseSiteConnection.url, _init_GM_stage_connected);
