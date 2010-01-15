@@ -22,16 +22,16 @@ package com.graphmind {
 			PluginManager._plugins = plugins ? plugins : [];
 		}
 		
-		public static function alter(hook:String, data:Object = null):void {
+		public static function callHook(hook:String, data:Object = null):void {
 			for each (var plugin:* in PluginManager._plugins) {
 				if (ApplicationDomain.currentDomain.hasDefinition('plugins.' + plugin)) {
 					var PluginClass:Class = getDefinitionByName('plugins.' + plugin) as Class;
 					try {
-						(PluginClass as Object)['hook_' + hook + '_alter'](data);
+						(PluginClass as Object)['hook_' + hook](data);
 					} catch (error:Error) {}
 				}
 			}
-		} 
+		}
 
 	}
 

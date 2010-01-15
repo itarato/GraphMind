@@ -56,6 +56,11 @@ package com.graphmind.display
 		private static const EFFECT_NORMAL:int = 0;
 		private static const EFFECT_HIGHLIGHT:int = 1;
 		
+		public static const HOOK_NODE_CONTEXT_MENU:String = 'node_context_menu';
+		public static const HOOK_NODE_MOVED:String        = 'node_moved';
+		public static const HOOK_NODE_DELETE:String		  = 'node_delete';
+		public static const HOOK_NODE_CREATED:String	  = 'node_created';
+		
 		protected var _displayComp:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connectionComp:UIComponent 	 = new UIComponent();
 		protected var _nodeItemData:NodeItemData;
@@ -73,6 +78,7 @@ package com.graphmind.display
 		private static var _nodeDropShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x888888, 1, 1, 1);
 		private static var _nodeGlowFilter:GlowFilter = new GlowFilter(0x0072B9, .8, 6, 6);
 		private static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, .8, 20, 20, 2, 1, true); 
+		
 		
 		private var _mouseSelectionTimeout:uint;
 
@@ -158,17 +164,11 @@ package com.graphmind.display
 			}
 			
 			// Extend context menu items by Plugin provided menu items
-			PluginManager.alter('node_context_menu', {data: cms});
+			PluginManager.callHook(HOOK_NODE_CONTEXT_MENU, {data: cms});
 			
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
-				cmi.addEventListener(
-					ContextMenuEvent.MENU_ITEM_SELECT, 
-					function(_event:ContextMenuEvent):void {
-						selectNode();
-						cmData.event(_event);
-					}
-				);
+				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
 				contextMenu.customItems.push(cmi);
 			}
 			
@@ -216,7 +216,6 @@ package com.graphmind.display
 		}
 		
 		private function onAddViewsListSelect(event:ContextMenuEvent):void {
-			StageManager.getInstance().stage.view_arguments.text = _nodeItemData.getDrupalID();
 			loadViews();
 		}
 		
@@ -226,6 +225,7 @@ package com.graphmind.display
 		
 		private function onRemoveNodeChildsSelect(event:ContextMenuEvent):void {
 			removeNodeChilds();
+			selectNode();
 			StageManager.getInstance().refreshNodePositions();
 		}
 		
@@ -510,14 +510,18 @@ package com.graphmind.display
 		}
 		
 		private function loadItem():void {
+			selectNode();
 			StageManager.getInstance().stage.currentState = 'load_item_state';
 		}
 		
 		private function loadViews():void {
+			selectNode();
+			StageManager.getInstance().stage.view_arguments.text = _nodeItemData.getDrupalID();
 			StageManager.getInstance().stage.currentState = 'load_view_state';
 		}
 		
 		private function loadNode():void {
+			selectNode();
 			StageManager.getInstance().onNewNormalNodeClick(this);
 		}
 		
@@ -539,6 +543,9 @@ package com.graphmind.display
 		}
 		
 		private function kill():void {
+			// @HOOK
+			PluginManager.callHook(HOOK_NODE_DELETE, {node: this});
+			
 			removeNodeChilds();
 			_displayComp.parent.removeChild(_displayComp);
 			_connectionComp.parent.removeChild(_connectionComp);
@@ -562,7 +569,7 @@ package com.graphmind.display
 			return false;
 		}
 		
-		public static function move(source:NodeItem, target:NodeItem):Boolean {
+		public static function move(source:NodeItem, target:NodeItem, callHook:Boolean = true):Boolean {
 			// No parent can detach child.
 			if (!source || !source._parentNode || !target) return false;
 			// Target is an ascendant of the source.
@@ -577,11 +584,16 @@ package com.graphmind.display
 			// Refresh display
 			StageManager.getInstance().refreshNodePositions();
 			
+			if (callHook) {
+				// Call hook
+				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
+			}
+			
 			return true;
 		}
 		
 		public static function moveToPrevSibling(source:NodeItem, target:NodeItem):void {
-			if (move(source, target._parentNode)) {
+			if (move(source, target._parentNode, false)) {
 				var siblingIDX:int = target._parentNode._childs.getItemIndex(target);
 				if (siblingIDX == -1) {
 					Alert.show('ERROR');
@@ -594,7 +606,11 @@ package com.graphmind.display
 				
 				target._parentNode._childs.setItemAt(source, siblingIDX);
 				
+				// Refresh after reordering
 				StageManager.getInstance().refreshNodePositions();
+				
+				// Call hook
+				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
 			}
 		}
 		
@@ -707,6 +723,7 @@ package com.graphmind.display
 		}
 		
 		public function onOpenSubtree(event:ContextMenuEvent):void {
+			selectNode();
 			uncollapseChilds(true);
 		}
 		
@@ -723,6 +740,7 @@ package com.graphmind.display
 		}
 		
 		public function toggleCloudWithRefresh(event:ContextMenuEvent):void {
+			selectNode();
 			toggleCloud(true);
 			updateTime();
 		}
@@ -754,6 +772,7 @@ package com.graphmind.display
 		}
 	
 		public function onUpdateNodeSelect(event:ContextMenuEvent):void {
+			selectNode();
 			updateDrupalItem();
 		}
 		
@@ -790,6 +809,14 @@ package com.graphmind.display
 		
 		public static function getLastSelectedNode():NodeItem {
 			return StageManager.getInstance().lastSelectedNode;
+		}
+		
+		public function parentNode():NodeItem {
+			return _parentNode;
+		}
+		
+		public function get nodeItemData():NodeItemData {
+			return _nodeItemData;
 		}
 	}
 }

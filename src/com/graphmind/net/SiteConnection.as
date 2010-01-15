@@ -79,6 +79,10 @@ package com.graphmind.net
 				"- Username: " + ((_username == null) ? 'undefined' : _username);
 		}
 		
+		public static function getBaseSiteConnection():SiteConnection {
+			return connections[0] as SiteConnection;
+		}
+		
 
 	}
 }

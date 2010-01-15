@@ -252,11 +252,16 @@ package com.graphmind
 			}
 		}
 		
+		// @TODO maybe it's not the right place for this, damn it
+		// Suggested name: createNode(parent)
 		public function onNewNormalNodeClick(parent:NodeItem):void {
 			var nodeItemData:NodeItemData = new NodeItemData({}, NodeItemData.NORMAL, SiteConnection.createSiteConnection());
 			var nodeItem:NodeItem = new NodeItem(nodeItemData);
 			parent.addNodeChild(nodeItem);
 			nodeItem.selectNode();
+			
+			// HOOK
+			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: nodeItem});
 		}
 		
 		public function onItemLoadSuccess(result:Object, requestData:TempItemLoadData):void {
