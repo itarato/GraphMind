@@ -217,6 +217,9 @@ package plugins {
 		public static function hook_node_created(data:Object):void {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
+			var parent:NodeItem = data.node as NodeItem;
+			if (!_isTaxonomyPluginNode(parent)) return;
+			
 			RPCServiceHelper.createRPC(
 				'graphmindTaxonomyManager',
 				'addSubtree',
