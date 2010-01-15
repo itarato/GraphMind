@@ -2,7 +2,8 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
 	width="168" height="20"
 	cornerRadius="5" 
-	fontWeight="normal" xmlns:assets="com.graphmind.display.assets.*">
+	fontWeight="normal" 
+	xmlns:assets="com.graphmind.display.assets.*">
 	
 	<mx:Script>
 		<![CDATA[

@@ -5,7 +5,7 @@ package com.graphmind.display
 	import com.graphmind.PluginManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
-	import com.graphmind.display.assets.ItemBaseComponent;
+	import components.ItemBaseComponent;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
