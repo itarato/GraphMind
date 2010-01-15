@@ -184,7 +184,7 @@ package com.graphmind
 				parseInt(GraphMind.instance.panelLoadView.view_offset.text),
 				GraphMind.instance.panelLoadView.view_name.text,
 				GraphMind.instance.panelLoadView.view_views_datagrid.selectedItem as ViewsCollection,
-				onViewsItemsLoadSuccess
+				onSuccess_DrupalViewsLoaded
 			);
 		}
 		
@@ -229,7 +229,7 @@ package com.graphmind
 			var loaderData:TempItemLoadData = new TempItemLoadData();
 			loaderData.nodeItem = activeNode;
 			loaderData.nodeItemData = nodeItemData;
-			loaderData.success = onItemLoadSuccess;
+			loaderData.success = onSuccess_DrupalItemLoaded;
 			
 			ConnectionManager.getInstance().itemLoad(loaderData);
 			
@@ -243,7 +243,7 @@ package com.graphmind
 			GraphMind.instance.currentState = '';
 		}
 		
-		public function onViewsItemsLoadSuccess(list:Array, requestData:TempViewLoadData):void {
+		public function onSuccess_DrupalViewsLoaded(list:Array, requestData:TempViewLoadData):void {
 			if (list.length == 0) {
 				Alert.show('Result is empty.');
 			}
@@ -267,7 +267,7 @@ package com.graphmind
 		
 		// @TODO maybe it's not the right place for this, damn it
 		// Suggested name: createNode(parent)
-		public function onNewNormalNodeClick(parent:NodeItem):void {
+		public function createSimpleNode(parent:NodeItem):void {
 			var nodeItemData:NodeItemData = new NodeItemData({}, NodeItemData.NORMAL, SiteConnection.createSiteConnection());
 			var nodeItem:NodeItem = new NodeItem(nodeItemData);
 			parent.addNodeChild(nodeItem);
@@ -277,7 +277,7 @@ package com.graphmind
 			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: nodeItem});
 		}
 		
-		public function onItemLoadSuccess(result:Object, requestData:TempItemLoadData):void {
+		public function onSuccess_DrupalItemLoaded(result:Object, requestData:TempItemLoadData):void {
 			requestData.nodeItemData.data = result;
 			var nodeItem:NodeItem = new NodeItem(requestData.nodeItemData);
 			requestData.nodeItem.addNodeChild(nodeItem);

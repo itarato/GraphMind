@@ -529,7 +529,7 @@ package com.graphmind.display
 		
 		private function loadNode():void {
 			selectNode();
-			StageManager.getInstance().onNewNormalNodeClick(this);
+			StageManager.getInstance().createSimpleNode(this);
 		}
 		
 		private function remove():void {
