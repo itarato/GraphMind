@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" height="100%">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.graphmind.StageManager;
+		]]>
+	</mx:Script>
+
+	<!-- Mindmap editor area -->
+	<mx:Canvas right="0" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
+		mouseUp="StageManager.getInstance().closeDragAndDrop();"
+		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
+		mouseOut="StageManager.getInstance().isDesktopDragged = false;">
+		
+		<!-- sublayer for cloud grapics -->
+		<mx:Canvas id="desktop_cloud" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
+			scaleX="{desktop_scale.value/100}"
+			scaleY="{desktop_scale.value/100}"/>
+		
+		<mx:Canvas id="desktop" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
+			mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
+			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
+			mouseMove="StageManager.getInstance().onDragDesktop(event);"
+			scaleX="{desktop_scale.value/100}"
+			scaleY="{desktop_scale.value/100}"/>
+	</mx:Canvas>
+	<!-- END mindmap editor -->
+	
+	<!-- Preview window -->
+	<mx:Canvas styleName="previewWindow" bottom="18" right="18" width="182" height="122" alpha="1" blendMode="{BlendMode.DIFFERENCE}">
+		<mx:UIComponent id="previewWindow" width="180" height="120"/>
+	</mx:Canvas>
+	<!-- END Preview window -->
+	
+	<mx:Canvas height="30" left="0" right="0" top="0"
+		backgroundAlpha="0.5"
+		backgroundColor="0x000000"
+		color="0xFFFFFF">
+		<mx:HBox paddingTop="4" paddingLeft="4">
+			<mx:LinkButton top="4" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"
+				id="fullScreenLinkButton"/>
+			
+			<mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
+				value="100"
+				id="desktop_scale"/>
+			
+			<mx:Label paddingTop="2" text="{desktop_scale.value + '%'}"
+				id="desktopScaleLabel"/>
+				
+			<mx:LinkButton top="4" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#FFDBA1"
+				visible="{StageManager.getInstance().isChanged}"
+				id="saveLinkButton"/>
+		</mx:HBox>
+	</mx:Canvas>
+			
+</mx:Canvas>

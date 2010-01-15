@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" 
+	horizontalCenter="0" verticalCenter="0"
+	layout="absolute" 
+	width="600" height="300" 
+	title="Load unique item">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.graphmind.net.SiteConnection;
+			import com.graphmind.StageManager;
+			import com.graphmind.net.UniqueItemLoader;
+		]]>
+	</mx:Script>
+	
+	<mx:Form left="10" top="10" right="10" height="240">
+		<mx:FormHeading label="Item parameters" width="316"/>
+		<mx:FormItem label="Source">
+			<mx:ComboBox dataProvider="{SiteConnection.connections}" 
+				labelField="shortName"
+				id="item_source"/>
+		</mx:FormItem>
+		<mx:FormItem label="Item type">
+			<mx:ComboBox dataProvider="{UniqueItemLoader.itemTypes}" id="item_type"/>
+		</mx:FormItem>
+		<mx:FormItem label="ID">
+			<mx:TextInput id="item_id"/>
+		</mx:FormItem>
+		<mx:ControlBar>
+			<mx:Button label="Submit" 
+				click="StageManager.getInstance().onLoadItemSubmitClick(event);"
+				icon="@Embed(source='assets/images/accept.png')"/>
+			<mx:Button label="Cancel" 
+				click="StageManager.getInstance().onLoadItemCancelClick(event);"
+				icon="@Embed(source='assets/images/cancel.png')"/>
+		</mx:ControlBar>
+	</mx:Form>
+	
+</mx:Panel>

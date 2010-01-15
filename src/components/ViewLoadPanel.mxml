@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="700" height="400" 
+	styleName="toolPanel"
+	layout="absolute" horizontalCenter="0" verticalCenter="0" 
+	title="Attach view">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.graphmind.StageManager;
+			import com.graphmind.data.ViewsCollection;
+		]]>
+	</mx:Script>
+	
+	<mx:DataGrid x="10" y="10" width="260" height="340"
+		dataProvider="{ViewsCollection.collection}"
+		itemClick="StageManager.getInstance().onDataGridItemClick_loadViewState(event);"
+		id="view_views_datagrid">
+		<mx:columns>
+			<mx:DataGridColumn headerText="ID"   dataField="siteConnectionID" width="30"/>
+			<mx:DataGridColumn headerText="Name" dataField="name"/>
+			<mx:DataGridColumn headerText="type" dataField="baseTable" width="60"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Form x="278" y="10" width="392" height="340">
+		<mx:FormHeading label="View parameters" width="240"/>
+		<mx:FormItem label="Name">
+			<mx:TextInput id="view_name"/>
+		</mx:FormItem>
+		<mx:FormItem label="Arguments">
+			<mx:TextInput id="view_arguments"/>
+		</mx:FormItem>
+		<!--<mx:FormItem label="Fields">
+			<mx:TextInput id="view_fields"/>
+		</mx:FormItem>-->
+		<mx:FormItem label="Offset">
+			<mx:TextInput id="view_offset" text="0"/>
+		</mx:FormItem>
+		<mx:FormItem label="Limit">
+			<mx:TextInput id="view_limit" text="10"/>
+		</mx:FormItem>
+		<mx:ControlBar>
+			<mx:Button label="Submit" click="{StageManager.getInstance().onLoadViewSubmitClick(event);}"
+				icon="@Embed(source='assets/images/accept.png')"/>
+			<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"
+				icon="@Embed(source='assets/images/cancel.png')"/>
+		</mx:ControlBar>
+	</mx:Form>
+</mx:Panel>
