@@ -15,7 +15,7 @@
 	<mx:Button x="10" y="248" label="Save node title" click="{StageManager.getInstance().onNodeLabelRTESave();}" icon="@Embed(source='assets/images/pencil.png')"/>
 	<mx:HRule left="10" y="278" right="10"/>
 	<mx:TextInput y="288" id="link" right="10" left="10"/>
-	<mx:Button x="10" y="318" label="Save external link" click="StageManager.getInstance().onSaveLink();" icon="@Embed(source='assets/images/anchor.png')"/>
+	<mx:Button x="10" y="318" label="Save external link" click="{StageManager.getInstance().onSaveLink();}" icon="@Embed(source='assets/images/anchor.png')"/>
 	<mx:HRule left="10" y="348" right="10"/>
 	<mx:Button x="10" y="358" label="Toggle cloud" icon="@Embed(source='assets/images/weather_clouds.png')">
 		<mx:click>{StageManager.getInstance().onToggleCloudClick();}</mx:click>

@@ -10,9 +10,9 @@
 
 	<!-- Mindmap editor area -->
 	<mx:Canvas right="0" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
-		mouseUp="StageManager.getInstance().closeDragAndDrop();"
-		mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
-		mouseOut="StageManager.getInstance().isDesktopDragged = false;">
+		mouseUp="{StageManager.getInstance().closeDragAndDrop();}"
+		mouseDownOutside="{StageManager.getInstance().closeDragAndDrop();}"
+		mouseOut="{StageManager.getInstance().isDesktopDragged = false;}">
 		
 		<!-- sublayer for cloud grapics -->
 		<mx:Canvas id="desktop_cloud" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
@@ -20,9 +20,9 @@
 			scaleY="{desktop_scale.value/100}"/>
 		
 		<mx:Canvas id="desktop" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
-			mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
-			mouseUp="StageManager.getInstance().isDesktopDragged = false;"
-			mouseMove="StageManager.getInstance().onDragDesktop(event);"
+			mouseDown="{StageManager.getInstance().onDragDesktopStart();desktop.setFocus();}"
+			mouseUp="{StageManager.getInstance().isDesktopDragged = false;}"
+			mouseMove="{StageManager.getInstance().onDragDesktop(event);}"
 			scaleX="{desktop_scale.value/100}"
 			scaleY="{desktop_scale.value/100}"/>
 	</mx:Canvas>
@@ -39,7 +39,7 @@
 		backgroundColor="0x000000"
 		color="0xFFFFFF">
 		<mx:HBox paddingTop="4" paddingLeft="4">
-			<mx:LinkButton top="4" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"
+			<mx:LinkButton top="4" label="Fullscreen" click="{StageManager.getInstance().toggleFullScreen();}"
 				id="fullScreenLinkButton"/>
 			
 			<mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"

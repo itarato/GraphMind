@@ -305,7 +305,7 @@ package com.graphmind
 			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
-		public function onRemoveAttributeClick(event:MouseEvent):void {
+		public function onRemoveAttributeClick():void {
 			if (!lastSelectedNode || GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text.length == 0) return;
 			
 			lastSelectedNode.dataDelete(GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);

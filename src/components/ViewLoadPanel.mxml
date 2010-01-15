@@ -14,7 +14,7 @@
 	
 	<mx:DataGrid x="10" y="10" width="260" height="340"
 		dataProvider="{ViewsCollection.collection}"
-		itemClick="StageManager.getInstance().onDataGridItemClick_loadViewState(event);"
+		itemClick="{StageManager.getInstance().onDataGridItemClick_loadViewState(event);}"
 		id="view_views_datagrid">
 		<mx:columns>
 			<mx:DataGridColumn headerText="ID"   dataField="siteConnectionID" width="30"/>
@@ -42,7 +42,7 @@
 		<mx:ControlBar>
 			<mx:Button label="Submit" click="{StageManager.getInstance().onLoadViewSubmitClick(event);}"
 				icon="@Embed(source='assets/images/accept.png')"/>
-			<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"
+			<mx:Button label="Cancel" click="{StageManager.getInstance().onLoadViewCancelClick(event);}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>

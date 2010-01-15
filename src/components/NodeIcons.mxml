@@ -12,7 +12,7 @@
 	<mx:Tile left="10" top="10" right="10" height="100%">
 		<mx:Repeater dataProvider="{GraphMind.icons}" id="icon_repeater">
 			<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" 
-				click="StageManager.getInstance().onIconClick(event);"/>
+				click="{StageManager.getInstance().onIconClick(event);}"/>
 		</mx:Repeater>
 	</mx:Tile>
 </mx:Canvas>
