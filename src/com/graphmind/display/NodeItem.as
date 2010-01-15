@@ -107,8 +107,8 @@ package com.graphmind.display
 			this.addChild(_displayComp);
 			
 			_connectionComp.graphics.lineStyle(2, 0x333333, 1);
-			StageManager.getInstance().stage.desktop.addChild(_connectionComp);
-			StageManager.getInstance().stage.desktop_cloud.addChild(_cloudComp);
+			StageManager.getInstance().stage.mindmapCanvas.desktop.addChild(_connectionComp);
+			StageManager.getInstance().stage.mindmapCanvas.desktop_cloud.addChild(_cloudComp);
 			
 			this._displayComp.title_label.htmlText = this._nodeItemData.title;
 		
@@ -291,7 +291,7 @@ package com.graphmind.display
 			event.stopPropagation();
 			//Log.info('click on node: ' + this._nodeItemData.title); 
 			selectNode();
-			StageManager.getInstance().stage.view_arguments.text = _nodeItemData.getDrupalID();
+			StageManager.getInstance().stage.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
 		
 		private function onLoadNodeClick(event:MouseEvent):void {
@@ -448,9 +448,9 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			StageManager.getInstance().stage.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
+			StageManager.getInstance().stage.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
 			
-			StageManager.getInstance().stage.node_info_panel.link.text = _nodeItemData.getPath();
+			StageManager.getInstance().stage.mindmapToolsPanel.node_info_panel.link.text = _nodeItemData.getPath();
 			
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
@@ -516,8 +516,11 @@ package com.graphmind.display
 		
 		private function loadViews():void {
 			selectNode();
-			StageManager.getInstance().stage.view_arguments.text = _nodeItemData.getDrupalID();
+//			var app:GraphMind = StageManager.getInstance().stage;
+//			trace(StageManager.getInstance().stage.panelLoadView.view_arguments);
+//			trace(_nodeItemData.getDrupalID());
 			StageManager.getInstance().stage.currentState = 'load_view_state';
+			StageManager.getInstance().stage.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
 		
 		private function loadNode():void {

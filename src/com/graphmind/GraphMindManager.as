@@ -56,9 +56,6 @@ package com.graphmind
 			baseSiteConnection = SiteConnection.createSiteConnection(getBaseDrupalURL());
 			
 			ConnectionManager.getInstance().connectToDrupal(baseSiteConnection.url, _init_GM_stage_connected);
-			
-			// Init plugins.
-			PluginManager.initPlugins(Application.application.parameters.plugins ? String(Application.application.parameters.plugins).split(',') : []);
 		}
 		
 		/**

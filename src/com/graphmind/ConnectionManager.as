@@ -9,6 +9,7 @@ package com.graphmind
 	import com.graphmind.net.UniqueItemLoader;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.temp.TempViewLoadData;
+	import com.graphmind.util.Log;
 	
 	import mx.controls.Alert;
 	import mx.rpc.events.FaultEvent;
@@ -241,6 +242,7 @@ package com.graphmind
 		 * @param string error - detailed error message from the event object
 		 */
 		public function alertErrorMessage(msg:String, details:String, connectionInfo:String = null, error:String = null):void {
+			Log.error('Network error: ' + error);
 			Alert.show(
 				msg + 
 				"\nDetails: " +	details + 

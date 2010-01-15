@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
-	applicationComplete="init();"
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute"
+	initialize="{onInitialize();}"
+	applicationComplete="{onApplicationComplete();}"
 	backgroundColor="#FFFFFF"
 	color="#333333" 
 	xmlns:components="components.*">
@@ -9,21 +11,22 @@
 		
 	<mx:Script>
 		<![CDATA[
+			import com.graphmind.PluginManager;
 			import nl.demonsters.debugger.MonsterDebugger;
+			
 			import mx.managers.SystemManager;
-			import com.graphmind.net.UniqueItemLoader;
-			import com.graphmind.net.SiteConnection;
 			import mx.states.State;
 			import mx.effects.easing.Linear;
+			
+			import com.graphmind.net.UniqueItemLoader;
+			import com.graphmind.net.SiteConnection;
 			import com.graphmind.util.Log;
 			import com.graphmind.ViewsManager;
 			import com.graphmind.data.ViewsCollection;
 			import com.graphmind.StageManager;
+			import com.graphmind.GraphMindManager;
 			
-			// Load plugins
-			import plugins.*;
-		
-			import mx.effects.easing.Bounce;
+			public static var graphmind:GraphMind;
 			
 			[Embed(source='assets/images/draganddrop.png')]
 			[Bindable]
@@ -35,19 +38,12 @@
 			[Bindable]
 			public static var icons:Array = [
 				"Mail", "yes", "help", "stop", "prepare",  "go",
-				
 				"down", "forward", "back", "up", 
-				
 				"full-0", "full-1", "full-2", "full-3", "full-4", "full-5", "full-6", "full-7", "full-8", "full-9", 
-				  
 				"ksmiletris", "smiley-angry", "smily_bad", "smiley-neutral", "smiley-oh", 
-				
 				"female1", "female2", "male1", "male2", 
-				
 				"kmail", "broken-line", "button_cancel", "button_ok", 
-				
 				"flag-black",  "flag-orange", "flag", "flag-yellow", "flag-blue", "flag-green", "flag-pink",
-				
 				"password", "attach", "edit", 
 				"freemind_butterfly", "hourglass", "pencil", "encrypted", 
 				"idea", "penguin", "bell", "family", "info", 
@@ -60,27 +56,30 @@
 				"group", "messagebox_warning"
 			];
 			
-			import com.graphmind.GraphMindManager;
+			
+			/**
+			 * Callback for initialize event.
+			 */
+			private function onInitialize():void {
+				Log.debug('Graphmind initialize.');
+				
+				// Bind the only one instance to a public static var
+				GraphMind.graphmind = this;
+			}
 			
 			
 			/**
 			 * Triggered event when the application is ready.
 			 */
-			private function init():void {
-//				var md:MonsterDebugger = new MonsterDebugger(this);
+			private function onApplicationComplete():void {
+				//var md:MonsterDebugger = new MonsterDebugger(this);
+				Log.debug('Grapmind started.');
 				
 				// Init managers
 				StageManager.getInstance().initStage(this);
 				GraphMindManager.getInstance().initGraphMind();
-				
-				Log.info('GrapMind started.');
-				
-				// Remove base context menu items (not perfect, though)
-				var cm:ContextMenu = new ContextMenu();
-				cm.hideBuiltInItems();
-				MovieClip(systemManager).contextMenu = cm;
+				PluginManager.initPlugins();
 			}
-			
 			
 		]]>
 	</mx:Script>
@@ -89,91 +88,24 @@
 		<mx:State name="load_view_state">
 			<mx:SetProperty name="visible" target="{mainHBox}" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
-				<mx:Panel width="700" height="400" 
-					styleName="toolPanel"
-					layout="absolute" horizontalCenter="0" verticalCenter="0" 
-					title="Attach view"
-					id="panelLoadView">
-					<mx:DataGrid x="10" y="10" width="260" height="340"
-						dataProvider="{ViewsCollection.collection}"
-						itemClick="StageManager.getInstance().onDataGridItemClick_loadViewState(event);"
-						id="view_views_datagrid">
-						<mx:columns>
-							<mx:DataGridColumn headerText="ID"   dataField="siteConnectionID" width="30"/>
-							<mx:DataGridColumn headerText="Name" dataField="name"/>
-							<mx:DataGridColumn headerText="type" dataField="baseTable" width="60"/>
-						</mx:columns>
-					</mx:DataGrid>
-					<mx:Form x="278" y="10" width="392" height="340">
-						<mx:FormHeading label="View parameters" width="240"/>
-						<mx:FormItem label="Name">
-							<mx:TextInput id="view_name"/>
-						</mx:FormItem>
-						<mx:FormItem label="Arguments">
-							<mx:TextInput id="view_arguments"/>
-						</mx:FormItem>
-						<!--<mx:FormItem label="Fields">
-							<mx:TextInput id="view_fields"/>
-						</mx:FormItem>-->
-						<mx:FormItem label="Offset">
-							<mx:TextInput id="view_offset" text="0"/>
-						</mx:FormItem>
-						<mx:FormItem label="Limit">
-							<mx:TextInput id="view_limit" text="10"/>
-						</mx:FormItem>
-						<mx:ControlBar>
-							<mx:Button label="Submit" click="{StageManager.getInstance().onLoadViewSubmitClick(event);}"
-								icon="@Embed(source='assets/images/accept.png')"/>
-							<mx:Button label="Cancel" click="StageManager.getInstance().onLoadViewCancelClick(event);"
-								icon="@Embed(source='assets/images/cancel.png')"/>
-						</mx:ControlBar>
-					</mx:Form>
-				</mx:Panel>
+				<components:ViewLoadPanel id="panelLoadView"/>
 			</mx:AddChild>
 		</mx:State>
-		
 		<mx:State name="load_item_state">
 			<mx:SetProperty name="visible" target="{mainHBox}" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
-				<mx:Panel horizontalCenter="0" verticalCenter="0"
-					id="panelLoadItem"
-					layout="absolute" width="600" height="300" title="Load unique item">
-					<mx:Form left="10" top="10" right="10" height="240">
-						<mx:FormHeading label="Item parameters" width="316"/>
-						<mx:FormItem label="Source">
-							<mx:ComboBox dataProvider="{SiteConnection.connections}" 
-								labelField="shortName"
-								id="item_source"/>
-						</mx:FormItem>
-						<mx:FormItem label="Item type">
-							<mx:ComboBox dataProvider="{UniqueItemLoader.itemTypes}" id="item_type"/>
-						</mx:FormItem>
-						<mx:FormItem label="ID">
-							<mx:TextInput id="item_id"/>
-						</mx:FormItem>
-						<mx:ControlBar>
-							<mx:Button label="Submit" 
-								click="StageManager.getInstance().onLoadItemSubmitClick(event);"
-								icon="@Embed(source='assets/images/accept.png')"/>
-							<mx:Button label="Cancel" 
-								click="StageManager.getInstance().onLoadItemCancelClick(event);"
-								icon="@Embed(source='assets/images/cancel.png')"/>
-						</mx:ControlBar>
-					</mx:Form>
-					
-				</mx:Panel>
+				<components:DrupalItemLoadPanel id="panelLoadDrupalItem"/>
 			</mx:AddChild>
 		</mx:State>
-		
 		<mx:State name="only_view_mode">
-			<mx:SetProperty name="visible" target="{panelMain}" value="false"/>
-			<mx:SetProperty name="visible" target="{saveLinkButton}" value="false"/>
-			<mx:SetProperty name="visible" target="{icon_outer_container}" value="false"/>
-			<mx:SetStyle target="{desktop_wrapper}" name="left" value="10"/>
-			<mx:SetStyle target="{desktop_wrapper}" name="right" value="10"/>
-			<mx:SetStyle target="{fullScreenLinkButton}" name="left" value="10"/>
-			<mx:SetStyle target="{desktop_scale}" name="left" value="96"/>
-			<mx:SetStyle target="{desktopScaleLabel}" name="left" value="256"/>
+			<mx:SetProperty name="visible" target="{mindmapToolsPanel.panelMain}" value="false"/>
+			<mx:SetProperty name="visible" target="{mindmapCanvas.saveLinkButton}" value="false"/>
+			<mx:SetProperty name="visible" target="{mindmapToolsPanel.icon_outer_container}" value="false"/>
+			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="left" value="10"/>
+			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="right" value="10"/>
+			<mx:SetStyle target="{mindmapCanvas.fullScreenLinkButton}" name="left" value="10"/>
+			<mx:SetStyle target="{mindmapCanvas.desktop_scale}" name="left" value="96"/>
+			<mx:SetStyle target="{mindmapCanvas.desktopScaleLabel}" name="left" value="256"/>
 		</mx:State>
 	</mx:states>
 
@@ -184,78 +116,13 @@
 		borderThickness="0"
 		color="#FFFFFF"/>
 	-->
-	<!-- END textarea -->
+	<!-- END Debug textarea -->
 
 	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="StageManager.getInstance().onDragAndDropImageMouseUp(event);"/>
 	
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
-		<mx:Canvas width="240" height="100%" styleName="toolPanel">
-		
-			<mx:Canvas id="panelMain" width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
-			
-				<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" 
-					styleName="toolPanelAccordion"
-					headerStyleName="toolPanelAccordionHeader">
-					<components:NodeInfo        id="node_info_panel"        />
-					<components:NodeAttributes  id="node_attributes_panel"  />
-					<components:NodeIcons       id="icon_outer_container"   />
-					<components:NodeConnections id="node_connections_panel" />
-					<components:NodeSave        id="node_save_panel"        />
-				</mx:Accordion>
-				
-			</mx:Canvas>
-
-		</mx:Canvas>
-		<mx:Canvas width="100%" height="100%">
-
-			<!-- Mindmap editor area -->
-			<mx:Canvas right="0" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
-				mouseUp="StageManager.getInstance().closeDragAndDrop();"
-				mouseDownOutside="StageManager.getInstance().closeDragAndDrop();"
-				mouseOut="StageManager.getInstance().isDesktopDragged = false;">
-				
-				<!-- sublayer for cloud grapics -->
-				<mx:Canvas id="desktop_cloud" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
-					scaleX="{desktop_scale.value/100}"
-					scaleY="{desktop_scale.value/100}"/>
-				
-				<mx:Canvas id="desktop" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
-					mouseDown="StageManager.getInstance().onDragDesktopStart();desktop.setFocus();"
-					mouseUp="StageManager.getInstance().isDesktopDragged = false;"
-					mouseMove="StageManager.getInstance().onDragDesktop(event);"
-					scaleX="{desktop_scale.value/100}"
-					scaleY="{desktop_scale.value/100}"/>
-			</mx:Canvas>
-			<!-- END mindmap editor -->
-			
-			<!-- Preview window -->
-			<mx:Canvas styleName="previewWindow" bottom="18" right="18" width="182" height="122" alpha="1" blendMode="{BlendMode.DIFFERENCE}">
-				<mx:UIComponent id="previewWindow" width="180" height="120"/>
-			</mx:Canvas>
-			<!-- END Preview window -->
-			
-			<mx:Canvas height="30" left="0" right="0" top="0"
-				backgroundAlpha="0.5"
-				backgroundColor="0x000000"
-				color="0xFFFFFF">
-				<mx:HBox paddingTop="4" paddingLeft="4">
-					<mx:LinkButton top="4" label="Fullscreen" click="StageManager.getInstance().toggleFullScreen();"
-						id="fullScreenLinkButton"/>
-					
-					<mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
-						value="100"
-						id="desktop_scale"/>
-					
-					<mx:Label paddingTop="2" text="{desktop_scale.value + '%'}"
-						id="desktopScaleLabel"/>
-						
-					<mx:LinkButton top="4" label="Save" click="{StageManager.getInstance().onSaveClick();}" color="#FFDBA1"
-						visible="{StageManager.getInstance().isChanged}"
-						id="saveLinkButton"/>
-				</mx:HBox>
-			</mx:Canvas>
-			
-		</mx:Canvas>
+		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
+		<components:MindmapCanvas id="mindmapCanvas"/>
 	</mx:HDividedBox>
 		
 </mx:Application>

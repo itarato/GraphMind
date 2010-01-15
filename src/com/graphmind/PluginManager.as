@@ -2,6 +2,8 @@ package com.graphmind {
 	import flash.system.ApplicationDomain;
 	import flash.utils.getDefinitionByName;
 	
+	import mx.core.Application;
+	
 	import plugins.*;
 
 	/**
@@ -18,8 +20,9 @@ package com.graphmind {
 		 * 
 		 * @param array plugins
 		 */
-		public static function initPlugins(plugins:Array = null):void {
-			PluginManager._plugins = plugins ? plugins : [];
+		public static function initPlugins():void {
+			var plugin_array:Array = Application.application.parameters.plugins ? String(Application.application.parameters.plugins).split(',') : []
+			PluginManager._plugins = plugin_array ? plugin_array : [];
 		}
 		
 		public static function callHook(hook:String, data:Object = null):void {
