@@ -107,8 +107,8 @@ package com.graphmind.display
 			this.addChild(_displayComp);
 			
 			_connectionComp.graphics.lineStyle(2, 0x333333, 1);
-			StageManager.getInstance().stage.mindmapCanvas.desktop.addChild(_connectionComp);
-			StageManager.getInstance().stage.mindmapCanvas.desktop_cloud.addChild(_cloudComp);
+			GraphMind.instance.mindmapCanvas.desktop.addChild(_connectionComp);
+			GraphMind.instance.mindmapCanvas.desktop_cloud.addChild(_cloudComp);
 			
 			this._displayComp.title_label.htmlText = this._nodeItemData.title;
 		
@@ -273,7 +273,7 @@ package com.graphmind.display
 			if (event.keyCode == Keyboard.ENTER) {
 				_displayComp.currentState = '';
 				title = _displayComp.title_new.text;
-				StageManager.getInstance().stage.setFocus();
+				GraphMind.instance.setFocus();
 			} else if (event.keyCode == Keyboard.ESCAPE) {
 				_displayComp.currentState = '';
 				_displayComp.title_new.text = _displayComp.title_label.text;
@@ -284,14 +284,14 @@ package com.graphmind.display
 			// @TODO this is a duplication of the onNewTitleKeyUp() (above)
 			_displayComp.currentState = '';
 			_nodeItemData.title = _displayComp.title_label.text = _displayComp.title_new.text;
-			StageManager.getInstance().stage.setFocus();
+			GraphMind.instance.setFocus();
 		}
 		
 		private function onItemLoaderSelectorClick(event:MouseEvent):void {
 			event.stopPropagation();
 			//Log.info('click on node: ' + this._nodeItemData.title); 
 			selectNode();
-			StageManager.getInstance().stage.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
+			GraphMind.instance.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
 		
 		private function onLoadNodeClick(event:MouseEvent):void {
@@ -448,9 +448,9 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			StageManager.getInstance().stage.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
+			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
 			
-			StageManager.getInstance().stage.mindmapToolsPanel.node_info_panel.link.text = _nodeItemData.getPath();
+			GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text = _nodeItemData.getPath();
 			
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
@@ -511,16 +511,13 @@ package com.graphmind.display
 		
 		private function loadItem():void {
 			selectNode();
-			StageManager.getInstance().stage.currentState = 'load_item_state';
+			GraphMind.instance.currentState = 'load_item_state';
 		}
 		
 		private function loadViews():void {
 			selectNode();
-//			var app:GraphMind = StageManager.getInstance().stage;
-//			trace(StageManager.getInstance().stage.panelLoadView.view_arguments);
-//			trace(_nodeItemData.getDrupalID());
-			StageManager.getInstance().stage.currentState = 'load_view_state';
-			StageManager.getInstance().stage.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
+			GraphMind.instance.currentState = 'load_view_state';
+			GraphMind.instance.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
 		
 		private function loadNode():void {

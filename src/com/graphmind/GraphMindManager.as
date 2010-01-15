@@ -127,7 +127,7 @@ package com.graphmind
 		public function setEditMode(editable:Boolean):void {
 			_isEditable = editable;
 			if (!editable) {
-				StageManager.getInstance().stage.currentState = 'only_view_mode';
+				GraphMind.instance.currentState = 'only_view_mode';
 			}
 		}
 

@@ -26,7 +26,7 @@
 			import com.graphmind.StageManager;
 			import com.graphmind.GraphMindManager;
 			
-			public static var graphmind:GraphMind;
+			public static var instance:GraphMind;
 			
 			[Embed(source='assets/images/draganddrop.png')]
 			[Bindable]
@@ -64,7 +64,7 @@
 				Log.debug('Graphmind initialize.');
 				
 				// Bind the only one instance to a public static var
-				GraphMind.graphmind = this;
+				GraphMind.instance = this;
 			}
 			
 			
@@ -76,7 +76,7 @@
 				Log.debug('Grapmind started.');
 				
 				// Init managers
-				StageManager.getInstance().initStage(this);
+				StageManager.getInstance().initStage();
 				GraphMindManager.getInstance().initGraphMind();
 				PluginManager.initPlugins();
 			}

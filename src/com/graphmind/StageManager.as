@@ -47,7 +47,6 @@ package com.graphmind
 		public static var DEFAULT_DESKTOP_WIDTH:int = 3000;
 		
 		// The stage object
-		private var _application:GraphMind = null;
 		public var lastSelectedNode:NodeItem = null;
 		public var baseNode:NodeItem = null;
 		public var dragAndDrop_sourceNodeItem:NodeItem;
@@ -75,24 +74,22 @@ package com.graphmind
 		/**
 		 * Initialize stage.
 		 */
-		public function initStage(application:GraphMind):void {
-			this._application = application;
-			
+		public function initStage():void {
 			// Scroll mindmap canvas to center
-			_application.mindmapCanvas.desktop_wrapper.verticalScrollPosition = (stage.mindmapCanvas.desktop.height - stage.mindmapCanvas.desktop_wrapper.height) / 2;
+			GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition = (GraphMind.instance.mindmapCanvas.desktop.height - GraphMind.instance.mindmapCanvas.desktop_wrapper.height) / 2;
 			
 			// Node title RTE editor's default color
-			stage.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
+			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 			
 			// Preview window init
 			previewBitmap.width = 180;
 			previewBitmap.height = 120;
-			stage.mindmapCanvas.previewWindow.addChild(previewBitmap);
+			GraphMind.instance.mindmapCanvas.previewWindow.addChild(previewBitmap);
 			
 			// Remove base context menu items (not perfect, though)
 			var cm:ContextMenu = new ContextMenu();
 			cm.hideBuiltInItems();
-			MovieClip(GraphMind.graphmind.systemManager).contextMenu = cm;
+			MovieClip(GraphMind.instance.systemManager).contextMenu = cm;
 		}
 		
 		/**
@@ -155,7 +152,7 @@ package com.graphmind
 			Log.info('onDataGridItemClick_loadViewState');
 			var selectedViewsCollection:ViewsCollection = event.itemRenderer.data as ViewsCollection;
 			
-			stage.panelLoadView.view_name.text = selectedViewsCollection.name;
+			GraphMind.instance.panelLoadView.view_name.text = selectedViewsCollection.name;
 		}
 		
 		/**
@@ -163,9 +160,9 @@ package com.graphmind
 		 */
 		public function onConnectFormSubmit():void {
 			var sc:SiteConnection = SiteConnection.createSiteConnection(
-				_application.mindmapToolsPanel.node_connections_panel.connectFormURL.text,
-				_application.mindmapToolsPanel.node_connections_panel.connectFormUsername.text,
-				_application.mindmapToolsPanel.node_connections_panel.connectFormPassword.text
+				GraphMind.instance.mindmapToolsPanel.node_connections_panel.connectFormURL.text,
+				GraphMind.instance.mindmapToolsPanel.node_connections_panel.connectFormUsername.text,
+				GraphMind.instance.mindmapToolsPanel.node_connections_panel.connectFormPassword.text
 			);
 			ConnectionManager.getInstance().connectToSite(sc);
 		}
@@ -174,16 +171,8 @@ package com.graphmind
 		 * Add new element to the editor canvas.
 		 */
 		public function addChildToStage(element:UIComponent):void {
-			_application.mindmapCanvas.desktop.addChild(element);
+			GraphMind.instance.mindmapCanvas.desktop.addChild(element);
 			refreshNodePositions();
-		}
-		
-		/**
-		 * Getter for stage object.
-		 * @return GraphMind
-		 */
-		public function get stage():GraphMind {
-			return this._application;
 		}
 		
 		/**
@@ -192,13 +181,13 @@ package com.graphmind
 		public function onLoadViewSubmitClick(event:MouseEvent):void {
 			//var viewsList:ViewsList = new ViewsList();
 			var viewsData:ViewsList = new ViewsList();
-			viewsData.args   	= stage.panelLoadView.view_arguments.text;
+			viewsData.args   	= GraphMind.instance.panelLoadView.view_arguments.text;
 			// Fields are not supported in Services for D6
 			// viewsData.fields 	= stage.view_fields.text;
-			viewsData.limit     = parseInt(stage.panelLoadView.view_limit.text);
-			viewsData.offset    = parseInt(stage.panelLoadView.view_offset.text);
-			viewsData.view_name = stage.panelLoadView.view_name.text;
-			viewsData.parent    = stage.panelLoadView.view_views_datagrid.selectedItem as ViewsCollection;
+			viewsData.limit     = parseInt(GraphMind.instance.panelLoadView.view_limit.text);
+			viewsData.offset    = parseInt(GraphMind.instance.panelLoadView.view_offset.text);
+			viewsData.view_name = GraphMind.instance.panelLoadView.view_name.text;
+			viewsData.parent    = GraphMind.instance.panelLoadView.view_views_datagrid.selectedItem as ViewsCollection;
 			
 			var loaderData:TempViewLoadData = new TempViewLoadData();
 			loaderData.viewsData = viewsData;
@@ -207,14 +196,14 @@ package com.graphmind
 			
 			ConnectionManager.getInstance().viewListLoad(loaderData);
 			
-			stage.currentState = '';
+			GraphMind.instance.currentState = '';
 		}
 		
 		/**
 		 * Event on cancelling views load panel.
 		 */
 		public function onLoadViewCancelClick(event:MouseEvent):void {
-			stage.currentState = '';
+			GraphMind.instance.currentState = '';
 		}
 		
 		/**
@@ -223,10 +212,10 @@ package com.graphmind
 		public function onLoadItemSubmitClick(event:MouseEvent):void {
 			var nodeItemData:NodeItemData = new NodeItemData(
 				{},
-				stage.panelLoadDrupalItem.item_type.selectedItem.data,
-				stage.panelLoadDrupalItem.item_source.selectedItem as SiteConnection
+				GraphMind.instance.panelLoadDrupalItem.item_type.selectedItem.data,
+				GraphMind.instance.panelLoadDrupalItem.item_source.selectedItem as SiteConnection
 			);
-			nodeItemData.drupalID = parseInt(stage.panelLoadDrupalItem.item_id.text);
+			nodeItemData.drupalID = parseInt(GraphMind.instance.panelLoadDrupalItem.item_id.text);
 			
 			var loaderData:TempItemLoadData = new TempItemLoadData();
 			loaderData.nodeItem = lastSelectedNode;
@@ -235,14 +224,14 @@ package com.graphmind
 			
 			ConnectionManager.getInstance().itemLoad(loaderData);
 			
-			stage.currentState = '';
+			GraphMind.instance.currentState = '';
 		}
 		
 		/**
 		 * Event for on item loader cancel.
 		 */
 		public function onLoadItemCancelClick(event:MouseEvent):void {
-			stage.currentState = '';
+			GraphMind.instance.currentState = '';
 		}
 		
 		public function onViewsItemsLoadSuccess(list:Array, requestData:TempViewLoadData):void {
@@ -299,7 +288,7 @@ package com.graphmind
 		}
 		
 		public function onDumpClick():void {
-			stage.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = GraphMindManager.getInstance().exportToFreeMindFormat();
+			GraphMind.instance.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = GraphMindManager.getInstance().exportToFreeMindFormat();
 		}
 		
 		public function onExportClick():void {
@@ -310,19 +299,19 @@ package com.graphmind
 		public function onAddOrUpdateClick(event:MouseEvent):void {
 			if (!lastSelectedNode) baseNode.selectNode();
 			
-			lastSelectedNode.data[stage.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text] = stage.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text;
+			lastSelectedNode.data[GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text] = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text;
 			lastSelectedNode.selectNode();
 			
-			stage.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = stage.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
+			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
 		public function onRemoveAttributeClick(event:MouseEvent):void {
-			if (!lastSelectedNode || stage.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text.length == 0) return;
+			if (!lastSelectedNode || GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text.length == 0) return;
 			
-			lastSelectedNode.dataDelete(stage.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
+			lastSelectedNode.dataDelete(GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
 			lastSelectedNode.selectNode();
 			
-			stage.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = stage.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
+			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 		}
 		
 		public function toggleFullScreen():void {
@@ -342,9 +331,9 @@ package com.graphmind
 		}
 		
 		public function onDragAndDropImageMouseUp(event:MouseEvent):void {
-			stage.dragAndDrop_shape.visible = false;
-			stage.dragAndDrop_shape.x = -stage.dragAndDrop_shape.width;
-			stage.dragAndDrop_shape.y = -stage.dragAndDrop_shape.height;
+			GraphMind.instance.dragAndDrop_shape.visible = false;
+			GraphMind.instance.dragAndDrop_shape.x = -GraphMind.instance.dragAndDrop_shape.width;
+			GraphMind.instance.dragAndDrop_shape.y = -GraphMind.instance.dragAndDrop_shape.height;
 		}
 		
 		public function prepaireDragAndDrop():void {
@@ -355,29 +344,29 @@ package com.graphmind
 			isPrepairedDragAndDrop = false;
 			isDragAndDrop = true;
 			StageManager.getInstance().dragAndDrop_sourceNodeItem = source;
-			StageManager.getInstance().stage.dragAndDrop_shape.visible = true;
-			StageManager.getInstance().stage.dragAndDrop_shape.x = StageManager.getInstance().stage.mouseX - StageManager.getInstance().stage.dragAndDrop_shape.width / 2;
-			StageManager.getInstance().stage.dragAndDrop_shape.y = StageManager.getInstance().stage.mouseY - StageManager.getInstance().stage.dragAndDrop_shape.height / 2;
-			StageManager.getInstance().stage.dragAndDrop_shape.startDrag(false);
+			GraphMind.instance.dragAndDrop_shape.visible = true;
+			GraphMind.instance.dragAndDrop_shape.x = GraphMind.instance.mouseX - GraphMind.instance.dragAndDrop_shape.width / 2;
+			GraphMind.instance.dragAndDrop_shape.y = GraphMind.instance.mouseY - GraphMind.instance.dragAndDrop_shape.height / 2;
+			GraphMind.instance.dragAndDrop_shape.startDrag(false);
 		}
 		
 		public function closeDragAndDrop():void {
 			isDragAndDrop = false;
 			isPrepairedDragAndDrop = false;
-			stage.dragAndDrop_shape.visible = false;
+			GraphMind.instance.dragAndDrop_shape.visible = false;
 			dragAndDrop_sourceNodeItem = null;
 		}
 		
 		public function onNodeLabelRTESave():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.title = stage.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText;
+			lastSelectedNode.title = GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText;
 		}
 		
 		public function onSaveLink():void {
 			if (!checkLastSelectedNodeIsExists()) return;
 			
-			lastSelectedNode.link = stage.mindmapToolsPanel.node_info_panel.link.text;
+			lastSelectedNode.link = GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text;
 		}
 		
 		public function checkLastSelectedNodeIsExists():Boolean {
@@ -400,18 +389,18 @@ package com.graphmind
 		
 		public function onDragDesktopStart():void {
 			isDesktopDragged = true;
-			_desktopDragInfo.oldVPos = stage.mindmapCanvas.desktop_wrapper.mouseY;
-			_desktopDragInfo.oldHPos = stage.mindmapCanvas.desktop_wrapper.mouseX;
-			_desktopDragInfo.oldScrollbarVPos = stage.mindmapCanvas.desktop_wrapper.verticalScrollPosition;
-			_desktopDragInfo.oldScrollbarHPos = stage.mindmapCanvas.desktop_wrapper.horizontalScrollPosition;
+			_desktopDragInfo.oldVPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseY;
+			_desktopDragInfo.oldHPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseX;
+			_desktopDragInfo.oldScrollbarVPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition;
+			_desktopDragInfo.oldScrollbarHPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.horizontalScrollPosition;
 		}
 		
 		public function onDragDesktop(event:MouseEvent):void {
 			if (isDesktopDragged) {
-				var deltaV:Number = stage.mindmapCanvas.desktop_wrapper.mouseY - _desktopDragInfo.oldVPos;
-				var deltaH:Number = stage.mindmapCanvas.desktop_wrapper.mouseX - _desktopDragInfo.oldHPos;
-				stage.mindmapCanvas.desktop_wrapper.verticalScrollPosition   = _desktopDragInfo.oldScrollbarVPos - deltaV;
-				stage.mindmapCanvas.desktop_wrapper.horizontalScrollPosition = _desktopDragInfo.oldScrollbarHPos - deltaH;
+				var deltaV:Number = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseY - _desktopDragInfo.oldVPos;
+				var deltaH:Number = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseX - _desktopDragInfo.oldHPos;
+				GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition   = _desktopDragInfo.oldScrollbarVPos - deltaV;
+				GraphMind.instance.mindmapCanvas.desktop_wrapper.horizontalScrollPosition = _desktopDragInfo.oldScrollbarHPos - deltaH;
 			}
 		}
 		
@@ -427,8 +416,8 @@ package com.graphmind
 			previewTimer = setTimeout(function():void {
 				previewBitmapData = new BitmapData(2880, 2000, false, 0x333333);
 				previewBitmap.bitmapData = previewBitmapData;
-				previewBitmapData.draw(stage.mindmapCanvas.desktop_cloud);
-				previewBitmapData.draw(stage.mindmapCanvas.desktop);
+				previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
+				previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
 				trace('refresh');
 			}, 400);
 		}
