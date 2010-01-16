@@ -54,6 +54,7 @@
 				"group", "messagebox_warning"
 			];
 			
+			public static var HOOK_PRE_INIT:String = 'pre_init';
 			
 			/**
 			 * Callback for initialize event.
@@ -74,9 +75,13 @@
 				Log.debug('Grapmind started.');
 				
 				// Init managers
+				// Plugins should be the first
+				PluginManager.init();
+				// @HOOK
+				PluginManager.callHook(HOOK_PRE_INIT);
+				
 				StageManager.getInstance().init();
 				GraphMindManager.getInstance().init();
-				PluginManager.init();
 			}
 			
 		]]>

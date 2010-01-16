@@ -66,7 +66,7 @@ package com.graphmind
 			for each (var iconsXML:XML in nodeXML.elements('icon')) {
 				nodeItem.addIcon(GraphMindManager.getInstance().getIconPath() + iconsXML.@BUILTIN + '.png');
 			}
-			nodeItem.refactorNodeBody();
+			nodeItem.redrawNodeBody();
 			
 			var nodeChilds:XMLList = nodeXML.elements('node');
 			for each (var childXML:XML in nodeChilds) {

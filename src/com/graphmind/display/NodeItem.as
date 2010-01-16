@@ -6,6 +6,7 @@ package com.graphmind.display
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.temp.TempItemLoadData;
+	import com.graphmind.util.Log;
 	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
 	
@@ -117,7 +118,7 @@ package com.graphmind.display
 			
 			this.buttonMode = true;
 			
-			this.refactorNodeBody();
+			this.redrawNodeBody();
 		}
 			
 		private function _initAttachEvents():void {
@@ -125,10 +126,10 @@ package com.graphmind.display
 				this._displayComp.title_label.doubleClickEnabled = true;
 				this._displayComp.title_label.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
 				
-				this._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP, onNewTitleKeyUp);
-				this._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT, onNewTitleFocusOut);
+				this._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP, onKeyUp_TitleTextField);
+				this._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT, onFocusOut_TitleTextField);
 				
-				this._displayComp.icon_add.addEventListener(MouseEvent.CLICK, onLoadNodeClick);
+				this._displayComp.icon_add.addEventListener(MouseEvent.CLICK, onClick_AddSimpleNodeButton);
 				
 				this._displayComp.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 				this._displayComp.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp);
@@ -139,10 +140,10 @@ package com.graphmind.display
 			this._displayComp.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this._displayComp.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
 			
-			this._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onTitleUpdateComplete);
+			this._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
 			
-			this._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK, onIconAnchorClick);
-			this._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK, onIconHasChildClick);
+			this._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK, onClick_NodeLinkButton);
+			this._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK, onClick_ToggleSubtreeButton);
 		}
 
 		private function _initCreateContextMenu():void {
@@ -151,27 +152,29 @@ package com.graphmind.display
 			contextMenu.hideBuiltInItems();
 			
 			var cms:Array = [
-				{title: 'Add node',        event: onAddNodeSelect,       	separator: false},
-				{title: 'Add Drupal item', event: onAddDrupalItemSelect, 	separator: false},
-				{title: 'Add Views list',  event: onAddViewsListSelect,  	separator: false},
-				{title: 'Remove node',     event: onRemoveNodeSelect,       separator: true},
-				{title: 'Remove childs',   event: onRemoveNodeChildsSelect, separator: false},
-				{title: 'Open subtree',    event: onOpenSubtree,            separator: true},
-				{title: 'Toggle cloud',    event: toggleCloudWithRefresh,   separator: false}
+				{title: 'Add node',        event: onContextMenuSelected_AddSimpleNode,    separator: false},
+				{title: 'Add Drupal item', event: onContextMenuSelected_AddDrupalItem, 	 separator: false},
+				{title: 'Add Views list',  event: onContextMenuSelected_AddDrupalViews,   separator: false},
+				{title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true},
+				{title: 'Remove childs',   event: onContextMenuSelected_RemoveNodeChilds, separator: false},
+				{title: 'Open subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true},
+				{title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false}
 			];
 			
 			if (NodeItemData.updatableTypes.indexOf(_nodeItemData.type) >= 0) {
-				cms.push({title: 'Update node', event: onUpdateNodeSelect, separator: false});
+				cms.push({title: 'Update node', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
 			}
 			
 			// Extend context menu items by Plugin provided menu items
 			PluginManager.callHook(HOOK_NODE_CONTEXT_MENU, {data: cms});
+			Log.debug('contextmenu: ' + cms.length);
 			
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
 				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
 				contextMenu.customItems.push(cmi);
 			}
+			trace(contextMenu);
 			
 			_displayComp.contextMenu = contextMenu;
 		}
@@ -208,33 +211,33 @@ package com.graphmind.display
 			}
 		}
 		
-		private function onAddNodeSelect(event:ContextMenuEvent):void {
+		private function onContextMenuSelected_AddSimpleNode(event:ContextMenuEvent):void {
 			loadNode();
 		}
 		
-		private function onAddDrupalItemSelect(event:ContextMenuEvent):void {
+		private function onContextMenuSelected_AddDrupalItem(event:ContextMenuEvent):void {
 			loadItem();
 		}
 		
-		private function onAddViewsListSelect(event:ContextMenuEvent):void {
+		private function onContextMenuSelected_AddDrupalViews(event:ContextMenuEvent):void {
 			loadViews();
 		}
 		
-		private function onRemoveNodeSelect(event:ContextMenuEvent):void {
+		private function onContextMenuSelected_RemoveNode(event:ContextMenuEvent):void {
 			remove();
 		}
 		
-		private function onRemoveNodeChildsSelect(event:ContextMenuEvent):void {
+		private function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
 			removeNodeChilds();
 			selectNode();
-			StageManager.getInstance().refreshNodePositions();
+			StageManager.getInstance().refreshMindmapStage();
 		}
 		
 		private function onClick(event:MouseEvent):void {
 			selectNode();
 		}
 		
-		private function onIconHasChildClick(event:MouseEvent):void {
+		private function onClick_ToggleSubtreeButton(event:MouseEvent):void {
 			StageManager.getInstance().isTreeChanged = true;
 			if (!this._isCollapsed) {
 				collapse();
@@ -270,10 +273,10 @@ package com.graphmind.display
 			_displayComp.title_new.setFocus();
 		}
 		
-		private function onNewTitleKeyUp(event:KeyboardEvent):void {
+		private function onKeyUp_TitleTextField(event:KeyboardEvent):void {
 			if (event.keyCode == Keyboard.ENTER) {
 				_displayComp.currentState = '';
-				title = _displayComp.title_new.text;
+				setTitle(_displayComp.title_new.text);
 				GraphMind.instance.setFocus();
 			} else if (event.keyCode == Keyboard.ESCAPE) {
 				_displayComp.currentState = '';
@@ -281,7 +284,7 @@ package com.graphmind.display
 			}
 		}
 		
-		private function onNewTitleFocusOut(event:FocusEvent):void {
+		private function onFocusOut_TitleTextField(event:FocusEvent):void {
 			// @TODO this is a duplication of the onNewTitleKeyUp() (above)
 			_displayComp.currentState = '';
 			_nodeItemData.title = _displayComp.title_label.text = _displayComp.title_new.text;
@@ -295,7 +298,7 @@ package com.graphmind.display
 			GraphMind.instance.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
 		
-		private function onLoadNodeClick(event:MouseEvent):void {
+		private function onClick_AddSimpleNodeButton(event:MouseEvent):void {
 			event.stopPropagation();
 			event.stopImmediatePropagation();
 			event.preventDefault();
@@ -312,12 +315,12 @@ package com.graphmind.display
 			loadViews();
 		}
 		
-		private function onIconAnchorClick(event:MouseEvent):void {
+		private function onClick_NodeLinkButton(event:MouseEvent):void {
 			var ur:URLRequest = new URLRequest(_nodeItemData.getPath());
 			navigateToURL(ur, '_blank');
 		}
 		
-		public function get childs():ArrayCollection {
+		public function getChildNodes():ArrayCollection {
 			return _childs;
 		}
 		
@@ -346,7 +349,7 @@ package com.graphmind.display
 				nodeItem.visible = false;
 				nodeItem.collapseChilds();
 			}
-			StageManager.getInstance().refreshNodePositions();
+			StageManager.getInstance().refreshMindmapStage();
 		}
 		
 		public function uncollapse():void {
@@ -363,7 +366,7 @@ package com.graphmind.display
 					nodeItem.uncollapseChilds(forceOpenSubtree);
 				}
 			}
-			StageManager.getInstance().refreshNodePositions();
+			StageManager.getInstance().refreshMindmapStage();
 		}
 		
 		/**
@@ -512,7 +515,7 @@ package com.graphmind.display
 			return output + '</node>' + "\n";
 		}
 		
-		public function get data():Object {
+		public function getNodeData():Object {
 			return _nodeItemData.data;
 		}
 		
@@ -538,7 +541,7 @@ package com.graphmind.display
 				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
 				_parentNode._displayComp.icon_has_child.visible = _parentNode._childs.length > 0;
 			}
-			StageManager.getInstance().refreshNodePositions();
+			StageManager.getInstance().refreshMindmapStage();
 		}
 		
 		private function removeNodeChilds():void {
@@ -593,7 +596,7 @@ package com.graphmind.display
 			// Add source to target
 			target.addNodeChild(source);
 			// Refresh display
-			StageManager.getInstance().refreshNodePositions();
+			StageManager.getInstance().refreshMindmapStage();
 			
 			if (callHook) {
 				// Call hook
@@ -618,7 +621,7 @@ package com.graphmind.display
 				target._parentNode._childs.setItemAt(source, siblingIDX);
 				
 				// Refresh after reordering
-				StageManager.getInstance().refreshNodePositions();
+				StageManager.getInstance().refreshMindmapStage();
 				
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
@@ -673,7 +676,7 @@ package com.graphmind.display
 				icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
 			}
 		
-			refactorNodeBody();
+			redrawNodeBody();
 			refreshParentTree();
 			
 			updateTime();
@@ -684,13 +687,13 @@ package com.graphmind.display
  			if (iconIDX == -1) return;
  			_icons.removeItemAt(iconIDX);
  			_displayComp.removeChild(event.currentTarget as Image);
- 			refactorNodeBody();
+ 			redrawNodeBody();
  			refreshParentTree();
  			
  			updateTime();
  		}
  		
- 		public function refactorNodeBody():void {
+ 		public function redrawNodeBody():void {
  			var titleExtraWidth:int = _getTitleExtraWidth();
  			for (var idx:* in _icons) {
  				Image(_icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + 158;
@@ -715,13 +718,13 @@ package com.graphmind.display
 			this.refreshChildNodePosition();
  		}
 		
-		public function set title(title:String):void {
+		public function setTitle(title:String):void {
 			_nodeItemData.title = _displayComp.title_label.htmlText = title;
 			updateTime();
 		}
 		
-		public function onTitleUpdateComplete(event:FlexEvent):void {
-			refactorNodeBody();
+		public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
+			redrawNodeBody();
 			refreshChildNodePosition();
 			refreshParentTree();
 		}
@@ -736,7 +739,7 @@ package com.graphmind.display
 			StageManager.getInstance().isTreeChanged = true;
 		}
 		
-		public function onOpenSubtree(event:ContextMenuEvent):void {
+		public function onContextMenuSelected_OpenSubtree(event:ContextMenuEvent):void {
 			selectNode();
 			uncollapseChilds(true);
 		}
@@ -750,10 +753,10 @@ package com.graphmind.display
 				_cloudComp.graphics.clear();
 			}
 			
-			if (forceRedraw) StageManager.getInstance().refreshNodePositions();
+			if (forceRedraw) StageManager.getInstance().refreshMindmapStage();
 		}
 		
-		public function toggleCloudWithRefresh(event:ContextMenuEvent):void {
+		public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
 			selectNode();
 			toggleCloud(true);
 			updateTime();
@@ -785,7 +788,7 @@ package com.graphmind.display
 			return _isCollapsed;
 		}
 	
-		public function onUpdateNodeSelect(event:ContextMenuEvent):void {
+		public function onContextMenuSelected_UpdateDrupalItem(event:ContextMenuEvent):void {
 			selectNode();
 			updateDrupalItem();
 		}
@@ -825,7 +828,7 @@ package com.graphmind.display
 			return StageManager.getInstance().activeNode;
 		}
 		
-		public function parentNode():NodeItem {
+		public function getParentNode():NodeItem {
 			return _parentNode;
 		}
 		

@@ -15,6 +15,7 @@ package com.graphmind
 	import com.graphmind.data.ViewsCollection;
 	import com.graphmind.data.ViewsList;
 	import com.graphmind.display.NodeItem;
+	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.temp.TempViewLoadData;
@@ -66,10 +67,13 @@ package com.graphmind
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
 		
 		// Preview window.
-		private var _previewBitmapData:BitmapData = new BitmapData(2880, 2000, true);
+		private var _previewBitmapData:BitmapData = new BitmapData(DEFAULT_DESKTOP_WIDTH, DEFAULT_DESKTOP_HEIGHT, true);
 		private var _previewBitmap:Bitmap = new Bitmap(_previewBitmapData);
 		private var _previewTimer:uint;
 		
+		/**
+		 * Singleton pattern.
+		 */
 		public static function getInstance():StageManager {
 			if (_instance == null) {
 				_instance = new StageManager();
@@ -106,22 +110,24 @@ package com.graphmind
 			ConnectionManager.getInstance().nodeLoad(
 				GraphMindManager.getInstance().getHostNodeID(), 
 				GraphMindManager.getInstance().baseSiteConnection, 
-				_loadBaseNode_stage_node_loaded
+				onSuccess_BaseNodeLoaded
 			);
 		}
 		
 		/**
 		 * Load base node - stage 2.
 		 */
-		private function _loadBaseNode_stage_node_loaded(result:ResultEvent):void {
+		private function onSuccess_BaseNodeLoaded(result:ResultEvent):void {
 			GraphMindManager.getInstance().setEditMode(result.result.graphmindEditable == '1');
 			
 			// ! Removed original data object: result.result.
 			// This caused a mailformed export string.
-			var itemData:NodeItemData = new NodeItemData({}, NodeItemData.NODE, GraphMindManager.getInstance().baseSiteConnection);
-			itemData.type = NodeItemData.NODE;
-			itemData.title = result.result.title;
-			var nodeItem:NodeItem = new NodeItem(itemData);
+			var nodeItem:NodeItem = NodeFactory.createNode(
+				{},
+				NodeItemData.NODE,
+				SiteConnection.getBaseSiteConnection(),
+				result.result.title
+			);
 			
 			// @WTF sometimes body_value is the right value, sometimes not
 			var is_valid_mm_xml:Boolean = false;
@@ -133,15 +139,17 @@ package com.graphmind
 			}
 				
 			if (is_valid_mm_xml) {
+				// Subtree
 				var importedBaseNode:NodeItem = ImportManager.getInstance().importMapFromString(baseNode, body);
 				addChildToStage(importedBaseNode);
 				baseNode = importedBaseNode;
 			} else {
+				// New node
 				addChildToStage(nodeItem);
 				baseNode = nodeItem;
 			}
 			
-			refreshNodePositions();
+			refreshMindmapStage();
 		}		
 				
 		/**
@@ -170,7 +178,7 @@ package com.graphmind
 		 */
 		public function addChildToStage(element:UIComponent):void {
 			GraphMind.instance.mindmapCanvas.desktop.addChild(element);
-			refreshNodePositions();
+			refreshMindmapStage();
 		}
 		
 		/**
@@ -284,7 +292,7 @@ package com.graphmind
 			nodeItem.selectNode();
 		}
 		
-		public function refreshNodePositions():void {
+		public function refreshMindmapStage():void {
 			if (!baseNode) return;
 			baseNode.x = 0;
 			baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
@@ -410,7 +418,7 @@ package com.graphmind
 		public function onClick_RTESaveButton():void {
 			if (!isActiveNodeExists()) return;
 			
-			activeNode.title = GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText;
+			activeNode.setTitle(GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText);
 		}
 		
 		public function onClick_SaveNodeLink():void {

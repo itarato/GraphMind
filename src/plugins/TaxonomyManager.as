@@ -95,7 +95,7 @@ package plugins {
 			// Node is not part of the plugin.
 			if (!_isTaxonomyPluginNode(node, NodeItemData.TERM)) return;
 			
-			var parentNode:NodeItem = node.parentNode();
+			var parentNode:NodeItem = node.getParentNode();
 			
 			// Deleting term
 			if (!_isTaxonomyPluginNode(parentNode)) {
@@ -105,13 +105,13 @@ package plugins {
 			}
 
 			var order:Array = [];
-			for each (var child:NodeItem in parentNode.childs) {
-				if (child.data.hasOwnProperty('tid')) {
-					order.push(child.data.tid);
+			for each (var child:NodeItem in parentNode.getChildNodes) {
+				if (child.getNodeData().hasOwnProperty('tid')) {
+					order.push(child.getNodeData().tid);
 				}
 			}
 			
-			var childNodes:Array = _changeChildsVocabulary(node, parentNode.data.vid || 0);
+			var childNodes:Array = _changeChildsVocabulary(node, parentNode.getNodeData().vid || 0);
 			_changeSiblingsWeight(node);
 			
 			RPCServiceHelper.createRPC(
@@ -122,9 +122,9 @@ package plugins {
 				function(_event:ResultEvent):void{Alert.show('Great success');}
 			).send(
 				baseConnection.sessionID,
-				node.data.tid,
-				parentNode.data.vid || 0,
-				parentNode.data.tid || 0,
+				node.getNodeData().tid,
+				parentNode.getNodeData().vid || 0,
+				parentNode.getNodeData().tid || 0,
 				order.join('|'),
 				childNodes.join('|')
 			);
@@ -134,7 +134,7 @@ package plugins {
 		 * Check if the node created by the TaxonomyManager plugin and has a certain type.
 		 */
 		private static function _isTaxonomyPluginNode(node:NodeItem, type:String = null):Boolean {
-			if (!node.data.hasOwnProperty('plugin') || !node.data.plugin == 'TaxonomyManager') {
+			if (!node.getNodeData().hasOwnProperty('plugin') || !node.getNodeData().plugin == 'TaxonomyManager') {
 				return false;
 			}
 			return type == null ? true : node.nodeItemData.type == type;
@@ -148,10 +148,10 @@ package plugins {
 		 * @param integer vid
 		 */
 		private static function _changeChildsVocabulary(node:NodeItem, vid:int):Array {
-			node.data.vid = vid;
+			node.getNodeData().vid = vid;
 			
-			var nodes:Array = [node.data.tid || 0];
-			for each (var child:NodeItem in node.childs) {
+			var nodes:Array = [node.getNodeData().tid || 0];
+			for each (var child:NodeItem in node.getChildNodes) {
 				nodes = nodes.concat(_changeChildsVocabulary(child, vid));
 			}
 			
@@ -164,10 +164,10 @@ package plugins {
 		 * @param NodeItem node
 		 */
 		private static function _changeSiblingsWeight(node:NodeItem):void {
-			var parentNode:NodeItem = node.parentNode();
+			var parentNode:NodeItem = node.getParentNode();
 			var weight:int = 0;
-			for each (var child:NodeItem in parentNode.childs) {
-				child.data.weight = weight++;
+			for each (var child:NodeItem in parentNode.getChildNodes) {
+				child.getNodeData().weight = weight++;
 			}
 		}
 		
@@ -188,7 +188,7 @@ package plugins {
 				'amfphp',
 				baseSiteConnection.url,
 				_onTermDeleted
-			).send(baseSiteConnection.sessionID, node.data.tid || 0);
+			).send(baseSiteConnection.sessionID, node.getNodeData().tid || 0);
 		}
 		
 		/**
@@ -202,9 +202,9 @@ package plugins {
 		 * De-pluginize a subtree.
 		 */
 		private static function _removePluginInfoFromNode(node:NodeItem):void {
-			node.data.plugin = undefined;
+			node.getNodeData().plugin = undefined;
 			
-			for each (var child:NodeItem in node.childs) {
+			for each (var child:NodeItem in node.getChildNodes) {
 				_removePluginInfoFromNode(child);
 			}
 		}

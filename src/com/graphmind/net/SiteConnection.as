@@ -1,5 +1,7 @@
 package com.graphmind.net
 {
+	import flash.errors.IllegalOperationError;
+	
 	import mx.collections.ArrayCollection;
 	
 	public class SiteConnection
@@ -79,7 +81,13 @@ package com.graphmind.net
 				"- Username: " + ((_username == null) ? 'undefined' : _username);
 		}
 		
+		/**
+		 * Get the master site connection.
+		 */
 		public static function getBaseSiteConnection():SiteConnection {
+			if (connections.length == 0) {
+				throw new IllegalOperationError('Site connection has not initalized yet.');
+			}
 			return connections[0] as SiteConnection;
 		}
 		
