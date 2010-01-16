@@ -55,7 +55,7 @@ package plugins {
 				vocabularyNodeItemData.title = vocabulary.name;
 				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
 				var vocabularyNode:NodeItem = new NodeItem(vocabularyNodeItemData);
-				baseNode.addNodeChild(vocabularyNode);
+				baseNode.addChildNode(vocabularyNode);
 				
 				var term_hierarchy:Object = {};
 				var term_storage:Object = {0: vocabularyNode};
@@ -78,7 +78,7 @@ package plugins {
 				
 				for (var _parentID:* in term_hierarchy) {
 					for each (var termNode:NodeItem in term_hierarchy[_parentID]) {
-						(term_storage[_parentID] as NodeItem).addNodeChild(termNode);
+						(term_storage[_parentID] as NodeItem).addChildNode(termNode);
 					}
 				}
 			}

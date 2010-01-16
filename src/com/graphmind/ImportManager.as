@@ -71,7 +71,7 @@ package com.graphmind
 			var nodeChilds:XMLList = nodeXML.elements('node');
 			for each (var childXML:XML in nodeChilds) {
 				var childNode:NodeItem = buildGrapMindNode(childXML);
-				nodeItem.addNodeChild(childNode);
+				nodeItem.addChildNode(childNode);
 			}
 			
 			if (nodeXML.@FOLDED == 'true') {

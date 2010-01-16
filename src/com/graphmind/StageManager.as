@@ -71,6 +71,10 @@ package com.graphmind
 		private var _previewBitmap:Bitmap = new Bitmap(_previewBitmapData);
 		private var _previewTimer:uint;
 		
+		// Mindmap stage redraw timer - performance reason
+		private var _mindmapStageTimer:uint;
+		
+		
 		/**
 		 * Singleton pattern.
 		 */
@@ -141,15 +145,15 @@ package com.graphmind
 			if (is_valid_mm_xml) {
 				// Subtree
 				var importedBaseNode:NodeItem = ImportManager.getInstance().importMapFromString(baseNode, body);
-				addChildToStage(importedBaseNode);
+				addNodeToStage(importedBaseNode);
 				baseNode = importedBaseNode;
 			} else {
 				// New node
-				addChildToStage(nodeItem);
+				addNodeToStage(nodeItem);
 				baseNode = nodeItem;
 			}
 			
-			refreshMindmapStage();
+			redrawMindmapStage();
 		}		
 				
 		/**
@@ -176,9 +180,9 @@ package com.graphmind
 		/**
 		 * Add new element to the editor canvas.
 		 */
-		public function addChildToStage(element:UIComponent):void {
-			GraphMind.instance.mindmapCanvas.desktop.addChild(element);
-			refreshMindmapStage();
+		public function addNodeToStage(node:UIComponent):void {
+			GraphMind.instance.mindmapCanvas.desktop.addChild(node);
+			redrawMindmapStage();
 		}
 		
 		/**
@@ -269,35 +273,42 @@ package com.graphmind
 					requestData.viewsData.parent.source
 				);
 				var nodeItem:NodeItem = new NodeItem(nodeItemData);
-				requestData.nodeItem.addNodeChild(nodeItem);
+				requestData.nodeItem.addChildNode(nodeItem);
 			}
 		}
 		
-		// @TODO maybe it's not the right place for this, damn it
-		// Suggested name: createNode(parent)
-		public function createSimpleNode(parent:NodeItem):void {
-			var nodeItemData:NodeItemData = new NodeItemData({}, NodeItemData.NORMAL, SiteConnection.createSiteConnection());
-			var nodeItem:NodeItem = new NodeItem(nodeItemData);
-			parent.addNodeChild(nodeItem);
-			nodeItem.selectNode();
+		/**
+		 * Create a new empty node and add to an existing node as a child.
+		 * Call it for creating simple child nodes.
+		 */
+		public function createSimpleChildNode(parent:NodeItem):void {
+			var node:NodeItem = NodeFactory.createNode({}, NodeItemData.NORMAL);
+			parent.addChildNode(node);
+			node.selectNode();
 			
 			// HOOK
-			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: nodeItem});
+			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: node});
 		}
 		
 		public function onSuccess_DrupalItemLoaded(result:Object, requestData:TempItemLoadData):void {
 			requestData.nodeItemData.data = result;
 			var nodeItem:NodeItem = new NodeItem(requestData.nodeItemData);
-			requestData.nodeItem.addNodeChild(nodeItem);
+			requestData.nodeItem.addChildNode(nodeItem);
 			nodeItem.selectNode();
 		}
 		
-		public function refreshMindmapStage():void {
+		public function redrawMindmapStage():void {
 			if (!baseNode) return;
-			baseNode.x = 0;
-			baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
-			baseNode.refreshChildNodePosition();
-			refreshPreviewWindow();
+			
+			// Very little time should be enough for increasing performance
+			// It prevents bulk refreshes (eg. on massive node creation)
+			clearTimeout(_mindmapStageTimer);
+			_mindmapStageTimer = setTimeout(function():void {
+				baseNode.x = 4;
+				baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
+				baseNode.refreshChildNodePosition();
+				redrawPreviewWindow();
+			}, 10);
 		}
 		
 		public function onClick_SaveGraphmindButton():void {
@@ -486,7 +497,7 @@ package com.graphmind
 			activeNode.toggleCloud(true);
 		}
 		
-		public function refreshPreviewWindow():void {
+		public function redrawPreviewWindow():void {
 			// Timeout can help on performance
 			clearTimeout(_previewTimer);
 			_previewTimer = setTimeout(function():void {

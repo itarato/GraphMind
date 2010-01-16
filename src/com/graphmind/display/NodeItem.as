@@ -212,7 +212,7 @@ package com.graphmind.display
 		}
 		
 		private function onContextMenuSelected_AddSimpleNode(event:ContextMenuEvent):void {
-			loadNode();
+			addSimpleChildNode();
 		}
 		
 		private function onContextMenuSelected_AddDrupalItem(event:ContextMenuEvent):void {
@@ -230,7 +230,7 @@ package com.graphmind.display
 		private function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
 			removeNodeChilds();
 			selectNode();
-			StageManager.getInstance().refreshMindmapStage();
+			StageManager.getInstance().redrawMindmapStage();
 		}
 		
 		private function onClick(event:MouseEvent):void {
@@ -302,7 +302,7 @@ package com.graphmind.display
 			event.stopPropagation();
 			event.stopImmediatePropagation();
 			event.preventDefault();
-			loadNode();
+			addSimpleChildNode();
 		}
 		
 		private function onLoadItemClick(event:MouseEvent):void {
@@ -324,11 +324,16 @@ package com.graphmind.display
 			return _childs;
 		}
 		
-		public function addNodeChild(node:NodeItem):void {
+		/**
+		 * Add a new child node to the node
+		 */
+		public function addChildNode(node:NodeItem):void {
+			// Add node as a new child
 			this._childs.addItem(node);
-			//Log.info('new child: ' + this._childs.length);
-			StageManager.getInstance().addChildToStage(node);
 			node._parentNode = this;
+			
+			// Add UI to the stage
+			StageManager.getInstance().addNodeToStage(node);
 			
 			// Update display
 			this.uncollapseChilds();
@@ -349,7 +354,7 @@ package com.graphmind.display
 				nodeItem.visible = false;
 				nodeItem.collapseChilds();
 			}
-			StageManager.getInstance().refreshMindmapStage();
+			StageManager.getInstance().redrawMindmapStage();
 		}
 		
 		public function uncollapse():void {
@@ -366,7 +371,7 @@ package com.graphmind.display
 					nodeItem.uncollapseChilds(forceOpenSubtree);
 				}
 			}
-			StageManager.getInstance().refreshMindmapStage();
+			StageManager.getInstance().redrawMindmapStage();
 		}
 		
 		/**
@@ -530,9 +535,9 @@ package com.graphmind.display
 			GraphMind.instance.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
 		
-		private function loadNode():void {
+		private function addSimpleChildNode():void {
 			selectNode();
-			StageManager.getInstance().createSimpleNode(this);
+			StageManager.getInstance().createSimpleChildNode(this);
 		}
 		
 		private function remove():void {
@@ -541,7 +546,7 @@ package com.graphmind.display
 				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
 				_parentNode._displayComp.icon_has_child.visible = _parentNode._childs.length > 0;
 			}
-			StageManager.getInstance().refreshMindmapStage();
+			StageManager.getInstance().redrawMindmapStage();
 		}
 		
 		private function removeNodeChilds():void {
@@ -594,9 +599,9 @@ package com.graphmind.display
 			// Remove source from parents childs
 			source.removeFromPatentsChilds();
 			// Add source to target
-			target.addNodeChild(source);
+			target.addChildNode(source);
 			// Refresh display
-			StageManager.getInstance().refreshMindmapStage();
+			StageManager.getInstance().redrawMindmapStage();
 			
 			if (callHook) {
 				// Call hook
@@ -621,7 +626,7 @@ package com.graphmind.display
 				target._parentNode._childs.setItemAt(source, siblingIDX);
 				
 				// Refresh after reordering
-				StageManager.getInstance().refreshMindmapStage();
+				StageManager.getInstance().redrawMindmapStage();
 				
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
@@ -753,7 +758,7 @@ package com.graphmind.display
 				_cloudComp.graphics.clear();
 			}
 			
-			if (forceRedraw) StageManager.getInstance().refreshMindmapStage();
+			if (forceRedraw) StageManager.getInstance().redrawMindmapStage();
 		}
 		
 		public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
