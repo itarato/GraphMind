@@ -734,7 +734,7 @@ package com.graphmind.display
 			refreshParentTree();
 		}
 		
-		public function set link(link:String):void {
+		public function setLink(link:String):void {
 			_nodeItemData.link = link;
 			_displayComp.icon_anchor.visible = _hasPath = link.length > 0;
 		}

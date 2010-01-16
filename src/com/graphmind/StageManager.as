@@ -435,7 +435,7 @@ package com.graphmind
 		public function onClick_SaveNodeLink():void {
 			if (!isActiveNodeExists()) return;
 			
-			activeNode.link = GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text;
+			activeNode.setLink(GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text);
 		}
 		
 		/**
