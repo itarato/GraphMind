@@ -82,7 +82,6 @@ package com.graphmind
 				nodeItem.toggleCloud();
 			}
 			
-			StageManager.getInstance().isTreeChanged = false;
 			return nodeItem;
 		}
 

@@ -224,13 +224,12 @@ package com.graphmind.display
 		}
 		
 		private function onContextMenuSelected_RemoveNode(event:ContextMenuEvent):void {
-			remove();
+			kill();
 		}
 		
 		private function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
-			removeNodeChilds();
+			_removeNodeChilds();
 			selectNode();
-			StageManager.getInstance().redrawMindmapStage();
 		}
 		
 		private function onClick(event:MouseEvent):void {
@@ -238,12 +237,13 @@ package com.graphmind.display
 		}
 		
 		private function onClick_ToggleSubtreeButton(event:MouseEvent):void {
-			StageManager.getInstance().isTreeChanged = true;
 			if (!this._isCollapsed) {
 				collapse();
 			} else {
 				uncollapse();
 			}
+			StageManager.getInstance().setMindmapUpdated();
+			StageManager.getInstance().redrawMindmapStage();
 			event.stopPropagation();
 		}
 		
@@ -278,6 +278,7 @@ package com.graphmind.display
 				_displayComp.currentState = '';
 				setTitle(_displayComp.title_new.text);
 				GraphMind.instance.setFocus();
+				selectNode();
 			} else if (event.keyCode == Keyboard.ESCAPE) {
 				_displayComp.currentState = '';
 				_displayComp.title_new.text = _displayComp.title_label.text;
@@ -335,11 +336,10 @@ package com.graphmind.display
 			// Add UI to the stage
 			StageManager.getInstance().addNodeToStage(node);
 			
-			// Update display
+			// Open subtree.
 			this.uncollapseChilds();
+			// Showing toggle-subtree button.
 			this._displayComp.icon_has_child.visible = true;
-			
-			updateTime();
 		}
 		
 		public function collapse():void {
@@ -354,6 +354,7 @@ package com.graphmind.display
 				nodeItem.visible = false;
 				nodeItem.collapseChilds();
 			}
+			StageManager.getInstance().setMindmapUpdated();
 			StageManager.getInstance().redrawMindmapStage();
 		}
 		
@@ -371,6 +372,7 @@ package com.graphmind.display
 					nodeItem.uncollapseChilds(forceOpenSubtree);
 				}
 			}
+			StageManager.getInstance().setMindmapUpdated();
 			StageManager.getInstance().redrawMindmapStage();
 		}
 		
@@ -394,9 +396,19 @@ package com.graphmind.display
 		}
 		
 		/**
-		 * Position child items.
+		 * Redraw a subtree and parents' clouds.
+		 * Call it for updating only a subtree.
 		 */
-		public function refreshChildNodePosition():void {
+		public function redrawSubtree():void {
+			_redrawSubtree();
+			_redrawParentsClouds();
+		}
+		
+		/**
+		 * Redraw a subtree.
+		 * Shouldn't call it directly because parent nodes' clouds won't be redrawn.
+		 */
+		public function _redrawSubtree():void {
 			this._connectionComp.graphics.clear();
 			
 			var totalChildWidth:int = childSubtreeWidth();
@@ -408,7 +420,7 @@ package com.graphmind.display
 				var subtreeWidth:int = child.childSubtreeWidth();
 				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
 				child.y = currentY + subtreeWidth / 2; 
-				child.refreshChildNodePosition();
+				child._redrawSubtree();
 				
 				if (!_isCollapsed) {
 					NodeGraphicsHelper.drawConnection(_connectionComp, this, child);
@@ -416,6 +428,8 @@ package com.graphmind.display
 				currentY += subtreeWidth;
 			}
 			
+			// Ugly hack for redrawing clouds.
+			// @Todo make better
 			if (_isCloud) {
 				toggleCloud();
 				toggleCloud();
@@ -447,8 +461,10 @@ package com.graphmind.display
 		 * Accessing to this node: StageManager.getInstance().activeNode():NodeItem.
 		 */
 		public function selectNode():void {
+			var isTheSameSelected:Boolean = isSelected();
+			
 			// Not to lose focus from textfield
-			if (!isSelected()) setFocus();
+			if (isTheSameSelected) setFocus();
 			
 			// @TODO mystery bug steal highlight somethimes from nodes
 			if (StageManager.getInstance().activeNode) {
@@ -462,11 +478,15 @@ package com.graphmind.display
 					value: _nodeItemData.data[key]
 				});
 			}
-			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText;
-			GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text = _nodeItemData.getPath();
-			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
-			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 			
+			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = _displayComp.title_label.htmlText || _displayComp.title_label.text;
+				
+			if (!isTheSameSelected) {
+				GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text = _nodeItemData.getPath();
+				GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
+				GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
+			}
+				
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
 		
@@ -540,41 +560,55 @@ package com.graphmind.display
 			StageManager.getInstance().createSimpleChildNode(this);
 		}
 		
-		private function remove():void {
-			kill();
-			if (_parentNode) {
-				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
-				_parentNode._displayComp.icon_has_child.visible = _parentNode._childs.length > 0;
-			}
-			StageManager.getInstance().redrawMindmapStage();
-		}
-		
-		private function removeNodeChilds():void {
+		/**
+		 * Remove each child of the node.
+		 */
+		private function _removeNodeChilds():void {
 			while (_childs.length > 0) {
-				var child:NodeItem = _childs.removeItemAt(0) as NodeItem;
-				child.kill();
+				(_childs.getItemAt(0) as NodeItem).kill();
 			}
-			_displayComp.icon_has_child.visible = false;
 		}
 		
+		/**
+		 * Kill a node and each childs.
+		 */
 		private function kill():void {
+			if (StageManager.getInstance().baseNode === this) return;
+			
 			// @HOOK
 			PluginManager.callHook(HOOK_NODE_DELETE, {node: this});
 			
-			removeNodeChilds();
+			if (_parentNode) {
+				// Remove parent's child (this child).
+				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
+				// Check parent's toggle-subtree button. With no child it should be hidden.
+				_parentNode._displayComp.icon_has_child.visible = _parentNode._childs.length > 0;
+			}
+			// Remove all children the same way.
+			_removeNodeChilds();
+			// Remove main UI element.
 			_displayComp.parent.removeChild(_displayComp);
+			// Remove connection UI element.
 			_connectionComp.parent.removeChild(_connectionComp);
+			// Remove cloud UI element.
 			_cloudComp.parent.removeChild(_cloudComp);
+			// Remove the whole UI.
 			parent.removeChild(this);
-			StageManager.getInstance().isTreeChanged = true;
+			// Update tree.
+			StageManager.getInstance().setMindmapUpdated();
+			StageManager.getInstance().redrawMindmapStage();
 		}
 		
-		public function dataAdd(attribute:String, value:String):void {
+		public function addData(attribute:String, value:String):void {
 			_nodeItemData.dataAdd(attribute, value);
+			StageManager.getInstance().setMindmapUpdated();
+			updateTime();
 		}
 		
-		public function dataDelete(param:String):void {
+		public function deleteData(param:String):void {
 			_nodeItemData.dataDelete(param);
+			StageManager.getInstance().setMindmapUpdated();
+			updateTime();
 		}
 		
 		public function isChild(node:NodeItem):Boolean {
@@ -597,10 +631,11 @@ package com.graphmind.display
 			if (source == target) return false;
 			
 			// Remove source from parents childs
-			source.removeFromPatentsChilds();
+			source.removeFromParentsChilds();
 			// Add source to target
 			target.addChildNode(source);
 			// Refresh display
+			StageManager.getInstance().setMindmapUpdated();
 			StageManager.getInstance().redrawMindmapStage();
 			
 			if (callHook) {
@@ -626,6 +661,7 @@ package com.graphmind.display
 				target._parentNode._childs.setItemAt(source, siblingIDX);
 				
 				// Refresh after reordering
+				StageManager.getInstance().setMindmapUpdated();
 				StageManager.getInstance().redrawMindmapStage();
 				
 				// Call hook
@@ -633,7 +669,7 @@ package com.graphmind.display
 			}
 		}
 		
-		private function removeFromPatentsChilds():void {
+		private function removeFromParentsChilds():void {
 			// Fix source's old parent's has_child icon
 			var parentNode:NodeItem = _parentNode;
 			
@@ -682,7 +718,7 @@ package com.graphmind.display
 			}
 		
 			redrawNodeBody();
-			refreshParentTree();
+			redrawParentsClouds();
 			
 			updateTime();
  		}
@@ -693,7 +729,7 @@ package com.graphmind.display
  			_icons.removeItemAt(iconIDX);
  			_displayComp.removeChild(event.currentTarget as Image);
  			redrawNodeBody();
- 			refreshParentTree();
+ 			redrawParentsClouds();
  			
  			updateTime();
  		}
@@ -720,7 +756,7 @@ package com.graphmind.display
 			this._displayComp.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
 			this._displayComp.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
 			
-			this.refreshChildNodePosition();
+			this._redrawSubtree();
  		}
 		
 		public function setTitle(title:String):void {
@@ -730,18 +766,26 @@ package com.graphmind.display
 		
 		public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
 			redrawNodeBody();
-			refreshChildNodePosition();
-			refreshParentTree();
+			_redrawSubtree();
+			redrawParentsClouds();
 		}
 		
 		public function setLink(link:String):void {
 			_nodeItemData.link = link;
 			_displayComp.icon_anchor.visible = _hasPath = link.length > 0;
+			updateTime();
+			StageManager.getInstance().setMindmapUpdated();
 		}
 		
+		/**
+		 * Upadte node's time.
+		 * Reasons:
+		 *  - modified title
+		 *  - changed attributes
+		 *  - toggled cloud
+		 */
 		public function updateTime():void {
 			_nodeItemData.modified = (new Date()).time;
-			StageManager.getInstance().isTreeChanged = true;
 		}
 		
 		public function onContextMenuSelected_OpenSubtree(event:ContextMenuEvent):void {
@@ -758,7 +802,10 @@ package com.graphmind.display
 				_cloudComp.graphics.clear();
 			}
 			
-			if (forceRedraw) StageManager.getInstance().redrawMindmapStage();
+			if (forceRedraw) {
+				StageManager.getInstance().setMindmapUpdated();
+				StageManager.getInstance().redrawMindmapStage();
+			}
 		}
 		
 		public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
@@ -776,13 +823,21 @@ package com.graphmind.display
 			];
 		}
 		
-		public function refreshParentTree():void {
+		/**
+		 * Refresh only the subtree and redraw the stage.
+		 */
+		public function redrawParentsClouds():void {
+			_redrawParentsClouds();
+			StageManager.getInstance().redrawMindmapStage();
+		}
+		
+		private function _redrawParentsClouds():void {
 			if (_isCloud) {
 				toggleCloud();
 				toggleCloud();
 			}
 			
-			if (_parentNode) _parentNode.refreshParentTree();
+			if (_parentNode) _parentNode._redrawParentsClouds();
 		}
 		
 		public function isSelected():Boolean {

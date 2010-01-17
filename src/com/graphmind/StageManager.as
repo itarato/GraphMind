@@ -62,7 +62,7 @@ package com.graphmind
 		private var _desktopDragInfo:DesktopDragInfo = new DesktopDragInfo();
 		
 		[Bindable]
-		private var _isTreeChanged:Boolean = false;
+		public var isTreeUpdated:Boolean = false;
 		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
 		
@@ -154,6 +154,8 @@ package com.graphmind
 			}
 			
 			redrawMindmapStage();
+			isTreeUpdated = false;
+			baseNode.selectNode();
 		}		
 				
 		/**
@@ -182,6 +184,7 @@ package com.graphmind
 		 */
 		public function addNodeToStage(node:UIComponent):void {
 			GraphMind.instance.mindmapCanvas.desktop.addChild(node);
+			setMindmapUpdated();
 			redrawMindmapStage();
 		}
 		
@@ -297,6 +300,11 @@ package com.graphmind
 			nodeItem.selectNode();
 		}
 		
+		/**
+		 * Refresh the whole mindmap stage.
+		 * 
+		 * Since it uses time deferring we can't decide on whether to refresh subtree or the whole tree.
+		 */
 		public function redrawMindmapStage():void {
 			if (!baseNode) return;
 			
@@ -304,9 +312,10 @@ package com.graphmind
 			// It prevents bulk refreshes (eg. on massive node creation)
 			clearTimeout(_mindmapStageTimer);
 			_mindmapStageTimer = setTimeout(function():void {
+				// Refresh the whole tree.
 				baseNode.x = 4;
 				baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
-				baseNode.refreshChildNodePosition();
+				baseNode._redrawSubtree();
 				redrawPreviewWindow();
 			}, 10);
 		}
@@ -330,7 +339,7 @@ package com.graphmind
 		public function updateNodeAttribute(node:NodeItem, attribute:String, value:String):void {
 			if (!node || !attribute) return;
 			
-			node.dataAdd(attribute, value);
+			node.addData(attribute, value);
 			node.selectNode();
 			
 			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
@@ -346,7 +355,7 @@ package com.graphmind
 		public function removeNodeAttribute(node:NodeItem, attribute:String):void {
 			if (!node || attribute.length == 0) return;
 			
-			node.dataDelete(attribute);
+			node.deleteData(attribute);
 			node.selectNode();
 			
 			GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
@@ -497,11 +506,16 @@ package com.graphmind
 			activeNode.toggleCloud(true);
 		}
 		
+		/**
+		 * Upadte preview window.
+		 * Don't call it unless it's really necessary.
+		 * Calling redrawMindmapStage() will call it.
+		 */
 		public function redrawPreviewWindow():void {
 			// Timeout can help on performance
 			clearTimeout(_previewTimer);
 			_previewTimer = setTimeout(function():void {
-				_previewBitmapData = new BitmapData(2880, 2000, false, 0x333333);
+				_previewBitmapData = new BitmapData(StageManager.DEFAULT_DESKTOP_WIDTH, StageManager.DEFAULT_DESKTOP_HEIGHT, false, 0x333333);
 				_previewBitmap.bitmapData = _previewBitmapData;
 				_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
 				_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
@@ -509,13 +523,12 @@ package com.graphmind
 			}, 400);
 		}
 		
-		public function set isTreeChanged(changed:Boolean):void {
-			_isTreeChanged = changed;
+		/**
+		 * Indicates mindmap has changed -> needs saving.
+		 */
+		public function setMindmapUpdated():void {
+			isTreeUpdated = true;
 		}
-		
-		[Bindable]
-		public function get isTreeChanged():Boolean {
-			return _isTreeChanged;
-		}
+				
 	}
 }

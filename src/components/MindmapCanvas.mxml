@@ -50,7 +50,7 @@
 				id="desktopScaleLabel"/>
 				
 			<mx:LinkButton top="4" label="Save" click="{StageManager.getInstance().onClick_SaveGraphmindButton();}" color="#FFDBA1"
-				visible="{StageManager.getInstance().isTreeChanged}"
+				visible="{StageManager.getInstance().isTreeUpdated}"
 				id="saveLinkButton"/>
 		</mx:HBox>
 	</mx:Canvas>

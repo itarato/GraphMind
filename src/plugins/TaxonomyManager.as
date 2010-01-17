@@ -105,7 +105,7 @@ package plugins {
 			}
 
 			var order:Array = [];
-			for each (var child:NodeItem in parentNode.getChildNodes) {
+			for each (var child:NodeItem in parentNode.getChildNodes()) {
 				if (child.getNodeData().hasOwnProperty('tid')) {
 					order.push(child.getNodeData().tid);
 				}
@@ -151,7 +151,7 @@ package plugins {
 			node.getNodeData().vid = vid;
 			
 			var nodes:Array = [node.getNodeData().tid || 0];
-			for each (var child:NodeItem in node.getChildNodes) {
+			for each (var child:NodeItem in node.getChildNodes()) {
 				nodes = nodes.concat(_changeChildsVocabulary(child, vid));
 			}
 			
@@ -166,7 +166,7 @@ package plugins {
 		private static function _changeSiblingsWeight(node:NodeItem):void {
 			var parentNode:NodeItem = node.getParentNode();
 			var weight:int = 0;
-			for each (var child:NodeItem in parentNode.getChildNodes) {
+			for each (var child:NodeItem in parentNode.getChildNodes()) {
 				child.getNodeData().weight = weight++;
 			}
 		}
@@ -204,7 +204,7 @@ package plugins {
 		private static function _removePluginInfoFromNode(node:NodeItem):void {
 			node.getNodeData().plugin = undefined;
 			
-			for each (var child:NodeItem in node.getChildNodes) {
+			for each (var child:NodeItem in node.getChildNodes()) {
 				_removePluginInfoFromNode(child);
 			}
 		}
