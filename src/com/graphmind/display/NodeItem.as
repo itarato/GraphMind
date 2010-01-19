@@ -58,10 +58,11 @@ package com.graphmind.display
 		private static const EFFECT_NORMAL:int = 0;
 		private static const EFFECT_HIGHLIGHT:int = 1;
 		
-		public static const HOOK_NODE_CONTEXT_MENU:String = 'node_context_menu';
-		public static const HOOK_NODE_MOVED:String        = 'node_moved';
-		public static const HOOK_NODE_DELETE:String		  = 'node_delete';
-		public static const HOOK_NODE_CREATED:String	  = 'node_created';
+		public static const HOOK_NODE_CONTEXT_MENU:String  = 'node_context_menu';
+		public static const HOOK_NODE_MOVED:String         = 'node_moved';
+		public static const HOOK_NODE_DELETE:String		   = 'node_delete';
+		public static const HOOK_NODE_CREATED:String	   = 'node_created';
+		public static const HOOK_NODE_TITLE_CHANGED:String = 'node_title_changed';
 		
 		protected var _displayComp:ItemBaseComponent = new ItemBaseComponent();
 		protected var _connectionComp:UIComponent 	 = new UIComponent();
@@ -171,6 +172,9 @@ package com.graphmind.display
 			
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
+				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, function(_event:ContextMenuEvent):void {
+					selectNode();
+				});
 				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
 				contextMenu.customItems.push(cmi);
 			}
@@ -229,11 +233,9 @@ package com.graphmind.display
 		
 		private function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
 			_removeNodeChilds();
-			selectNode();
 		}
 		
 		private function onClick(event:MouseEvent):void {
-			selectNode();
 		}
 		
 		private function onClick_ToggleSubtreeButton(event:MouseEvent):void {
@@ -464,7 +466,7 @@ package com.graphmind.display
 			var isTheSameSelected:Boolean = isSelected();
 			
 			// Not to lose focus from textfield
-			if (isTheSameSelected) setFocus();
+			if (!isTheSameSelected) setFocus();
 			
 			// @TODO mystery bug steal highlight somethimes from nodes
 			if (StageManager.getInstance().activeNode) {
@@ -761,6 +763,7 @@ package com.graphmind.display
 		
 		public function setTitle(title:String):void {
 			_nodeItemData.title = _displayComp.title_label.htmlText = title;
+			PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
 			updateTime();
 		}
 		
@@ -789,7 +792,6 @@ package com.graphmind.display
 		}
 		
 		public function onContextMenuSelected_OpenSubtree(event:ContextMenuEvent):void {
-			selectNode();
 			uncollapseChilds(true);
 		}
 		
@@ -809,7 +811,6 @@ package com.graphmind.display
 		}
 		
 		public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
-			selectNode();
 			toggleCloud(true);
 			updateTime();
 		}
@@ -849,7 +850,6 @@ package com.graphmind.display
 		}
 	
 		public function onContextMenuSelected_UpdateDrupalItem(event:ContextMenuEvent):void {
-			selectNode();
 			updateDrupalItem();
 		}
 		
@@ -894,6 +894,10 @@ package com.graphmind.display
 		
 		public function get nodeItemData():NodeItemData {
 			return _nodeItemData;
+		}
+		
+		public function getTitle():String {
+			return _nodeItemData.title;
 		}
 	}
 }

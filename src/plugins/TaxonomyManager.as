@@ -4,6 +4,7 @@ package plugins {
 	import com.graphmind.display.NodeItem;
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
+	import com.graphmind.util.Log;
 	
 	import flash.events.ContextMenuEvent;
 	
@@ -30,21 +31,18 @@ package plugins {
 			var node:NodeItem = NodeItem.getLastSelectedNode();
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
-			// @FIXME it's not sure it exists at all!!!
-			node.selectNode();
-			
 			RPCServiceHelper.createRPC(
 				'taxonomy',
 				'getAll',
 				'amfphp',
 				baseSiteConnection.url,
 				function(_event:ResultEvent):void {
-					onTaxonomyRequestReady(_event, baseSiteConnection, node);
+					onSuccess_TaxonomyRequestReady(_event, baseSiteConnection, node);
 				}
 			).send(baseSiteConnection.sessionID);
 		}
 		
-		private static function onTaxonomyRequestReady(event:ResultEvent, sc:SiteConnection, baseNode:NodeItem):void {
+		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, sc:SiteConnection, baseNode:NodeItem):void {
 			for each (var vocabulary:Object in event.result) {
 				vocabulary.plugin = 'TaxonomyManager';
 				var vocabularyNodeItemData:NodeItemData = new NodeItemData(
@@ -87,20 +85,27 @@ package plugins {
 		/**
 		 * Implementation of hook_node_moved.
 		 */
+		// @FIXME - on move the old footprint stays.
 		public static function hook_node_moved(data:Object):void {
 			// @TODO revert plan if action cannot be done
 			var node:NodeItem = data.node as NodeItem;
 			var baseConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
-			// Node is not part of the plugin.
-			if (!_isTaxonomyPluginNode(node, NodeItemData.TERM)) return;
+			// Node is not a TERM.
+			if (!_isTaxonomyPluginNode(node, NodeItemData.TERM)) {
+				if (!_isTaxonomyPluginNode(node)) {
+					// If it's neither term nor vocabulary
+					hook_node_created({node: node});
+				}
+				return;
+			}
 			
 			var parentNode:NodeItem = node.getParentNode();
 			
 			// Deleting term
 			if (!_isTaxonomyPluginNode(parentNode)) {
-				_removePluginInfoFromNode(node)
 				hook_node_delete({node: node});
+				_removePluginInfoFromNode(node);
 				return;
 			}
 
@@ -119,7 +124,7 @@ package plugins {
 				'moveTerm',
 				'amfphp',
 				baseConnection.url,
-				function(_event:ResultEvent):void{Alert.show('Great success');}
+				function(_event:ResultEvent):void{}
 			).send(
 				baseConnection.sessionID,
 				node.getNodeData().tid,
@@ -134,7 +139,7 @@ package plugins {
 		 * Check if the node created by the TaxonomyManager plugin and has a certain type.
 		 */
 		private static function _isTaxonomyPluginNode(node:NodeItem, type:String = null):Boolean {
-			if (!node.getNodeData().hasOwnProperty('plugin') || !node.getNodeData().plugin == 'TaxonomyManager') {
+			if (!node.getNodeData().hasOwnProperty('plugin') || node.getNodeData().plugin !== 'TaxonomyManager') {
 				return false;
 			}
 			return type == null ? true : node.nodeItemData.type == type;
@@ -187,14 +192,14 @@ package plugins {
 				'deleteTerm',
 				'amfphp',
 				baseSiteConnection.url,
-				_onTermDeleted
+				onSuccess_TermDeleted
 			).send(baseSiteConnection.sessionID, node.getNodeData().tid || 0);
 		}
 		
 		/**
 		 * Callback for delete node service call.
 		 */
-		private static function _onTermDeleted(event:ResultEvent):void {
+		private static function onSuccess_TermDeleted(event:ResultEvent):void {
 			// Term is deleted with all subterms
 		}
 		
@@ -203,6 +208,8 @@ package plugins {
 		 */
 		private static function _removePluginInfoFromNode(node:NodeItem):void {
 			node.getNodeData().plugin = undefined;
+			node.nodeItemData.type = NodeItemData.NORMAL;
+			node.redrawNodeBody();
 			
 			for each (var child:NodeItem in node.getChildNodes()) {
 				_removePluginInfoFromNode(child);
@@ -217,21 +224,78 @@ package plugins {
 		public static function hook_node_created(data:Object):void {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
-			var parent:NodeItem = data.node as NodeItem;
+			var node:NodeItem = data.node as NodeItem;
+			if (_isTaxonomyPluginNode(node)) return;
+			var parent:NodeItem = node.getParentNode();
 			if (!_isTaxonomyPluginNode(parent)) return;
+			
+			var subtree_node_reference:Array = new Array();
+			var subtree:Object = _getSubtreeInfo(node, subtree_node_reference);
+			Log.debug('Node reference: ' + subtree_node_reference);
 			
 			RPCServiceHelper.createRPC(
 				'graphmindTaxonomyManager',
 				'addSubtree',
 				'amfphp',
 				baseSiteConnection.url,
-				_onSubtreeAdded
-			).send(baseSiteConnection.sessionID, 333, 444, [1, 2, [3, 4, 5, [6], 7, [8, 9, 10], 11]]);
+				function (_event:ResultEvent):void {
+					onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
+				}
+			).send(baseSiteConnection.sessionID, parent.getNodeData().tid || 0, parent.getNodeData().vid || 0, subtree);
 		}
 		
-		private static function _onSubtreeAdded(event:ResultEvent):void {
-			
+		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:NodeItem):void {
+			_convertSubtreeToTaxonomy(event.result, nodeReference);
+			hook_node_moved({node: baseNode});
 		}
+		
+		private static function _getSubtreeInfo(node:NodeItem, node_reference:Array):Object {
+			var info:Object = new Object();
+			info.name  = node.getTitle();
+			info.terms = new Array();
+			info.nrid  = node_reference.length;
+			node_reference.push(node);
+			
+			for each (var child:NodeItem in node.getChildNodes()) {
+				(info.terms as Array).push(_getSubtreeInfo(child, node_reference));
+			}
+			
+			return info;
+		}
+		
+		private static function _convertSubtreeToTaxonomy(subtreeInfo:Object, nodeReference:Array):void {
+			if (subtreeInfo.hasOwnProperty('nrid')) {
+				var node:NodeItem = nodeReference[subtreeInfo['nrid']] as NodeItem; 
+				node.addData('tid', subtreeInfo.tid);
+				node.addData('vid', subtreeInfo.vid);
+				node.addData('plugin', 'TaxonomyManager');
+				node.nodeItemData.type = NodeItemData.TERM;
+				node.redrawNodeBody();
+				
+				if (subtreeInfo.hasOwnProperty('terms')) {
+					for each (var child:Object in subtreeInfo.terms) {
+						_convertSubtreeToTaxonomy(child, nodeReference);
+					}
+				}
+			}
+		}
+		
+		public static function hook_node_title_changed(data:Object):void {
+			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
+			var node:NodeItem = data.node as NodeItem;
+			
+			RPCServiceHelper.createRPC(
+				'graphmindTaxonomyManager',
+				'renameTerm',
+				'amfphp',
+				baseSiteConnection.url,
+				onSuccess_TermRenamed
+			).send(baseSiteConnection.sessionID, node.getNodeData().tid, node.getTitle());
+		}
+		
+		private static function onSuccess_TermRenamed(event:ResultEvent):void {
+			// Term is renamed.
+		} 
 	}
 	
 }

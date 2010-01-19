@@ -186,6 +186,9 @@ package com.graphmind
 			GraphMind.instance.mindmapCanvas.desktop.addChild(node);
 			setMindmapUpdated();
 			redrawMindmapStage();
+			
+			// HOOK
+			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: node});
 		}
 		
 		/**
@@ -288,9 +291,6 @@ package com.graphmind
 			var node:NodeItem = NodeFactory.createNode({}, NodeItemData.NORMAL);
 			parent.addChildNode(node);
 			node.selectNode();
-			
-			// HOOK
-			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: node});
 		}
 		
 		public function onSuccess_DrupalItemLoaded(result:Object, requestData:TempItemLoadData):void {
