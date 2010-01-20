@@ -1,4 +1,6 @@
 package com.graphmind {
+	import com.graphmind.util.Log;
+	
 	import flash.system.ApplicationDomain;
 	import flash.utils.getDefinitionByName;
 	
@@ -26,6 +28,7 @@ package com.graphmind {
 		}
 		
 		public static function callHook(hook:String, data:Object = null):void {
+			Log.debug('Hook called: ' + hook);
 			for each (var plugin:* in PluginManager._plugins) {
 				if (ApplicationDomain.currentDomain.hasDefinition('plugins.' + plugin)) {
 					var PluginClass:Class = getDefinitionByName('plugins.' + plugin) as Class;

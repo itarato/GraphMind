@@ -8,7 +8,6 @@ package plugins {
 	
 	import flash.events.ContextMenuEvent;
 	
-	import mx.controls.Alert;
 	import mx.rpc.events.ResultEvent;
 	
 	public class TaxonomyManager {
@@ -283,6 +282,9 @@ package plugins {
 		public static function hook_node_title_changed(data:Object):void {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			var node:NodeItem = data.node as NodeItem;
+			
+			// Only for terms.
+			if (!_isTaxonomyPluginNode(node, NodeItemData.TERM)) return;
 			
 			RPCServiceHelper.createRPC(
 				'graphmindTaxonomyManager',

@@ -330,13 +330,15 @@ package com.graphmind.display
 		/**
 		 * Add a new child node to the node
 		 */
-		public function addChildNode(node:NodeItem):void {
+		public function addChildNode(node:NodeItem, addToStage:Boolean = true):void {
 			// Add node as a new child
 			this._childs.addItem(node);
 			node._parentNode = this;
 			
-			// Add UI to the stage
-			StageManager.getInstance().addNodeToStage(node);
+			if (addToStage) {
+				// Add UI to the stage
+				StageManager.getInstance().addNodeToStage(node);
+			}
 			
 			// Open subtree.
 			this.uncollapseChilds();
@@ -635,7 +637,7 @@ package com.graphmind.display
 			// Remove source from parents childs
 			source.removeFromParentsChilds();
 			// Add source to target
-			target.addChildNode(source);
+			target.addChildNode(source, false);
 			// Refresh display
 			StageManager.getInstance().setMindmapUpdated();
 			StageManager.getInstance().redrawMindmapStage();
