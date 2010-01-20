@@ -2,8 +2,8 @@ package com.graphmind
 {
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.OSD;
 	
-	import mx.controls.Alert;
 	import mx.core.Application;
 	import mx.rpc.events.ResultEvent;
 	
@@ -112,10 +112,10 @@ package com.graphmind
 		private function _save_stage_saved(result:ResultEvent):void {
 			//MonsterDebugger.trace(this, result.result);
 			if (result.result == '1') {
-				Alert.show('GraphMind data is saved.', 'GraphMind notice');
+				OSD.show('GraphMind data is saved.');
 				lastSaved = new Date().time;
 			} else {
-				Alert.show('This content has been modified by another user, changes cannot be saved.', 'GraphMind alert');
+				OSD.show('This content has been modified by another user, changes cannot be saved.', OSD.WARNING);
 				// @TODO prevent later savings
 			}
 		}

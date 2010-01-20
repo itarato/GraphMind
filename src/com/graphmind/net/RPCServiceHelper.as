@@ -1,6 +1,7 @@
 package com.graphmind.net
 {
 	import com.graphmind.util.Log;
+	import com.graphmind.util.OSD;
 	
 	import mx.rpc.AbstractOperation;
 	import mx.rpc.events.FaultEvent;
@@ -34,6 +35,7 @@ package com.graphmind.net
 		
 		private static function onErrorRPCConnection(error:FaultEvent):void {
 			Log.warning('Error during RCP connection: ' + error);
+			OSD.show('Error during RCP connection: ' + error, OSD.ERROR);
 		}
 	}
 }

@@ -21,6 +21,7 @@ package com.graphmind
 	import com.graphmind.temp.TempViewLoadData;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.OSD;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -32,7 +33,6 @@ package com.graphmind
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
-	import mx.controls.Alert;
 	import mx.controls.Image;
 	import mx.core.Application;
 	import mx.core.UIComponent;
@@ -263,7 +263,7 @@ package com.graphmind
 		
 		public function onSuccess_DrupalViewsLoaded(list:Array, requestData:TempViewLoadData):void {
 			if (list.length == 0) {
-				Alert.show('Result is empty.');
+				OSD.show('Result is empty.', OSD.WARNING);
 			}
 			for each (var nodeData:Object in list) {
 				// @TODO update or append checkbox for the panel?
@@ -452,7 +452,7 @@ package com.graphmind
 		 */
 		public function isActiveNodeExists(showError:Boolean = false):Boolean {
 			if (!activeNode) {
-				if (showError) Alert.show("Please, select a node first.", "Graphmind");
+				if (showError) OSD.show("Please, select a node first.", OSD.WARNING);
 				return false;
 			}
 			

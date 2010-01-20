@@ -10,8 +10,8 @@ package com.graphmind
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.temp.TempViewLoadData;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.OSD;
 	
-	import mx.controls.Alert;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
@@ -243,12 +243,12 @@ package com.graphmind
 		 */
 		public function alertErrorMessage(msg:String, details:String, connectionInfo:String = null, error:String = null):void {
 			Log.error('Network error: ' + error);
-			Alert.show(
+			OSD.show(
 				msg + 
 				"\nDetails: " +	details + 
 				(connectionInfo != null ? ("\n\nConnection: " + connectionInfo) : '') + 
-				(error != null ? ("\n\nMsg: " + error) : ''), 
-			'Graphmind warning');
+				(error != null ? ("\n\nMsg: " + error) : '')
+			, OSD.ERROR);
 		}
 		
 	}

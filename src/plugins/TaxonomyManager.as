@@ -5,6 +5,7 @@ package plugins {
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.OSD;
 	
 	import flash.events.ContextMenuEvent;
 	
@@ -79,6 +80,7 @@ package plugins {
 					}
 				}
 			}
+			OSD.show('Taxonomy tree is loaded.');
 		}
 		
 		/**
@@ -123,7 +125,9 @@ package plugins {
 				'moveTerm',
 				'amfphp',
 				baseConnection.url,
-				function(_event:ResultEvent):void{}
+				function(_event:ResultEvent):void{
+					OSD.show('Term\'s new position is saved.');
+				}
 			).send(
 				baseConnection.sessionID,
 				node.getNodeData().tid,
@@ -200,6 +204,7 @@ package plugins {
 		 */
 		private static function onSuccess_TermDeleted(event:ResultEvent):void {
 			// Term is deleted with all subterms
+			OSD.show('Term is removed.');
 		}
 		
 		/**
@@ -246,6 +251,7 @@ package plugins {
 		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:NodeItem):void {
 			_convertSubtreeToTaxonomy(event.result, nodeReference);
 			hook_node_moved({node: baseNode});
+			OSD.show('Subtree is added.');
 		}
 		
 		private static function _getSubtreeInfo(node:NodeItem, node_reference:Array):Object {
@@ -297,6 +303,7 @@ package plugins {
 		
 		private static function onSuccess_TermRenamed(event:ResultEvent):void {
 			// Term is renamed.
+			OSD.show('Term name is set.');
 		} 
 	}
 	

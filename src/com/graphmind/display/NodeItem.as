@@ -8,6 +8,7 @@ package com.graphmind.display
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.NodeGraphicsHelper;
+	import com.graphmind.util.OSD;
 	import com.graphmind.util.StringUtility;
 	
 	import components.ItemBaseComponent;
@@ -28,7 +29,6 @@ package com.graphmind.display
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
-	import mx.controls.Alert;
 	import mx.controls.Image;
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
@@ -654,7 +654,6 @@ package com.graphmind.display
 			if (move(source, target._parentNode, false)) {
 				var siblingIDX:int = target._parentNode._childs.getItemIndex(target);
 				if (siblingIDX == -1) {
-					Alert.show('ERROR');
 					return;
 				}
 				

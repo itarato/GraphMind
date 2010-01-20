@@ -12,6 +12,7 @@
 		
 	<mx:Script>
 		<![CDATA[
+			import com.graphmind.util.OSD;
 			import com.graphmind.PluginManager;
 			import nl.demonsters.debugger.MonsterDebugger;
 			
@@ -75,6 +76,7 @@
 				Log.debug('Grapmind started.');
 				
 				// Init managers
+				OSD.init(OSDContainer, 300);
 				// Plugins should be the first
 				PluginManager.init();
 				// @HOOK
@@ -82,6 +84,7 @@
 				
 				StageManager.getInstance().init();
 				GraphMindManager.getInstance().init();
+				OSD.show('Graphmind started.');
 			}
 			
 		]]>
@@ -133,5 +136,7 @@
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
 		<components:MindmapCanvas id="mindmapCanvas"/>
 	</mx:HDividedBox>
+	
+	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>
 		
 </mx:Application>
