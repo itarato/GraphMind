@@ -57,7 +57,7 @@ package com.graphmind.util {
 		
 		private static function getColorFromLevel(level:String):uint {
 			switch (level) {
-				case INFO:    return 0x00467F;
+				case INFO:    return 0x3D8F00;
 				case WARNING: return 0xCF4900;
 				case ERROR:   return 0xCF0000;
 				default:      return 0x2F2F2F;
