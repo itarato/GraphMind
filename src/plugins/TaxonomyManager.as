@@ -15,7 +15,8 @@ package plugins {
 		
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE:String = 'vocabulary';
 		// @TODO add color
-//		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xFF0000;
+		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xEF95E7;
+		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
 		/**
 		 * Implementation of hook_node_context_menu_alter().
@@ -52,6 +53,7 @@ package plugins {
 				);
 				vocabularyNodeItemData.title = vocabulary.name;
 				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
+				vocabularyNodeItemData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
 				var vocabularyNode:NodeItem = new NodeItem(vocabularyNodeItemData);
 				baseNode.addChildNode(vocabularyNode);
 				
@@ -65,6 +67,7 @@ package plugins {
 						sc
 					);
 					termNodeItemData.title = term.name;
+					termNodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
 					var termNodeItem:NodeItem = new NodeItem(termNodeItemData);
 					var parentID:String = term.parents[0] || 'none';
 					if (!term_hierarchy.hasOwnProperty(parentID)) {
@@ -213,6 +216,7 @@ package plugins {
 		private static function _removePluginInfoFromNode(node:NodeItem):void {
 			node.getNodeData().plugin = undefined;
 			node.nodeItemData.type = NodeItemData.NORMAL;
+			node.nodeItemData.color = undefined;
 			node.redrawNodeBody();
 			
 			for each (var child:NodeItem in node.getChildNodes()) {
@@ -275,6 +279,7 @@ package plugins {
 				node.addData('vid', subtreeInfo.vid);
 				node.addData('plugin', 'TaxonomyManager');
 				node.nodeItemData.type = NodeItemData.TERM;
+				node.nodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
 				node.redrawNodeBody();
 				
 				if (subtreeInfo.hasOwnProperty('terms')) {

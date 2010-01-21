@@ -42,10 +42,10 @@ package com.graphmind
 	public class StageManager
 	{
 		private static var _instance:StageManager = null;
-		[Bindable]
-		public static var DEFAULT_DESKTOP_HEIGHT:int = 2000;
 		// Flash Player 9 can handle maximum 2880 pixel width BitmapData:
 		// http://livedocs.adobe.com/flex/3/langref/flash/display/BitmapData.html#BitmapData().
+		[Bindable]
+		public static var DEFAULT_DESKTOP_HEIGHT:int = 2880;
 		[Bindable]
 		public static var DEFAULT_DESKTOP_WIDTH:int = 2880;
 		
@@ -70,6 +70,8 @@ package com.graphmind
 		private var _previewBitmapData:BitmapData = new BitmapData(DEFAULT_DESKTOP_WIDTH, DEFAULT_DESKTOP_HEIGHT, true);
 		private var _previewBitmap:Bitmap = new Bitmap(_previewBitmapData);
 		private var _previewTimer:uint;
+		[Bindable]
+		public static var previewWindowScale:Number = 15;
 		
 		// Mindmap stage redraw timer - performance reason
 		private var _mindmapStageTimer:uint;
@@ -97,8 +99,8 @@ package com.graphmind
 			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 			
 			// Preview window init
-			_previewBitmap.width = 180;
-			_previewBitmap.height = 120;
+			_previewBitmap.width = DEFAULT_DESKTOP_WIDTH / previewWindowScale;
+			_previewBitmap.height = DEFAULT_DESKTOP_HEIGHT / StageManager.previewWindowScale;
 			GraphMind.instance.mindmapCanvas.previewWindow.addChild(_previewBitmap);
 			
 			// Remove base context menu items (not perfect, though)
@@ -515,11 +517,15 @@ package com.graphmind
 			// Timeout can help on performance
 			clearTimeout(_previewTimer);
 			_previewTimer = setTimeout(function():void {
-				_previewBitmapData = new BitmapData(StageManager.DEFAULT_DESKTOP_WIDTH, StageManager.DEFAULT_DESKTOP_HEIGHT, false, 0x333333);
-				_previewBitmap.bitmapData = _previewBitmapData;
-				_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
-				_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
-				Log.debug('Preview window refreshed.');
+				if (GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible) {
+					_previewBitmapData = new BitmapData(StageManager.DEFAULT_DESKTOP_WIDTH, StageManager.DEFAULT_DESKTOP_HEIGHT, false, 0x333333);
+					_previewBitmap.width = DEFAULT_DESKTOP_WIDTH / previewWindowScale;
+					_previewBitmap.height = DEFAULT_DESKTOP_HEIGHT / StageManager.previewWindowScale;
+					_previewBitmap.bitmapData = _previewBitmapData;
+					_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
+					_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
+					Log.debug('Preview window refreshed.');
+				}
 			}, 400);
 		}
 		
@@ -528,6 +534,27 @@ package com.graphmind
 		 */
 		public function setMindmapUpdated():void {
 			isTreeUpdated = true;
+		}
+		
+		public function previewWindowIncrease():void {
+			previewWindowScale /= 1.2;
+			redrawPreviewWindow();
+		}
+		
+		public function previewWindowDecrease():void {
+			previewWindowScale *= 1.2;
+			redrawPreviewWindow();
+		}
+		
+		public function previewWindowClose():void {
+			GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible = false;
+			GraphMind.instance.mindmapCanvas.previewWindowOpenIcon.visible = true;
+		}
+		
+		public function previewWindowOpen():void {
+			GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible = true;
+			GraphMind.instance.mindmapCanvas.previewWindowOpenIcon.visible = false;
+			redrawPreviewWindow();
 		}
 				
 	}

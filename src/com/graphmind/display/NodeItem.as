@@ -443,6 +443,10 @@ package com.graphmind.display
 		}
 		
 		private function getTypeColor():uint {
+			if (_nodeItemData.color) {
+				return _nodeItemData.color;
+			}
+			
 			switch (this._nodeItemData.type) {
 				case NodeItemData.NODE:
 					return 0xC2D7EF;

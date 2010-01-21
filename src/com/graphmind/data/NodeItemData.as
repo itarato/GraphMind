@@ -19,6 +19,9 @@ package com.graphmind.data {
 		public var type:String = NORMAL;
 		public var id:uint = NodeItemData.id++;
 		public var link:String = '';
+		// Extra color for the node. GM has it's own colors, but with this
+		// variable plugins can add their own colors. 
+		public var color:uint;
 		protected var _drupalID:int;
 		
 		// FreeMind data
