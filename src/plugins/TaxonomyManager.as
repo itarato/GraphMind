@@ -9,6 +9,7 @@ package plugins {
 	
 	import flash.events.ContextMenuEvent;
 	
+	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
 	public class TaxonomyManager {
@@ -39,7 +40,8 @@ package plugins {
 				baseSiteConnection.url,
 				function(_event:ResultEvent):void {
 					onSuccess_TaxonomyRequestReady(_event, baseSiteConnection, node);
-				}
+				},
+				transactionError
 			).send(baseSiteConnection.sessionID);
 		}
 		
@@ -130,7 +132,8 @@ package plugins {
 				baseConnection.url,
 				function(_event:ResultEvent):void{
 					OSD.show('Term\'s new position is saved.');
-				}
+				},
+				transactionError
 			).send(
 				baseConnection.sessionID,
 				node.getNodeData().tid,
@@ -198,7 +201,8 @@ package plugins {
 				'deleteTerm',
 				'amfphp',
 				baseSiteConnection.url,
-				onSuccess_TermDeleted
+				onSuccess_TermDeleted,
+				transactionError
 			).send(baseSiteConnection.sessionID, node.getNodeData().tid || 0);
 		}
 		
@@ -248,7 +252,8 @@ package plugins {
 				baseSiteConnection.url,
 				function (_event:ResultEvent):void {
 					onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
-				}
+				},
+				transactionError
 			).send(baseSiteConnection.sessionID, parent.getNodeData().tid || 0, parent.getNodeData().vid || 0, subtree);
 		}
 		
@@ -302,14 +307,23 @@ package plugins {
 				'renameTerm',
 				'amfphp',
 				baseSiteConnection.url,
-				onSuccess_TermRenamed
+				onSuccess_TermRenamed,
+				transactionError
 			).send(baseSiteConnection.sessionID, node.getNodeData().tid, node.getTitle());
 		}
 		
 		private static function onSuccess_TermRenamed(event:ResultEvent):void {
 			// Term is renamed.
 			OSD.show('Term name is set.');
-		} 
+		}
+		
+		private static function transactionError(event:FaultEvent):void {
+			OSD.show(
+				"Error occured during the transaction.\n" + 
+				"It's very suggested to reload the whole taxonomy tree structure.",
+				OSD.ERROR
+			);
+		}
 	}
 	
 }
