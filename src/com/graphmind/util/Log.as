@@ -1,5 +1,7 @@
 package com.graphmind.util {
 	
+	import com.graphmind.GraphMindManager;
+	
 	import mx.controls.Alert;
 //	import com.graphmind.StageManager;
 	
@@ -11,6 +13,10 @@ package com.graphmind.util {
 		public static var LOG_ERROR:String = 'ERROR';
 		
 		public static function log(text:String, level:String = 'INFO'):void {
+			if (!GraphMindManager.LOG_MODE) {
+				return;
+			}
+			
 			var date:Date = new Date();
 			var logMessage:String = level + " -- " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "-" + date.getMilliseconds() + " -- " + text;
 			

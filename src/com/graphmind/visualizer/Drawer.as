@@ -1,10 +1,11 @@
 package com.graphmind.visualizer {
 	
 	import flash.errors.IllegalOperationError;
+	import flash.events.EventDispatcher;
 	
 	import mx.core.UIComponent;
-	
-	public class Drawer {
+
+	public class Drawer extends EventDispatcher {
 		
 		protected var _target:UIComponent;
 		

@@ -122,7 +122,6 @@ package com.graphmind
 		 * Connect to a site - loading views list
 		 */
 		private function _connectToSite_phase_logged_in(result:ResultEvent, sc:SiteConnection):void {
-			trace('login succeeded');
 			getViews(sc, function(_result:ResultEvent):void{
 				_connectToSite_phase_views_loaded(_result, sc);
 			});
@@ -132,7 +131,6 @@ package com.graphmind
 		 * Connect to a site - final state, views recieved
 		 */
 		private function _connectToSite_phase_views_loaded(result:ResultEvent, sc:SiteConnection):void {
-			trace('views loaded');
 			ViewsManager.getInstance().receiveViewsData(result, sc);
 		}
 		// END of site connection /////

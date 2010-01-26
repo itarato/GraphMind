@@ -23,6 +23,7 @@ package com.graphmind
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	import com.graphmind.visualizer.Drawer;
+	import com.graphmind.visualizer.TreeDrawer;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -40,8 +41,7 @@ package com.graphmind
 	import mx.events.ListEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	public class StageManager
-	{
+	public class StageManager {
 		private static var _instance:StageManager = null;
 		// Flash Player 9 can handle maximum 2880 pixel width BitmapData:
 		// http://livedocs.adobe.com/flex/3/langref/flash/display/BitmapData.html#BitmapData().
@@ -49,6 +49,8 @@ package com.graphmind
 		public static var DEFAULT_DESKTOP_HEIGHT:int = 2880;
 		[Bindable]
 		public static var DEFAULT_DESKTOP_WIDTH:int = 2880;
+		
+		public static var EVENT_MINDMAP_UPDATED:String = 'mindmapUpdated';
 		
 		// @TODO select base node when it's ready
 		// TODO add timer for normal stage refresh
@@ -112,6 +114,10 @@ package com.graphmind
 			var cm:ContextMenu = new ContextMenu();
 			cm.hideBuiltInItems();
 			MovieClip(GraphMind.instance.systemManager).contextMenu = cm;
+			
+			_drawer.addEventListener(EVENT_MINDMAP_UPDATED, function(event:Event):void{
+				_redrawPreviewWindow();
+			});
 		}
 		
 		/**
@@ -316,17 +322,6 @@ package com.graphmind
 			if (!baseNode) return;
 			
 			_drawer.redraw();
-			
-			// Very little time should be enough for increasing performance
-			// It prevents bulk refreshes (eg. on massive node creation)
-//			clearTimeout(_mindmapStageTimer);
-//			_mindmapStageTimer = setTimeout(function():void {
-//				// Refresh the whole tree.
-//				baseNode.x = 4;
-//				baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
-//				baseNode._redrawSubtree();
-//				redrawPreviewWindow();
-//			}, 10);
 		}
 		
 		public function onClick_SaveGraphmindButton():void {
@@ -520,7 +515,7 @@ package com.graphmind
 		 * Don't call it unless it's really necessary.
 		 * Calling redrawMindmapStage() will call it.
 		 */
-		public function redrawPreviewWindow():void {
+		private function _redrawPreviewWindow():void {
 			// Timeout can help on performance
 			clearTimeout(_previewTimer);
 			_previewTimer = setTimeout(function():void {
@@ -545,12 +540,12 @@ package com.graphmind
 		
 		public function previewWindowIncrease():void {
 			previewWindowScale /= 1.2;
-			redrawPreviewWindow();
+			_redrawPreviewWindow();
 		}
 		
 		public function previewWindowDecrease():void {
 			previewWindowScale *= 1.2;
-			redrawPreviewWindow();
+			_redrawPreviewWindow();
 		}
 		
 		public function previewWindowClose():void {
@@ -561,7 +556,7 @@ package com.graphmind
 		public function previewWindowOpen():void {
 			GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible = true;
 			GraphMind.instance.mindmapCanvas.previewWindowOpenIcon.visible = false;
-			redrawPreviewWindow();
+			_redrawPreviewWindow();
 		}
 				
 	}

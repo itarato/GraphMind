@@ -3,10 +3,10 @@ package com.graphmind.visualizer {
 	import com.graphmind.display.ITreeNode;
 	import com.graphmind.display.NodeItem;
 	
+	import flash.events.Event;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
 	
-	import mx.containers.Canvas;
 	import mx.core.UIComponent;
 	
 	
@@ -21,7 +21,7 @@ package com.graphmind.visualizer {
 		// Mindmap stage redraw timer - performance reason
 		private var _timer:uint;
 		
-		public function TreeDrawer(target:UIComponent, cloudContainer:UIComponent, connectionContainer:Canvas) {
+		public function TreeDrawer(target:UIComponent, cloudContainer:UIComponent, connectionContainer:UIComponent) {
 			super(target);
 			_cloudDrawer = new CloudDrawer(cloudContainer);
 			_connectionDrawer = new ConnectionDrawer(connectionContainer);
@@ -33,11 +33,11 @@ package com.graphmind.visualizer {
 				_connectionDrawer.clearAll();
 				_cloudDrawer.clearAll();
 				
-//				// Refresh the whole tree.
+				// Refresh the whole tree.
 				StageManager.getInstance().baseNode.x = 4;
 				StageManager.getInstance().baseNode.y = _target.height >> 1;
 				_redrawNode(StageManager.getInstance().baseNode);
-//				redrawPreviewWindow();
+				dispatchEvent(new Event(StageManager.EVENT_MINDMAP_UPDATED));
 			}, 10);
 		}
 		

@@ -172,7 +172,6 @@ package com.graphmind.display
 				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
 				contextMenu.customItems.push(cmi);
 			}
-			trace(contextMenu);
 			
 			_displayComp.contextMenu = contextMenu;
 		}
@@ -256,7 +255,6 @@ package com.graphmind.display
 			
 			if (StageManager.getInstance().isPrepairedNodeDragAndDrop) {
 				StageManager.getInstance().openDragAndDrop(this);
-				//trace(StageManager.getInstance().isPrepairedDragAndDrop.toString());
 			}
 			
 			_displayComp.insertLeft.visible = false;
@@ -907,10 +905,6 @@ package com.graphmind.display
 			return _nodeItemData.title;
 		}
 		
-//		public function isCollapsed():Boolean {
-//			return _isCollapsed;
-//		}
-
 		public function isHasCloud():Boolean {
 			return _isCloud;
 		}

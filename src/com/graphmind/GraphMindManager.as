@@ -13,6 +13,8 @@ package com.graphmind
 	{
 		private static var _instance:GraphMindManager = null;
 		
+		public static var LOG_MODE:Boolean = false;
+		
 		// Base site connection
 		public var baseSiteConnection:SiteConnection;
 		private var _isEditable:Boolean = false;

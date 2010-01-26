@@ -5,11 +5,11 @@ package com.graphmind.visualizer
 	import flash.errors.IllegalOperationError;
 	import flash.geom.Point;
 	
-	import mx.containers.Canvas;
+	import mx.core.UIComponent;
 	
 	public class ConnectionDrawer extends Drawer
 	{
-		public function ConnectionDrawer(target:Canvas) {
+		public function ConnectionDrawer(target:UIComponent) {
 			super(target);
 		}
 		
