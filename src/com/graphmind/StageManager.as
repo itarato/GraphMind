@@ -22,6 +22,7 @@ package com.graphmind
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
+	import com.graphmind.visualizer.Drawer;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -73,6 +74,11 @@ package com.graphmind
 		[Bindable]
 		public static var previewWindowScale:Number = 15;
 		
+		/**
+		 * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)
+		 */
+		private var _drawer:Drawer;
+		
 		// Mindmap stage redraw timer - performance reason
 		private var _mindmapStageTimer:uint;
 		
@@ -91,7 +97,9 @@ package com.graphmind
 		/**
 		 * Initialize stage.
 		 */
-		public function init():void {
+		public function init(drawer:Drawer):void {
+			_drawer = drawer;
+			
 			// Scroll mindmap canvas to center
 			GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition = (GraphMind.instance.mindmapCanvas.desktop.height - GraphMind.instance.mindmapCanvas.desktop_wrapper.height) / 2;
 			
@@ -281,7 +289,7 @@ package com.graphmind
 					requestData.viewsData.parent.source
 				);
 				var nodeItem:NodeItem = new NodeItem(nodeItemData);
-				requestData.nodeItem.addChildNode(nodeItem);
+				requestData.nodeItem.addChildNodeWithStageRefresh(nodeItem);
 			}
 		}
 		
@@ -291,14 +299,14 @@ package com.graphmind
 		 */
 		public function createSimpleChildNode(parent:NodeItem):void {
 			var node:NodeItem = NodeFactory.createNode({}, NodeItemData.NORMAL);
-			parent.addChildNode(node);
+			parent.addChildNodeWithStageRefresh(node);
 			node.selectNode();
 		}
 		
 		public function onSuccess_DrupalItemLoaded(result:Object, requestData:TempItemLoadData):void {
 			requestData.nodeItemData.data = result;
 			var nodeItem:NodeItem = new NodeItem(requestData.nodeItemData);
-			requestData.nodeItem.addChildNode(nodeItem);
+			requestData.nodeItem.addChildNodeWithStageRefresh(nodeItem);
 			nodeItem.selectNode();
 		}
 		
@@ -310,16 +318,18 @@ package com.graphmind
 		public function redrawMindmapStage():void {
 			if (!baseNode) return;
 			
+			_drawer.redraw();
+			
 			// Very little time should be enough for increasing performance
 			// It prevents bulk refreshes (eg. on massive node creation)
-			clearTimeout(_mindmapStageTimer);
-			_mindmapStageTimer = setTimeout(function():void {
-				// Refresh the whole tree.
-				baseNode.x = 4;
-				baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
-				baseNode._redrawSubtree();
-				redrawPreviewWindow();
-			}, 10);
+//			clearTimeout(_mindmapStageTimer);
+//			_mindmapStageTimer = setTimeout(function():void {
+//				// Refresh the whole tree.
+//				baseNode.x = 4;
+//				baseNode.y = DEFAULT_DESKTOP_HEIGHT >> 1;
+//				baseNode._redrawSubtree();
+//				redrawPreviewWindow();
+//			}, 10);
 		}
 		
 		public function onClick_SaveGraphmindButton():void {

@@ -23,6 +23,7 @@ package plugins {
 		 * Implementation of hook_node_context_menu_alter().
 		 */
 		public static function hook_node_context_menu(params:Object = null):void {
+			trace('OOOOOOOOOOOOOOOOOOOO');
 			(params.data as Array).push({title: 'Load taxonomy', event: TaxonomyManager.loadFullTaxonomyTree, separator: true});
 		}
 		
@@ -57,7 +58,7 @@ package plugins {
 				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
 				vocabularyNodeItemData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
 				var vocabularyNode:NodeItem = new NodeItem(vocabularyNodeItemData);
-				baseNode.addChildNode(vocabularyNode);
+				baseNode.addChildNodeWithStageRefresh(vocabularyNode);
 				
 				var term_hierarchy:Object = {};
 				var term_storage:Object = {0: vocabularyNode};
@@ -81,7 +82,7 @@ package plugins {
 				
 				for (var _parentID:* in term_hierarchy) {
 					for each (var termNode:NodeItem in term_hierarchy[_parentID]) {
-						(term_storage[_parentID] as NodeItem).addChildNode(termNode);
+						(term_storage[_parentID] as NodeItem).addChildNodeWithStageRefresh(termNode);
 					}
 				}
 			}
@@ -106,7 +107,7 @@ package plugins {
 				return;
 			}
 			
-			var parentNode:NodeItem = node.getParentNode();
+ 			var parentNode:NodeItem = node.getParentNode() as NodeItem;
 			
 			// Deleting term
 			if (!_isTaxonomyPluginNode(parentNode)) {
@@ -116,7 +117,7 @@ package plugins {
 			}
 
 			var order:Array = [];
-			for each (var child:NodeItem in parentNode.getChildNodes()) {
+			for each (var child:NodeItem in parentNode.getChildNodeAll()) {
 				if (child.getNodeData().hasOwnProperty('tid')) {
 					order.push(child.getNodeData().tid);
 				}
@@ -165,7 +166,7 @@ package plugins {
 			node.getNodeData().vid = vid;
 			
 			var nodes:Array = [node.getNodeData().tid || 0];
-			for each (var child:NodeItem in node.getChildNodes()) {
+			for each (var child:NodeItem in node.getChildNodeAll()) {
 				nodes = nodes.concat(_changeChildsVocabulary(child, vid));
 			}
 			
@@ -178,9 +179,9 @@ package plugins {
 		 * @param NodeItem node
 		 */
 		private static function _changeSiblingsWeight(node:NodeItem):void {
-			var parentNode:NodeItem = node.getParentNode();
+			var parentNode:NodeItem = node.getParentNode() as NodeItem;
 			var weight:int = 0;
-			for each (var child:NodeItem in parentNode.getChildNodes()) {
+			for each (var child:NodeItem in parentNode.getChildNodeAll()) {
 				child.getNodeData().weight = weight++;
 			}
 		}
@@ -223,7 +224,7 @@ package plugins {
 			node.nodeItemData.color = undefined;
 			node.redrawNodeBody();
 			
-			for each (var child:NodeItem in node.getChildNodes()) {
+			for each (var child:NodeItem in node.getChildNodeAll()) {
 				_removePluginInfoFromNode(child);
 			}
 		}
@@ -238,7 +239,7 @@ package plugins {
 			
 			var node:NodeItem = data.node as NodeItem;
 			if (_isTaxonomyPluginNode(node)) return;
-			var parent:NodeItem = node.getParentNode();
+			var parent:NodeItem = node.getParentNode() as NodeItem;
 			if (!_isTaxonomyPluginNode(parent)) return;
 			
 			var subtree_node_reference:Array = new Array();
@@ -270,7 +271,7 @@ package plugins {
 			info.nrid  = node_reference.length;
 			node_reference.push(node);
 			
-			for each (var child:NodeItem in node.getChildNodes()) {
+			for each (var child:NodeItem in node.getChildNodeAll()) {
 				(info.terms as Array).push(_getSubtreeInfo(child, node_reference));
 			}
 			

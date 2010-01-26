@@ -12,6 +12,7 @@
 		
 	<mx:Script>
 		<![CDATA[
+			import com.graphmind.visualizer.TreeDrawer;
 			import com.graphmind.util.OSD;
 			import com.graphmind.PluginManager;
 			import nl.demonsters.debugger.MonsterDebugger;
@@ -82,7 +83,7 @@
 				// @HOOK
 				PluginManager.callHook(HOOK_PRE_INIT);
 				
-				StageManager.getInstance().init();
+				StageManager.getInstance().init(new TreeDrawer(mindmapCanvas.desktop, mindmapCanvas.desktop_cloud, mindmapCanvas.desktop));
 				GraphMindManager.getInstance().init();
 				OSD.show('Graphmind started.');
 			}

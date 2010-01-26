@@ -8,7 +8,6 @@ package com.graphmind.display
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.NodeGraphicsHelper;
-	import com.graphmind.util.OSD;
 	import com.graphmind.util.StringUtility;
 	
 	import components.ItemBaseComponent;
@@ -33,16 +32,12 @@ package com.graphmind.display
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
 	
-	public class NodeItem extends DisplayItem {
+	public class NodeItem extends UIComponent implements ITreeNode {
 		
-		public static const WIDTH_DEFAULT:int = 162;
 		public static const WIDTH_MC_DEFAULT:int = 168;
+		public static const WIDTH_DEFAULT:int = 162;
 		public static const HEIGHT:int = 20;
-		public static const MARGIN_RIGHT:int = 34;
-		public static const MARGIN_BOTTOM:int = 4;
 		public static const ICON_WIDTH:int = 18;
-		public static const CLOUD_MARGIN:int = 8;
-		public static const CLOUD_PADDING:int = 6;
 		[Bindable]
 		public static var TITLE_DEFAULT_WIDTH:int = 120;
 		public static var TITLE_MAX_WIDTH:int = 220;
@@ -323,22 +318,40 @@ package com.graphmind.display
 			navigateToURL(ur, '_blank');
 		}
 		
-		public function getChildNodes():ArrayCollection {
+		public function getChildNodeAll():ArrayCollection {
 			return _childs;
+		}
+		
+		public function getChildNodeAt(index:int):ITreeNode {
+			return _childs.getItemAt(index) as ITreeNode;
+		}
+		
+		public function getChildNodeIndex(child:ITreeNode):int {
+			return _childs.getItemIndex(child);
+		}
+		
+		public function removeChildNodeAll():void {
+			_childs.removeAll();
+		}
+		
+		public function removeChildNodeAt(index:int):void {
+			_childs.removeItemAt(index);
+		}
+		
+		public function addChildNodeWithStageRefresh(node:NodeItem):void {
+			addChildNode(node);
+			
+			// Add UI to the stage
+			StageManager.getInstance().addNodeToStage(node as NodeItem);
 		}
 		
 		/**
 		 * Add a new child node to the node
 		 */
-		public function addChildNode(node:NodeItem, addToStage:Boolean = true):void {
+		public function addChildNode(node:ITreeNode):void {
 			// Add node as a new child
 			this._childs.addItem(node);
-			node._parentNode = this;
-			
-			if (addToStage) {
-				// Add UI to the stage
-				StageManager.getInstance().addNodeToStage(node);
-			}
+			(node as NodeItem)._parentNode = this;
 			
 			// Open subtree.
 			this.uncollapseChilds();
@@ -385,18 +398,19 @@ package com.graphmind.display
 		 * @return int
 		 */
 		private function childSubtreeWidth():int {
-			var width:int = 0;
-			if (_childs.length == 0 || _isCollapsed) {
-				width = HEIGHT + MARGIN_BOTTOM;
-			} else {
-				for each (var child:NodeItem in _childs) {
-					width += child.childSubtreeWidth();
-				}
-			}
-			
-			if (_isCloud) width += 2 * CLOUD_MARGIN;
-			
-			return width;
+//			var width:int = 0;
+//			if (_childs.length == 0 || _isCollapsed) {
+//				width = HEIGHT + MARGIN_BOTTOM;
+//			} else {
+//				for each (var child:NodeItem in _childs) {
+//					width += child.childSubtreeWidth();
+//				}
+//			}
+//			
+//			if (_isCloud) width += 2 * CLOUD_MARGIN;
+//			
+//			return width;
+			return 0;
 		}
 		
 		/**
@@ -413,33 +427,33 @@ package com.graphmind.display
 		 * Shouldn't call it directly because parent nodes' clouds won't be redrawn.
 		 */
 		public function _redrawSubtree():void {
-			this._connectionComp.graphics.clear();
-			
-			var totalChildWidth:int = childSubtreeWidth();
-			var currentY:int = y - totalChildWidth / 2;
-			
-			if (_isCloud) currentY += CLOUD_MARGIN;
-			
-			for each (var child:NodeItem in _childs) {
-				var subtreeWidth:int = child.childSubtreeWidth();
-				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
-				child.y = currentY + subtreeWidth / 2; 
-				child._redrawSubtree();
-				
-				if (!_isCollapsed) {
-					NodeGraphicsHelper.drawConnection(_connectionComp, this, child);
-				}
-				currentY += subtreeWidth;
-			}
-			
-			// Ugly hack for redrawing clouds.
-			// @Todo make better
-			if (_isCloud) {
-				toggleCloud();
-				toggleCloud();
-			}
-			
-			_cloudComp.visible = !_parentNode || !_parentNode._isCollapsed;
+//			this._connectionComp.graphics.clear();
+//			
+//			var totalChildWidth:int = childSubtreeWidth();
+//			var currentY:int = y - totalChildWidth / 2;
+//			
+//			if (_isCloud) currentY += CLOUD_MARGIN;
+//			
+//			for each (var child:NodeItem in _childs) {
+//				var subtreeWidth:int = child.childSubtreeWidth();
+//				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
+//				child.y = currentY + subtreeWidth / 2; 
+//				child._redrawSubtree();
+//				
+//				if (!_isCollapsed) {
+//					NodeGraphicsHelper.drawConnection(_connectionComp, this, child);
+//				}
+//				currentY += subtreeWidth;
+//			}
+//			
+//			// Ugly hack for redrawing clouds.
+//			// @Todo make better
+//			if (_isCloud) {
+//				toggleCloud();
+//				toggleCloud();
+//			}
+//			
+//			_cloudComp.visible = !_parentNode || !_parentNode._isCollapsed;
 		}
 		
 		private function getTypeColor():uint {
@@ -641,7 +655,7 @@ package com.graphmind.display
 			// Remove source from parents childs
 			source.removeFromParentsChilds();
 			// Add source to target
-			target.addChildNode(source, false);
+			target.addChildNode(source);
 			// Refresh display
 			StageManager.getInstance().setMindmapUpdated();
 			StageManager.getInstance().redrawMindmapStage();
@@ -686,23 +700,6 @@ package com.graphmind.display
 			}
 			
 			parentNode._displayComp.icon_has_child.visible = parentNode._childs.length > 0;
-		}
-			
-		
-		public function getWidth():int {
-			return WIDTH_DEFAULT + _getIconsExtraWidth() + _getTitleExtraWidth(); 
-		}
-		
-		private function _getTitleExtraWidth():int {
-			return _displayComp.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
-				0 :
-				(_displayComp.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
-					TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH :
-					_displayComp.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
-		}
-		
-		private function _getIconsExtraWidth():int {
-			return _icons.length * ICON_WIDTH;
 		}
 		
 		public function addIcon(source:String):void {
@@ -822,10 +819,10 @@ package com.graphmind.display
 		
 		public function getBoundingPoints():Array {
 			return [
-				[x - CLOUD_PADDING, y - CLOUD_PADDING],
-				[x + getWidth() + CLOUD_PADDING, y - CLOUD_PADDING],
-				[x + getWidth() + CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING],
-				[x - CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING]
+//				[x - CLOUD_PADDING, y - CLOUD_PADDING],
+//				[x + getWidth() + CLOUD_PADDING, y - CLOUD_PADDING],
+//				[x + getWidth() + CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING],
+//				[x - CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING]
 			];
 		}
 		
@@ -893,7 +890,7 @@ package com.graphmind.display
 			return StageManager.getInstance().activeNode;
 		}
 		
-		public function getParentNode():NodeItem {
+		public function getParentNode():ITreeNode {
 			return _parentNode;
 		}
 		
@@ -903,6 +900,34 @@ package com.graphmind.display
 		
 		public function getTitle():String {
 			return _nodeItemData.title;
+		}
+		
+//		public function isCollapsed():Boolean {
+//			return _isCollapsed;
+//		}
+
+		public function isHasCloud():Boolean {
+			return _isCloud;
+		}
+		
+		public function getHeight():int {
+			return HEIGHT;
+		}
+		
+		public function getWidth():int {
+			return WIDTH_DEFAULT + _getIconsExtraWidth() + _getTitleExtraWidth(); 
+		}
+		
+		private function _getTitleExtraWidth():int {
+			return _displayComp.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
+				0 :
+				(_displayComp.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
+					TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH :
+					_displayComp.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
+		}
+		
+		private function _getIconsExtraWidth():int {
+			return _icons.length * ICON_WIDTH;
 		}
 	}
 }
