@@ -44,30 +44,23 @@ package com.graphmind.visualizer {
 		protected function _redrawNode(node:ITreeNode):void {
 			var totalChildWidth:int = _getSubtreeHeight(node);
 			var currentY:int = (node as NodeItem).y - totalChildWidth / 2;
-//			
+			
 			if ((node as NodeItem).isHasCloud()) currentY += CloudDrawer.MARGIN;
-//			
+			
 			for each (var child:NodeItem in node.getChildNodeAll()) {
 				var subtreeWidth:int = _getSubtreeHeight(child);
 				child.x = (node as NodeItem).x + (node as NodeItem).getWidth() + MARGIN_RIGHT;
 				child.y = currentY + subtreeWidth / 2;
 				_redrawNode(child);
-//				
+				
 				if (!(node as NodeItem).isCollapsed()) {
 					_connectionDrawer.draw((node as NodeItem), child);
 				}
 				currentY += subtreeWidth;
 			}
-//			
-//			// Ugly hack for redrawing clouds.
-//			// @Todo make better
-			if ((node as NodeItem).isHasCloud()) {
-//				toggleCloud();
-//				toggleCloud();
+			if ((node as NodeItem).isHasCloud() && (!node.getParentNode() || !(node.getParentNode() as NodeItem).isCollapsed())) {
 				_cloudDrawer.draw(node as NodeItem);
 			}
-//			
-//			_cloudComp.visible = !_parentNode || !_parentNode._isCollapsed;
 		}
 		
 		private function _getSubtreeHeight(node:ITreeNode):int {
