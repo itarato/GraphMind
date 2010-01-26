@@ -79,9 +79,6 @@ package com.graphmind
 		 */
 		private var _drawer:Drawer;
 		
-		// Mindmap stage redraw timer - performance reason
-		private var _mindmapStageTimer:uint;
-		
 		
 		/**
 		 * Singleton pattern.

@@ -23,7 +23,6 @@ package plugins {
 		 * Implementation of hook_node_context_menu_alter().
 		 */
 		public static function hook_node_context_menu(params:Object = null):void {
-			trace('OOOOOOOOOOOOOOOOOOOO');
 			(params.data as Array).push({title: 'Load taxonomy', event: TaxonomyManager.loadFullTaxonomyTree, separator: true});
 		}
 		

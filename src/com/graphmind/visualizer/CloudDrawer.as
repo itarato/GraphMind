@@ -1,33 +1,25 @@
-package com.graphmind.util {
+package com.graphmind.visualizer
+{
 	import com.graphmind.display.NodeItem;
 	
+	import flash.errors.IllegalOperationError;
 	import flash.geom.Point;
 	
 	import mx.core.UIComponent;
 	
-	
-	public class NodeGraphicsHelper {
+	public class CloudDrawer extends Drawer {
 		
-		public static function drawConnection(target:UIComponent, fromNode:NodeItem,  toNode:NodeItem):void {
-			target.graphics.lineStyle(2, 0x777777);
-			var pFrom:Point = new Point(fromNode.x + fromNode.getWidth(), fromNode.y + (NodeItem.HEIGHT >> 1));
-			var pTo:Point   = new Point(toNode.x, toNode.y + (NodeItem.HEIGHT >> 1));
-			target.graphics.moveTo((pFrom.x + pTo.x) >> 1, (pFrom.y + pTo.y) >> 1);
-			target.graphics.curveTo(
-				pFrom.x + ((pTo.x - pFrom.x) >> 2),
-				pFrom.y,
-				pFrom.x,
-				pFrom.y
-			);
-			target.graphics.moveTo((pFrom.x + pTo.x) >> 1, (pFrom.y + pTo.y) >> 1);
-			target.graphics.curveTo(
-				pTo.x - ((pTo.x - pFrom.x) >> 2),
-				pTo.y,
-				pTo.x,
-				pTo.y
-			);
+		public static const MARGIN:int = 8;
+		public static const PADDING:int = 6;
+		
+		public function CloudDrawer(target:UIComponent) {
+			super(target);
 		}
 		
+		public override function redraw():void {
+			throw new IllegalOperationError('This method shouldn\'t be called.');
+		} 
+
 		/**
 		 * Draw a cloud around a node and it's subtree
 		 * 
@@ -37,14 +29,14 @@ package com.graphmind.util {
 		 * @param NodeItem node
 		 * @param UIComponent target
 		 */
-		public static function drawCloud(node:NodeItem, target:UIComponent):void {
-			var points:Array = getSubtreePointsInOrdered(node);
+		public function draw(node:NodeItem):void {
+			var points:Array = _getSubtreePointsInOrdered(node);
 			
 			// Search for most-bottom-left point
-			var p0:Point = convexHull_getMostBottomLeftPoint(points);
+			var p0:Point = _convexHull_getMostBottomLeftPoint(points);
 
 			// Order points cw
-			var orderedPoints:Object = convexHull_getOrderedPointContainer(points, p0);
+			var orderedPoints:Object = _convexHull_getOrderedPointContainer(points, p0);
 			
 			var stack:Array = [];
 			
@@ -59,7 +51,7 @@ package com.graphmind.util {
 			// Graham's scan method
 			for (var k:int = i; k <= 180; k++) {
 				if (!orderedPoints.hasOwnProperty('angle_' + k)) continue;
-				while (ifPointOnTheRight(
+				while (_ifPointOnTheRight(
 					stack[stack.length - 2],
 					stack[stack.length - 1],
 					orderedPoints['angle_' + k]
@@ -68,14 +60,14 @@ package com.graphmind.util {
 			}
 			
 			// Drawing
-			target.graphics.lineStyle(1, 0x0072B9, .3);
-			target.graphics.beginFill(0x0072B9, .1);
+			_target.graphics.lineStyle(1, 0x0072B9, .3);
+			_target.graphics.beginFill(0x0072B9, .1);
 			var v0:Array = [];
 			var v1:Array = [];
 			var p_cutter_right:Array = [];
 			var p_cutter_left:Array  = [];
 			var radius:Number = 10;
-			target.graphics.moveTo(
+			_target.graphics.moveTo(
 				(stack[stack.length - 1][0] + stack[0][0]) / 2,
 				(stack[stack.length - 1][1] + stack[0][1]) / 2
 			);
@@ -117,49 +109,59 @@ package com.graphmind.util {
 				}
 				
 				// curve sandbox
-				var anchors:Array = convexHull_angleHalfCut(v0, v1, 10);
-				target.graphics.curveTo(
+				var anchors:Array = _convexHull_angleHalfCut(v0, v1, 10);
+				_target.graphics.curveTo(
 					anchors[1][0], anchors[1][1],
 					stack[pi][0], stack[pi][1]
 				);
-				target.graphics.curveTo(
+				_target.graphics.curveTo(
 					anchors[0][0], anchors[0][1],
 					p_cutter_right[0], p_cutter_right[1]
 				);
 			}
-			target.graphics.endFill();
+			_target.graphics.endFill();
 		}
 		
-		public static function getSubtreePointsInOrdered(node:NodeItem):Array {
+		private function _getSubtreePointsInOrdered(node:NodeItem):Array {
 			var points:Array = [];
 			
-			points = points.concat(node.getBoundingPoints());
+			var boundingPoints:Array = node.getBoundingPoints();
+			// Adding padding.
+			boundingPoints[0][0] -= PADDING;
+			boundingPoints[0][1] -= PADDING;
+			boundingPoints[1][0] += PADDING;
+			boundingPoints[1][1] -= PADDING;
+			boundingPoints[2][0] += PADDING;
+			boundingPoints[2][1] += PADDING;
+			boundingPoints[3][0] -= PADDING;
+			boundingPoints[3][1] += PADDING;
+			points = points.concat(boundingPoints);
 			
 			if (!node.isCollapsed()) {
 				for each (var child:NodeItem in node.getChildNodeAll()) {
-					points = points.concat(getSubtreePointsInOrdered(child));
+					points = points.concat(_getSubtreePointsInOrdered(child));
 				}
 			}
 			
 			return points;
 		}
 		
-		public static function getCurrentAngle(relX:Number, relY:Number):int {
+		private function _getCurrentAngle(relX:Number, relY:Number):int {
 			var relDegree:Number = Math.atan(relY / relX) / Math.PI * 180;
 			return (360 - (relX < 0 ? 180.0 + relDegree : relDegree)) % 360;
 		}
 		
-		public static function isBiggerDistance(p0:Point, p1:Array, p2:Array):Boolean {
+		private function _isBiggerDistance(p0:Point, p1:Array, p2:Array):Boolean {
 			var d1:Number = Math.pow(p0.x - p1[0], 2) + Math.pow(p0.y - p1[1], 2);
 			var d2:Number = Math.pow(p0.x - p2[0], 2) + Math.pow(p0.y - p2[1], 2);
 			return d2 > d1;
 		}
 		
-		public static function ifPointOnTheRight(tm2:Array, tm1:Array, p:Array):Boolean {
+		private function _ifPointOnTheRight(tm2:Array, tm1:Array, p:Array):Boolean {
 			return ((tm1[0] - tm2[0]) * (p[1] - tm2[1]) - (p[0] - tm2[0]) * (tm1[1] - tm2[1])) >= 0;
 		}
 		
-		private static function convexHull_getMostBottomLeftPoint(points:Array):Point {
+		private function _convexHull_getMostBottomLeftPoint(points:Array):Point {
 			// Search for most-bottom-left point
 			var p0:Point = new Point(int.MAX_VALUE, int.MAX_VALUE);
 			var idx:*;
@@ -172,21 +174,21 @@ package com.graphmind.util {
 			return p0;
 		}
 		
-		private static function convexHull_getOrderedPointContainer(points:Array, p0:Point):Object {
+		private function _convexHull_getOrderedPointContainer(points:Array, p0:Point):Object {
 			var orderedPoints:Object = {};
 			for (var idx:* in points) {
-				var angle:int = getCurrentAngle(
+				var angle:int = _getCurrentAngle(
 					p0.x - points[idx][0],
 					p0.y - points[idx][1]
 				);
-				if (!orderedPoints.hasOwnProperty('angle_' + angle) || isBiggerDistance(p0, orderedPoints['angle_' + angle], points[idx])) {
+				if (!orderedPoints.hasOwnProperty('angle_' + angle) || _isBiggerDistance(p0, orderedPoints['angle_' + angle], points[idx])) {
 					orderedPoints['angle_' + angle] = points[idx];
 				}
 			}
 			return orderedPoints;
 		}
 		
-		private static function convexHull_angleHalfCut(v1:Array, v2:Array, length:Number):Array {
+		private function _convexHull_angleHalfCut(v1:Array, v2:Array, length:Number):Array {
 			// Relatice choords
 			var rx1:Number = v1[1][0] - v1[0][0];
 			var ry1:Number = v1[1][1] - v1[0][1];

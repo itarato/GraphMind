@@ -7,7 +7,6 @@ package com.graphmind.display
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
-	import com.graphmind.util.NodeGraphicsHelper;
 	import com.graphmind.util.StringUtility;
 	
 	import components.ItemBaseComponent;
@@ -397,7 +396,7 @@ package com.graphmind.display
 		 * Calculates the with of the subtree comes from this node.
 		 * @return int
 		 */
-		private function childSubtreeWidth():int {
+//		private function childSubtreeWidth():int {
 //			var width:int = 0;
 //			if (_childs.length == 0 || _isCollapsed) {
 //				width = HEIGHT + MARGIN_BOTTOM;
@@ -410,23 +409,25 @@ package com.graphmind.display
 //			if (_isCloud) width += 2 * CLOUD_MARGIN;
 //			
 //			return width;
-			return 0;
-		}
+//			return 0;
+//		}
 		
 		/**
 		 * Redraw a subtree and parents' clouds.
 		 * Call it for updating only a subtree.
 		 */
-		public function redrawSubtree():void {
-			_redrawSubtree();
-			_redrawParentsClouds();
-		}
+//		[Deprecated]
+//		public function redrawSubtree():void {
+//			// @TODO refreshing subtree is enough
+//			StageManager.getInstance().redrawMindmapStage();
+//			_redrawParentsClouds();
+//		}
 		
 		/**
 		 * Redraw a subtree.
 		 * Shouldn't call it directly because parent nodes' clouds won't be redrawn.
 		 */
-		public function _redrawSubtree():void {
+//		public function _redrawSubtree():void {
 //			this._connectionComp.graphics.clear();
 //			
 //			var totalChildWidth:int = childSubtreeWidth();
@@ -454,7 +455,7 @@ package com.graphmind.display
 //			}
 //			
 //			_cloudComp.visible = !_parentNode || !_parentNode._isCollapsed;
-		}
+//		}
 		
 		private function getTypeColor():uint {
 			if (_nodeItemData.color) {
@@ -760,7 +761,8 @@ package com.graphmind.display
 			this._displayComp.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
 			this._displayComp.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
 			
-			this._redrawSubtree();
+			// @TODO refreshing subtree is enough
+			StageManager.getInstance().redrawMindmapStage();
  		}
 		
 		public function setTitle(title:String):void {
@@ -771,7 +773,8 @@ package com.graphmind.display
 		
 		public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
 			redrawNodeBody();
-			_redrawSubtree();
+			// @TODO refreshing subtree is enough
+			StageManager.getInstance().redrawMindmapStage();
 			redrawParentsClouds();
 		}
 		
@@ -800,16 +803,17 @@ package com.graphmind.display
 		public function toggleCloud(forceRedraw:Boolean = false):void {
 			if (!_isCloud) {
 				_isCloud = true;
-				NodeGraphicsHelper.drawCloud(this, _cloudComp);
+//				NodeGraphicsHelper.drawCloud(this, _cloudComp);
 			} else {
 				_isCloud = false;
-				_cloudComp.graphics.clear();
+//				_cloudComp.graphics.clear();
 			}
 			
-			if (forceRedraw) {
+			// @FIXME temporary solution
+//			if (forceRedraw) {
 				StageManager.getInstance().setMindmapUpdated();
 				StageManager.getInstance().redrawMindmapStage();
-			}
+//			}
 		}
 		
 		public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
@@ -818,11 +822,12 @@ package com.graphmind.display
 		}
 		
 		public function getBoundingPoints():Array {
+			// Top-left - top-right - bottom-right - bottom-left.
 			return [
-//				[x - CLOUD_PADDING, y - CLOUD_PADDING],
-//				[x + getWidth() + CLOUD_PADDING, y - CLOUD_PADDING],
-//				[x + getWidth() + CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING],
-//				[x - CLOUD_PADDING, y + HEIGHT + CLOUD_PADDING]
+				[x, y],
+				[x + getWidth(), y],
+				[x + getWidth(), y + getHeight()],
+				[x, y + getHeight()]
 			];
 		}
 		
@@ -929,5 +934,6 @@ package com.graphmind.display
 		private function _getIconsExtraWidth():int {
 			return _icons.length * ICON_WIDTH;
 		}
+		
 	}
 }
