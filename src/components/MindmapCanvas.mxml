@@ -25,6 +25,13 @@
 			mouseMove="{StageManager.getInstance().onMouseMove_InnerMindmapStage();}"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}"/>
+		
+		<mx:Canvas id="desktop_overlay" 
+			width="{StageManager.DEFAULT_DESKTOP_WIDTH}" 
+			height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" 
+			focusEnabled="false"
+			scaleX="{desktopScaleHSlider.value/100}"
+			scaleY="{desktopScaleHSlider.value/100}"/>
 	</mx:Canvas>
 	<!-- END mindmap editor -->
 	

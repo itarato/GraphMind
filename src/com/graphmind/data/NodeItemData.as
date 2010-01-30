@@ -17,7 +17,7 @@ package com.graphmind.data {
 		public var data:Object;
 		public var source:SiteConnection = SiteConnection.createSiteConnection();
 		public var type:String = NORMAL;
-		public var id:uint = NodeItemData.id++;
+		public var id:String = 'ID_' + String(NodeItemData.id++);
 		public var link:String = '';
 		// Extra color for the node. GM has it's own colors, but with this
 		// variable plugins can add their own colors. 

@@ -83,7 +83,12 @@
 				// @HOOK
 				PluginManager.callHook(HOOK_PRE_INIT);
 				
-				StageManager.getInstance().init(new TreeDrawer(mindmapCanvas.desktop, mindmapCanvas.desktop_cloud, mindmapCanvas.desktop));
+				StageManager.getInstance().init(new TreeDrawer(
+					mindmapCanvas.desktop, 
+					mindmapCanvas.desktop_cloud, 
+					mindmapCanvas.desktop,
+					mindmapCanvas.desktop_overlay
+				));
 				GraphMindManager.getInstance().init();
 				OSD.show('Graphmind started.');
 			}

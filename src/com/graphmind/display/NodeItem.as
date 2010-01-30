@@ -52,6 +52,9 @@ package com.graphmind.display
 		private static const EFFECT_NORMAL:int = 0;
 		private static const EFFECT_HIGHLIGHT:int = 1;
 		
+		// Node access caches
+		public static var nodes:ArrayCollection = new ArrayCollection();
+		
 		public static const HOOK_NODE_CONTEXT_MENU:String  = 'node_context_menu';
 		public static const HOOK_NODE_MOVED:String         = 'node_moved';
 		public static const HOOK_NODE_DELETE:String		   = 'node_delete';
@@ -74,7 +77,10 @@ package com.graphmind.display
 		// Display effects
 		private static var _nodeDropShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x888888, 1, 1, 1);
 		private static var _nodeGlowFilter:GlowFilter = new GlowFilter(0x0072B9, .8, 6, 6);
-		private static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, .8, 20, 20, 2, 1, true); 
+		private static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, .8, 20, 20, 2, 1, true);
+		
+		// ArrowLinks
+		private var _arrowLinks:ArrayCollection = new ArrayCollection(); 
 		
 		
 		private var _mouseSelectionTimeout:uint;
@@ -85,6 +91,7 @@ package com.graphmind.display
 		public function NodeItem(viewItem:NodeItemData) {
 			// Init super class
 			super();
+			NodeItem.nodes.addItem(this);
 			// Attach data object
 			this._nodeItemData = viewItem;
 			// Init display elements
@@ -523,7 +530,7 @@ package com.graphmind.display
 			var output:String = '<node ' + 
 				'CREATED="'  + _nodeItemData.created   + '" ' + 
 				'MODIFIED="' + _nodeItemData.modified  + '" ' + 
-				'ID="ID_'    + _nodeItemData.id        + '" ' + 
+				'ID="'       + _nodeItemData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
 				(titleIsHTML ? '' : 'TEXT="' + escape(_nodeItemData.title) + '" ') + 
 				(_nodeItemData.getPath().toString().length > 0 ? ('LINK="' + escape(_nodeItemData.getPath()) + '" ') : '') + 
@@ -927,6 +934,14 @@ package com.graphmind.display
 		
 		private function _getIconsExtraWidth():int {
 			return _icons.length * ICON_WIDTH;
+		}
+		
+		public function getArrowLinks():ArrayCollection {
+			return _arrowLinks;
+		}
+		
+		public function addArrowLink(arrowLink:ArrowLink):void {
+			this._arrowLinks.addItem(arrowLink);
 		}
 		
 	}
