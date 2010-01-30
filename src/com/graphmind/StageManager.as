@@ -22,7 +22,7 @@ package com.graphmind
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
-	import com.graphmind.visualizer.Drawer;
+	import com.graphmind.visualizer.StructureDrawer;
 	import com.graphmind.visualizer.TreeDrawer;
 	
 	import flash.display.Bitmap;
@@ -79,7 +79,7 @@ package com.graphmind
 		/**
 		 * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)
 		 */
-		private var _drawer:Drawer;
+		private var _drawer:StructureDrawer;
 		
 		
 		/**
@@ -96,7 +96,7 @@ package com.graphmind
 		/**
 		 * Initialize stage.
 		 */
-		public function init(drawer:Drawer):void {
+		public function init(drawer:StructureDrawer):void {
 			_drawer = drawer;
 			
 			// Scroll mindmap canvas to center

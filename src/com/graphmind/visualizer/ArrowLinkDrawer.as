@@ -14,10 +14,6 @@ package com.graphmind.visualizer
 			super(target);
 		}
 		
-		public override function redraw():void {
-			throw new IllegalOperationError('Don\'t call this.');
-		}
-		
 		public function draw(arrowLink:ArrowLink):void {
 			if (!arrowLink.isReady) return;
 			if (arrowLink.destinationNode.getParentNode() && (arrowLink.destinationNode.getParentNode() as NodeItem).isCollapsed()) return;

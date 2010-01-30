@@ -1,4 +1,5 @@
 package com.graphmind.visualizer {
+	
 	import com.graphmind.StageManager;
 	import com.graphmind.display.ArrowLink;
 	import com.graphmind.display.ITreeNode;
@@ -12,7 +13,7 @@ package com.graphmind.visualizer {
 	import mx.core.UIComponent;
 	
 	
-	public class TreeDrawer extends Drawer {
+	public class TreeDrawer extends StructureDrawer {
 		
 		public static const MARGIN_BOTTOM:int = 4;
 		public static const MARGIN_RIGHT:int = 34;

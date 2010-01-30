@@ -13,10 +13,6 @@ package com.graphmind.visualizer
 			super(target);
 		}
 		
-		public override function redraw():void {
-			throw new IllegalOperationError('Connections shouldn\'t created this way.');
-		}
-		
 		public function draw(nodeFrom:NodeItem, nodeTo:NodeItem):void {
 			_target.graphics.lineStyle(2, 0x777777);
 			var pFrom:Point = new Point(nodeFrom.x + nodeFrom.getWidth(), nodeFrom.y + (NodeItem.HEIGHT >> 1));

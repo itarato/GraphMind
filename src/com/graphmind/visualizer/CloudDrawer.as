@@ -2,7 +2,6 @@ package com.graphmind.visualizer
 {
 	import com.graphmind.display.NodeItem;
 	
-	import flash.errors.IllegalOperationError;
 	import flash.geom.Point;
 	
 	import mx.core.UIComponent;
@@ -16,10 +15,6 @@ package com.graphmind.visualizer
 			super(target);
 		}
 		
-		public override function redraw():void {
-			throw new IllegalOperationError('This method shouldn\'t be called.');
-		} 
-
 		/**
 		 * Draw a cloud around a node and it's subtree
 		 * 
