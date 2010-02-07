@@ -4,8 +4,8 @@ package com.graphmind.visualizer {
 	import com.graphmind.display.ArrowLink;
 	import com.graphmind.display.ITreeNode;
 	import com.graphmind.display.NodeItem;
+	import com.graphmind.event.StageEvent;
 	
-	import flash.events.Event;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
 	
@@ -32,13 +32,15 @@ package com.graphmind.visualizer {
 			arrowLinkContainer:UIComponent
 			) 
 		{
-			super(target);
+			super(target, new SimpleNodeDrawer(GraphMind.instance.mindmapCanvas.desktop));
 			_cloudDrawer        = new CloudDrawer(cloudContainer);
 			_connectionDrawer   = new ConnectionDrawer(connectionContainer);
 			_arrowLinkContainer = new ArrowLinkDrawer(arrowLinkContainer);
 		}
 		
 		public override function redraw():void {
+			if (_isLocked) return;
+			
 			clearTimeout(_timer);
 			_timer = setTimeout(function():void {
 				_connectionDrawer.clearAll();
@@ -52,7 +54,7 @@ package com.graphmind.visualizer {
 				postProcessObjects.arrowLinks = new Array();
 				_redrawNode(StageManager.getInstance().baseNode, postProcessObjects);
 				_redrawArrowLinks(postProcessObjects.arrowLinks);
-				dispatchEvent(new Event(StageManager.EVENT_MINDMAP_UPDATED));
+				dispatchEvent(new StageEvent(StageEvent.MINDMAP_UPDATED));
 			}, 10);
 		}
 		
@@ -91,7 +93,7 @@ package com.graphmind.visualizer {
 		private function _redrawArrowLinks(arrowLinkNodes:Array):void {
 			for each (var arrowLinks:ArrayCollection in arrowLinkNodes) {
 				for each (var arrowLink:ArrowLink in arrowLinks) {
-					trace('Arrow link found');
+//					trace('Arrow link found');
 					_arrowLinkContainer.draw(arrowLink);
 				}
 			}

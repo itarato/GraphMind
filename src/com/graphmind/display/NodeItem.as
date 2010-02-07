@@ -5,6 +5,7 @@ package com.graphmind.display
 	import com.graphmind.PluginManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
+	import com.graphmind.event.NodeEvent;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.StringUtility;
@@ -98,6 +99,8 @@ package com.graphmind.display
 			_initDisplayElements();
 			// Init events
 			_initAttachEvents();
+			
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.CREATED, this));
 		}
 		
 		private function _initDisplayElements():void {
@@ -245,7 +248,7 @@ package com.graphmind.display
 				uncollapse();
 			}
 			StageManager.getInstance().setMindmapUpdated();
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 			event.stopPropagation();
 		}
 		
@@ -295,7 +298,6 @@ package com.graphmind.display
 		
 		private function onItemLoaderSelectorClick(event:MouseEvent):void {
 			event.stopPropagation();
-			//Log.info('click on node: ' + this._nodeItemData.title); 
 			selectNode();
 			GraphMind.instance.panelLoadView.view_arguments.text = _nodeItemData.getDrupalID();
 		}
@@ -361,6 +363,8 @@ package com.graphmind.display
 			this.uncollapseChilds();
 			// Showing toggle-subtree button.
 			this._displayComp.icon_has_child.visible = true;
+			
+			// Not necessary to fire NODE_ATTCHED event. MOVED and CREATED covers this.
 		}
 		
 		public function collapse():void {
@@ -376,7 +380,7 @@ package com.graphmind.display
 				nodeItem.collapseChilds();
 			}
 			StageManager.getInstance().setMindmapUpdated();
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 		}
 		
 		public function uncollapse():void {
@@ -394,73 +398,8 @@ package com.graphmind.display
 				}
 			}
 			StageManager.getInstance().setMindmapUpdated();
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 		}
-		
-		/**
-		 * Calculates the with of the subtree comes from this node.
-		 * @return int
-		 */
-//		private function childSubtreeWidth():int {
-//			var width:int = 0;
-//			if (_childs.length == 0 || _isCollapsed) {
-//				width = HEIGHT + MARGIN_BOTTOM;
-//			} else {
-//				for each (var child:NodeItem in _childs) {
-//					width += child.childSubtreeWidth();
-//				}
-//			}
-//			
-//			if (_isCloud) width += 2 * CLOUD_MARGIN;
-//			
-//			return width;
-//			return 0;
-//		}
-		
-		/**
-		 * Redraw a subtree and parents' clouds.
-		 * Call it for updating only a subtree.
-		 */
-//		[Deprecated]
-//		public function redrawSubtree():void {
-//			// @TODO refreshing subtree is enough
-//			StageManager.getInstance().redrawMindmapStage();
-//			_redrawParentsClouds();
-//		}
-		
-		/**
-		 * Redraw a subtree.
-		 * Shouldn't call it directly because parent nodes' clouds won't be redrawn.
-		 */
-//		public function _redrawSubtree():void {
-//			this._connectionComp.graphics.clear();
-//			
-//			var totalChildWidth:int = childSubtreeWidth();
-//			var currentY:int = y - totalChildWidth / 2;
-//			
-//			if (_isCloud) currentY += CLOUD_MARGIN;
-//			
-//			for each (var child:NodeItem in _childs) {
-//				var subtreeWidth:int = child.childSubtreeWidth();
-//				child.x = x + getWidth() + NodeItem.MARGIN_RIGHT;
-//				child.y = currentY + subtreeWidth / 2; 
-//				child._redrawSubtree();
-//				
-//				if (!_isCollapsed) {
-//					NodeGraphicsHelper.drawConnection(_connectionComp, this, child);
-//				}
-//				currentY += subtreeWidth;
-//			}
-//			
-//			// Ugly hack for redrawing clouds.
-//			// @Todo make better
-//			if (_isCloud) {
-//				toggleCloud();
-//				toggleCloud();
-//			}
-//			
-//			_cloudComp.visible = !_parentNode || !_parentNode._isCollapsed;
-//		}
 		
 		private function getTypeColor():uint {
 			if (_nodeItemData.color) {
@@ -526,7 +465,7 @@ package com.graphmind.display
 			//var titleIsHTML:Boolean = _displayComponent.title_label.text != _displayComponent.title_label.htmlText;
 			var titleIsHTML:Boolean = _nodeItemData.title.toString().indexOf('<') >= 0;
 			
-			// Bade node information
+			// Base node information
 			var output:String = '<node ' + 
 				'CREATED="'  + _nodeItemData.created   + '" ' + 
 				'MODIFIED="' + _nodeItemData.modified  + '" ' + 
@@ -624,7 +563,7 @@ package com.graphmind.display
 			parent.removeChild(this);
 			// Update tree.
 			StageManager.getInstance().setMindmapUpdated();
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 		}
 		
 		public function addData(attribute:String, value:String):void {
@@ -650,7 +589,7 @@ package com.graphmind.display
 			return false;
 		}
 		
-		public static function move(source:NodeItem, target:NodeItem, callHook:Boolean = true):Boolean {
+		public static function move(source:NodeItem, target:NodeItem, callEvent:Boolean = true):Boolean {
 			// No parent can detach child.
 			if (!source || !source._parentNode || !target) return false;
 			// Target is an ascendant of the source.
@@ -664,11 +603,13 @@ package com.graphmind.display
 			target.addChildNode(source);
 			// Refresh display
 			StageManager.getInstance().setMindmapUpdated();
-			StageManager.getInstance().redrawMindmapStage();
+			// Calling event with the value of NULL indicates that a full update is needed.
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 			
-			if (callHook) {
+			if (callEvent) {
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
+				StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
 			}
 			
 			return true;
@@ -689,10 +630,11 @@ package com.graphmind.display
 				
 				// Refresh after reordering
 				StageManager.getInstance().setMindmapUpdated();
-				StageManager.getInstance().redrawMindmapStage();
+				StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 				
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
+				StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
 			}
 		}
 		
@@ -767,7 +709,7 @@ package com.graphmind.display
 			this._displayComp.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
 			
 			// @TODO refreshing subtree is enough
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
  		}
 		
 		public function setTitle(title:String):void {
@@ -779,7 +721,7 @@ package com.graphmind.display
 		public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
 			redrawNodeBody();
 			// @TODO refreshing subtree is enough
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 			redrawParentsClouds();
 		}
 		
@@ -806,19 +748,10 @@ package com.graphmind.display
 		}
 		
 		public function toggleCloud(forceRedraw:Boolean = false):void {
-			if (!_isCloud) {
-				_isCloud = true;
-//				NodeGraphicsHelper.drawCloud(this, _cloudComp);
-			} else {
-				_isCloud = false;
-//				_cloudComp.graphics.clear();
-			}
+			_isCloud = !_isCloud;
 			
-			// @FIXME temporary solution
-//			if (forceRedraw) {
-				StageManager.getInstance().setMindmapUpdated();
-				StageManager.getInstance().redrawMindmapStage();
-//			}
+			StageManager.getInstance().setMindmapUpdated();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 		}
 		
 		public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
@@ -841,7 +774,7 @@ package com.graphmind.display
 		 */
 		public function redrawParentsClouds():void {
 			_redrawParentsClouds();
-			StageManager.getInstance().redrawMindmapStage();
+			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 		}
 		
 		private function _redrawParentsClouds():void {

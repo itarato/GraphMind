@@ -15,6 +15,8 @@ package com.graphmind
 	import com.graphmind.data.ViewsCollection;
 	import com.graphmind.data.ViewsList;
 	import com.graphmind.display.NodeItem;
+	import com.graphmind.event.NodeEvent;
+	import com.graphmind.event.StageEvent;
 	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.temp.TempItemLoadData;
@@ -23,12 +25,12 @@ package com.graphmind
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	import com.graphmind.visualizer.StructureDrawer;
-	import com.graphmind.visualizer.TreeDrawer;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.StageDisplayState;
+	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
 	import flash.utils.clearTimeout;
@@ -41,7 +43,7 @@ package com.graphmind
 	import mx.events.ListEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	public class StageManager {
+	public class StageManager extends EventDispatcher {
 		private static var _instance:StageManager = null;
 		// Flash Player 9 can handle maximum 2880 pixel width BitmapData:
 		// http://livedocs.adobe.com/flex/3/langref/flash/display/BitmapData.html#BitmapData().
@@ -79,7 +81,7 @@ package com.graphmind
 		/**
 		 * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)
 		 */
-		private var _drawer:StructureDrawer;
+		public var structureDrawer:StructureDrawer;
 		
 		
 		/**
@@ -96,8 +98,8 @@ package com.graphmind
 		/**
 		 * Initialize stage.
 		 */
-		public function init(drawer:StructureDrawer):void {
-			_drawer = drawer;
+		public function init(structureDrawer:StructureDrawer):void {
+			this.structureDrawer = structureDrawer;
 			
 			// Scroll mindmap canvas to center
 			GraphMind.instance.mindmapCanvas.desktop_wrapper.verticalScrollPosition = (GraphMind.instance.mindmapCanvas.desktop.height - GraphMind.instance.mindmapCanvas.desktop_wrapper.height) / 2;
@@ -115,8 +117,11 @@ package com.graphmind
 			cm.hideBuiltInItems();
 			MovieClip(GraphMind.instance.systemManager).contextMenu = cm;
 			
-			_drawer.addEventListener(EVENT_MINDMAP_UPDATED, function(event:Event):void{
+			this.structureDrawer.addEventListener(StageEvent.MINDMAP_UPDATED, function(event:StageEvent):void{
 				_redrawPreviewWindow();
+			});
+			this.addEventListener(NodeEvent.UPDATE_GRAPHICS, function(event:NodeEvent):void{
+				redrawMindmapStage();
 			});
 		}
 		
@@ -166,7 +171,8 @@ package com.graphmind
 				baseNode = nodeItem;
 			}
 			
-			redrawMindmapStage();
+//			redrawMindmapStage();
+			this.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, baseNode));
 			isTreeUpdated = false;
 			baseNode.selectNode();
 		}		
@@ -196,9 +202,10 @@ package com.graphmind
 		 * Add new element to the editor canvas.
 		 */
 		public function addNodeToStage(node:UIComponent):void {
-			GraphMind.instance.mindmapCanvas.desktop.addChild(node);
+			structureDrawer.addNodeToStage(node as NodeItem);
 			setMindmapUpdated();
-			redrawMindmapStage();
+			this.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, node as NodeItem));
+//			redrawMindmapStage();
 			
 			// HOOK
 			PluginManager.callHook(NodeItem.HOOK_NODE_CREATED, {node: node});
@@ -321,7 +328,7 @@ package com.graphmind
 		public function redrawMindmapStage():void {
 			if (!baseNode) return;
 			
-			_drawer.redraw();
+			structureDrawer.redraw();
 		}
 		
 		public function onClick_SaveGraphmindButton():void {
