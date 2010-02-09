@@ -17,6 +17,7 @@ package com.graphmind.visualizer {
 			_target.graphics.clear();
 		}
 		
+		// @TODO use lock
 		public function lock():void {
 			_isLocked = true;
 		}
