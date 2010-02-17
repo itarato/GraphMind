@@ -69,6 +69,7 @@
 				// Init managers
 				StageManager.getInstance().initStage(this);
 				GraphMindManager.getInstance().initGraphMind();
+				GraphMindManager.getInstance().setEditMode(false);
 				
 				Log.info('GrapMind started.');
 				

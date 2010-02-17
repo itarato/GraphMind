@@ -127,6 +127,8 @@ package com.graphmind
 			_isEditable = editable;
 			if (!editable) {
 				StageManager.getInstance().stage.currentState = 'only_view_mode';
+			} else if (StageManager.getInstance().stage.currentState == 'only_view_mode') {
+				StageManager.getInstance().stage.currentState = '';
 			}
 		}
 
