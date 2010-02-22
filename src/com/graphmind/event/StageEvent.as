@@ -6,9 +6,12 @@ package com.graphmind.event
 	{
 		public static var MINDMAP_UPDATED:String = 'mindmapUpdated';
 		
-		public function StageEvent(type:String)
+		public var height:Number;
+		
+		public function StageEvent(type:String, height:Number = 0)
 		{
 			super(type);
+			this.height = height;
 		}
 
 	}

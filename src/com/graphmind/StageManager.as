@@ -26,15 +26,11 @@ package com.graphmind
 	import com.graphmind.util.OSD;
 	import com.graphmind.visualizer.StructureDrawer;
 	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.StageDisplayState;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
-	import flash.utils.clearTimeout;
-	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
@@ -48,9 +44,9 @@ package com.graphmind
 		// Flash Player 9 can handle maximum 2880 pixel width BitmapData:
 		// http://livedocs.adobe.com/flex/3/langref/flash/display/BitmapData.html#BitmapData().
 		[Bindable]
-		public static var DEFAULT_DESKTOP_HEIGHT:int = 8000;
+		public static var DEFAULT_DESKTOP_HEIGHT:int = 2000;
 		[Bindable]
-		public static var DEFAULT_DESKTOP_WIDTH:int = 2880;
+		public static var DEFAULT_DESKTOP_WIDTH:int = 3000;
 		
 		public static var EVENT_MINDMAP_UPDATED:String = 'mindmapUpdated';
 		
@@ -108,6 +104,7 @@ package com.graphmind
 			this.addEventListener(NodeEvent.UPDATE_GRAPHICS, function(event:NodeEvent):void{
 				redrawMindmapStage();
 			});
+			this.structureDrawer.addEventListener(StageEvent.MINDMAP_UPDATED, onMindmapUpdated);
 		}
 		
 		/**
@@ -507,6 +504,14 @@ package com.graphmind
 		 */
 		public function setMindmapUpdated():void {
 			isTreeUpdated = true;
+		}
+		
+		private function onMindmapUpdated(event:StageEvent):void {
+			Log.debug('New height: ' + event.height);
+			if (event.height > (DEFAULT_DESKTOP_HEIGHT + (NodeItem.HEIGHT << 2))) {
+				DEFAULT_DESKTOP_HEIGHT = event.height + 200;
+				dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+			}
 		}
 				
 	}

@@ -52,15 +52,15 @@ package com.graphmind.visualizer {
 				StageManager.getInstance().baseNode.y = _target.height >> 1;
 				var postProcessObjects:Object = new Object();
 				postProcessObjects.arrowLinks = new Array();
-				_redrawNode(StageManager.getInstance().baseNode, postProcessObjects);
+				var totalHeight:Number = _redrawNode(StageManager.getInstance().baseNode, postProcessObjects);
 				_redrawArrowLinks(postProcessObjects.arrowLinks);
-				dispatchEvent(new StageEvent(StageEvent.MINDMAP_UPDATED));
+				dispatchEvent(new StageEvent(StageEvent.MINDMAP_UPDATED, totalHeight));
 			}, 10);
 		}
 		
-		protected function _redrawNode(node:ITreeNode, postProcessObjects:Object):void {
-			var totalChildWidth:int = _getSubtreeHeight(node);
-			var currentY:int = (node as NodeItem).y - totalChildWidth / 2;
+		protected function _redrawNode(node:ITreeNode, postProcessObjects:Object):Number {
+			var totalChildHeight:int = _getSubtreeHeight(node);
+			var currentY:int = (node as NodeItem).y - totalChildHeight / 2;
 			
 			if ((node as NodeItem).isHasCloud()) currentY += CloudDrawer.MARGIN;
 			
@@ -85,6 +85,8 @@ package com.graphmind.visualizer {
 			// ArrowLinks
 			//postProcessObjects.arrowLinks = (postProcessObjects.arrowLinks as Array).concat((node as NodeItem).getArrawLinks());
 			(postProcessObjects.arrowLinks as Array).push((node as NodeItem).getArrowLinks());
+			
+			return totalChildHeight;
 		}
 		
 		/**
@@ -110,9 +112,10 @@ package com.graphmind.visualizer {
 			}
 			
 			if ((node as NodeItem).isHasCloud()) height += 2 * CloudDrawer.MARGIN;
+
+//			Log.debug('Height: ' + height);
 			
 			return height;
-			return 0;
 		}
 	}
 	
