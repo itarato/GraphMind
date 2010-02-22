@@ -130,9 +130,9 @@ package com.graphmind
 		
 		public function setEditMode(editable:Boolean):void {
 			_isEditable = editable;
-			if (!editable) {
+			if (!_isEditable) {
 				GraphMind.instance.currentState = 'only_view_mode';
-			} else if (GraphMind.instance.currentState == 'only_view_mode') {
+			} else {
 				GraphMind.instance.currentState = '';
 			}
 		}

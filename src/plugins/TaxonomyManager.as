@@ -34,7 +34,7 @@ package plugins {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			RPCServiceHelper.createRPC(
-				'taxonomy',
+				'graphmindTaxonomyManager',
 				'getAll',
 				'amfphp',
 				baseSiteConnection.url,

@@ -6,10 +6,6 @@
 		<![CDATA[
 			import com.graphmind.GraphMindManager;
 			import com.graphmind.StageManager;
-			
-			private function isSaveVisible():Boolean {
-				return StageManager.getInstance().isTreeUpdated && GraphMindManager.getInstance().isEditable();
-			}
 		]]>
 	</mx:Script>
 
@@ -80,7 +76,7 @@
 				id="desktopScaleLabel"/>
 				
 			<mx:LinkButton top="4" label="Save" click="{StageManager.getInstance().onClick_SaveGraphmindButton();}" color="#FFDBA1"
-				visible="{isSaveVisible()}"
+				visible="{StageManager.getInstance().isTreeUpdated}"
 				id="saveLinkButton"/>
 		</mx:HBox>
 	</mx:Canvas>
