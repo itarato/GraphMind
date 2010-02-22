@@ -58,6 +58,8 @@ package com.graphmind
 			baseSiteConnection = SiteConnection.createSiteConnection(getBaseDrupalURL());
 			
 			ConnectionManager.getInstance().connectToDrupal(baseSiteConnection.url, _init_GM_stage_connected);
+			
+			setEditMode(false);
 		}
 		
 		/**
@@ -130,6 +132,8 @@ package com.graphmind
 			_isEditable = editable;
 			if (!editable) {
 				GraphMind.instance.currentState = 'only_view_mode';
+			} else if (GraphMind.instance.currentState == 'only_view_mode') {
+				GraphMind.instance.currentState = '';
 			}
 		}
 

@@ -117,7 +117,8 @@
 		</mx:State>
 		<!-- Read-only mode state -->
 		<mx:State name="only_view_mode">
-			<mx:SetProperty name="visible" target="{mindmapToolsPanel.panelMain}" value="false"/>
+			<mx:SetProperty name="visible" target="{mindmapToolsPanel}" value="false"/>
+			<mx:SetProperty name="width" target="{mindmapToolsPanel}" value="0" />
 			<mx:SetProperty name="visible" target="{mindmapCanvas.saveLinkButton}" value="false"/>
 			<mx:SetProperty name="visible" target="{mindmapToolsPanel.icon_outer_container}" value="false"/>
 			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="left" value="10"/>
