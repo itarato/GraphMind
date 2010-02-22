@@ -48,7 +48,7 @@ package com.graphmind
 		// Flash Player 9 can handle maximum 2880 pixel width BitmapData:
 		// http://livedocs.adobe.com/flex/3/langref/flash/display/BitmapData.html#BitmapData().
 		[Bindable]
-		public static var DEFAULT_DESKTOP_HEIGHT:int = 2880;
+		public static var DEFAULT_DESKTOP_HEIGHT:int = 8000;
 		[Bindable]
 		public static var DEFAULT_DESKTOP_WIDTH:int = 2880;
 		
@@ -70,13 +70,6 @@ package com.graphmind
 		public var isTreeUpdated:Boolean = false;
 		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
-		
-		// Preview window.
-		private var _previewBitmapData:BitmapData = new BitmapData(DEFAULT_DESKTOP_WIDTH, DEFAULT_DESKTOP_HEIGHT, true);
-		private var _previewBitmap:Bitmap = new Bitmap(_previewBitmapData);
-		private var _previewTimer:uint;
-		[Bindable]
-		public static var previewWindowScale:Number = 15;
 		
 		/**
 		 * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)
@@ -107,19 +100,11 @@ package com.graphmind
 			// Node title RTE editor's default color
 			GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
 			
-			// Preview window init
-			_previewBitmap.width = DEFAULT_DESKTOP_WIDTH / previewWindowScale;
-			_previewBitmap.height = DEFAULT_DESKTOP_HEIGHT / StageManager.previewWindowScale;
-			GraphMind.instance.mindmapCanvas.previewWindow.addChild(_previewBitmap);
-			
 			// Remove base context menu items (not perfect, though)
 			var cm:ContextMenu = new ContextMenu();
 			cm.hideBuiltInItems();
 			MovieClip(GraphMind.instance.systemManager).contextMenu = cm;
 			
-			this.structureDrawer.addEventListener(StageEvent.MINDMAP_UPDATED, function(event:StageEvent):void{
-				_redrawPreviewWindow();
-			});
 			this.addEventListener(NodeEvent.UPDATE_GRAPHICS, function(event:NodeEvent):void{
 				redrawMindmapStage();
 			});
@@ -518,52 +503,10 @@ package com.graphmind
 		}
 		
 		/**
-		 * Upadte preview window.
-		 * Don't call it unless it's really necessary.
-		 * Calling redrawMindmapStage() will call it.
-		 */
-		private function _redrawPreviewWindow():void {
-			// Timeout can help on performance
-			clearTimeout(_previewTimer);
-			_previewTimer = setTimeout(function():void {
-				if (GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible) {
-					_previewBitmapData = new BitmapData(StageManager.DEFAULT_DESKTOP_WIDTH, StageManager.DEFAULT_DESKTOP_HEIGHT, false, 0x333333);
-					_previewBitmap.width = DEFAULT_DESKTOP_WIDTH / previewWindowScale;
-					_previewBitmap.height = DEFAULT_DESKTOP_HEIGHT / StageManager.previewWindowScale;
-					_previewBitmap.bitmapData = _previewBitmapData;
-					_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop_cloud);
-					_previewBitmapData.draw(GraphMind.instance.mindmapCanvas.desktop);
-					Log.debug('Preview window refreshed.');
-				}
-			}, 400);
-		}
-		
-		/**
 		 * Indicates mindmap has changed -> needs saving.
 		 */
 		public function setMindmapUpdated():void {
 			isTreeUpdated = true;
-		}
-		
-		public function previewWindowIncrease():void {
-			previewWindowScale /= 1.2;
-			_redrawPreviewWindow();
-		}
-		
-		public function previewWindowDecrease():void {
-			previewWindowScale *= 1.2;
-			_redrawPreviewWindow();
-		}
-		
-		public function previewWindowClose():void {
-			GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible = false;
-			GraphMind.instance.mindmapCanvas.previewWindowOpenIcon.visible = true;
-		}
-		
-		public function previewWindowOpen():void {
-			GraphMind.instance.mindmapCanvas.previewWindowCanvas.visible = true;
-			GraphMind.instance.mindmapCanvas.previewWindowOpenIcon.visible = false;
-			_redrawPreviewWindow();
 		}
 				
 	}

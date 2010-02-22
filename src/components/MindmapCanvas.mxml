@@ -36,30 +36,6 @@
 	</mx:Canvas>
 	<!-- END mindmap editor -->
 	
-	<!-- Preview window -->
-	<mx:Canvas styleName="previewWindow" bottom="18" right="18" 
-		width="{StageManager.DEFAULT_DESKTOP_WIDTH / StageManager.previewWindowScale + 2}" 
-		height="{StageManager.DEFAULT_DESKTOP_HEIGHT / StageManager.previewWindowScale + 2}" 
-		alpha="1" 
-		id="previewWindowCanvas">
-		<mx:UIComponent id="previewWindow"
-			blendMode="{BlendMode.DIFFERENCE}" 
-			width="{StageManager.DEFAULT_DESKTOP_WIDTH / StageManager.previewWindowScale}" 
-			height="{StageManager.DEFAULT_DESKTOP_HEIGHT / StageManager.previewWindowScale}"/>
-		<mx:Image source="@Embed(source='assets/images/plus.gif')" bottom="4" right="36"
-			click="{StageManager.getInstance().previewWindowIncrease();}"/>
-		<mx:Image source="@Embed(source='assets/images/minus.gif')" bottom="4" right="20"
-			click="{StageManager.getInstance().previewWindowDecrease();}"/>
-		<mx:Image source="@Embed(source='assets/images/hide_map.gif')" bottom="4" right="4"
-			click="{StageManager.getInstance().previewWindowClose();}"/>
-	</mx:Canvas>
-	<mx:Image source="@Embed(source='assets/images/show_map.gif')"
-		bottom="18" right="18"
-		click="{StageManager.getInstance().previewWindowOpen();}"
-		visible="false"
-		id="previewWindowOpenIcon"/>
-	<!-- END Preview window -->
-	
 	<mx:Canvas height="30" left="0" right="0" top="0"
 		backgroundAlpha="0.5"
 		backgroundColor="0x000000"
