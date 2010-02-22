@@ -117,15 +117,10 @@
 		</mx:State>
 		<!-- Read-only mode state -->
 		<mx:State name="only_view_mode">
-			<mx:SetProperty name="visible" target="{mindmapToolsPanel}" value="false"/>
-			<mx:SetProperty name="width" target="{mindmapToolsPanel}" value="0" />
+			<mx:RemoveChild target="{mindmapToolsPanel}" />
+			<mx:RemoveChild target="{mindmapCanvas.saveLinkButton}" />
 			<mx:SetProperty name="visible" target="{mindmapCanvas.saveLinkButton}" value="false"/>
 			<mx:SetProperty name="visible" target="{mindmapToolsPanel.icon_outer_container}" value="false"/>
-			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="left" value="10"/>
-			<mx:SetStyle target="{mindmapCanvas.desktop_wrapper}" name="right" value="10"/>
-			<mx:SetStyle target="{mindmapCanvas.fullScreenLinkButton}" name="left" value="10"/>
-			<mx:SetStyle target="{mindmapCanvas.desktopScaleHSlider}" name="left" value="96"/>
-			<mx:SetStyle target="{mindmapCanvas.desktopScaleLabel}" name="left" value="256"/>
 		</mx:State>
 	</mx:states>
 
