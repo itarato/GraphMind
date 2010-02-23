@@ -153,8 +153,8 @@ package com.graphmind
 				baseNode = nodeItem;
 			}
 			
-//			redrawMindmapStage();
 			this.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, baseNode));
+			this.dispatchEvent(new StageEvent(StageEvent.MINDMAP_CREATION_COMPLETE));
 			isTreeUpdated = false;
 			baseNode.selectNode();
 		}		

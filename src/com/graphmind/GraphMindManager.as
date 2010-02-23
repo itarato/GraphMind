@@ -13,7 +13,7 @@ package com.graphmind
 	{
 		private static var _instance:GraphMindManager = null;
 		
-		public static var LOG_MODE:Boolean = false;
+		public static var LOG_MODE:Boolean = true;
 		
 		// Base site connection
 		public var baseSiteConnection:SiteConnection;

@@ -1,7 +1,9 @@
 package plugins {
 	
+	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeItemData;
 	import com.graphmind.display.NodeItem;
+	import com.graphmind.event.StageEvent;
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
@@ -18,6 +20,32 @@ package plugins {
 		// @TODO add color
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xEF95E7;
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
+		
+		
+		public static function hook_pre_init(data:Object):void {
+			StageManager.getInstance().addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
+		}
+		
+		private static function onMindmapCreationComplete(event:StageEvent):void {
+			// Refreshing taxonomy
+			var cursor:int = 0;
+			var parent:NodeItem = null;
+			while (NodeItem.nodes.length > cursor) {
+				var node:NodeItem = NodeItem.nodes[cursor] as NodeItem;
+				if (_isTaxonomyPluginNode(node, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE)) {
+					parent = node.getParentNode() as NodeItem;
+					node.kill();
+					cursor = 0;
+				} else {
+					cursor++;
+				}
+			}
+			
+			if (parent !== null) {
+				parent.selectNode();
+				loadFullTaxonomyTree(null);
+			}
+		} 
 		
 		/**
 		 * Implementation of hook_node_context_menu_alter().
@@ -191,6 +219,10 @@ package plugins {
 		 * @param Object data
 		 */
 		public static function hook_node_delete(data:Object):void {
+			if (!data.directKill) {
+				return;
+			}
+			
 			var node:NodeItem = data.node as NodeItem;
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
@@ -237,7 +269,15 @@ package plugins {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			var node:NodeItem = data.node as NodeItem;
-			if (_isTaxonomyPluginNode(node)) return;
+			if (_isTaxonomyPluginNode(node)) {
+				// Recolor taxonomy
+				if (_isTaxonomyPluginNode(node, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE)) {
+					node.nodeItemData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
+				} else {
+					node.nodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
+				}
+				return;
+			}
 			var parent:NodeItem = node.getParentNode() as NodeItem;
 			if (!_isTaxonomyPluginNode(parent)) return;
 			

@@ -229,7 +229,7 @@ package com.graphmind.display
 		}
 		
 		private function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
-			_removeNodeChilds();
+			_removeNodeChilds(true);
 		}
 		
 		private function onClick(event:MouseEvent):void {
@@ -524,23 +524,23 @@ package com.graphmind.display
 		/**
 		 * Remove each child of the node.
 		 */
-		private function _removeNodeChilds():void {
+		private function _removeNodeChilds(killedDirectly:Boolean = false):void {
 			while (_childs.length > 0) {
-				(_childs.getItemAt(0) as NodeItem).kill();
+				(_childs.getItemAt(0) as NodeItem).kill(killedDirectly);
 			}
 		}
 		
 		/**
 		 * Kill a node and each childs.
 		 */
-		private function kill():void {
+		public function kill(killedDirectly:Boolean = true):void {
 			if (StageManager.getInstance().baseNode === this) return;
 			
 			// @HOOK
-			PluginManager.callHook(HOOK_NODE_DELETE, {node: this});
+			PluginManager.callHook(HOOK_NODE_DELETE, {node: this, directKill: killedDirectly});
 			
 			// Remove all children the same way.
-			_removeNodeChilds();
+			_removeNodeChilds(false);
 			
 			if (_parentNode) {
 				// Remove parent's child (this child).

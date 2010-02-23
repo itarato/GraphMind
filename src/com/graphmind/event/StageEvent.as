@@ -5,6 +5,7 @@ package com.graphmind.event
 	public class StageEvent extends Event
 	{
 		public static var MINDMAP_UPDATED:String = 'mindmapUpdated';
+		public static var MINDMAP_CREATION_COMPLETE:String = 'mindmapCreationComplete';
 		
 		public var height:Number;
 		
