@@ -63,7 +63,6 @@ package com.graphmind.display
 		public static const HOOK_NODE_TITLE_CHANGED:String = 'node_title_changed';
 		
 		protected var _displayComp:ItemBaseComponent = new ItemBaseComponent();
-		protected var _connectionComp:UIComponent 	 = new UIComponent();
 		protected var _nodeItemData:NodeItemData;
 		protected var _childs:ArrayCollection 		 = new ArrayCollection();
 		protected var _isCollapsed:Boolean 		 	 = false;
@@ -73,7 +72,6 @@ package com.graphmind.display
 		protected var _hasPath:Boolean 				 = false;
 		protected var _icons:ArrayCollection		 = new ArrayCollection();
 		protected var _isCloud:Boolean				 = false;
-		protected var _cloudComp:UIComponent		 = new UIComponent();
 		
 		// Display effects
 		private static var _nodeDropShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x888888, 1, 1, 1);
@@ -112,10 +110,6 @@ package com.graphmind.display
 			this.addChild(_backgroundComp);
 			
 			this.addChild(_displayComp);
-			
-			_connectionComp.graphics.lineStyle(2, 0x333333, 1);
-			GraphMind.instance.mindmapCanvas.desktop.addChild(_connectionComp);
-			GraphMind.instance.mindmapCanvas.desktop_cloud.addChild(_cloudComp);
 			
 			this._displayComp.title_label.htmlText = this._nodeItemData.title;
 		
@@ -545,25 +539,43 @@ package com.graphmind.display
 			// @HOOK
 			PluginManager.callHook(HOOK_NODE_DELETE, {node: this});
 			
+			// Remove all children the same way.
+			_removeNodeChilds();
+			
 			if (_parentNode) {
 				// Remove parent's child (this child).
 				_parentNode._childs.removeItemAt(_parentNode._childs.getItemIndex(this));
 				// Check parent's toggle-subtree button. With no child it should be hidden.
 				_parentNode._displayComp.icon_has_child.visible = _parentNode._childs.length > 0;
 			}
-			// Remove all children the same way.
-			_removeNodeChilds();
 			// Remove main UI element.
 			_displayComp.parent.removeChild(_displayComp);
-			// Remove connection UI element.
-			_connectionComp.parent.removeChild(_connectionComp);
-			// Remove cloud UI element.
-			_cloudComp.parent.removeChild(_cloudComp);
 			// Remove the whole UI.
 			parent.removeChild(this);
+			
+			// Remove event listeners
+			this._displayComp.title_label.removeEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
+			this._displayComp.title_new.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp_TitleTextField);
+			this._displayComp.title_new.removeEventListener(FocusEvent.FOCUS_OUT, onFocusOut_TitleTextField);
+			this._displayComp.icon_add.removeEventListener(MouseEvent.CLICK, onClick_AddSimpleNodeButton);
+			this._displayComp.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			this._displayComp.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			this._displayComp.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			this._displayComp.removeEventListener(MouseEvent.CLICK, onClick);
+			this._displayComp.removeEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
+			this._displayComp.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+			this._displayComp.title_label.removeEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
+			this._displayComp.icon_anchor.removeEventListener(MouseEvent.CLICK, onClick_NodeLinkButton);
+			this._displayComp.icon_has_child.removeEventListener(MouseEvent.CLICK, onClick_ToggleSubtreeButton);
+			
+			// Remove from the global storage
+			nodes.removeItemAt(nodes.getItemIndex(this));
+			
 			// Update tree.
 			StageManager.getInstance().setMindmapUpdated();
 			StageManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
+			
+			delete this; // :.(
 		}
 		
 		public function addData(attribute:String, value:String):void {
@@ -875,6 +887,10 @@ package com.graphmind.display
 		
 		public function addArrowLink(arrowLink:ArrowLink):void {
 			this._arrowLinks.addItem(arrowLink);
+		}
+		
+		public override function toString():String {
+			return '[Node: ' + this._nodeItemData.id + ']';
 		}
 		
 	}
