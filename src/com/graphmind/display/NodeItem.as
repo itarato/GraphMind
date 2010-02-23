@@ -553,21 +553,6 @@ package com.graphmind.display
 			// Remove the whole UI.
 			parent.removeChild(this);
 			
-			// Remove event listeners
-			this._displayComp.title_label.removeEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
-			this._displayComp.title_new.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp_TitleTextField);
-			this._displayComp.title_new.removeEventListener(FocusEvent.FOCUS_OUT, onFocusOut_TitleTextField);
-			this._displayComp.icon_add.removeEventListener(MouseEvent.CLICK, onClick_AddSimpleNodeButton);
-			this._displayComp.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			this._displayComp.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-			this._displayComp.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			this._displayComp.removeEventListener(MouseEvent.CLICK, onClick);
-			this._displayComp.removeEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
-			this._displayComp.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-			this._displayComp.title_label.removeEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
-			this._displayComp.icon_anchor.removeEventListener(MouseEvent.CLICK, onClick_NodeLinkButton);
-			this._displayComp.icon_has_child.removeEventListener(MouseEvent.CLICK, onClick_ToggleSubtreeButton);
-			
 			// Remove from the global storage
 			nodes.removeItemAt(nodes.getItemIndex(this));
 			
