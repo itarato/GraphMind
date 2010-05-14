@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Container xmlns:mx="http://www.adobe.com/2006/mxml" 
 	width="168" height="20"
-	cornerRadius="5" 
 	fontWeight="normal" 
 	xmlns:assets="com.graphmind.display.assets.*">
 	
@@ -67,4 +66,4 @@
 		id="icon_has_child" 
 		visible="false"/>
 		
-</mx:Canvas>
+</mx:Container>

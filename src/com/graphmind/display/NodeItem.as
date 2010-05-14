@@ -12,7 +12,6 @@ package com.graphmind.display
 	
 	import components.ItemBaseComponent;
 	
-	import flash.display.Sprite;
 	import flash.events.ContextMenuEvent;
 	import flash.events.FocusEvent;
 	import flash.events.KeyboardEvent;
@@ -29,6 +28,7 @@ package com.graphmind.display
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
+	import mx.core.Container;
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
 	
@@ -68,7 +68,7 @@ package com.graphmind.display
 		protected var _isCollapsed:Boolean 		 	 = false;
 		protected var _isForcedCollapsed:Boolean 	 = false;
 		protected var _parentNode:NodeItem 			 = null;
-		protected var _backgroundComp:Sprite 		 = new Sprite();
+		protected var _backgroundComp:Container      = new Container();
 		protected var _hasPath:Boolean 				 = false;
 		protected var _icons:ArrayCollection		 = new ArrayCollection();
 		protected var _isCloud:Boolean				 = false;
@@ -116,6 +116,11 @@ package com.graphmind.display
 			_hasPath = _nodeItemData.getPath().length > 0;
 			
 			this.buttonMode = true;
+			
+			// Background component - what a surprise, huh?
+			_backgroundComp.height = HEIGHT;
+			_backgroundComp.setStyle('cornerRadius', '5');
+			_backgroundComp.setStyle('borderStyle', 'solid');
 			
 			this.redrawNodeBody();
 		}
@@ -690,11 +695,11 @@ package com.graphmind.display
  			}
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
- 				
- 			this._backgroundComp.graphics.clear();		
-			this._backgroundComp.graphics.beginFill(getTypeColor());
-			this._backgroundComp.graphics.drawRoundRect(0, 0, WIDTH_DEFAULT + leftOffset, HEIGHT, 10, 10);
-			this._backgroundComp.graphics.endFill();
+
+			if (_backgroundComp.width != WIDTH_DEFAULT + leftOffset) {
+				_backgroundComp.width = WIDTH_DEFAULT + leftOffset;
+			}
+			_backgroundComp.setStyle('backgroundColor', getTypeColor());
 			
 			_setBackgroundEffect(isSelected() ? EFFECT_HIGHLIGHT : EFFECT_NORMAL);
 			
@@ -816,7 +821,7 @@ package com.graphmind.display
 		}
 		
 		private function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
-			_backgroundComp.filters = (effect == EFFECT_NORMAL) ? [_nodeDropShadow] : [_nodeInnerGlowFilter, _nodeGlowFilter];
+			_backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
 		}
 		
 		public function getEqualChild(data:Object, type:String):NodeItem {

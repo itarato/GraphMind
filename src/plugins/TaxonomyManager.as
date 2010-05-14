@@ -89,6 +89,7 @@ package plugins {
 				
 				var term_hierarchy:Object = {};
 				var term_storage:Object = {0: vocabularyNode};
+				
 				for each (var term:Object in vocabulary.terms) {
 					term.plugin = 'TaxonomyManager';
 					var termNodeItemData:NodeItemData = new NodeItemData(
