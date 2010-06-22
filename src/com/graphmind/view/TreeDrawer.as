@@ -50,10 +50,6 @@ package com.graphmind.view {
 			clearTimeout(_timer);
 			Log.debug('TreeDrawer.rerfreshGraphics()');
 			_timer = setTimeout(function():void {
-//				if (!_isRootNodeSet) {
-//					Log.error('No root node yet');
-//					return void;
-//				}
 				
 				_connectionDrawer.clearAll();
 				_cloudDrawer.clearAll();
@@ -68,11 +64,9 @@ package com.graphmind.view {
 				
 				if (totalHeight > (TreeManager.DEFAULT_DESKTOP_HEIGHT + (TreeNodeUI.HEIGHT << 2))) {
 					TreeManager.DEFAULT_DESKTOP_HEIGHT = totalHeight + 200;
-//					dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 				}
 				
 				_redrawArrowLinks(postProcessObjects.arrowLinks);
-				dispatchEvent(new StageEvent(StageEvent.MINDMAP_UPDATED, totalHeight));
 			}, 10);
 		}
 		
