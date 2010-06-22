@@ -573,10 +573,10 @@ package com.graphmind.display {
 				icon.addEventListener(MouseEvent.DOUBLE_CLICK, removeIcon);
 			}
 		
-			getUI().refreshGraphics();
-			redrawParentsClouds();
-			
-			updateTime();
+      redrawParentsClouds();
+      TreeManager.getInstance().setMindmapUpdated();
+      updateTime();
+      getUI().refreshGraphics();
  		}
  		
  		public function removeIcon(event:MouseEvent):void {
@@ -584,10 +584,11 @@ package com.graphmind.display {
  			if (iconIDX == -1) return;
  			_icons.removeItemAt(iconIDX);
  			getTreeNodeUI()._displayComp.removeChild(event.currentTarget as Image);
-			_nodeUI.refreshGraphics();
+      
  			redrawParentsClouds();
- 			
+ 		  TreeManager.getInstance().setMindmapUpdated();
  			updateTime();
+      getUI().refreshGraphics();
  		}
  		
 		public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
@@ -595,6 +596,7 @@ package com.graphmind.display {
 			// @TODO refreshing subtree is enough
 			TreeManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 			redrawParentsClouds();
+			TreeManager.getInstance().setMindmapUpdated();
 		}
 		
 		public function setLink(link:String):void {
