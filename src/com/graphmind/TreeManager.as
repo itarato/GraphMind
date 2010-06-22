@@ -285,6 +285,7 @@ package com.graphmind {
 					requestData.viewsData.parent.source
 				);
 				var nodeItem:TreeNodeController = new TreeNodeController(nodeItemData);
+				requestData.nodeItem.addChildNodeWithStageRefresh(nodeItem);
 			}
 		}
 		
