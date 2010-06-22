@@ -1,6 +1,6 @@
 package com.graphmind.display {
-	import mx.collections.ArrayCollection;
 	
+	import mx.collections.ArrayCollection;
 	
 	public interface ITreeNode {
 		
@@ -17,6 +17,10 @@ package com.graphmind.display {
 		function getParentNode():ITreeNode;
 		
 		function getChildNodeIndex(child:ITreeNode):int;
+		
+		function isCollapsed():Boolean;
+		
+		function hasChild():Boolean;
 		
 	}
 	

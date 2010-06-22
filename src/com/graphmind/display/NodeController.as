@@ -15,7 +15,7 @@ package com.graphmind.display
 		public static var nodes:ArrayCollection = new ArrayCollection();
 
 		// Model
-		protected var _nodeItemData:NodeData;
+		public var _nodeItemData:NodeData;
 		
 		// View
 		protected var _nodeUI:NodeUI;

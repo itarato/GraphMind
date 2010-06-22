@@ -1,14 +1,14 @@
 package com.graphmind.factory
 {
-	import com.graphmind.data.NodeItemData;
-	import com.graphmind.display.NodeItem;
+	import com.graphmind.data.NodeData;
+	import com.graphmind.display.TreeNodeController;
 	import com.graphmind.net.SiteConnection;
 	
 	public class NodeFactory
 	{
 	
-		public static function createNode(data:Object, type:String, sc:SiteConnection = null, title:String = null):NodeItem {
-			var nid:NodeItemData = new NodeItemData(
+		public static function createNode(data:Object, type:String, sc:SiteConnection = null, title:String = null):TreeNodeController {
+			var nid:NodeData = new NodeData(
 				data,
 				type,
 				sc
@@ -19,7 +19,7 @@ package com.graphmind.factory
 				nid.title = title;
 			}
 			
-			var ni:NodeItem = new NodeItem(nid);
+			var ni:TreeNodeController = new TreeNodeController(nid);
 			return ni;
 		}
 	

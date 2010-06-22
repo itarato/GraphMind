@@ -18,7 +18,7 @@ package com.graphmind
 		// Base site connection
 		public var baseSiteConnection:SiteConnection;
 		private var _isEditable:Boolean = false;
-		private var lastSaved:Number = new Date().time;
+		public var lastSaved:Number = new Date().time;
 		
 		public function GraphMindManager() {}
 		
@@ -81,39 +81,13 @@ package com.graphmind
 			ViewsManager.getInstance().receiveViewsData(result, baseSiteConnection);
 			
 			// Load base node
-			StageManager.getInstance().loadBaseNode();
-		}
-		
-		/**
-		 * Export work to FreeMind XML format
-		 * @return string
-		 */
-		public function exportToFreeMindFormat():String {
-			return '<map version="0.9.0">' + "\n" + 
-				StageManager.getInstance().baseNode.exportToFreeMindFormat() + 
-				'</map>' + "\n";
-		}
-		
-		/**
-		 * Save work into host node
-		 */
-		public function save():String {
-			var mm:String = exportToFreeMindFormat();
-			ConnectionManager.getInstance().saveGraphMind(
-				getHostNodeID(),
-				mm,
-				lastSaved,
-				baseSiteConnection, 
-				_save_stage_saved
-			);
-			StageManager.getInstance().isTreeUpdated = false;
-			return mm;
+			TreeManager.getInstance().loadBaseNode();
 		}
 		
 		/**
 		 * Save event is done.
 		 */
-		private function _save_stage_saved(result:ResultEvent):void {
+		public function _save_stage_saved(result:ResultEvent):void {
 			//MonsterDebugger.trace(this, result.result);
 			if (result.result == '1') {
 				OSD.show('GraphMind data is saved.');

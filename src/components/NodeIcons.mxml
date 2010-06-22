@@ -5,14 +5,14 @@
 	<mx:Script>
 		<![CDATA[
 			import com.graphmind.GraphMindManager;
-			import com.graphmind.StageManager;
+			import com.graphmind.TreeManager;
 		]]>
 	</mx:Script>
 
 	<mx:Tile left="10" top="10" right="10" height="100%">
 		<mx:Repeater dataProvider="{GraphMind.icons}" id="icon_repeater">
 			<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" 
-				click="{StageManager.getInstance().onClick_Icon(event);}"/>
+				click="{TreeManager.getInstance().onClick_Icon(event);}"/>
 		</mx:Repeater>
 	</mx:Tile>
 </mx:Canvas>

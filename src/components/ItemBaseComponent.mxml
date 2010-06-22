@@ -6,7 +6,9 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import com.graphmind.display.NodeItem;
+			import com.graphmind.view.TreeNodeUI;
+			import com.graphmind.display.TreeNodeController;
+			import com.graphmind.display.NodeController;
 			[Embed(source='assets/images/add.png')]
 			[Bindable]
 			public var image_add:Class;
@@ -47,22 +49,22 @@
 	</mx:states>
 		
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
-	<mx:Image source="{image_insertLeft}" x="{NodeItem.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
+	<mx:Image source="{image_insertLeft}" x="{TreeNodeUI.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
-	<mx:Label x="2" y="1" text="Label" width="{NodeItem.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"/>
+	<mx:Label x="2" y="1" text="Label" width="{TreeNodeUI.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"/>
 	
-	<mx:Image x="{NodeItem.ICON_ADD_DEFAULT_X}" y="2" 
+	<mx:Image x="{TreeNodeUI.ICON_ADD_DEFAULT_X}" y="2" 
 		source="{image_add}" 
 		width="16" height="16" 
 		id="icon_add"
 		visible="false"/>
 		
-	<mx:Image x="{NodeItem.ICON_ANCHOR_DEFAULT_X}" y="2" source="{image_anchor}" 
+	<mx:Image x="{TreeNodeUI.ICON_ANCHOR_DEFAULT_X}" y="2" source="{image_anchor}" 
 		width="16" height="16" 
 		id="icon_anchor"
 		visible="false"/>
 		
-	<mx:Image x="{NodeItem.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
+	<mx:Image x="{TreeNodeUI.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 
 		visible="false"/>
 		

@@ -1,6 +1,6 @@
 package com.graphmind.event {
 	
-	import com.graphmind.display.NodeItem;
+	import com.graphmind.display.NodeController;
 	
 	import flash.events.Event;
 	
@@ -12,10 +12,11 @@ package com.graphmind.event {
 		public static var DELETED:String 		   = 'deleted';
 		public static var CREATED:String		   = 'created';
 		public static var ATTRIBUTE_CHANGED:String = 'attributeChanged';
+		public static var DRAG_AND_DROP_FINISHED:String = 'finished_drag_and_drop';
 		
-		public var node:NodeItem;
+		public var node:NodeController;
 		
-		public function NodeEvent(type:String, node:NodeItem = null) {
+		public function NodeEvent(type:String, node:NodeController = null) {
 			super(type);
 			this.node = node; 
 		}

@@ -4,16 +4,16 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import com.graphmind.StageManager;
+			import com.graphmind.TreeManager;
 		]]>
 	</mx:Script>
 
 	<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
 	<mx:Button x="10" y="10" label="Save"
-		click="{StageManager.getInstance().onClick_SaveGraphmindButton();}"
+		click="{TreeManager.getInstance().onClick_SaveGraphmindButton();}"
 		icon="@Embed(source='assets/images/disk.png')"/>
 	<mx:Button x="104" y="10" label="Dump XML"
-		click="{StageManager.getInstance().onClick_DumpFreemindXMLButton();}"
+		click="{TreeManager.getInstance().onClick_DumpFreemindXMLButton();}"
 		icon="@Embed(source='assets/images/tag.png')"/>
 				
 </mx:Canvas>

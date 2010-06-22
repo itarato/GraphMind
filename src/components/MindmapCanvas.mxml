@@ -5,31 +5,31 @@
 	<mx:Script>
 		<![CDATA[
 			import com.graphmind.GraphMindManager;
-			import com.graphmind.StageManager;
+			import com.graphmind.TreeManager;
 		]]>
 	</mx:Script>
 
 	<!-- Mindmap editor area -->
 	<mx:Canvas right="0" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
-		mouseUp="{StageManager.getInstance().onMouseUp_MindmapStage();}"
-		mouseDownOutside="{StageManager.getInstance().onMouseDownOutside_MindmapStage();}"
-		mouseOut="{StageManager.getInstance().onMouseOut_MindmapStage();}">
+		mouseUp="{TreeManager.getInstance().onMouseUp_MindmapStage();}"
+		mouseDownOutside="{TreeManager.getInstance().onMouseDownOutside_MindmapStage();}"
+		mouseOut="{TreeManager.getInstance().onMouseOut_MindmapStage();}">
 		
 		<!-- sublayer for cloud grapics -->
-		<mx:Canvas id="desktop_cloud" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}"
+		<mx:Canvas id="desktop_cloud" width="{TreeManager.DEFAULT_DESKTOP_WIDTH}" height="{TreeManager.DEFAULT_DESKTOP_HEIGHT}"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}"/>
 		
-		<mx:Canvas id="desktop" width="{StageManager.DEFAULT_DESKTOP_WIDTH}" height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
-			mouseDown="{StageManager.getInstance().onMouseDown_InnerMindmapStage();}"
-			mouseUp="{StageManager.getInstance().onMouseUp_InnerMindmapStage();}"
-			mouseMove="{StageManager.getInstance().onMouseMove_InnerMindmapStage();}"
+		<mx:Canvas id="desktop" width="{TreeManager.DEFAULT_DESKTOP_WIDTH}" height="{TreeManager.DEFAULT_DESKTOP_HEIGHT}" focusEnabled="true" 
+			mouseDown="{TreeManager.getInstance().onMouseDown_InnerMindmapStage();}"
+			mouseUp="{TreeManager.getInstance().onMouseUp_InnerMindmapStage();}"
+			mouseMove="{TreeManager.getInstance().onMouseMove_InnerMindmapStage();}"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}"/>
 		
 		<mx:Canvas id="desktop_overlay" 
-			width="{StageManager.DEFAULT_DESKTOP_WIDTH}" 
-			height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" 
+			width="{TreeManager.DEFAULT_DESKTOP_WIDTH}" 
+			height="{TreeManager.DEFAULT_DESKTOP_HEIGHT}" 
 			focusEnabled="false"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}"/>
@@ -41,7 +41,7 @@
 		backgroundColor="0x000000"
 		color="0xFFFFFF">
 		<mx:HBox paddingTop="4" paddingLeft="4">
-			<mx:LinkButton top="4" label="Fullscreen" click="{StageManager.getInstance().onClick_FullscreenButton();}"
+			<mx:LinkButton top="4" label="Fullscreen" click="{TreeManager.getInstance().onClick_FullscreenButton();}"
 				id="fullScreenLinkButton"/>
 			
 			<mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
@@ -51,8 +51,8 @@
 			<mx:Label paddingTop="2" text="{desktopScaleHSlider.value + '%'}"
 				id="desktopScaleLabel"/>
 				
-			<mx:LinkButton top="4" label="Save" click="{StageManager.getInstance().onClick_SaveGraphmindButton();}" color="#FFDBA1"
-				visible="{StageManager.getInstance().isTreeUpdated}"
+			<mx:LinkButton top="4" label="Save" click="{TreeManager.getInstance().onClick_SaveGraphmindButton();}" color="#FFDBA1"
+				visible="{TreeManager.getInstance().isTreeUpdated}"
 				id="saveLinkButton"/>
 		</mx:HBox>
 	</mx:Canvas>

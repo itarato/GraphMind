@@ -8,7 +8,7 @@
 	<mx:Script>
 		<![CDATA[
 			import com.graphmind.net.SiteConnection;
-			import com.graphmind.StageManager;
+			import com.graphmind.TreeManager;
 			import com.graphmind.net.UniqueItemLoader;
 		]]>
 	</mx:Script>
@@ -28,10 +28,10 @@
 		</mx:FormItem>
 		<mx:ControlBar>
 			<mx:Button label="Submit" 
-				click="{StageManager.getInstance().onClick_LoadItemSubmit();}"
+				click="{TreeManager.getInstance().onClick_LoadItemSubmit();}"
 				icon="@Embed(source='assets/images/accept.png')"/>
 			<mx:Button label="Cancel" 
-				click="{StageManager.getInstance().onClick_LoadItemCancel();}"
+				click="{TreeManager.getInstance().onClick_LoadItemCancel();}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>

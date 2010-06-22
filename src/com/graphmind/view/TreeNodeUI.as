@@ -68,7 +68,7 @@ package com.graphmind.view {
 			_backgroundComp.setStyle('borderStyle', 'solid');
 			
 			// @TODO - handle it!
-//			this._displayComp.title_label.htmlText = this._nodeItemData.title;
+			_displayComp.title_label.htmlText = getTreeNodeController()._nodeItemData.title;
 
 			_displayComp.title_label.doubleClickEnabled = true;
 			
