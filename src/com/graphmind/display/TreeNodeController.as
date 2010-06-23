@@ -35,16 +35,16 @@ package com.graphmind.display {
 		
 		public static const HOOK_NODE_CONTEXT_MENU:String  = 'node_context_menu';
 		public static const HOOK_NODE_MOVED:String         = 'node_moved';
-		public static const HOOK_NODE_DELETE:String		   = 'node_delete';
-		public static const HOOK_NODE_CREATED:String	   = 'node_created';
+		public static const HOOK_NODE_DELETE:String		     = 'node_delete';
+		public static const HOOK_NODE_CREATED:String	     = 'node_created';
 		public static const HOOK_NODE_TITLE_CHANGED:String = 'node_title_changed';
 		
-		protected var _childs:ArrayCollection 		 = new ArrayCollection();
-		protected var _isCollapsed:Boolean 		 	 = false;
-		protected var _isForcedCollapsed:Boolean 	 = false;
+		protected var _childs:ArrayCollection 		   = new ArrayCollection();
+		protected var _isCollapsed:Boolean 		 	     = false;
+		protected var _isForcedCollapsed:Boolean 	   = false;
 		protected var _parentNode:TreeNodeController = null;
-		protected var _hasPath:Boolean 				 = false;
-		protected var _isCloud:Boolean				 = false;
+		protected var _hasPath:Boolean 				       = false;
+		protected var _isCloudEnabled:Boolean				 = false;
 		
 		// Time delay until selecting a node on mouseover
 		protected var _mouseSelectionTimeout:uint;
@@ -308,7 +308,7 @@ package com.graphmind.display {
 			
 			var cms:Array = [
 				{title: 'Add node',        event: onContextMenuSelected_AddSimpleNode,    separator: false},
-				{title: 'Add Drupal item', event: onContextMenuSelected_AddDrupalItem, 	 separator: false},
+				{title: 'Add Drupal item', event: onContextMenuSelected_AddDrupalItem, 	  separator: false},
 				{title: 'Add Views list',  event: onContextMenuSelected_AddDrupalViews,   separator: false},
 				{title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true},
 				{title: 'Remove childs',   event: onContextMenuSelected_RemoveNodeChilds, separator: false},
@@ -413,7 +413,7 @@ package com.graphmind.display {
 				output = output + '<icon BUILTIN="' + StringUtility.iconUrlToIconName((icon as Image).source.toString()) + '"/>' + "\n";
 			}
 			
-			if (_isCloud) {
+			if (_isCloudEnabled) {
 				output = output + '<cloud/>' + "\n";
 			}
 			
@@ -612,18 +612,18 @@ package com.graphmind.display {
 		}
 		
 		public function toggleCloud():void {
-			_isCloud ? disableCloud() : enableCloud();
+			_isCloudEnabled ? disableCloud() : enableCloud();
 		}
 		
 		public function enableCloud():void {
-		  _isCloud = true;
+		  _isCloudEnabled = true;
 		  
       TreeManager.getInstance().setMindmapUpdated();
       TreeManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
 		}
 		
 		public function disableCloud():void {
-		  _isCloud = false;
+		  _isCloudEnabled = false;
           
       TreeManager.getInstance().setMindmapUpdated();
       TreeManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
@@ -647,7 +647,7 @@ package com.graphmind.display {
 		}
 		
 		protected function _redrawParentsClouds():void {
-			if (_isCloud) {
+			if (_isCloudEnabled) {
 				toggleCloud();
 				toggleCloud();
 			}
@@ -688,7 +688,7 @@ package com.graphmind.display {
 		}
 		
 		public function hasCloud():Boolean {
-			return _isCloud;
+			return _isCloudEnabled;
 		}
 		
 		public function getEqualChild(data:Object, type:String):TreeNodeController {

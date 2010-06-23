@@ -112,7 +112,7 @@ package com.graphmind {
 		/**
 		 * Load base node.
 		 */
-		public function loadBaseNode():void {
+		public override function loadBaseNode():void {
 			ConnectionManager.getInstance().nodeLoad(
 				GraphMindManager.getInstance().getHostNodeID(), 
 				GraphMindManager.getInstance().baseSiteConnection, 

@@ -28,6 +28,12 @@ package com.graphmind {
 			trace('AbstractStageManager.onMindmapUpdated');
 			structureDrawer.refreshGraphics();
 		}
+		
+		/**
+		 * Load the basic information from Drupal.
+		 */
+		public function loadBaseNode():void {
+		}
 
 	}
 	

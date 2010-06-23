@@ -1,5 +1,8 @@
 package com.graphmind.data {
   
+  /**
+   * Drupal object types.
+   */
   public class NodeType {
     
     public static const NODE:String    = 'node';
