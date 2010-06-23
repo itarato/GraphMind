@@ -1,6 +1,7 @@
 package com.graphmind
 {
 	import com.graphmind.data.NodeData;
+	import com.graphmind.data.NodeType;
 	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.display.TreeNodeController;
 	import com.graphmind.net.SiteConnection;
@@ -68,7 +69,7 @@ package com.graphmind
 			
 			var nodeItemData:NodeData = new NodeData(
 				attributes,
-				nodeXML.@TYPE ? nodeXML.@TYPE : NodeData.NORMAL,
+				nodeXML.@TYPE ? nodeXML.@TYPE : NodeType.NORMAL,
 				sc || SiteConnection.createSiteConnection()
 			);
 			nodeItemData.created  = Number(nodeXML.@CREATED);

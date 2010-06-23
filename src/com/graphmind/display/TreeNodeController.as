@@ -5,6 +5,7 @@ package com.graphmind.display {
 	import com.graphmind.PluginManager;
 	import com.graphmind.TreeManager;
 	import com.graphmind.data.NodeData;
+	import com.graphmind.data.NodeType;
 	import com.graphmind.event.NodeEvent;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
@@ -300,7 +301,7 @@ package com.graphmind.display {
 		}
 		
 			
-		public override function getContextMenu():ContextMenu {
+		public function getContextMenu():ContextMenu {
 			var contextMenu:ContextMenu = new ContextMenu();
 			contextMenu.customItems = [];
 			contextMenu.hideBuiltInItems();
@@ -315,7 +316,7 @@ package com.graphmind.display {
 				{title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false}
 			];
 			
-			if (NodeData.updatableTypes.indexOf(_nodeItemData.type) >= 0) {
+			if (NodeType.updatableTypes.indexOf(_nodeItemData.type) >= 0) {
 				cms.push({title: 'Update node', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
 			}
 			
@@ -350,7 +351,7 @@ package com.graphmind.display {
 			
 			// @TODO mystery bug steal highlight somethimes from nodes
 			if (TreeManager.getInstance().activeNode) {
-				TreeManager.getInstance().activeNode.unselectNode();
+				TreeManager.getInstance().activeNode.deselectNode();
 			}
 			TreeManager.getInstance().activeNode = this;
 			TreeManager.getInstance().selectedNodeData = new ArrayCollection();
@@ -372,8 +373,8 @@ package com.graphmind.display {
 			getTreeNodeUI()._setBackgroundEffect(TreeNodeUI.EFFECT_HIGHLIGHT);
 		}
 		
-		public override function unselectNode():void {
-			super.unselectNode();
+		public override function deselectNode():void {
+			super.deselectNode();
 			
 			getTreeNodeUI()._setBackgroundEffect(TreeNodeUI.EFFECT_NORMAL);
 		}
@@ -720,7 +721,7 @@ package com.graphmind.display {
 		}
 		
 		public static function getLastSelectedNode():TreeNodeController {
-			return TreeManager.getInstance().activeNode;
+			return TreeManager.getInstance().getActiveTreeNodeController();
 		}
 		
 		public function getTypeColor():uint {
@@ -729,20 +730,25 @@ package com.graphmind.display {
 			}
 			
 			switch (this._nodeItemData.type) {
-				case NodeData.NODE:
+				case NodeType.NODE:
 					return 0xC2D7EF;
-				case NodeData.COMMENT:
+				case NodeType.COMMENT:
 					return 0xC2EFD9;
-				case NodeData.USER:
+				case NodeType.USER:
 					return 0xEFD2C2;
-				case NodeData.FILE:
+				case NodeType.FILE:
 					return 0xE9C2EF;
-				case NodeData.TERM:
+				case NodeType.TERM:
 					return 0xD9EFC2;
 				default:
 					return 0xDFD9D1;
 			}
 		}
+    
+    public override function toString():String {
+      return '[TreeNodeController: ' + this._nodeItemData.id + ']';
+    }
 		
 	}
+	
 }

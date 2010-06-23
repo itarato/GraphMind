@@ -1,5 +1,6 @@
 package com.graphmind {
 
+	import com.graphmind.display.NodeController;
 	import com.graphmind.view.StructureDrawer;
 	
 	import flash.events.Event;
@@ -8,6 +9,7 @@ package com.graphmind {
 	public class AbstractStageManager extends EventDispatcher {
 		
 		public static var EVENT_MINDMAP_UPDATED:String = 'mindmapUpdated';
+    public var activeNode:NodeController = null;
 		
 		/**
 		 * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)

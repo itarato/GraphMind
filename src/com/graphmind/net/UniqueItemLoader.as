@@ -1,6 +1,6 @@
 package com.graphmind.net
 {
-	import com.graphmind.data.NodeData;
+	import com.graphmind.data.NodeType;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -8,21 +8,21 @@ package com.graphmind.net
 	{
 		[Bindable]
 		public static var itemTypes:ArrayCollection = new ArrayCollection([
-			{label: "Node", data: NodeData.NODE},
-			{label: "User", data: NodeData.USER},
-			{label: "File", data: NodeData.FILE}
+			{label: "Node", data: NodeType.NODE},
+			{label: "User", data: NodeType.USER},
+			{label: "File", data: NodeType.FILE}
 		]);
 		
 		public static function nodeTypeToServiceType(nodeType:String):String {
-			var service_name:String = NodeData.NORMAL;
+			var service_name:String = NodeType.NORMAL;
 			switch (nodeType) {
-				case NodeData.USER:
+				case NodeType.USER:
 					service_name = 'user';
 					break;
-				case NodeData.NODE:
+				case NodeType.NODE:
 					service_name = 'node';
 					break;
-				case NodeData.FILE:
+				case NodeType.FILE:
 					service_name = 'file';
 					break;
 			}

@@ -24,36 +24,43 @@ package com.graphmind.display {
 		/**
 		 * Constructor
 		 */
-		public function NodeController(viewItem:NodeData) {
+		public function NodeController(nodeData:NodeData) {
 			// Init super class
 			super(this);
 			
-			_nodeUI = new NodeUI(this);
+			// View and Model
+      _nodeItemData = nodeData;
+			_nodeUI       = new NodeUI(this);
 			
+			// Add this to the collection
 			NodeController.nodes.addItem(this);
 		}
 		
-		public function getContextMenu():ContextMenu {
-			return null;
-		}
-		
+		/**
+		 * Get String representation.
+		 */
 		public override function toString():String {
-			return '[Node: ' + this._nodeItemData.id + ']';
+			return '[NodeController: ' + this._nodeItemData.id + ']';
 		}
 		
+		/**
+		 * Implementation of getUI().
+		 */
 		public function getUI():IDrawable {
 			return _nodeUI;
 		}
 		
-		public function get nodeItemData():NodeData {
+		/**
+		 * Public accessor of the Model.
+		 */
+		public function getNodeItemData():NodeData {
 			return _nodeItemData;
 		}
 		
-		public static function getLastSelectedNode():NodeController {
-		  Log.warning('Not implemented: NodeController.getLastSelectedNode()');
-		  return null;
-		}
-		
+		/**
+		 * Check if the node is selected.
+		 * @return Boolean
+		 */
 		public function isSelected():Boolean {
 			return TreeManager.getInstance().activeNode == this;
 		}
@@ -66,7 +73,7 @@ package com.graphmind.display {
 		 *  - toggled cloud
 		 */
 		public function updateTime():void {
-			_nodeItemData.modified = (new Date()).time;
+			getNodeItemData().modified = (new Date()).time;
 		}
 		
 		public function addData(attribute:String, value:String):void {
@@ -85,11 +92,11 @@ package com.graphmind.display {
 		 * Kill a node and each childs.
 		 */
 		public function kill(killedDirectly:Boolean = true):void {
+		  getUI().getUIComponent().parent.removeChild(getUI().getUIComponent());
+		  delete this.getUI();
+		  delete this.getNodeItemData();
+		  delete this;
 		}
-		
-		public function getNodeData():Object {
-			return _nodeItemData.data;
-		}	
 			
 		/**
 		 * Select a single node on the mindmap stage.
@@ -99,8 +106,12 @@ package com.graphmind.display {
 		public function selectNode():void {
 		}
 		
-		public function unselectNode():void {
+		/**
+		 * Deselect node.
+		 */
+		public function deselectNode():void {
 		}
 		
 	}
+	
 }

@@ -17,7 +17,7 @@ package com.graphmind.display {
 		
 		public function findTargetNode():Boolean {
 			for each (var node:TreeNodeController in NodeController.nodes) {
-				if (node.nodeItemData.id.toString() == _destinationID) {
+				if (node.getNodeItemData().id.toString() == _destinationID) {
 					destinationNode = node;
 					return isReady = true;
 				}

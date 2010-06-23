@@ -12,6 +12,7 @@
 package com.graphmind {
 	
 	import com.graphmind.data.NodeData;
+	import com.graphmind.data.NodeType;
 	import com.graphmind.data.ViewsCollection;
 	import com.graphmind.data.ViewsServicesParamsVO;
 	import com.graphmind.display.TreeNodeController;
@@ -51,7 +52,6 @@ package com.graphmind {
 		
 		// @TODO select base node when it's ready
 		// @TODO add timer for normal stage refresh
-		public var activeNode:TreeNodeController = null;
 		public var rootNode:TreeNodeController   = null;
 		
 		public var dragAndDrop_sourceNode:TreeNodeController;
@@ -130,7 +130,7 @@ package com.graphmind {
 			// This caused a mailformed export string.
 			var rootNode:TreeNodeController = NodeFactory.createNode(
 				{},
-				NodeData.NODE,
+				NodeType.NODE,
 				SiteConnection.getBaseSiteConnection(),
 				result.result.title
 			);
@@ -199,7 +199,7 @@ package com.graphmind {
 		 */
 		public function onClick_LoadViewsSubmitButton():void {
 			loadAndAttachViewsList(
-				activeNode,
+				getActiveTreeNodeController(),
 				GraphMind.instance.panelLoadView.view_arguments.text,
 				parseInt(GraphMind.instance.panelLoadView.view_limit.text),
 				parseInt(GraphMind.instance.panelLoadView.view_offset.text),
@@ -248,7 +248,7 @@ package com.graphmind {
 			nodeItemData.drupalID = parseInt(GraphMind.instance.panelLoadDrupalItem.item_id.text);
 			
 			var loaderData:TempItemLoadData = new TempItemLoadData();
-			loaderData.nodeItem = activeNode;
+			loaderData.nodeItem = getActiveTreeNodeController();
 			loaderData.nodeItemData = nodeItemData;
 			loaderData.success = onSuccess_DrupalItemLoaded;
 			
@@ -291,7 +291,7 @@ package com.graphmind {
 		 * Call it for creating simple child nodes.
 		 */
 		public function createSimpleChildNode(parent:TreeNodeController):void {
-			var node:TreeNodeController = NodeFactory.createNode({}, NodeData.NORMAL);
+			var node:TreeNodeController = NodeFactory.createNode({}, NodeType.NORMAL);
 			parent.addChildNodeWithStageRefresh(node);
 			node.selectNode();
 		}
@@ -324,7 +324,7 @@ package com.graphmind {
 		
 		public function onClick_NodeAttributeAddOrUpdateButton():void {
 			updateNodeAttribute(
-				activeNode,
+				getActiveTreeNodeController(),
 				GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text,
 				GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text
 			);
@@ -340,7 +340,7 @@ package com.graphmind {
 		}
 		
 		public function onClick_NodeAttributeRemoveButton():void {
-			removeNodeAttribute(activeNode, GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
+			removeNodeAttribute(getActiveTreeNodeController(), GraphMind.instance.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
 		}
 		
 		/**
@@ -432,13 +432,13 @@ package com.graphmind {
 		public function onClick_RTESaveButton():void {
 			if (!isActiveNodeExists()) return;
 			
-			activeNode.setTitle(GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText);
+			getActiveTreeNodeController().setTitle(GraphMind.instance.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText);
 		}
 		
 		public function onClick_SaveNodeLink():void {
 			if (!isActiveNodeExists()) return;
 			
-			activeNode.setLink(GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text);
+			getActiveTreeNodeController().setLink(GraphMind.instance.mindmapToolsPanel.node_info_panel.link.text);
 		}
 		
 		/**
@@ -460,7 +460,7 @@ package com.graphmind {
 		public function addIconToNode(icon:Image):void {
 			if (!isActiveNodeExists()) return;
 			
-			activeNode.addIcon(icon.source.toString());
+			getActiveTreeNodeController().addIcon(icon.source.toString());
 		}
 		
 		public function onMouseDown_InnerMindmapStage():void {
@@ -497,7 +497,7 @@ package com.graphmind {
 		public function onClick_ToggleCloudButton():void {
 			if (!isActiveNodeExists()) return;
 			
-			activeNode.toggleCloud();
+			getActiveTreeNodeController().toggleCloud();
 		}
 		
 		/**
@@ -537,10 +537,9 @@ package com.graphmind {
 			return structureDrawer as TreeDrawer;
 		}
 		
-//		private function onRootNodeIsReady(event:NodeEvent):void {
-//			getTreeDrawer().setRootNode(event.node as TreeNodeController);
-//			getTreeDrawer().refreshGraphics();
-//		}
+    public function getActiveTreeNodeController():TreeNodeController {
+      return activeNode as TreeNodeController;
+    }
 				
 	}
 	

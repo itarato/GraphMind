@@ -6,18 +6,9 @@ package com.graphmind.data {
 		// Gobal node ID tracker
 		public static var id:uint = 0;
 		
-		// @TODO create a NodeType enum class or something
-		public static const NODE:String    = 'node';
-		public static const USER:String    = 'users';
-		public static const COMMENT:String = 'comments';
-		public static const NORMAL:String  = 'normal';
-		public static const FILE:String    = 'files';
-		public static const TERM:String    = 'term_data';
-		public static const updatableTypes:Array = [FILE, NODE, USER];
-		
 		public var data:Object;
 		public var source:SiteConnection = SiteConnection.createSiteConnection();
-		public var type:String = NORMAL;
+		public var type:String = NodeType.NORMAL;
 		public var id:String = 'ID_' + String(NodeData.id++);
 		public var link:String = '';
 		// Extra color for the node. GM has it's own colors, but with this
@@ -33,7 +24,7 @@ package com.graphmind.data {
 		// This title overrides each other.
 		private var _title:String;
 		
-		public function NodeData(data:Object, type:String = NORMAL, source:SiteConnection = null) {
+		public function NodeData(data:Object, type:String = NodeType.NORMAL, source:SiteConnection = null) {
 			this.modified = this.created = new Date().time;
 			
 			this.data   = data;
@@ -46,19 +37,19 @@ package com.graphmind.data {
 			
 			var title:String = '';
 			switch (type) {
-				case NODE:
+				case NodeType.NODE:
 					title = data.title || data.node_title || '';
 					break;
-				case USER:
+				case NodeType.USER:
 					title = data.name  || data.users_name || '';
 					break;
-				case COMMENT:
+				case NodeType.COMMENT:
 					title = data.comments_subject || data.title || data.comments_title || '';
 					break;
-				case FILE:
+				case NodeType.FILE:
 					title = data.files_filename || data.filename || '';
 					break;
-				case TERM:
+				case NodeType.TERM:
 					title = data.term_data_name || '';
 					break;
 			}
@@ -86,14 +77,14 @@ package com.graphmind.data {
 			if (source && source.url && getDrupalID()) {
 				var url:String = source.url.toString().replace(/services\/amfphp/gi, '');
 				switch (type) {
-					case NODE: return url + '/node/' + getDrupalID();
-					case USER: return url + '/user/' + getDrupalID();
-					case COMMENT:
+					case NodeType.NODE: return url + '/node/' + getDrupalID();
+					case NodeType.USER: return url + '/user/' + getDrupalID();
+					case NodeType.COMMENT:
 						if (data.cid && data.comments_nid) {
 							return url + '/node/' + data.comments_nid + '#comment-' + data.cid;
 						}
 						break;
-					case TERM: return url + '/taxonomy/term/' + getDrupalID();
+					case NodeType.TERM: return url + '/taxonomy/term/' + getDrupalID();
 				}
 			}
 			
@@ -121,20 +112,28 @@ package com.graphmind.data {
 		
 		public static function getDrupalIDFromData(type:String, data:Object):String {
 			switch (type) {
-				case NODE:
+				case NodeType.NODE:
 					return data.nid || data.id || data.node_id || '';
-				case USER:
+				case NodeType.USER:
 					return data.userid || data.uid || data.id || data.users_id || '';
-				case COMMENT:
+				case NodeType.COMMENT:
 					return data.cid || data.id || data.comments_id || '';
-				case FILE:
+				case NodeType.FILE:
 					return data.fid || ''; 
-				case TERM:
+				case NodeType.TERM:
 					return data.tid || '';
 				default:
 					return '';
 			}
 		}
+	
+	  /**
+	   * Get the custom data object.
+	   */ 
+    public function getData():Object {
+      return data;
+    } 
 		
 	}
+	
 }
