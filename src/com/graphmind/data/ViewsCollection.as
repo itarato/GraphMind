@@ -33,10 +33,6 @@ package com.graphmind.data {
 		public function get baseTable():String {
 			return this._baseTable;
 		}
-
-		public function handleDataGridSelection():void {
-			Log.info('click on views table: ' + this._name);
-		}
 		
 		public function get sourceURL():String {
 			return _source.url;

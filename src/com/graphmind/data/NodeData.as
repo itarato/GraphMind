@@ -25,7 +25,7 @@ package com.graphmind.data {
 		public var color:uint;
 		protected var _drupalID:int;
 		
-		// FreeMind data
+		// FreeMind data - timestamp
 		public var created:Number;
 		public var modified:Number;
 		

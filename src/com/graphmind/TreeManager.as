@@ -13,7 +13,7 @@ package com.graphmind {
 	
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.ViewsCollection;
-	import com.graphmind.data.ViewsList;
+	import com.graphmind.data.ViewsServicesParamsVO;
 	import com.graphmind.display.TreeNodeController;
 	import com.graphmind.event.NodeEvent;
 	import com.graphmind.event.StageEvent;
@@ -158,10 +158,7 @@ package com.graphmind {
 			dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, rootNode));
 	    dispatchEvent(new StageEvent(StageEvent.MINDMAP_CREATION_COMPLETE));
 			isTreeUpdated = false;
-			this.rootNode.selectNode();
-			
-//			dispatchEvent(new NodeEvent(ROOT_NODE_IS_READY, rootNode));
-//      getTreeDrawer().refreshGraphics();
+			rootNode.selectNode();
 		}		
 				
 		/**
@@ -213,7 +210,7 @@ package com.graphmind {
 		}
 		
 		public function loadAndAttachViewsList(node:TreeNodeController, args:String, limit:int, offset:int, viewName:String, viewsInfo:ViewsCollection, onSuccess:Function):void {
-			var viewsData:ViewsList = new ViewsList();
+			var viewsData:ViewsServicesParamsVO = new ViewsServicesParamsVO();
 			viewsData.args   	= args;
 			// Fields are not supported in Services for D6
 			// viewsData.fields 	= stage.view_fields.text;

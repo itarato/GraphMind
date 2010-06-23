@@ -6,13 +6,13 @@ package com.graphmind.event {
 	
 	public class NodeEvent extends Event {
 		
-		public static var UPDATE_DATA:String 	   = 'updateData';
-		public static var UPDATE_GRAPHICS:String   = 'updateGraphic';
-		public static var MOVED:String 			   = 'moved';
-		public static var DELETED:String 		   = 'deleted';
-		public static var CREATED:String		   = 'created';
-		public static var ATTRIBUTE_CHANGED:String = 'attributeChanged';
-		public static var DRAG_AND_DROP_FINISHED:String = 'finished_drag_and_drop';
+		public static var UPDATE_DATA:String 	          = 'node_update_data';
+		public static var UPDATE_GRAPHICS:String        = 'node_update_graphic';
+		public static var MOVED:String 			            = 'node_moved';
+		public static var DELETED:String 		            = 'node_deleted';
+		public static var CREATED:String		            = 'node_created';
+		public static var ATTRIBUTE_CHANGED:String      = 'node_attribute_changed';
+		public static var DRAG_AND_DROP_FINISHED:String = 'node_finished_drag_and_drop';
 		
 		public var node:NodeController;
 		

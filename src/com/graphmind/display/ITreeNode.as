@@ -2,6 +2,9 @@ package com.graphmind.display {
 	
 	import mx.collections.ArrayCollection;
 	
+	/**
+	 * Tree.
+	 */
 	public interface ITreeNode {
 		
 		function getChildNodeAll():ArrayCollection;

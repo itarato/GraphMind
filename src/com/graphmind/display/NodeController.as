@@ -1,7 +1,8 @@
-package com.graphmind.display
-{
+package com.graphmind.display {
+  
 	import com.graphmind.TreeManager;
 	import com.graphmind.data.NodeData;
+	import com.graphmind.util.Log;
 	import com.graphmind.view.NodeUI;
 	
 	import flash.events.EventDispatcher;
@@ -15,7 +16,7 @@ package com.graphmind.display
 		public static var nodes:ArrayCollection = new ArrayCollection();
 
 		// Model
-		public var _nodeItemData:NodeData;
+		protected var _nodeItemData:NodeData;
 		
 		// View
 		protected var _nodeUI:NodeUI;
@@ -49,7 +50,8 @@ package com.graphmind.display
 		}
 		
 		public static function getLastSelectedNode():NodeController {
-			return TreeManager.getInstance().activeNode;
+		  Log.warning('Not implemented: NodeController.getLastSelectedNode()');
+		  return null;
 		}
 		
 		public function isSelected():Boolean {
