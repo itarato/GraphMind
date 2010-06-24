@@ -8,6 +8,9 @@ package com.graphmind {
 	
 	public class AbstractStageManager extends EventDispatcher {
 		
+    [Bindable]
+    public var isTreeUpdated:Boolean = false;
+    
 		public static var EVENT_MINDMAP_UPDATED:String = 'mindmapUpdated';
     public var activeNode:NodeController = null;
 		
@@ -34,6 +37,13 @@ package com.graphmind {
 		 */
 		public function loadBaseNode():void {
 		}
+    
+    /**
+     * Indicates mindmap has changed -> needs saving.
+     */
+    public function setMindmapUpdated():void {
+      isTreeUpdated = true;
+    }
 
 	}
 	

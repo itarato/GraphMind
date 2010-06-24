@@ -1,12 +1,10 @@
 package com.graphmind.display {
   
-	import com.graphmind.TreeManager;
+//	import com.graphmind.TreeManager;
 	import com.graphmind.data.NodeData;
-	import com.graphmind.util.Log;
 	import com.graphmind.view.NodeUI;
 	
 	import flash.events.EventDispatcher;
-	import flash.ui.ContextMenu;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -62,7 +60,7 @@ package com.graphmind.display {
 		 * @return Boolean
 		 */
 		public function isSelected():Boolean {
-			return TreeManager.getInstance().activeNode == this;
+      return GraphMind.instance.stageManager.activeNode == this;
 		}
 		
 		/**
@@ -78,13 +76,13 @@ package com.graphmind.display {
 		
 		public function addData(attribute:String, value:String):void {
 			_nodeItemData.dataAdd(attribute, value);
-			TreeManager.getInstance().setMindmapUpdated();
+			GraphMind.instance.stageManager.setMindmapUpdated();
 			updateTime();
 		}
 		
 		public function deleteData(param:String):void {
 			_nodeItemData.dataDelete(param);
-			TreeManager.getInstance().setMindmapUpdated();
+			GraphMind.instance.stageManager.setMindmapUpdated();
 			updateTime();
 		}
 		

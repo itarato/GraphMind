@@ -12,6 +12,8 @@
 		
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.view.FuturesWheelManager;
+		  import com.graphmind.view.FuturesWheelDrawer;
 			import com.graphmind.AbstractStageManager;
 			import com.graphmind.view.TreeNodeUI;
 			import com.graphmind.view.TreeDrawer;
@@ -86,7 +88,8 @@
 				// @HOOK
 				PluginManager.callHook(HOOK_PRE_INIT);
 				
-				stageManager = TreeManager.getInstance();
+				//stageManager = TreeManager.getInstance();
+				stageManager = FuturesWheelManager.getInstance();
 				
 				stageManager.init(
 					new TreeDrawer(

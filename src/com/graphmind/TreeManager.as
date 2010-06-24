@@ -41,7 +41,7 @@ package com.graphmind {
 	
 	public class TreeManager extends AbstractStageManager {
 		
-		private static var _instance:TreeManager = null;
+		protected static var _instance:TreeManager = null;
 
 		[Bindable]
 		public static var DEFAULT_DESKTOP_HEIGHT:int = 2000;
@@ -58,11 +58,9 @@ package com.graphmind {
 		public var isNodeDragAndDrop:Boolean = false;
 		public var isPrepairedNodeDragAndDrop:Boolean = false;
 		
-		private var isDesktopDragged:Boolean = false;
-		private var _desktopDragInfo:DesktopDragInfo = new DesktopDragInfo();
+		protected var isDesktopDragged:Boolean = false;
+		protected var _desktopDragInfo:DesktopDragInfo = new DesktopDragInfo();
 		
-		[Bindable]
-		public var isTreeUpdated:Boolean = false;
 		[Bindable]
 		public var selectedNodeData:ArrayCollection = new ArrayCollection();
 		
@@ -79,6 +77,11 @@ package com.graphmind {
 		 * Singleton pattern.
 		 */
 		public static function getInstance():TreeManager {
+		  // @TODO - somewhat fucking ugly hack, please fix it.
+		  if (GraphMind.instance || GraphMind.instance.stageManager !== null) {
+		    return GraphMind.instance.stageManager as TreeManager;
+		  }
+		  
 			if (_instance == null) {
 				_instance = new TreeManager();
 			}
@@ -123,7 +126,7 @@ package com.graphmind {
 		/**
 		 * Load base node - stage 2.
 		 */
-		private function onSuccess_BaseNodeLoaded(result:ResultEvent):void {
+		protected function onSuccess_BaseNodeLoaded(result:ResultEvent):void {
 			GraphMindManager.getInstance().setEditMode(result.result.graphmindEditable == '1');
 			
 			// ! Removed original data object: result.result.
@@ -362,7 +365,7 @@ package com.graphmind {
 		/**
 		 * Toggle fullscreen mode.
 		 */
-		private function toggleFullscreenMode():void {
+		protected function toggleFullscreenMode():void {
 			try {
 				
 				switch (Application.application.stage.displayState) {
@@ -415,7 +418,7 @@ package com.graphmind {
 		/**
 		 * Finishes drag and drop session for a node.
 		 */
-		private function closeNodeDragAndDrop():void {
+		protected function closeNodeDragAndDrop():void {
 			isNodeDragAndDrop = false;
 			isPrepairedNodeDragAndDrop = false;
 			GraphMind.instance.dragAndDrop_shape.visible = false;
@@ -425,7 +428,7 @@ package com.graphmind {
 		/**
 		 * Finishes drag and drop session for the mindmap area.
 		 */
-		private function closeDesktopDragAndDrop():void {
+		protected function closeDesktopDragAndDrop():void {
 			TreeManager.getInstance().isDesktopDragged = false;
 		}
 		
@@ -474,7 +477,7 @@ package com.graphmind {
 		/**
 		 * Start the dragged node's drag and drop session.
 		 */
-		private function startNodeDragAndDrop():void {
+		protected function startNodeDragAndDrop():void {
 			GraphMind.instance.mindmapCanvas.desktop.setFocus();
 			
 			isDesktopDragged = true;
@@ -485,7 +488,7 @@ package com.graphmind {
 			_desktopDragInfo.oldScrollbarHPos = GraphMind.instance.mindmapCanvas.desktop_wrapper.horizontalScrollPosition;
 		}
 		
-		private function doNodeDragAndDrop():void {
+		protected function doNodeDragAndDrop():void {
 			if (isDesktopDragged) {
 				var deltaV:Number = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseY - _desktopDragInfo.oldVPos;
 				var deltaH:Number = GraphMind.instance.mindmapCanvas.desktop_wrapper.mouseX - _desktopDragInfo.oldHPos;
@@ -498,13 +501,6 @@ package com.graphmind {
 			if (!isActiveNodeExists()) return;
 			
 			getActiveTreeNodeController().toggleCloud();
-		}
-		
-		/**
-		 * Indicates mindmap has changed -> needs saving.
-		 */
-		public function setMindmapUpdated():void {
-			isTreeUpdated = true;
 		}
 		
 		/**

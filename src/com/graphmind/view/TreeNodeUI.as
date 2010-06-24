@@ -56,7 +56,7 @@ package com.graphmind.view {
 			this.addChild(_displayComp);
 			
 			// Event when a drag-and-drop process ends
-			TreeManager.getInstance().addEventListener(NodeEvent.DRAG_AND_DROP_FINISHED, onDragAndDropFinished);
+			GraphMind.instance.addEventListener(NodeEvent.DRAG_AND_DROP_FINISHED, onDragAndDropFinished);
 		}
 		
 		public override function initGraphics():void {
@@ -122,7 +122,7 @@ package com.graphmind.view {
 			
 			// @TODO refreshing subtree is enough
 			//TreeManager.getInstance().dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, _sourceNodeController));
-			TreeManager.getInstance().dispatchEvent(new Event(AbstractStageManager.EVENT_MINDMAP_UPDATED));
+			GraphMind.instance.dispatchEvent(new Event(AbstractStageManager.EVENT_MINDMAP_UPDATED));
 		}
 		
 		/**
