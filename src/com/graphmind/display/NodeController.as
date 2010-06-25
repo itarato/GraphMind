@@ -12,9 +12,6 @@ package com.graphmind.display {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
-
-		// Model
-		protected var _nodeItemData:NodeData;
 		
 		// View
 		protected var _nodeUI:NodeUI;

@@ -91,14 +91,22 @@
 				//stageManager = TreeManager.getInstance();
 				stageManager = FuturesWheelManager.getInstance();
 				
-				stageManager.init(
-					new TreeDrawer(
-						mindmapCanvas.desktop, 
-						mindmapCanvas.desktop_cloud, 
-						mindmapCanvas.desktop,
-						mindmapCanvas.desktop_overlay
-					)
-				);
+//				stageManager.init(
+//					new TreeDrawer(
+//						mindmapCanvas.desktop, 
+//						mindmapCanvas.desktop_cloud, 
+//						mindmapCanvas.desktop,
+//						mindmapCanvas.desktop_overlay
+//					)
+//				);
+          stageManager.init(
+            new FuturesWheelDrawer(
+              mindmapCanvas.desktop,
+              mindmapCanvas.desktop_cloud,
+              mindmapCanvas.desktop,
+              mindmapCanvas.desktop_overlay
+            )
+          );
 				
 				GraphMindManager.getInstance().init();
 				

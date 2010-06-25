@@ -39,12 +39,6 @@ package com.graphmind.display {
 		public static const HOOK_NODE_CREATED:String	     = 'node_created';
 		public static const HOOK_NODE_TITLE_CHANGED:String = 'node_title_changed';
 		
-		protected var _childs:ArrayCollection 		   = new ArrayCollection();
-		protected var _isCollapsed:Boolean 		 	     = false;
-		protected var _isForcedCollapsed:Boolean 	   = false;
-		protected var _parentNode:TreeNodeController = null;
-		protected var _hasPath:Boolean 				       = false;
-		protected var _isCloudEnabled:Boolean				 = false;
 		
 		// Time delay until selecting a node on mouseover
 		protected var _mouseSelectionTimeout:uint;

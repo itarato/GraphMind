@@ -2,6 +2,8 @@ package com.graphmind.data {
 	
 	import com.graphmind.net.SiteConnection;
 	
+	import mx.collections.ArrayCollection;
+	
 	public class NodeData {
 		// Gobal node ID tracker
 		public static var id:uint = 0;
@@ -23,6 +25,14 @@ package com.graphmind.data {
 		// Hard-coded title
 		// This title overrides each other.
 		private var _title:String;
+		
+		// Child nodes
+    protected var _childs:ArrayCollection        = new ArrayCollection();
+    protected var _isCollapsed:Boolean           = false;
+    protected var _isForcedCollapsed:Boolean     = false;
+    protected var _parentNode:NodeData           = null;
+    protected var _hasPath:Boolean               = false;
+    protected var _isCloudEnabled:Boolean        = false;
 		
 		public function NodeData(data:Object, type:String = NodeType.NORMAL, source:SiteConnection = null) {
 			this.modified = this.created = new Date().time;
