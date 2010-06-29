@@ -1,11 +1,10 @@
 package com.graphmind.view {
 	
-	import com.graphmind.TreeManager;
+	import com.graphmind.StageManager;
 	import com.graphmind.display.ICloud;
 	import com.graphmind.display.ITreeItem;
+	import com.graphmind.display.NodeController;
 	import com.graphmind.display.TreeArrowLink;
-	import com.graphmind.display.TreeNodeController;
-	import com.graphmind.event.StageEvent;
 	import com.graphmind.util.Log;
 	
 	import flash.utils.clearTimeout;
@@ -56,14 +55,14 @@ package com.graphmind.view {
 				_arrowLinkContainer.clearAll();
 				
 				// Refresh the whole tree.
-				TreeManager.getInstance().rootNode.getUI().x = 4;
-				TreeManager.getInstance().rootNode.getUI().y = _target.height >> 1;
+				GraphMind.i.stageManager.rootNode.getUI().x = 4;
+				GraphMind.i.stageManager.rootNode.getUI().y = _target.height >> 1;
 				var postProcessObjects:Object = new Object();
 				postProcessObjects.arrowLinks = new Array();
-				var totalHeight:Number = _redrawNode(TreeManager.getInstance().rootNode, postProcessObjects);
+				var totalHeight:Number = _redrawNode(GraphMind.i.stageManager.rootNode, postProcessObjects);
 				
-				if (totalHeight > (TreeManager.DEFAULT_DESKTOP_HEIGHT + (TreeNodeUI.HEIGHT << 2))) {
-					TreeManager.DEFAULT_DESKTOP_HEIGHT = totalHeight + 200;
+				if (totalHeight > (StageManager.DEFAULT_DESKTOP_HEIGHT + (NodeUI.HEIGHT << 2))) {
+					StageManager.DEFAULT_DESKTOP_HEIGHT = totalHeight + 200;
 				}
 				
 				_redrawArrowLinks(postProcessObjects.arrowLinks);
@@ -96,7 +95,7 @@ package com.graphmind.view {
 			
 			// ArrowLinks
 			//postProcessObjects.arrowLinks = (postProcessObjects.arrowLinks as Array).concat((node as NodeItem).getArrawLinks());
-			(postProcessObjects.arrowLinks as Array).push((node as TreeNodeController).getArrowLinks());
+			(postProcessObjects.arrowLinks as Array).push((node as NodeController).getArrowLinks());
 			
 			return totalChildHeight;
 		}

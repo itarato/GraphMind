@@ -14,8 +14,8 @@ package com.graphmind.view
 		
 		public function draw(nodeFrom:ITreeItem, nodeTo:ITreeItem):void {
 			_target.graphics.lineStyle(2, 0x777777);
-			var pFrom:Point = new Point(nodeFrom.getUI().x + nodeFrom.getUI().getWidth(), nodeFrom.getUI().y + (TreeNodeUI.HEIGHT >> 1));
-			var pTo:Point   = new Point(nodeTo.getUI().x, nodeTo.getUI().y + (TreeNodeUI.HEIGHT >> 1));
+			var pFrom:Point = new Point(nodeFrom.getUI().x + nodeFrom.getUI().getWidth(), nodeFrom.getUI().y + (NodeUI.HEIGHT >> 1));
+			var pTo:Point   = new Point(nodeTo.getUI().x, nodeTo.getUI().y + (NodeUI.HEIGHT >> 1));
 			_target.graphics.moveTo((pFrom.x + pTo.x) >> 1, (pFrom.y + pTo.y) >> 1);
 			_target.graphics.curveTo(
 				pFrom.x + ((pTo.x - pFrom.x) >> 2),

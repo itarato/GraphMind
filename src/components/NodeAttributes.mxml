@@ -4,12 +4,11 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import com.graphmind.TreeManager;
 		]]>
 	</mx:Script>
 			
 	<mx:DataGrid width="100%" 
-		dataProvider="{TreeManager.getInstance().selectedNodeData}" 
+		dataProvider="{GraphMind.i.stageManager.selectedNodeData}" 
 		top="0" bottom="190" left="0"
 		id="attributesDataGrid">
 		<mx:click>
@@ -26,7 +25,7 @@
 		</mx:columns>
 	</mx:DataGrid>
 	<mx:Button label="Save" left="10" bottom="10" 
-		click="{TreeManager.getInstance().onClick_NodeAttributeAddOrUpdateButton();}"
+		click="{GraphMind.i.stageManager.onClick_NodeAttributeAddOrUpdateButton();}"
 		tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
 	<mx:Label text="Value" left="10" bottom="108"/>
 	<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" right="10"/>
@@ -34,6 +33,6 @@
 	<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" right="10" height="60"/>
 	<mx:Button label="Remove"
 		tabIndex="23"
-		click="{TreeManager.getInstance().onClick_NodeAttributeRemoveButton()};" left="90" bottom="10" icon="@Embed(source='assets/images/delete.png')"/>
+		click="{GraphMind.i.stageManager.onClick_NodeAttributeRemoveButton()};" left="90" bottom="10" icon="@Embed(source='assets/images/delete.png')"/>
 				
 </mx:Canvas>

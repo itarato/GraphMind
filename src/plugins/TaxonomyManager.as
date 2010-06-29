@@ -1,9 +1,8 @@
 package plugins {
 	
-	import com.graphmind.TreeManager;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.display.TreeNodeController;
+	import com.graphmind.display.NodeController;
 	import com.graphmind.event.StageEvent;
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
@@ -24,17 +23,17 @@ package plugins {
 		
 		
 		public static function hook_pre_init(data:Object):void {
-			TreeManager.getInstance().addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
+			GraphMind.i.stageManager.addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
 		}
 		
 		private static function onMindmapCreationComplete(event:StageEvent):void {
 			// Refreshing taxonomy
 			var cursor:int = 0;
-			var parent:TreeNodeController = null;
-			while (TreeNodeController.nodes.length > cursor) {
-				var node:TreeNodeController = TreeNodeController.nodes[cursor] as TreeNodeController;
+			var parent:NodeController = null;
+			while (NodeController.nodes.length > cursor) {
+				var node:NodeController = NodeController.nodes[cursor] as NodeController;
 				if (_isTaxonomyPluginNode(node, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE)) {
-					parent = node.getParentNode() as TreeNodeController;
+					parent = node.getParentNode() as NodeController;
 					node.kill();
 					cursor = 0;
 				} else {
@@ -59,7 +58,7 @@ package plugins {
 		 * Callback for loading and attaching taxonomy tree.
 		 */
 		public static function loadFullTaxonomyTree(event:ContextMenuEvent):void {
-			var node:TreeNodeController = TreeNodeController.getLastSelectedNode();
+			var node:NodeController = GraphMind.i.stageManager.activeNode;
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			RPCServiceHelper.createRPC(
@@ -74,7 +73,7 @@ package plugins {
 			).send(baseSiteConnection.sessionID);
 		}
 		
-		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, sc:SiteConnection, baseNode:TreeNodeController):void {
+		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, sc:SiteConnection, baseNode:NodeController):void {
 			for each (var vocabulary:Object in event.result) {
 				vocabulary.plugin = 'TaxonomyManager';
 				var vocabularyNodeItemData:NodeData = new NodeData(
@@ -85,8 +84,8 @@ package plugins {
 				vocabularyNodeItemData.title = vocabulary.name;
 				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
 				vocabularyNodeItemData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
-				var vocabularyNode:TreeNodeController = new TreeNodeController(vocabularyNodeItemData);
-				baseNode.addChildNodeWithStageRefresh(vocabularyNode);
+				var vocabularyNode:NodeController = new NodeController(vocabularyNodeItemData);
+				baseNode.addChildNode(vocabularyNode);
 				
 				var term_hierarchy:Object = {};
 				var term_storage:Object = {0: vocabularyNode};
@@ -100,7 +99,7 @@ package plugins {
 					);
 					termNodeItemData.title = term.name;
 					termNodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
-					var termNodeItem:TreeNodeController = new TreeNodeController(termNodeItemData);
+					var termNodeItem:NodeController = new NodeController(termNodeItemData);
 					var parentID:String = term.parents[0] || 'none';
 					if (!term_hierarchy.hasOwnProperty(parentID)) {
 						term_hierarchy[parentID] = [];
@@ -110,8 +109,8 @@ package plugins {
 				}
 				
 				for (var _parentID:* in term_hierarchy) {
-					for each (var termNode:TreeNodeController in term_hierarchy[_parentID]) {
-						(term_storage[_parentID] as TreeNodeController).addChildNodeWithStageRefresh(termNode);
+					for each (var termNode:NodeController in term_hierarchy[_parentID]) {
+						(term_storage[_parentID] as NodeController).addChildNode(termNode);
 					}
 				}
 			}
@@ -124,7 +123,7 @@ package plugins {
 		// @FIXME - on move the old footprint stays.
 		public static function hook_node_moved(data:Object):void {
 			// @TODO revert plan if action cannot be done
-			var node:TreeNodeController = data.node as TreeNodeController;
+			var node:NodeController = data.node as NodeController;
 			var baseConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			// Node is not a TERM.
@@ -136,7 +135,7 @@ package plugins {
 				return;
 			}
 			
- 			var parentNode:TreeNodeController = node.getParentNode() as TreeNodeController;
+ 			var parentNode:NodeController = node.getParentNode() as NodeController;
 			
 			// Deleting term
 			if (!_isTaxonomyPluginNode(parentNode)) {
@@ -146,13 +145,13 @@ package plugins {
 			}
 
 			var order:Array = [];
-			for each (var child:TreeNodeController in parentNode.getChildNodeAll()) {
-				if (child.getNodeItemData().getData().hasOwnProperty('tid')) {
-					order.push(child.getNodeItemData().getData().tid);
+			for each (var child:NodeController in parentNode.getChildNodeAll()) {
+				if (child.nodeData.data.hasOwnProperty('tid')) {
+					order.push(child.nodeData.data.tid);
 				}
 			}
 			
-			var childNodes:Array = _changeChildsVocabulary(node, parentNode.getNodeItemData().getData().vid || 0);
+			var childNodes:Array = _changeChildsVocabulary(node, parentNode.nodeData.data.vid || 0);
 			_changeSiblingsWeight(node);
 			
 			RPCServiceHelper.createRPC(
@@ -166,9 +165,9 @@ package plugins {
 				transactionError
 			).send(
 				baseConnection.sessionID,
-				node.getNodeItemData().getData().tid,
-				parentNode.getNodeItemData().getData().vid || 0,
-				parentNode.getNodeItemData().getData().tid || 0,
+				node.nodeData.data.tid,
+				parentNode.nodeData.data.vid || 0,
+				parentNode.nodeData.data.tid || 0,
 				order.join('|'),
 				childNodes.join('|')
 			);
@@ -177,11 +176,11 @@ package plugins {
 		/**
 		 * Check if the node created by the TaxonomyManager plugin and has a certain type.
 		 */
-		private static function _isTaxonomyPluginNode(node:TreeNodeController, type:String = null):Boolean {
-			if (!node.getNodeItemData().getData().hasOwnProperty('plugin') || node.getNodeItemData().getData().plugin !== 'TaxonomyManager') {
+		private static function _isTaxonomyPluginNode(node:NodeController, type:String = null):Boolean {
+			if (!node.nodeData.data.hasOwnProperty('plugin') || node.nodeData.data.plugin !== 'TaxonomyManager') {
 				return false;
 			}
-			return type == null ? true : node.getNodeItemData().type == type;
+			return type == null ? true : node.nodeData.type == type;
 		}
 		
 		/**
@@ -191,11 +190,11 @@ package plugins {
 		 * @param NodeItem node
 		 * @param integer vid
 		 */
-		private static function _changeChildsVocabulary(node:TreeNodeController, vid:int):Array {
-			node.getNodeItemData().getData().vid = vid;
+		private static function _changeChildsVocabulary(node:NodeController, vid:int):Array {
+			node.nodeData.data.vid = vid;
 			
-			var nodes:Array = [node.getNodeItemData().getData().tid || 0];
-			for each (var child:TreeNodeController in node.getChildNodeAll()) {
+			var nodes:Array = [node.nodeData.data.tid || 0];
+			for each (var child:NodeController in node.getChildNodeAll()) {
 				nodes = nodes.concat(_changeChildsVocabulary(child, vid));
 			}
 			
@@ -207,11 +206,11 @@ package plugins {
 		 * 
 		 * @param NodeItem node
 		 */
-		private static function _changeSiblingsWeight(node:TreeNodeController):void {
-			var parentNode:TreeNodeController = node.getParentNode() as TreeNodeController;
+		private static function _changeSiblingsWeight(node:NodeController):void {
+			var parentNode:NodeController = node.getParentNode() as NodeController;
 			var weight:int = 0;
-			for each (var child:TreeNodeController in parentNode.getChildNodeAll()) {
-				child.getNodeItemData().getData().weight = weight++;
+			for each (var child:NodeController in parentNode.getChildNodeAll()) {
+				child.nodeData.data.weight = weight++;
 			}
 		}
 		
@@ -225,7 +224,7 @@ package plugins {
 				return;
 			}
 			
-			var node:TreeNodeController = data.node as TreeNodeController;
+			var node:NodeController = data.node as NodeController;
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) return;
@@ -237,7 +236,7 @@ package plugins {
 				baseSiteConnection.url,
 				onSuccess_TermDeleted,
 				transactionError
-			).send(baseSiteConnection.sessionID, node.getNodeItemData().getData().tid || 0);
+			).send(baseSiteConnection.sessionID, node.nodeData.data.tid || 0);
 		}
 		
 		/**
@@ -251,13 +250,13 @@ package plugins {
 		/**
 		 * De-pluginize a subtree.
 		 */
-		private static function _removePluginInfoFromNode(node:TreeNodeController):void {
-			node.getNodeItemData().getData().plugin = undefined;
-			node.getNodeItemData().type = NodeType.NORMAL;
-			node.getNodeItemData().color = undefined;
+		private static function _removePluginInfoFromNode(node:NodeController):void {
+			node.nodeData.data.plugin = undefined;
+			node.nodeData.type = NodeType.NORMAL;
+			node.nodeData.color = undefined;
 			node.getUI().refreshGraphics();
 			
-			for each (var child:TreeNodeController in node.getChildNodeAll()) {
+			for each (var child:NodeController in node.getChildNodeAll()) {
 				_removePluginInfoFromNode(child);
 			}
 		}
@@ -270,17 +269,17 @@ package plugins {
 		public static function hook_node_created(data:Object):void {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
-			var node:TreeNodeController = data.node as TreeNodeController;
+			var node:NodeController = data.node as NodeController;
 			if (_isTaxonomyPluginNode(node)) {
 				// Recolor taxonomy
 				if (_isTaxonomyPluginNode(node, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE)) {
-					node.getNodeItemData().color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
+					node.nodeData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
 				} else {
-					node.getNodeItemData().color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
+					node.nodeData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
 				}
 				return;
 			}
-			var parent:TreeNodeController = node.getParentNode() as TreeNodeController;
+			var parent:NodeController = node.getParentNode() as NodeController;
 			if (!_isTaxonomyPluginNode(parent)) return;
 			
 			var subtree_node_reference:Array = new Array();
@@ -296,23 +295,23 @@ package plugins {
 					onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
 				},
 				transactionError
-			).send(baseSiteConnection.sessionID, parent.getNodeItemData().getData().tid || 0, parent.getNodeItemData().getData().vid || 0, subtree);
+			).send(baseSiteConnection.sessionID, parent.nodeData.data.tid || 0, parent.nodeData.data.vid || 0, subtree);
 		}
 		
-		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:TreeNodeController):void {
+		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:NodeController):void {
 			_convertSubtreeToTaxonomy(event.result, nodeReference);
 			hook_node_moved({node: baseNode});
 			OSD.show('Subtree is added.');
 		}
 		
-		private static function _getSubtreeInfo(node:TreeNodeController, node_reference:Array):Object {
+		private static function _getSubtreeInfo(node:NodeController, node_reference:Array):Object {
 			var info:Object = new Object();
-			info.name  = node.getTitle();
+			info.name  = node.nodeData._title;
 			info.terms = new Array();
 			info.nrid  = node_reference.length;
 			node_reference.push(node);
 			
-			for each (var child:TreeNodeController in node.getChildNodeAll()) {
+			for each (var child:NodeController in node.getChildNodeAll()) {
 				(info.terms as Array).push(_getSubtreeInfo(child, node_reference));
 			}
 			
@@ -321,13 +320,13 @@ package plugins {
 		
 		private static function _convertSubtreeToTaxonomy(subtreeInfo:Object, nodeReference:Array):void {
 			if (subtreeInfo.hasOwnProperty('nrid')) {
-				var node:TreeNodeController = nodeReference[subtreeInfo['nrid']] as TreeNodeController; 
+				var node:NodeController = nodeReference[subtreeInfo['nrid']] as NodeController; 
 				node.addData('tid', subtreeInfo.tid);
 				node.addData('vid', subtreeInfo.vid);
 				node.addData('plugin', 'TaxonomyManager');
-				node.getNodeItemData().type = NodeType.TERM;
-				node.getNodeItemData().color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
-				node.getUI().refreshGraphics();
+				node.nodeData.type = NodeType.TERM;
+				node.nodeData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
+				node.nodeView.refreshGraphics();
 				
 				if (subtreeInfo.hasOwnProperty('terms')) {
 					for each (var child:Object in subtreeInfo.terms) {
@@ -339,7 +338,7 @@ package plugins {
 		
 		public static function hook_node_title_changed(data:Object):void {
 			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
-			var node:TreeNodeController = data.node as TreeNodeController;
+			var node:NodeController = data.node as NodeController;
 			
 			// Only for terms.
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) return;
@@ -351,7 +350,7 @@ package plugins {
 				baseSiteConnection.url,
 				onSuccess_TermRenamed,
 				transactionError
-			).send(baseSiteConnection.sessionID, node.getNodeItemData().getData().tid, node.getTitle());
+			).send(baseSiteConnection.sessionID, node.nodeData.data.tid, node.nodeData._title);
 		}
 		
 		private static function onSuccess_TermRenamed(event:ResultEvent):void {

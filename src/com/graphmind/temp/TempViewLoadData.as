@@ -1,12 +1,12 @@
 package com.graphmind.temp
 {
 	import com.graphmind.data.ViewsServicesParamsVO;
-	import com.graphmind.display.TreeNodeController;
+	import com.graphmind.display.NodeController;
 	
 	public class TempViewLoadData
 	{
 		// Parent node item (GraphMind node).
-		public var nodeItem:TreeNodeController = null;
+		public var nodeItem:NodeController = null;
 		// Views argument object.
 		public var viewsData:ViewsServicesParamsVO = null;
 		// Callback on success

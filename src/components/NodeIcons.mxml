@@ -4,15 +4,35 @@
 
 	<mx:Script>
 		<![CDATA[
-			import com.graphmind.GraphMindManager;
-			import com.graphmind.TreeManager;
+			import com.graphmind.ApplicationManager;
+    
+      [Bindable]
+      public static var icons:Array = [
+        "Mail", "yes", "help", "stop", "prepare",  "go",
+        "down", "forward", "back", "up", 
+        "full-0", "full-1", "full-2", "full-3", "full-4", "full-5", "full-6", "full-7", "full-8", "full-9", 
+        "ksmiletris", "smiley-angry", "smily_bad", "smiley-neutral", "smiley-oh", 
+        "female1", "female2", "male1", "male2", 
+        "kmail", "broken-line", "button_cancel", "button_ok", 
+        "flag-black",  "flag-orange", "flag", "flag-yellow", "flag-blue", "flag-green", "flag-pink",
+        "password", "attach", "edit", 
+        "freemind_butterfly", "hourglass", "pencil", "encrypted", 
+        "idea", "penguin", "bell", "family", "info", 
+        "bookmark", "fema", "kaddressbook", "redo", 
+        "korn", "calendar", "knotify", 
+        "clanbomber", "launch", "stop-sign", 
+        "clock", "licq", "clock2", 
+        "list", "closed", "wizard", 
+        "decrypted", "gohome", "xmag", "desktop_new", "folder", 
+        "group", "messagebox_warning"
+      ];
 		]]>
 	</mx:Script>
 
 	<mx:Tile left="10" top="10" right="10" height="100%">
-		<mx:Repeater dataProvider="{GraphMind.icons}" id="icon_repeater">
-			<mx:Image source="{GraphMindManager.getInstance().getIconPath()}{icon_repeater.currentItem}.png" 
-				click="{TreeManager.getInstance().onClick_Icon(event);}"/>
+		<mx:Repeater dataProvider="{icons}" id="icon_repeater">
+			<mx:Image source="{GraphMind.i.applicationManager.getIconPath()}{icon_repeater.currentItem}.png" 
+				click="{GraphMind.i.stageManager.onClick_Icon(event);}"/>
 		</mx:Repeater>
 	</mx:Tile>
 </mx:Canvas>

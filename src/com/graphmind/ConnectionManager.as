@@ -1,9 +1,6 @@
-/**
- * Manager
- * Singleton
- */
-package com.graphmind
-{
+package com.graphmind {
+  
+	import com.graphmind.data.ViewsCollection;
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.net.UniqueItemLoader;
@@ -15,28 +12,12 @@ package com.graphmind
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	public class ConnectionManager
-	{
-		private static var _instance:ConnectionManager = null;
-		
-		
-		public function ConnectionManager()	{
-			super();
-		}
-		
-		public static function getInstance():ConnectionManager {
-			if (_instance == null) {
-				_instance = new ConnectionManager();
-			}
-			
-			return _instance;
-		}
-		
+	public class ConnectionManager {
 		
 		/**
 		 * Connect to a site
 		 */
-		public function connectToDrupal(url:String, success:Function):void {
+		public static function connectToDrupal(url:String, success:Function):void {
 			RPCServiceHelper.createRPC('system', 'connect', 'amfphp', url, success, function(error:FaultEvent):void{
 				alertErrorMessage(
 					'Network error: cannot connect to site: ' + url,
@@ -50,7 +31,7 @@ package com.graphmind
 		/**
 		 * Logout from a site.
 		 */
-		public function logout(sc:SiteConnection, success:Function):void {
+		public static function logout(sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC('user', 'logout', 'amfphp', sc.url, success, function(error:FaultEvent):void{
 				alertErrorMessage('Network error: cannot logout with user', 'graphmind error', sc.toString(), error.toString());
 			}).send(sc.sessionID);
@@ -59,7 +40,7 @@ package com.graphmind
 		/**
 		 * Login to a site
 		 */
-		public function login(sc:SiteConnection, success:Function):void {
+		public static function login(sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC('user', 'login', 'amfphp', sc.url, success, function(error:FaultEvent):void{
 				alertErrorMessage('Network error: cannot login with user', 'missing user permissions', sc.toString(), error.toString());
 			}).send(sc.sessionID, sc.username, sc.password);
@@ -68,7 +49,7 @@ package com.graphmind
 		/**
 		 * Get base sites views list
 		 */
-		public function getViews(sc:SiteConnection, success:Function):void {
+		public static function getViews(sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC('graphmind', 'getViews', 'amfphp', sc.url, success, function(error:FaultEvent):void{
 				alertErrorMessage('Network error: cannot get views list', 'missing permission', sc.toString(), error.toString());
 			}).send(sc.sessionID);
@@ -78,7 +59,7 @@ package com.graphmind
 		/**
 		 * Connect to a Drupal site - multiple steps
 		 */
-		public function connectToSite(sc:SiteConnection):void {
+		public static function connectToSite(sc:SiteConnection):void {
 			connectToDrupal(sc.url, function(_result:ResultEvent):void {
 				_connectToSite_phase_connected(_result, sc);
 			});
@@ -87,7 +68,7 @@ package com.graphmind
 		/**
 		 * Connect to a site - stage 2
 		 */
-		private function _connectToSite_phase_connected(result:ResultEvent, sc:SiteConnection):void {
+		private static function _connectToSite_phase_connected(result:ResultEvent, sc:SiteConnection):void {
 			sc.sessionID = result.result.sessid;
 			if (result.result.user.userid == 0) {
 				// Not logged in yet
@@ -112,7 +93,7 @@ package com.graphmind
 		/**
 		 * Connect to a site - logging out
 		 */
-		private function _connectToSite_phase_logged_out(result:ResultEvent, sc:SiteConnection):void {
+		private static function _connectToSite_phase_logged_out(result:ResultEvent, sc:SiteConnection):void {
 			login(sc, function(_result:ResultEvent):void {
 				_connectToSite_phase_logged_in(_result, sc);
 			});
@@ -121,7 +102,7 @@ package com.graphmind
 		/**
 		 * Connect to a site - loading views list
 		 */
-		private function _connectToSite_phase_logged_in(result:ResultEvent, sc:SiteConnection):void {
+		private static function _connectToSite_phase_logged_in(result:ResultEvent, sc:SiteConnection):void {
 			getViews(sc, function(_result:ResultEvent):void{
 				_connectToSite_phase_views_loaded(_result, sc);
 			});
@@ -130,8 +111,10 @@ package com.graphmind
 		/**
 		 * Connect to a site - final state, views recieved
 		 */
-		private function _connectToSite_phase_views_loaded(result:ResultEvent, sc:SiteConnection):void {
-			ViewsManager.getInstance().receiveViewsData(result, sc);
+		private static function _connectToSite_phase_views_loaded(result:ResultEvent, sc:SiteConnection):void {
+      for each (var data:Object in result.result) {
+        var viewsTable:ViewsCollection = new ViewsCollection(data, sc);
+      }
 		}
 		// END of site connection /////
 		
@@ -139,7 +122,7 @@ package com.graphmind
 		/**
 		 * Load a node
 		 */
-		public function nodeLoad(nid:int, sc:SiteConnection, sucecss:Function):void {
+		public static function nodeLoad(nid:int, sc:SiteConnection, sucecss:Function):void {
 			RPCServiceHelper.createRPC('node', 'get', 'amfphp', sc.url, sucecss, function(error:FaultEvent):void{
 				alertErrorMessage(
 					'Node cannot loaded: ' + nid,
@@ -155,7 +138,7 @@ package com.graphmind
 		/**
 		 * Load items from a views.
 		 */
-		public function viewListLoad(requestData:TempViewLoadData):void {
+		public static function viewListLoad(requestData:TempViewLoadData):void {
 			RPCServiceHelper.createRPC(
 				'views', 
 				'get', 
@@ -188,7 +171,7 @@ package com.graphmind
 		/**
 		 * Load single item.
 		 */
-		public function itemLoad(requestData:TempItemLoadData):void {
+		public static function itemLoad(requestData:TempItemLoadData):void {
 			RPCServiceHelper.createRPC(
 				UniqueItemLoader.nodeTypeToServiceType(requestData.nodeItemData.type),
 				'get',
@@ -216,7 +199,7 @@ package com.graphmind
 		/**
 		 * Save (export) the state of the map in an MM (FreeMind) format.
 		 */
-		public function saveGraphMind(nid:int, mm:String, lastSaveTimestamp:Number, sc:SiteConnection, success:Function):void {
+		public static function saveGraphMind(nid:int, mm:String, lastSaveTimestamp:Number, sc:SiteConnection, success:Function):void {
 			RPCServiceHelper.createRPC(
 				'graphmind', 
 				'saveGraphMind',
@@ -239,7 +222,7 @@ package com.graphmind
 		 * @param string connectionInfo - connection info (url, username, sessid)
 		 * @param string error - detailed error message from the event object
 		 */
-		public function alertErrorMessage(msg:String, details:String, connectionInfo:String = null, error:String = null):void {
+		public static function alertErrorMessage(msg:String, details:String, connectionInfo:String = null, error:String = null):void {
 			Log.error('Network error: ' + error);
 			OSD.show(
 				msg + 

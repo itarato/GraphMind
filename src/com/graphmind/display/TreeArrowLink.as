@@ -4,20 +4,20 @@ package com.graphmind.display {
 	
 	public class TreeArrowLink extends UIComponent {
 	
-		public var sourceNode:TreeNodeController;
-		public var destinationNode:TreeNodeController;
+		public var sourceNode:NodeController;
+		public var destinationNode:NodeController;
 		private var _destinationID:String;
 		public var isReady:Boolean = false;
 		
-		public function TreeArrowLink(node:TreeNodeController, destinationID:String) {
+		public function TreeArrowLink(node:NodeController, destinationID:String) {
 			this.sourceNode = node;
 			this._destinationID = destinationID;
 			node.addArrowLink(this);
 		}
 		
 		public function findTargetNode():Boolean {
-			for each (var node:TreeNodeController in NodeController.nodes) {
-				if (node.getNodeItemData().id.toString() == _destinationID) {
+			for each (var node:NodeController in NodeController.nodes) {
+				if (node.nodeData.id.toString() == _destinationID) {
 					destinationNode = node;
 					return isReady = true;
 				}
@@ -26,4 +26,5 @@ package com.graphmind.display {
 		}
 		
 	}
+	
 }
