@@ -1,5 +1,6 @@
 package com.graphmind.view {
 	
+	import com.graphmind.PluginManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.display.ICloud;
 	import com.graphmind.display.ITreeItem;
@@ -70,6 +71,8 @@ package com.graphmind.view {
 		}
 		
 		protected function _redrawNode(node:ITreeItem, postProcessObjects:Object):Number {
+		  node.getUI().refreshGraphics();
+		  
 			var totalChildHeight:int = _getSubtreeHeight(node);
 			var currentY:int = node.getUI().y - totalChildHeight / 2;
 			

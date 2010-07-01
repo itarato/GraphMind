@@ -42,11 +42,6 @@ package com.graphmind
 		 */
 		public var lastSaved:Number = new Date().time;
 		
-    /**
-     * Stage manager.
-     */
-    public var stageManager:StageManager;
-		
 		/**
 		 * Constructor.
 		 */

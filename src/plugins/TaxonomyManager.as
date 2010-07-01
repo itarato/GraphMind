@@ -4,6 +4,7 @@ package plugins {
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.NodeController;
 	import com.graphmind.event.StageEvent;
+	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
@@ -20,7 +21,6 @@ package plugins {
 		// @TODO add color
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xEF95E7;
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
-		
 		
 		public static function hook_pre_init(data:Object):void {
 			GraphMind.i.stageManager.addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
@@ -84,7 +84,7 @@ package plugins {
 				vocabularyNodeItemData.title = vocabulary.name;
 				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
 				vocabularyNodeItemData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
-				var vocabularyNode:NodeController = new NodeController(vocabularyNodeItemData);
+				var vocabularyNode:NodeController = NodeFactory.createNodeWithNodeData(vocabularyNodeItemData);
 				baseNode.addChildNode(vocabularyNode);
 				
 				var term_hierarchy:Object = {};
@@ -99,7 +99,7 @@ package plugins {
 					);
 					termNodeItemData.title = term.name;
 					termNodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
-					var termNodeItem:NodeController = new NodeController(termNodeItemData);
+					var termNodeItem:NodeController = NodeFactory.createNodeWithNodeData(termNodeItemData);
 					var parentID:String = term.parents[0] || 'none';
 					if (!term_hierarchy.hasOwnProperty(parentID)) {
 						term_hierarchy[parentID] = [];

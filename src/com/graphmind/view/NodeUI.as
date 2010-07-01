@@ -31,24 +31,40 @@ package com.graphmind.view {
 		[Bindable]
 		public static var ICON_INSERT_LEFT_DEFAULT_X:int = WIDTH_DEFAULT - 2;
 		
+		/**
+		 * Backgroung shape.
+		 */
 		public var _backgroundComp:Container = new Container();
+		
+		/**
+		 * Various UI elements.
+		 */
 		public var _displayComp:ItemBaseComponent = new ItemBaseComponent();
 		
+		/**
+		 * Images (icons).
+		 */
 		public var icons:ArrayCollection = new ArrayCollection();
+		
+		/**
+		 * Indicates if the UI was changed and needs an update.
+		 */
+		public var isGraphicsUpdated:Boolean = true;
 		
 		/**
 		 * Background color.
 		 */
-		public var backgroundColor:uint = 0xAAAAAA;
+		public var backgroundColor:uint = 0xDFD9D1;
 		
 		public function NodeUI():void {
 			super();
 			
-			this.addChild(_backgroundComp);
-			this.addChild(_displayComp);
+			addChild(_backgroundComp);
+			addChild(_displayComp);
 			
+			initGraphics();
 			// Event when a drag-and-drop process ends
-			GraphMind.i.addEventListener(NodeEvent.DRAG_AND_DROP_FINISHED, onDragAndDropFinished);
+//			GraphMind.i.addEventListener(NodeEvent.DRAG_AND_DROP_FINISHED, onDragAndDropFinished);
 		}
 		
 		public function initGraphics():void {
@@ -65,6 +81,8 @@ package com.graphmind.view {
 		}
 		
 		public function refreshGraphics():void {
+		  if (!isGraphicsUpdated) return;
+		  
 			var titleExtraWidth:int = _getTitleExtraWidth();
  			for (var idx:* in icons) {
  				Image(icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + 158;
@@ -83,6 +101,8 @@ package com.graphmind.view {
 			this._displayComp.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
 			this._displayComp.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
 			this._displayComp.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
+			
+			isGraphicsUpdated = false;
 		}
 		
 		/**
@@ -122,6 +142,8 @@ package com.graphmind.view {
 		 */
 		public function addIcon(icon:Image):void {
 		  icons.addItem(icon);
+		  _displayComp.addChild(icon);
+		  isGraphicsUpdated = true;
 		}
 		
 		/**
@@ -130,7 +152,9 @@ package com.graphmind.view {
 		public function removeIcon(source:String):void {
 		  for (var idx:* in icons) {
 		    if ((icons[idx] as Image).source == source) {
+		      (icons[idx] as Image).parent.removeChild(icons[idx] as Image);
 		      icons.removeItemAt(idx);
+		      isGraphicsUpdated = true;
 		      break;
 		    }
 		  }

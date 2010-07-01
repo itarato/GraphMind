@@ -2,9 +2,11 @@ package com.graphmind.display {
 	
 	import com.graphmind.ConnectionManager;
 	import com.graphmind.PluginManager;
+	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.event.NodeEvent;
+	import com.graphmind.event.StageEvent;
 	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
@@ -56,7 +58,7 @@ package com.graphmind.display {
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuAddDrupalViews")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveNode")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveChilds")]
-	public class NodeController extends EventDispatcher implements IHasUI, ITreeItem {
+	public class NodeController extends EventDispatcher implements IHasUI, ITreeItem, ICloud {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
@@ -66,6 +68,12 @@ package com.graphmind.display {
 		public static const HOOK_NODE_DELETE:String		     = 'node_delete';
 		public static const HOOK_NODE_CREATED:String	     = 'node_created';
 		public static const HOOK_NODE_TITLE_CHANGED:String = 'node_title_changed';
+		
+		public static const UP_TIME:uint       = 1;
+		public static const UP_NODE_UI:uint    = 2;
+		public static const UP_SUBTREE_UI:uint = 4;
+    public static const UP_TREE_UI:uint    = 8;
+		public static const UP_STAGE_NODE_DATA:uint = 16;
 		
 		// Time delay until selecting a node on mouseover
 		protected var _mouseSelectionTimeout:uint;
@@ -116,7 +124,7 @@ package com.graphmind.display {
      * Parent node.
      * For the root it's null.
      */
-    protected var parent:NodeController = null;
+    public var parent:NodeController = null;
     
     /**
      * ArrowLinks
@@ -126,32 +134,41 @@ package com.graphmind.display {
     /**
      * Constructor.
      */ 
-		public function NodeController(nodeData:NodeData, nodeView:NodeUI = null):void {
+		public function NodeController(nodeData:NodeData, newNodeView:NodeUI = null):void {
 			super();
 			
 			this.nodeData = nodeData;
 			
-			if (nodeView == null) {
-			  nodeView = new NodeUI();
+			if (newNodeView == null) {
+			  newNodeView = new NodeUI();
 			}
 			
       // Event listeners
-      nodeView._displayComp.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
-      nodeView._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
-      nodeView._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
-      nodeView._displayComp.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
-      nodeView._displayComp.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
-      nodeView._displayComp.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
-      nodeView._displayComp.addEventListener(MouseEvent.MOUSE_MOVE,                 onMouseMove);
-      nodeView._displayComp.addEventListener(MouseEvent.MOUSE_OVER,                 onMouseOver);
-      nodeView._displayComp.addEventListener(MouseEvent.MOUSE_OUT,                  onMouseOut);
-      nodeView._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
-      nodeView._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK,          onClick_NodeLinkButton);
-      nodeView._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
+      newNodeView._displayComp.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
+      newNodeView._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
+      newNodeView._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
+      newNodeView._displayComp.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
+      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
+      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
+      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_MOVE,                 onMouseMove);
+      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_OVER,                 onMouseOver);
+      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_OUT,                  onMouseOut);
+      newNodeView._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
+      newNodeView._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK,          onClick_NodeLinkButton);
+      newNodeView._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
   
-      nodeView._displayComp.contextMenu = getContextMenu();
+      newNodeView._displayComp.contextMenu = getContextMenu();
 			
-			this.nodeView = nodeView; 
+			nodeView = newNodeView;
+			
+			nodeData.recalculateTitle(true);
+			setTitle(nodeData.title);
+			
+			nodeData.recalculateDrupalID();
+			
+			nodeView.backgroundColor = nodeData.color;
+			
+			nodes.addItem(this);
 		}
 		
 		/**
@@ -161,6 +178,7 @@ package com.graphmind.display {
     public function createSimpleNodeChild():void {
       var node:NodeController = NodeFactory.createNode({}, NodeType.NORMAL);
       addChildNode(node);
+      node.selectNode();
     }
     
 		/**
@@ -236,7 +254,7 @@ package com.graphmind.display {
 			GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = nodeView._displayComp.title_label.htmlText || nodeView._displayComp.title_label.text;
 				
 			if (!isTheSameSelected) {
-				GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = nodeData.getPath();
+				GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = nodeData.link;
 				GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
 				GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
 			}
@@ -248,6 +266,7 @@ package com.graphmind.display {
 		 * Deselect node.
 		 */
 		public function deselectNode():void {
+		  GraphMind.i.stageManager.activeNode = null;
 			_setBackgroundEffect(EFFECT_NORMAL);
 		}
 		
@@ -266,7 +285,7 @@ package com.graphmind.display {
 				'ID="'       + nodeData.id        + '" ' + 
 				'FOLDED="'   + (_isForcedCollapsed ? 'true' : 'false') + '" ' + 
 				(titleIsHTML ? '' : 'TEXT="' + escape(nodeData.title) + '" ') + 
-				(nodeData.getPath().toString().length > 0 ? ('LINK="' + escape(nodeData.getPath()) + '" ') : '') + 
+				(nodeData.link.length > 0 ? ('LINK="' + escape(nodeData.link) + '" ') : '') + 
 				'TYPE="' + nodeData.type + '" ' +
 				">\n";
 			
@@ -285,8 +304,8 @@ package com.graphmind.display {
 				output = output + '<site URL="' + escape(nodeData.source.url) + '" USERNAME="' + escape(nodeData.source.username) + '"/>' + "\n";
 			}
 			
-			for each (var icon:* in nodeData._icons) {
-				output = output + '<icon BUILTIN="' + StringUtility.iconUrlToIconName((icon as Image).source.toString()) + '"/>' + "\n";
+			for each (var iconName:* in nodeData._icons) {
+				output = output + '<icon BUILTIN="' + iconName + '"/>' + "\n";
 			}
 			
 			if (hasCloud()) {
@@ -315,7 +334,7 @@ package com.graphmind.display {
 		protected function loadViews():void {
 			selectNode();
 			GraphMind.i.currentState = 'load_view_state';
-			GraphMind.i.panelLoadView.view_arguments.text = nodeData.getDrupalID();
+			GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
 		}
 		
 		/**
@@ -358,6 +377,8 @@ package com.graphmind.display {
 			GraphMind.i.stageManager.setMindmapUpdated();
 			GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 			
+			update(UP_SUBTREE_UI);
+			
 			delete this; // :.(
 		}
 		
@@ -391,9 +412,6 @@ package com.graphmind.display {
 			// Add source to target
 			target.addChildNode(source);
 			// Refresh display
-			GraphMind.i.stageManager.setMindmapUpdated();
-			// Calling event with the value of NULL indicates that a full update is needed.
-			GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 			
 			if (callEvent) {
 				// Call hook
@@ -401,6 +419,8 @@ package com.graphmind.display {
 				GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
 			}
 			
+			source.update(UP_TREE_UI);
+
 			return true;
 		}
 		
@@ -443,15 +463,18 @@ package com.graphmind.display {
 			parent.nodeView._displayComp.icon_has_child.visible = parent._childs.length > 0;
 		}
  		
+ 		protected function onDoubleClick_icon(event:MouseEvent):void {
+ 		  removeIcon(event.currentTarget as Image);
+ 		}
+ 		
  		/**
  		 * Remove an icon.
  		 */
- 		public function onDoubleClick_icon(event:MouseEvent):void {
- 		  // @TODO put it into a removeIcon() function.
- 		  var icon:Image = event.target as Image;
- 		  var iconName:String = StringUtility.iconUrlToIconName(icon.source.toString());
- 			nodeData._icons.removeItemAt(nodeData._icons.getItemIndex(iconName));
- 			updateTime();
+ 		public function removeIcon(icon:Image):void {
+      var iconName:String = StringUtility.iconUrlToIconName(icon.source.toString());
+      nodeData._icons.removeItemAt(nodeData._icons.getItemIndex(iconName));
+      nodeView.removeIcon(icon.source.toString());
+      update(UP_TIME | UP_SUBTREE_UI);
  		}
  		
  		/**
@@ -460,7 +483,7 @@ package com.graphmind.display {
 		public function setLink(link:String):void {
 			nodeData.link = link;
 			nodeView._displayComp.icon_anchor.visible = (link.length > 0);
-			updateTime();
+			update(UP_TIME | UP_NODE_UI);
 		}
 		
 		/**
@@ -475,6 +498,7 @@ package com.graphmind.display {
 		 */
 		public function enableCloud():void {
 		  nodeData.hasCloud = true;
+		  update(UP_TIME | UP_TREE_UI);
 		}
 		
 		/**
@@ -482,26 +506,27 @@ package com.graphmind.display {
 		 */
 		public function disableCloud():void {
 		  nodeData.hasCloud = false;
+		  update(UP_TIME | UP_TREE_UI);
 		}
 		
 		/**
 		 * Refresh only the subtree and redraw the stage.
 		 */
-		public function redrawParentsClouds():void {
-			_redrawParentsClouds();
-		}
+//		public function redrawParentsClouds():void {
+//			_redrawParentsClouds();
+//		}
 		
 		/**
 		 * Force to redraw parents' clouds recursively
 		 */
-		protected function _redrawParentsClouds():void {
-			if (nodeData.hasCloud) {
-				toggleCloud();
-				toggleCloud();
-			}
-			
-			if (parent) parent._redrawParentsClouds();
-		}
+//		protected function _redrawParentsClouds():void {
+//			if (nodeData.hasCloud) {
+//				toggleCloud();
+//				toggleCloud();
+//			}
+//			
+//			if (parent) parent._redrawParentsClouds();
+//		}
 		
 		/**
 		 * Check if the subtree is collapsed.
@@ -522,14 +547,17 @@ package com.graphmind.display {
 		
 		/**
 		 * Update from Drupal request is arrived.
+		 * @param object placeholder - we're using this as a callback. The second param
+		 *  is a node (in this case the same) that has to be updated. We don't need that now.
 		 */
-		public function updateDrupalItem_result(result:Object):void {
+		public function updateDrupalItem_result(result:Object, placeholder:Object = null):void {
 			for (var key:* in result) {
 				nodeData.data[key] = result[key];
 			}
 			nodeData.recalculateTitle();
-			nodeView._displayComp.title_label.text = nodeData.title;
+			setTitle(nodeData.title);
 			selectNode();
+			update(UP_TIME | UP_NODE_UI);
 		}
 		
 		/**
@@ -551,6 +579,7 @@ package com.graphmind.display {
 		 */
 		public function addArrowLink(arrowLink:TreeArrowLink):void {
 			this._arrowLinks.addItem(arrowLink);
+			update(UP_TIME | UP_TREE_UI);
 		}
 		
 		/**
@@ -573,7 +602,7 @@ package com.graphmind.display {
 		public function setTitle(title:String):void {
 			nodeData.title = nodeView._displayComp.title_label.htmlText = title;
 			PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
-			updateTime();
+			update(UP_TIME);
 		}
 		
 		public function hasChild():Boolean {
@@ -590,9 +619,29 @@ package com.graphmind.display {
      *  - modified title
      *  - changed attributes
      *  - toggled cloud
+     * @param uint updateSet - binary flag
+     *  UP_TIME | UP_NODE_UI | UP_SUBTREE_UI | UP_TREE_UI
      */
-    public function updateTime():void {
-      nodeData.modified = (new Date()).time;
+    public function update(updateSet:uint = 0):void {
+      if (updateSet & UP_TIME) {
+        nodeData.modified = (new Date()).time;
+      }
+      
+      if (updateSet & UP_NODE_UI) {
+        nodeView.isGraphicsUpdated = true;
+        nodeView.refreshGraphics();
+      }
+      
+      if (updateSet & (UP_SUBTREE_UI | UP_TREE_UI)) {
+        nodeView.isGraphicsUpdated = true;
+        nodeView.refreshGraphics();
+        GraphMind.i.stageManager.dispatchEvent(new StageEvent(StageManager.EVENT_MINDMAP_UPDATED));
+      }
+      
+      if (updateSet & UP_STAGE_NODE_DATA) {
+        deselectNode();
+        selectNode();
+      }
     }
     
     /**
@@ -601,7 +650,7 @@ package com.graphmind.display {
     public function addData(attribute:String, value:String):void {
       nodeData.dataAdd(attribute, value);
       GraphMind.i.stageManager.setMindmapUpdated();
-      updateTime();
+      update(UP_TIME | UP_STAGE_NODE_DATA);
     }
     
     /**
@@ -609,8 +658,7 @@ package com.graphmind.display {
      */
     public function deleteData(param:String):void {
       nodeData.dataDelete(param);
-      GraphMind.i.stageManager.setMindmapUpdated();
-      updateTime();
+      update(UP_TIME | UP_STAGE_NODE_DATA);
     }
     
     /**
@@ -623,7 +671,7 @@ package com.graphmind.display {
     public function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(selectNode, 400);
       nodeView._displayComp.icon_add.visible = GraphMind.i.applicationManager.isEditable();
-      nodeView._displayComp.icon_anchor.visible = nodeData.getPath().length > 0;
+      nodeView._displayComp.icon_anchor.visible = nodeData.link.length > 0;
     }
     
     public function onMouseOut(event:MouseEvent):void {
@@ -673,7 +721,7 @@ package com.graphmind.display {
     public function onItemLoaderSelectorClick(event:MouseEvent):void {
       event.stopPropagation();
       selectNode();
-      GraphMind.i.panelLoadView.view_arguments.text = nodeData.getDrupalID();
+      GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
     }
     
     public function onClick_AddSimpleNodeButton(event:MouseEvent):void {
@@ -696,7 +744,7 @@ package com.graphmind.display {
     }
     
     public function onClick_NodeLinkButton(event:MouseEvent):void {
-      var ur:URLRequest = new URLRequest(nodeData.getPath());
+      var ur:URLRequest = new URLRequest(nodeData.link);
       navigateToURL(ur, '_blank');
     }
     
@@ -774,7 +822,7 @@ package com.graphmind.display {
     
     public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
       toggleCloud();
-      updateTime();
+      update();
     }
   
     public function onContextMenuSelected_UpdateDrupalItem(event:ContextMenuEvent):void {
@@ -783,11 +831,7 @@ package com.graphmind.display {
     
     
     public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
-      getUI().refreshGraphics();
-      // @TODO refreshing subtree is enough
-      GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
-      redrawParentsClouds();
-      GraphMind.i.stageManager.setMindmapUpdated();
+      update(UP_SUBTREE_UI);
     }
     
     public function onUpdateGraphics(event:NodeEvent):void {
@@ -830,6 +874,7 @@ package com.graphmind.display {
       nodeView._displayComp.icon_has_child.visible = true;
       
       // Not necessary to fire NODE_ATTCHED event. MOVED and CREATED covers this.
+      update(UP_SUBTREE_UI);
     }
     
     public function collapse():void {
@@ -844,8 +889,7 @@ package com.graphmind.display {
         nodeItem.nodeView.visible = false;
         nodeItem.collapseChilds();
       }
-      GraphMind.i.stageManager.setMindmapUpdated();
-      GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
+      update(UP_TIME | UP_SUBTREE_UI);
     }
     
     public function uncollapse():void {
@@ -862,8 +906,7 @@ package com.graphmind.display {
           nodeItem.uncollapseChilds(forceOpenSubtree);
         }
       }
-      GraphMind.i.stageManager.setMindmapUpdated();
-      GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
+      update(UP_TIME | UP_SUBTREE_UI);
     }
     
     public function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
@@ -895,7 +938,7 @@ package com.graphmind.display {
         icon.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick_icon);
       }
     
-      updateTime();
+      update(UP_TIME | UP_SUBTREE_UI);
     }
     
 	}

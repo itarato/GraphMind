@@ -1,11 +1,8 @@
 package com.graphmind.data {
 	
-	import com.graphmind.event.NodeEvent;
 	import com.graphmind.net.SiteConnection;
-	import com.graphmind.util.StringUtility;
 	
 	import mx.collections.ArrayCollection;
-	import mx.controls.Image;
 	
 	public class NodeData {
 		/**
@@ -40,7 +37,7 @@ package com.graphmind.data {
 		 * URL.
 		 * For Drupal items by default the object's path. Can be overwriten.
 		 */
-		public var link:String = '';
+		protected var _link:String = '';
 		
 		/**
 		 * Extra color for the node. GM has it's own colors, but with this
@@ -88,6 +85,12 @@ package com.graphmind.data {
 			this.data   = data;
 			this.source = source;
 			this.type   = type;
+			
+			// Get title from arbitrary data.
+			recalculateTitle();
+			recalculateColor();
+			recalculateLink();
+			recalculateDrupalID();
 		}
 		
 		public function get title():String {
@@ -102,30 +105,35 @@ package com.graphmind.data {
 			this._drupalID = id;
 		}
 		
-		public function getDrupalID():String {
-			if (_drupalID) return _drupalID.toString();
-			
-			return getDrupalIDFromData(type, data);
+		public function get drupalID():int {
+		  recalculateDrupalID();
+			return _drupalID;
 		}
 		
-		public function getPath():String {
-			if (link.length > 0) return link;
+		public function recalculateLink():void {
+			if (_link.length > 0) return;
 			
-			if (source && source.url && getDrupalID()) {
+			var newLink:String = '';
+			
+			if (source && source.url && drupalID) {
 				var url:String = source.url.toString().replace(/services\/amfphp/gi, '');
 				switch (type) {
-					case NodeType.NODE: return url + '/node/' + getDrupalID();
-					case NodeType.USER: return url + '/user/' + getDrupalID();
+					case NodeType.NODE: 
+					  newLink = url + '/node/' + drupalID;
+					  break;
+					case NodeType.USER: 
+					  newLink = url + '/user/' + drupalID;
 					case NodeType.COMMENT:
 						if (data.cid && data.comments_nid) {
-							return url + '/node/' + data.comments_nid + '#comment-' + data.cid;
+							newLink = url + '/node/' + data.comments_nid + '#comment-' + data.cid;
 						}
 						break;
-					case NodeType.TERM: return url + '/taxonomy/term/' + getDrupalID();
+					case NodeType.TERM: 
+            newLink = url + '/taxonomy/term/' + drupalID;
 				}
 			}
 			
-			return '';
+			_link = newLink;
 		}
 
 		public function dataDelete(param:String):void {
@@ -144,24 +152,37 @@ package com.graphmind.data {
 		
 		public function equalTo(attributes:Object, nodeType:String):Boolean {
 			// @TODO add node source site filtering
-			return nodeType == type && getDrupalIDFromData(nodeType, attributes) == getDrupalID();
+			return nodeType == type && getDrupalIDFromData(nodeType, attributes) == drupalID;
 		}
 		
-		public static function getDrupalIDFromData(type:String, data:Object):String {
+		public function recalculateDrupalID(forceRecalculate:Boolean = false):void {
+		  // It already has a good one.
+		  if (!forceRecalculate && _drupalID && _drupalID > 0) return;
+		  
+		  _drupalID = Number(getDrupalIDFromData(type, data));
+		}
+		
+		protected static function getDrupalIDFromData(type:String, data:Object):int {
+		  var idString:String;
 			switch (type) {
 				case NodeType.NODE:
-					return data.nid || data.id || data.node_id || '';
+					idString = data.nid || data.id || data.node_id || '';
+					break;
 				case NodeType.USER:
-					return data.userid || data.uid || data.id || data.users_id || '';
+					idString = data.userid || data.uid || data.id || data.users_id || '';
+					break;
 				case NodeType.COMMENT:
-					return data.cid || data.id || data.comments_id || '';
+					idString = data.cid || data.id || data.comments_id || '';
+					break;
 				case NodeType.FILE:
-					return data.fid || ''; 
+					idString = data.fid || '';
+					break; 
 				case NodeType.TERM:
-					return data.tid || '';
-				default:
-					return '';
+					idString = data.tid || '';
+					break;
 			}
+			
+			return Number(idString);
 		}
 	
 	  /**
@@ -175,7 +196,7 @@ package com.graphmind.data {
       _icons.addItem(iconName);
     }
     
-    public function getTypeColor():uint {
+    protected function getTypeColor():uint {
       if (color) {
         return color;
       }
@@ -199,8 +220,8 @@ package com.graphmind.data {
     /**
      * Recalculate title;
      */    
-    public function recalculateTitle():void {
-      if (_title && _title.length > 0) {
+    public function recalculateTitle(forcedRecalculate:Boolean = false):void {
+      if (!forcedRecalculate && _title && _title.length > 0) {
         return void;
       } else {
         switch (type) {
@@ -226,6 +247,19 @@ package com.graphmind.data {
         }
       }
        
+    }
+    
+    public function set link(value:String):void {
+      _link = value;
+    }
+    
+    public function get link():String {
+      recalculateLink();
+      return _link;
+    }
+    
+    public function recalculateColor():void {
+      color = getTypeColor();
     }
     
 	}

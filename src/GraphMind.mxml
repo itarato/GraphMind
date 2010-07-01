@@ -33,12 +33,10 @@
 			import com.graphmind.ApplicationManager;
 			
 			// 'Singleton' instance.
-			[Bindable]
-			public static var i:GraphMind;
+			[Bindable] public static var i:GraphMind;
 			
 			[Embed(source='assets/images/draganddrop.png')]
-			[Bindable]
-			private var image_dragAndDrop:Class;
+			[Bindable] private var image_dragAndDrop:Class;
 			
 			/**
 			 * Hook: fired when the application is being initialized.

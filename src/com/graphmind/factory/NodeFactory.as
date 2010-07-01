@@ -1,5 +1,6 @@
 package com.graphmind.factory {
   
+	import com.graphmind.PluginManager;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.display.NodeController;
 	import com.graphmind.net.SiteConnection;
@@ -14,9 +15,18 @@ package com.graphmind.factory {
 				nodeData.title = title;
 			}
 			
-			var node:NodeController = new NodeController(nodeData); 
+			var node:NodeController = createNodeWithNodeData(nodeData); 
 			
 			return node;
+		}
+		
+		public static function createNodeWithNodeData(nodeData:NodeData):NodeController {
+		  var node:NodeController = new NodeController(nodeData);
+		  GraphMind.i.stageManager.addNodeToStage(node);
+		  
+      // HOOK
+      PluginManager.callHook(NodeController.HOOK_NODE_CREATED, {node: node});
+		  return node;
 		}
 	
 	}

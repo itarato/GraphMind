@@ -26,7 +26,6 @@ package com.graphmind {
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
 	import mx.core.Application;
-	import mx.core.UIComponent;
 	import mx.events.ListEvent;
 	import mx.rpc.events.ResultEvent;
 	
@@ -170,11 +169,9 @@ package com.graphmind {
       if (is_valid_mm_xml) {
         // Subtree
         var importedBaseNode:NodeController = ImportManager.importMapFromString(rootNode, body);
-        addNodeToStage(importedBaseNode.getUI().getUIComponent());
         this.rootNode = importedBaseNode;
       } else {
         // New node
-        addNodeToStage(rootNode.getUI().getUIComponent());
         this.rootNode = rootNode;
       }
       
@@ -204,24 +201,13 @@ package com.graphmind {
       );
       ConnectionManager.connectToSite(sc);
     }
-        
-    /**
-     * Add new element to the editor canvas.
-     */
-    public function addNodeToStage(node:UIComponent):void {
-      structureDrawer.addUIElementToDisplayList(node);
-      setMindmapUpdated();
-      
-      // HOOK
-      PluginManager.callHook(NodeController.HOOK_NODE_CREATED, {node: node});
-    }
     
     /**
      * Event for clicking on the view load panel.
      */
     public function onClick_LoadViewsSubmitButton():void {
       loadAndAttachViewsList(
-        getActiveTreeNodeController(),
+        activeNode,
         GraphMind.i.panelLoadView.view_arguments.text,
         parseInt(GraphMind.i.panelLoadView.view_limit.text),
         parseInt(GraphMind.i.panelLoadView.view_offset.text),
@@ -270,7 +256,7 @@ package com.graphmind {
       nodeItemData.drupalID = parseInt(GraphMind.i.panelLoadDrupalItem.item_id.text);
       
       var loaderData:TempItemLoadData = new TempItemLoadData();
-      loaderData.nodeItem = getActiveTreeNodeController();
+      loaderData.nodeItem = activeNode;
       loaderData.nodeItemData = nodeItemData;
       loaderData.success = onSuccess_DrupalItemLoaded;
       
@@ -308,7 +294,8 @@ package com.graphmind {
     
     public function onSuccess_DrupalItemLoaded(result:Object, requestData:TempItemLoadData):void {
       requestData.nodeItemData.data = result;
-      var nodeItem:NodeController = new NodeController(requestData.nodeItemData);
+//      var nodeItem:NodeController = NodeFactory.createNode(
+      var nodeItem:NodeController = NodeFactory.createNodeWithNodeData(requestData.nodeItemData);
       requestData.nodeItem.addChildNode(nodeItem);
       nodeItem.selectNode();
     }
@@ -334,7 +321,7 @@ package com.graphmind {
     
     public function onClick_NodeAttributeAddOrUpdateButton():void {
       updateNodeAttribute(
-        getActiveTreeNodeController(),
+        activeNode,
         GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text,
         GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text
       );
@@ -350,7 +337,7 @@ package com.graphmind {
     }
     
     public function onClick_NodeAttributeRemoveButton():void {
-      removeNodeAttribute(getActiveTreeNodeController(), GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
+      removeNodeAttribute(activeNode, GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
     }
     
     /**
@@ -442,13 +429,13 @@ package com.graphmind {
     public function onClick_RTESaveButton():void {
       if (!isActiveNodeExists()) return;
       
-      getActiveTreeNodeController().setTitle(GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText);
+      activeNode.setTitle(GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText);
     }
     
     public function onClick_SaveNodeLink():void {
       if (!isActiveNodeExists()) return;
       
-      getActiveTreeNodeController().setLink(GraphMind.i.mindmapToolsPanel.node_info_panel.link.text);
+      activeNode.setLink(GraphMind.i.mindmapToolsPanel.node_info_panel.link.text);
     }
     
     /**
@@ -470,7 +457,7 @@ package com.graphmind {
     public function addIconToNode(icon:Image):void {
       if (!isActiveNodeExists()) return;
       
-      getActiveTreeNodeController().addIcon(icon.source.toString());
+      activeNode.addIcon(icon.source.toString());
     }
     
     public function onMouseDown_InnerMindmapStage():void {
@@ -507,7 +494,7 @@ package com.graphmind {
     public function onClick_ToggleCloudButton():void {
       if (!isActiveNodeExists()) return;
       
-      getActiveTreeNodeController().toggleCloud();
+      activeNode.toggleCloud();
     }
     
     /**
@@ -540,8 +527,8 @@ package com.graphmind {
       return structureDrawer as TreeDrawer;
     }
     
-    public function getActiveTreeNodeController():NodeController {
-      return activeNode as NodeController;
+    public function addNodeToStage(node:NodeController):void {
+      structureDrawer.addUIElementToDisplayList(node.nodeView);
     }
 
 	}

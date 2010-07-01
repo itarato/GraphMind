@@ -182,7 +182,7 @@ package com.graphmind {
 				},
 				function(error:FaultEvent):void {
 					alertErrorMessage(
-						'Item cannot loaded. Type:' + requestData.nodeItemData.type + ' Id:' + requestData.nodeItemData.getDrupalID(),
+						'Item cannot loaded. Type:' + requestData.nodeItemData.type + ' Id:' + requestData.nodeItemData.drupalID,
 						'no permission or missing object',
 						requestData.nodeItemData.source.toString(),
 						error.toString()
@@ -190,7 +190,7 @@ package com.graphmind {
 				} 
 			).send(
 				requestData.nodeItemData.source.sessionID,
-				requestData.nodeItemData.getDrupalID()
+				requestData.nodeItemData.drupalID
 			);
 		}
 		// END of load item ///////////
