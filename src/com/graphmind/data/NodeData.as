@@ -219,34 +219,35 @@ package com.graphmind.data {
 
     /**
      * Recalculate title;
-     */    
+     */
     public function recalculateTitle(forcedRecalculate:Boolean = false):void {
-      if (!forcedRecalculate && _title && _title.length > 0) {
+//      if (!forcedRecalculate && _title && _title.length > 0) {
+      if (_title && _title.length > 0 && _title != ('node #' + id)) {
         return void;
-      } else {
-        switch (type) {
-          case NodeType.NODE:
-            _title = data.title || data.node_title || '';
-            break;
-          case NodeType.USER:
-            _title = data.name  || data.users_name || '';
-            break;
-          case NodeType.COMMENT:
-            _title = data.comments_subject || data.title || data.comments_title || '';
-            break;
-          case NodeType.FILE:
-            _title = data.files_filename || data.filename || '';
-            break;
-          case NodeType.TERM:
-            _title = data.term_data_name || '';
-            break;
-        }
-        
-        if (!_title || !_title.length) {
-          _title = 'node #' + id;
-        }
       }
-       
+      
+      switch (type) {
+        case NodeType.NODE:
+          _title = data.title || data.node_title || '';
+          break;
+        case NodeType.USER:
+          _title = data.name  || data.users_name || '';
+          break;
+        case NodeType.COMMENT:
+          _title = data.comments_subject || data.title || data.comments_title || '';
+          break;
+        case NodeType.FILE:
+          _title = data.files_filename || data.filename || '';
+          break;
+        case NodeType.TERM:
+          _title = data.term_data_name || '';
+          break;
+      }
+      
+      if (!_title || !_title.length) {
+        _title = 'node #' + id;
+      }
+         
     }
     
     public function set link(value:String):void {

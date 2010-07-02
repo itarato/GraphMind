@@ -23,7 +23,7 @@ package plugins {
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
 		public static function hook_pre_init(data:Object):void {
-			GraphMind.i.stageManager.addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
+			GraphMind.i.addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
 		}
 		
 		private static function onMindmapCreationComplete(event:StageEvent):void {

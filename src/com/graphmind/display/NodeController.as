@@ -599,9 +599,18 @@ package com.graphmind.display {
 			return null;
 		}
 
-		public function setTitle(title:String):void {
+    /**
+     * Set the title of the node. For title should be called every time!
+     * 
+     * @param boolean userChange - indicates if the change was done by user interaction.
+     */
+		public function setTitle(title:String, userChange:Boolean = false):void {
 			nodeData.title = nodeView._displayComp.title_label.htmlText = title;
-			PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
+			
+			if (userChange) {
+			  PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
+			}
+			
 			update(UP_TIME);
 		}
 		
@@ -700,7 +709,7 @@ package com.graphmind.display {
       
       if (event.keyCode == Keyboard.ENTER) {
         nodeView._displayComp.currentState = '';
-        setTitle(nodeView._displayComp.title_new.text);
+        setTitle(nodeView._displayComp.title_new.text, true);
         GraphMind.i.setFocus();
         selectNode();
       } else if (event.keyCode == Keyboard.ESCAPE) {
@@ -714,7 +723,7 @@ package com.graphmind.display {
       
       // @TODO this is a duplication of the onNewTitleKeyUp() (above)
       nodeView._displayComp.currentState = '';
-      nodeData.title = nodeView._displayComp.title_label.text = nodeView._displayComp.title_new.text;
+      setTitle(nodeView._displayComp.title_new.text, true);
       GraphMind.i.setFocus();
     }
     

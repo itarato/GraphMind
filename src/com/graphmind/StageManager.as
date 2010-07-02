@@ -176,7 +176,10 @@ package com.graphmind {
       }
       
       dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, rootNode));
-      dispatchEvent(new StageEvent(StageEvent.MINDMAP_CREATION_COMPLETE));
+      // It's important to call the event on the main app.
+      // Some Plugin event listener should be registrated before the StageManager
+      // object exists.
+      GraphMind.i.dispatchEvent(new StageEvent(StageEvent.MINDMAP_CREATION_COMPLETE));
       isTreeUpdated = false;
       rootNode.selectNode();
     }   

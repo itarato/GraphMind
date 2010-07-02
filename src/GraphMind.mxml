@@ -9,6 +9,10 @@
 	
 	<!-- Main style for the stage -->
 	<mx:Style source="style/stage.css" />
+	
+	<mx:Metadata>
+	  [Event(name="mindmapCreationComplete", type="com.graphmind.event.StageEvent")]
+	</mx:Metadata>
 		
 	<mx:Script>
 		<![CDATA[
@@ -46,14 +50,12 @@
 			/**
 			 * Stage manager.
 			 */
-			[Bindable]
-			public var stageManager:StageManager;
+			[Bindable] public var stageManager:StageManager;
 			
 			/**
 			 * Application manager.
 			 */
-			[Bindable]
-			public var applicationManager:ApplicationManager;
+			[Bindable] public var applicationManager:ApplicationManager;
 			
 			/**
 			 * Callback for initialize event.
@@ -74,11 +76,12 @@
 				
 				// Init managers
 				OSD.init(OSDContainer, 300);
-				// Plugins should be the first
-				PluginManager.init();
+				
+        // Plugins should be the first
+        PluginManager.init();
 				// @HOOK
 				PluginManager.callHook(HOOK_PRE_INIT);
-				
+        
 				applicationManager = new ApplicationManager();
 				
 				stageManager = new StageManager(
