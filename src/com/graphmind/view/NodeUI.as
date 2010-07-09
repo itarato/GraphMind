@@ -71,7 +71,7 @@ package com.graphmind.view {
 			Log.debug('TreeNodeUI.initGraphics()');
 			
 			// Background component - what a surprise, huh?
-			_backgroundComp.height = HEIGHT;
+			_backgroundComp.height = getHeight();
 			_backgroundComp.setStyle('cornerRadius', '5');
 			_backgroundComp.setStyle('borderStyle', 'solid');
 			

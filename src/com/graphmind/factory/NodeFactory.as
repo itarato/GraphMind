@@ -21,7 +21,7 @@ package com.graphmind.factory {
 		}
 		
 		public static function createNodeWithNodeData(nodeData:NodeData):NodeController {
-		  var node:NodeController = new NodeController(nodeData);
+		  var node:NodeController = new (GraphMind.i.workflowComposite.getNodeControllerClass() as Class)(nodeData);
 		  GraphMind.i.stageManager.addNodeToStage(node);
 		  
       // HOOK

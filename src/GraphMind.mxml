@@ -16,8 +16,10 @@
 		
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.TreeWorkflow;
+		  import com.graphmind.FuturesWheelWorkflow;
+		  import com.graphmind.IWorkflowComposite;
 		  import com.graphmind.display.NodeController;
-		  import com.graphmind.view.FuturesWheelManager;
 		  import com.graphmind.view.FuturesWheelDrawer;
 			import com.graphmind.StageManager;
 			import com.graphmind.view.NodeUI;
@@ -39,9 +41,6 @@
 			// 'Singleton' instance.
 			[Bindable] public static var i:GraphMind;
 			
-			[Embed(source='assets/images/draganddrop.png')]
-			[Bindable] private var image_dragAndDrop:Class;
-			
 			/**
 			 * Hook: fired when the application is being initialized.
 			 */
@@ -56,6 +55,14 @@
 			 * Application manager.
 			 */
 			[Bindable] public var applicationManager:ApplicationManager;
+			
+			/**
+			 * Workflow manager - kinda factory for different composites.
+			 * For example:
+			 *  - tree composite creates tree nodes and tree structure...
+			 *  - futures wheel composite creates f.w. related objects
+			 */
+			public var workflowComposite:IWorkflowComposite; 
 			
 			/**
 			 * Callback for initialize event.
@@ -77,6 +84,16 @@
 				// Init managers
 				OSD.init(OSDContainer, 300);
 				
+				if (Application.application.parameters.hasOwnProperty('workflow')) {
+				  if (Application.application.parameters['workflow'] == 'futures_wheel') {
+            workflowComposite = new FuturesWheelWorkflow();
+          }
+				}
+			
+				if (workflowComposite == null) {
+          workflowComposite = new TreeWorkflow();
+        }
+				
         // Plugins should be the first
         PluginManager.init();
 				// @HOOK
@@ -84,14 +101,7 @@
         
 				applicationManager = new ApplicationManager();
 				
-				stageManager = new StageManager(
-          new TreeDrawer(
-            mindmapCanvas.desktop,
-            mindmapCanvas.desktop_cloud,
-            mindmapCanvas.desktop,
-            mindmapCanvas.desktop_overlay
-          )
-				);
+        stageManager = workflowComposite.createStageManager();
 				
 				OSD.show('Graphmind started.');
 			}
@@ -133,9 +143,6 @@
 	-->
 	<!-- END Debug textarea -->
 
-	<!-- Image for imitating drag-and-drop -->
-	<mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="{GraphMind.i.stageManager.onMouseUp_DragAndDropImage();}"/>
-	
 	<!-- Main mindmap area -->
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>

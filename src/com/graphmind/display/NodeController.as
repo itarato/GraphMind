@@ -140,7 +140,7 @@ package com.graphmind.display {
 			this.nodeData = nodeData;
 			
 			if (newNodeView == null) {
-			  newNodeView = new NodeUI();
+			  newNodeView = GraphMind.i.workflowComposite.createNodeUI();
 			}
 			
       // Event listeners
@@ -308,6 +308,10 @@ package com.graphmind.display {
 				output = output + '<icon BUILTIN="' + iconName + '"/>' + "\n";
 			}
 			
+			for each (var arrowLink:TreeArrowLink in _arrowLinks) {
+			  output = output + '<arrowlink DESTINATION="' + arrowLink.destinationNode.nodeData.id + '"/>' + "\n";
+			}
+			
 			if (hasCloud()) {
 				output = output + '<cloud/>' + "\n";
 			}
@@ -365,6 +369,14 @@ package com.graphmind.display {
 				// Check parent's toggle-subtree button. With no child it should be hidden.
 				parent.nodeView._displayComp.icon_has_child.visible = parent._childs.length > 0;
 			}
+
+      // Remove arrow links.			
+      for each (var arrowLink:TreeArrowLink in TreeArrowLink.arrowLinks) {
+        if (arrowLink.destinationNode == this || arrowLink.sourceNode == this) {
+          arrowLink.sourceNode.removeArrowLink(arrowLink);
+        }
+      }
+			
 			// Remove main UI element.
 			nodeView._displayComp.parent.removeChild(nodeView._displayComp);
 			// Remove the whole UI.
@@ -429,7 +441,7 @@ package com.graphmind.display {
 		 */
 		public static function moveToPrevSibling(source:NodeController, target:NodeController):void {
 			if (move(source, target.parent, false)) {
-				var siblingIDX:int = target.parent._childs.getItemIndex(target);
+				var siblingIDX:int = target.parent._childs.getItemIndex(target) + 1;
 				if (siblingIDX == -1) {
 					return;
 				}
@@ -448,7 +460,33 @@ package com.graphmind.display {
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
 				GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
 			}
-		}
+		}    
+		
+    /**
+     * Move a node to a next sibling.
+     */
+    public static function moveToNextSibling(source:NodeController, target:NodeController):void {
+      if (move(source, target.parent, false)) {
+        var siblingIDX:int = target.parent._childs.getItemIndex(target);
+        if (siblingIDX == -1) {
+          return;
+        }
+        
+        for (var i:int = target.parent._childs.length - 1; i > siblingIDX; i--) {
+          target.parent._childs[i] = target.parent._childs[i - 1];
+        }
+        
+        target.parent._childs.setItemAt(source, siblingIDX);
+        
+        // Refresh after reordering
+        GraphMind.i.stageManager.setMindmapUpdated();
+        GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+        
+        // Call hook
+        PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
+        GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+      }
+    }
 		
 		/**
 		 * Remove this node from it's parent's child collection.
@@ -580,6 +618,9 @@ package com.graphmind.display {
 		public function addArrowLink(arrowLink:TreeArrowLink):void {
 			this._arrowLinks.addItem(arrowLink);
 			update(UP_TIME | UP_TREE_UI);
+			
+			arrowLink.doubleClickEnabled = true;
+			arrowLink.addEventListener(MouseEvent.MOUSE_OVER, onDoubleClick_arrowLink);
 		}
 		
 		/**
@@ -847,6 +888,11 @@ package com.graphmind.display {
       //redrawMindmapStage();
       GraphMind.i.stageManager.structureDrawer.refreshGraphics();
     }
+    
+    public function onDoubleClick_arrowLink(event:MouseEvent):void {
+      //removeArrowLink();
+      trace(event);
+    }
         
     public function getChildNodeAll():ArrayCollection {
       return _childs;
@@ -948,6 +994,11 @@ package com.graphmind.display {
       }
     
       update(UP_TIME | UP_SUBTREE_UI);
+    }
+    
+    public function removeArrowLink(arrowLink:TreeArrowLink):void {
+      TreeArrowLink.arrowLinks.removeItemAt(TreeArrowLink.arrowLinks.getItemIndex(arrowLink));
+      _arrowLinks.removeItemAt(_arrowLinks.getItemIndex(arrowLink));
     }
     
 	}

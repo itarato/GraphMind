@@ -10,7 +10,7 @@ package com.graphmind {
 	
 	public class ImportManager {
 		
-		public static function importMapFromString(baseNode:NodeController, stringData:String):NodeController {
+		public static function importMapFromString(stringData:String):NodeController {
 			var xmlData:XML = new XML(stringData);
 			
 			var postProcessObject:Object = new Object();

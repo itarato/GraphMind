@@ -1,8 +1,11 @@
 package com.graphmind.display {
 	
-	import mx.core.UIComponent;
+	import mx.collections.ArrayCollection;
+	import mx.containers.Canvas;
 	
-	public class TreeArrowLink extends UIComponent {
+	public class TreeArrowLink extends Canvas {
+	
+	  public static var arrowLinks:ArrayCollection = new ArrayCollection();
 	
 		public var sourceNode:NodeController;
 		public var destinationNode:NodeController;
@@ -13,6 +16,7 @@ package com.graphmind.display {
 			this.sourceNode = node;
 			this._destinationID = destinationID;
 			node.addArrowLink(this);
+			arrowLinks.addItem(this);
 		}
 		
 		public function findTargetNode():Boolean {

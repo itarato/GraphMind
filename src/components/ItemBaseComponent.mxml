@@ -2,7 +2,9 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
 	width="168" height="20"
 	fontWeight="normal" 
-	xmlns:assets="com.graphmind.display.assets.*">
+	xmlns:assets="com.graphmind.display.assets.*"
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off">
 	
 	<mx:Script>
 		<![CDATA[
@@ -51,7 +53,8 @@
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
 	<mx:Image source="{image_insertLeft}" x="{NodeUI.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
-	<mx:Label x="2" y="1" text="Label" width="{NodeUI.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"/>
+	<mx:Text x="2" y="1" text="Label" width="{NodeUI.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"
+	  selectable="false"/>
 	
 	<mx:Image x="{NodeUI.ICON_ADD_DEFAULT_X}" y="2" 
 		source="{image_add}" 

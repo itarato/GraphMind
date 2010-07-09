@@ -110,6 +110,13 @@ package com.graphmind {
       var cm:ContextMenu = new ContextMenu();
       cm.hideBuiltInItems();
       MovieClip(GraphMind.i.systemManager).contextMenu = cm;
+      
+      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop));
+      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink));
+      GraphMind.i.mindmapCanvas.desktop_wrapper.swapChildrenAt(
+        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop),
+        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink)
+      );
 		}
 
     /**
@@ -148,15 +155,6 @@ package com.graphmind {
     protected function onSuccess_BaseNodeLoaded(result:ResultEvent):void {
       GraphMind.i.applicationManager.setEditMode(result.result.graphmindEditable == '1');
       
-      // ! Removed original data object: result.result.
-      // This caused a mailformed export string.
-      var rootNode:NodeController = NodeFactory.createNode(
-        {},
-        NodeType.NODE,
-        SiteConnection.getBaseSiteConnection(),
-        result.result.title
-      );
-      
       // @WTF sometimes body_value is the right value, sometimes not
       var is_valid_mm_xml:Boolean = false;
       var body:String = result.result.body.toString();
@@ -168,11 +166,18 @@ package com.graphmind {
         
       if (is_valid_mm_xml) {
         // Subtree
-        var importedBaseNode:NodeController = ImportManager.importMapFromString(rootNode, body);
-        this.rootNode = importedBaseNode;
+        var importedBaseNode:NodeController = ImportManager.importMapFromString(body);
+        rootNode = importedBaseNode;
       } else {
         // New node
-        this.rootNode = rootNode;
+        // ! Removed original data object: result.result.
+        // This caused a mailformed export string.
+        rootNode = NodeFactory.createNode(
+          {},
+          NodeType.NODE,
+          SiteConnection.getBaseSiteConnection(),
+          result.result.title
+        );
       }
       
       dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, rootNode));
@@ -377,9 +382,9 @@ package com.graphmind {
     }
     
     public function onMouseUp_DragAndDropImage():void {
-      GraphMind.i.dragAndDrop_shape.visible = false;
-      GraphMind.i.dragAndDrop_shape.x = -GraphMind.i.dragAndDrop_shape.width;
-      GraphMind.i.dragAndDrop_shape.y = -GraphMind.i.dragAndDrop_shape.height;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.visible = false;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.x = -100;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.y = -100;
     }
     
     public function prepaireDragAndDrop():void {
@@ -390,10 +395,10 @@ package com.graphmind {
       NodeController.isPrepairedNodeDragAndDrop = false;
       NodeController.isNodeDragAndDrop = true;
       NodeController.dragAndDrop_sourceNode = source;
-      GraphMind.i.dragAndDrop_shape.visible = true;
-      GraphMind.i.dragAndDrop_shape.x = GraphMind.i.mouseX - GraphMind.i.dragAndDrop_shape.width / 2;
-      GraphMind.i.dragAndDrop_shape.y = GraphMind.i.mouseY - GraphMind.i.dragAndDrop_shape.height / 2;
-      GraphMind.i.dragAndDrop_shape.startDrag(false);
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.visible = true;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.x = GraphMind.i.mindmapCanvas.desktop.mouseX - GraphMind.i.mindmapCanvas.dragAndDrop_shape.width / 2;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.y = GraphMind.i.mindmapCanvas.desktop.mouseY - GraphMind.i.mindmapCanvas.dragAndDrop_shape.height / 2;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.startDrag(false);
     }
     
     public function onMouseUp_MindmapStage():void {
@@ -415,10 +420,10 @@ package com.graphmind {
     /**
      * Finishes drag and drop session for a node.
      */
-    protected function closeNodeDragAndDrop():void {
+    public function closeNodeDragAndDrop():void {
       NodeController.isNodeDragAndDrop = false;
       NodeController.isPrepairedNodeDragAndDrop = false;
-      GraphMind.i.dragAndDrop_shape.visible = false;
+      GraphMind.i.mindmapCanvas.dragAndDrop_shape.visible = false;
       NodeController.dragAndDrop_sourceNode = null;
     }
     

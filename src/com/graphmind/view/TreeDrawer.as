@@ -1,6 +1,5 @@
 package com.graphmind.view {
 	
-	import com.graphmind.PluginManager;
 	import com.graphmind.StageManager;
 	import com.graphmind.display.ICloud;
 	import com.graphmind.display.ITreeItem;
@@ -20,12 +19,12 @@ package com.graphmind.view {
 		public static const MARGIN_BOTTOM:int = 4;
 		public static const MARGIN_RIGHT:int = 34;
 		
-		private var _cloudDrawer:CloudDrawer;
-		private var _connectionDrawer:TreeConnectionDrawer;
-		private var _arrowLinkContainer:TreeArrowLinkUI;
+		protected var _cloudDrawer:CloudDrawer;
+		protected var _connectionDrawer:TreeConnectionDrawer;
+		protected var _arrowLinkContainer:TreeArrowLinkUI;
 		
 		// Mindmap stage redraw timer - performance reason
-		private var _timer:uint;
+		protected var _timer:uint;
 //		private var _isRootNodeSet:Boolean = false;
 		
 		public function TreeDrawer (
@@ -37,7 +36,9 @@ package com.graphmind.view {
 			super(target);
 			_cloudDrawer        = new CloudDrawer(cloudContainer);
 			_connectionDrawer   = new TreeConnectionDrawer(connectionContainer);
-			_arrowLinkContainer = new TreeArrowLinkUI(arrowLinkContainer);
+			_arrowLinkContainer = GraphMind.i.workflowComposite.createArrowLinkDrawer(arrowLinkContainer);
+			
+			initGraphics();
 		}
 		
 		public override function initGraphics():void {
