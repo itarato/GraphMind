@@ -72,6 +72,7 @@ package com.graphmind {
 			if (arrowLinkXMLList.length() > 0) {
 				for each (var arrowLinkXML:Object in arrowLinkXMLList) {
 					var arrowLink:TreeArrowLink = new TreeArrowLink(node, arrowLinkXML.@DESTINATION.toString());
+					node.addArrowLink(arrowLink);
 					(postProcessObject.arrowLinks as Array).push(arrowLink);
 				}
 			}

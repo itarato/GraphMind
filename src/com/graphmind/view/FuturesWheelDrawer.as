@@ -4,6 +4,7 @@ package com.graphmind.view {
   import com.graphmind.display.ICloud;
   import com.graphmind.display.ITreeItem;
   import com.graphmind.display.NodeController;
+  import com.graphmind.display.TreeArrowLink;
   import com.graphmind.util.Log;
   
   import flash.geom.Point;
@@ -60,6 +61,7 @@ package com.graphmind.view {
         _redrawFuturesWheenNode(GraphMind.i.stageManager.rootNode, postProcessObjects);
         
         _redrawArrowLinks(postProcessObjects.arrowLinks);
+        _recheckArrowLinkVisibility();
       }, 10);
     }
     
@@ -154,6 +156,12 @@ package com.graphmind.view {
         target.graphics.beginFill(0xFFFFFF);
         target.graphics.drawCircle(center.x, center.y, i * FUTURE_WHEEL_CIRCLE_SLICE_HEIGHT - thickness);
         target.graphics.endFill();
+      }
+    }
+    
+    protected function _recheckArrowLinkVisibility():void {
+      for each (var arrowLink:TreeArrowLink in TreeArrowLink.arrowLinks) {
+        arrowLink.visible = !arrowLink.sourceNode.parent.isCollapsed() && !arrowLink.destinationNode.parent.isCollapsed();
       }
     }
     

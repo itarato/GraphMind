@@ -78,7 +78,8 @@
 			 * Triggered event when the application is ready.
 			 */
 			private function onApplicationComplete():void {
-				//var md:MonsterDebugger = new MonsterDebugger(this);
+//				var md:MonsterDebugger = new MonsterDebugger(this);
+				
 				Log.debug('Grapmind started.');
 				
 				// Init managers
