@@ -31,7 +31,7 @@ package com.graphmind.data {
 		 * 'Unique' string ID for nodes: ID_#.
 		 * @TODO making it really unique.
 		 */
-		public var id:String = 'ID_' + String(NodeData.id++);
+		private var _id:String = 'ID_' + String(NodeData.id++);
 		
 		/**
 		 * URL.
@@ -261,6 +261,23 @@ package com.graphmind.data {
     
     public function recalculateColor():void {
       color = getTypeColor();
+    }
+    
+    public function set id(id:String):void {
+      //trace('num?');
+      if (id.match(/\d+/gi)) {
+        var num:int = Number(id.replace(/[^\d]/gi, ''));
+        //trace('Num: ' + num);
+        if (num >= NodeData.id) {
+          NodeData.id = num + 1;
+        }
+      }
+      
+      _id = id;
+    }
+    
+    public function get id():String {
+      return _id;
     }
     
 	}

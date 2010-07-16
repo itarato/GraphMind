@@ -161,7 +161,9 @@ package com.graphmind.view {
     
     protected function _recheckArrowLinkVisibility():void {
       for each (var arrowLink:TreeArrowLink in TreeArrowLink.arrowLinks) {
-        arrowLink.visible = !arrowLink.sourceNode.parent.isCollapsed() && !arrowLink.destinationNode.parent.isCollapsed();
+        arrowLink.visible = 
+          (!arrowLink.sourceNode.parent || !arrowLink.sourceNode.parent.isCollapsed()) && 
+          (!arrowLink.destinationNode.parent || !arrowLink.destinationNode.parent.isCollapsed());
       }
     }
     

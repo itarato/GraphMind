@@ -111,12 +111,12 @@ package com.graphmind {
       cm.hideBuiltInItems();
       MovieClip(GraphMind.i.systemManager).contextMenu = cm;
       
-      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop));
-      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink));
-      GraphMind.i.mindmapCanvas.desktop_wrapper.swapChildrenAt(
-        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop),
-        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink)
-      );
+//      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop));
+//      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink));
+//      GraphMind.i.mindmapCanvas.desktop_wrapper.swapChildrenAt(
+//        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop),
+//        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink)
+//      );
 		}
 
     /**

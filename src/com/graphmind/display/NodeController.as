@@ -620,7 +620,7 @@ package com.graphmind.display {
 			update(UP_TIME | UP_TREE_UI);
 			
 			arrowLink.doubleClickEnabled = true;
-			arrowLink.addEventListener(MouseEvent.MOUSE_OVER, onDoubleClick_arrowLink);
+			arrowLink.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick_arrowLink);
 		}
 		
 		/**
@@ -890,7 +890,7 @@ package com.graphmind.display {
     }
     
     public function onDoubleClick_arrowLink(event:MouseEvent):void {
-      //removeArrowLink();
+      removeArrowLink(event.target as TreeArrowLink);
       trace(event);
     }
         
