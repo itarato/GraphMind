@@ -1,5 +1,6 @@
 package com.graphmind.display {
   import com.graphmind.data.NodeData;
+  import com.graphmind.util.Log;
   import com.graphmind.view.FuturesWheelNodeUI;
   import com.graphmind.view.NodeUI;
   
@@ -118,8 +119,13 @@ package com.graphmind.display {
     }
     
     public override function removeArrowLink(arrowLink:TreeArrowLink):void {
-      arrowLink.parent.removeChild(arrowLink);
-      _arrowLinks.removeItemAt(_arrowLinks.getItemIndex(arrowLink));
+      try {
+        _arrowLinks.removeItemAt(_arrowLinks.getItemIndex(arrowLink));
+        TreeArrowLink.arrowLinks.removeItemAt(TreeArrowLink.arrowLinks.getItemIndex(arrowLink));
+        arrowLink.parent.removeChild(arrowLink);
+      } catch (e:Error) {
+        Log.error('Link removal is failed.');
+      }
     }
     
   }
