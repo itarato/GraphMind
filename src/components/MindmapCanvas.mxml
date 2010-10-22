@@ -45,9 +45,7 @@
     <mx:Canvas id="desktop_arrowlink" 
       width="{StageManager.DEFAULT_DESKTOP_WIDTH}" 
       height="{StageManager.DEFAULT_DESKTOP_HEIGHT}" 
-      focusEnabled="true"
-      scaleX="{desktopScaleHSlider.value/100}"
-      scaleY="{desktopScaleHSlider.value/100}"/>
+      focusEnabled="true"/>
 			</mx:Canvas>
 	</mx:Canvas>
 	<!-- END mindmap editor -->

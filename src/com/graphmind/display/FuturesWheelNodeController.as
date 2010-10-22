@@ -128,6 +128,10 @@ package com.graphmind.display {
       }
     }
     
+    public override function toString():String {
+      return '[FuturesWheelNodeController: ' + this.nodeData.id + ' - ' + getUI().x + ',' + getUI().y + ']';
+    }
+    
   }
   
 }

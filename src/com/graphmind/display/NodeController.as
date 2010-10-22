@@ -660,7 +660,7 @@ package com.graphmind.display {
 		}
     
     public override function toString():String {
-      return '[TreeNodeController: ' + this.nodeData.id + ']';
+      return '[NodeController: ' + this.nodeData.id + ']';
     }
 		
     /**
