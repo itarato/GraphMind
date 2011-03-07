@@ -232,5 +232,19 @@ package com.graphmind {
 			, OSD.ERROR);
 		}
 		
+		
+		public static function loadFeatures(sc:SiteConnection, callback:Function, nid:uint):void {
+		  RPCServiceHelper.createRPC(
+		    'graphmind', 
+		    'getFeatures',
+		    'amfphp',
+		    sc.url,
+		    callback,
+		    function(error:FaultEvent):void {
+		      alertErrorMessage('Cannot load features.', 'network error', sc.toString(), error.toString());
+		    }
+		  ).send(sc.sessionID, nid);
+		}
+		
 	}
 }

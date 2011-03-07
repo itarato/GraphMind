@@ -43,6 +43,10 @@ package com.graphmind
 		public var lastSaved:Number = new Date().time;
 		
 		/**
+		 */
+		public var features:Array;
+		
+		/**
 		 * Constructor.
 		 */
 		public function ApplicationManager() {
@@ -85,11 +89,23 @@ package com.graphmind
 			baseSiteConnection.username  = result.result.user.name;
 			
 			// Get all the available views
-			ConnectionManager.getViews(baseSiteConnection, _init_GM_stage_views_loaded);
+			// @todo Loading views is a feature. So it has to be added later.
+			// ConnectionManager.getViews(baseSiteConnection, _init_GM_stage_views_loaded);
+			ConnectionManager.loadFeatures(baseSiteConnection, _init_GM_stage_features_loaded, this.getHostNodeID());
 		}
 		
+		
+		protected function _init_GM_stage_features_loaded(result:ResultEvent):void {
+		  OSD.show('Features are loaded');
+		  this.features = result.result as Array;
+      
+      // Load base node
+      dispatchEvent(new Event(APPLICATION_DATA_COMPLETE));
+		}
+		
+		
 		/**
-		 * Init stage 3
+		 * Init stage 4
 		 * Base site's views are loaded already
 		 */
 		protected function _init_GM_stage_views_loaded(result:ResultEvent):void {
@@ -97,9 +113,6 @@ package com.graphmind
       for each (var data:Object in result.result) {
         new ViewsCollection(data, baseSiteConnection);
       }
-			
-			// Load base node
-			dispatchEvent(new Event(APPLICATION_DATA_COMPLETE));
 		}
 		
 		/**
