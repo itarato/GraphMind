@@ -1,11 +1,11 @@
-package com.graphmind
-{
+package com.graphmind {
+  
 	import com.graphmind.data.ViewsCollection;
+	import com.graphmind.event.ApplicationEvent;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
 	import mx.core.Application;
@@ -13,14 +13,15 @@ package com.graphmind
 	
 	import plugins.*;
 	
-	[Event(name="applicationDataComplete", type="ApplicationManager")]
+	/**
+	 * Emitted events.
+	 */
+	[Event(name="applicationDataComplete", type="com.graphmind.event.ApplicationEvent")]
 	public class ApplicationManager extends EventDispatcher {
 	  
-	  /**
-	   * Event: triggered when application loaded the basic data.
-	   */
-	  public static var APPLICATION_DATA_COMPLETE:String = 'applicationDataComplete';
-		
+		/**
+		 * Logging mode is enabled or not.
+		 */
 		public static var LOG_MODE:Boolean = true;
 		
 		/** 
@@ -43,6 +44,7 @@ package com.graphmind
 		public var lastSaved:Number = new Date().time;
 		
 		/**
+		 * Feature array.
 		 */
 		public var features:Array;
 		
@@ -50,10 +52,12 @@ package com.graphmind
 		 * Constructor.
 		 */
 		public function ApplicationManager() {
+		  // Establish connection to the Drupal site.
       baseSiteConnection = SiteConnection.createSiteConnection(getBaseDrupalURL());
-      
       ConnectionManager.connectToDrupal(baseSiteConnection.url, _init_GM_stage_connected);
       
+      // Edit mode has to be false by default.
+      // Editing privileges have to be arrived from the backend with the user object.
       setEditMode(false);
 		}
 			
@@ -62,7 +66,7 @@ package com.graphmind
 		 */
 		protected function getBaseDrupalURL():String {
 			Log.info('Host url: ' + Application.application.parameters.basePath);
-			return Application.application.parameters.basePath || 'http://localhost/drupal_services/?q=services/amfphp';
+			return Application.application.parameters.basePath;
 		}
 		
 		/**
@@ -70,14 +74,14 @@ package com.graphmind
 		 */
 		public function getHostNodeID():int {
 			Log.info("Host nid: " + Application.application.parameters.nid);
-			return Application.application.parameters.nid || 184;
+			return Application.application.parameters.nid;
 		}
 		
 		/**
 		 * URL for the icons.
 		 */
 		public function getIconPath():String {
-			return Application.application.parameters.iconDir || 'http://localhost/drupal_services/sites/default/modules/graphmind_service/graphmind/icons/';
+			return Application.application.parameters.iconDir;
 		}
 
 		/**
@@ -100,7 +104,7 @@ package com.graphmind
 		  this.features = result.result as Array;
       
       // Load base node
-      dispatchEvent(new Event(APPLICATION_DATA_COMPLETE));
+      dispatchEvent(new ApplicationEvent(ApplicationEvent.APPLICATION_DATA_COMPLETE));
 		}
 		
 		
@@ -114,6 +118,7 @@ package com.graphmind
         new ViewsCollection(data, baseSiteConnection);
       }
 		}
+
 		
 		/**
 		 * Save event is done.
@@ -129,9 +134,11 @@ package com.graphmind
 			}
 		}
 
+
 		public function isEditable():Boolean {
 			return _isEditable;
 		}
+		
 		
 		public function setEditMode(editable:Boolean):void {
 			_isEditable = editable;
@@ -140,6 +147,14 @@ package com.graphmind
 			} else {
 				GraphMind.i.currentState = '';
 			}
+		}
+		
+		
+		/**
+		 * Checks is the map is connected to a site.
+		 */
+		public function isBaseConnectionLive():Boolean {
+		  return true;
 		}
 
 	}

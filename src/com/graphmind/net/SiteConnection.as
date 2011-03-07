@@ -16,6 +16,8 @@ package com.graphmind.net
 		private var _sessionID:String;
 		private var _id:int;
 		
+		public var isConnected:Boolean = false;
+		
 		public function SiteConnection(url:String = '', username:String = '', password:String = '') {
 			connections.addItem(this);
 			this._id = ++__id;

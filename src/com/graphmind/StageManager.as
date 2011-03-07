@@ -5,6 +5,7 @@ package com.graphmind {
 	import com.graphmind.data.ViewsCollection;
 	import com.graphmind.data.ViewsServicesParamsVO;
 	import com.graphmind.display.NodeController;
+	import com.graphmind.event.ApplicationEvent;
 	import com.graphmind.event.NodeEvent;
 	import com.graphmind.event.StageEvent;
 	import com.graphmind.factory.NodeFactory;
@@ -98,7 +99,7 @@ package com.graphmind {
 		  // Event listener - the stage UI is updated
 			addEventListener(EVENT_MINDMAP_UPDATED, onMindmapUpdated);
 			// Event listener - application ready to load the base node
-			GraphMind.i.applicationManager.addEventListener(ApplicationManager.APPLICATION_DATA_COMPLETE, onApplicationDataComplete);
+			GraphMind.i.applicationManager.addEventListener(ApplicationEvent.APPLICATION_DATA_COMPLETE, onApplicationDataComplete);
       
       // Scroll mindmap canvas to center
       GraphMind.i.mindmapCanvas.desktop_wrapper.verticalScrollPosition = (GraphMind.i.mindmapCanvas.desktop.height - GraphMind.i.mindmapCanvas.desktop_wrapper.height) / 2;
