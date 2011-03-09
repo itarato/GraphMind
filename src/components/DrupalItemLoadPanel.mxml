@@ -7,6 +7,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.MapController;
 			import com.graphmind.net.SiteConnection;
 			import com.graphmind.net.UniqueItemLoader;
 		]]>
@@ -27,10 +28,10 @@
 		</mx:FormItem>
 		<mx:ControlBar>
 			<mx:Button label="Submit" 
-				click="{GraphMind.i.stageManager.onClick_LoadItemSubmit();}"
+				click="{MapController.i.onClick_LoadItemSubmit();}"
 				icon="@Embed(source='assets/images/accept.png')"/>
 			<mx:Button label="Cancel" 
-				click="{GraphMind.i.stageManager.onClick_LoadItemCancel();}"
+				click="{MapController.i.onClick_LoadItemCancel();}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>

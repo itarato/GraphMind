@@ -1,12 +1,12 @@
 package com.graphmind.display {
 	
-	import com.graphmind.ConnectionManager;
+	import com.graphmind.ApplicationController;
+	import com.graphmind.MapController;
 	import com.graphmind.PluginManager;
-	import com.graphmind.StageManager;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.NodeType;
+	import com.graphmind.event.MapEvent;
 	import com.graphmind.event.NodeEvent;
-	import com.graphmind.event.StageEvent;
 	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
@@ -140,7 +140,7 @@ package com.graphmind.display {
 			this.nodeData = nodeData;
 			
 			if (newNodeView == null) {
-			  newNodeView = GraphMind.i.workflowComposite.createNodeUI();
+			  newNodeView = ApplicationController.i.workflowComposite.createNodeUI();
 			}
 			
       // Event listeners
@@ -224,7 +224,8 @@ package com.graphmind.display {
      * @return Boolean
      */
     public function isSelected():Boolean {
-      return GraphMind.i.stageManager.activeNode == this;
+      // @todo rethink - too many levels
+      return MapController.i.activeNode == this;
     }
 		
 		/**
@@ -239,13 +240,14 @@ package com.graphmind.display {
 			if (!isTheSameSelected) nodeView.setFocus();
 			
 			// @TODO mystery bug steal highlight somethimes from nodes
-			if (GraphMind.i.stageManager.activeNode) {
-				GraphMind.i.stageManager.activeNode.deselectNode();
+			// @todo rethink too many levels
+			if (MapController.i.activeNode) {
+				MapController.i.activeNode.deselectNode();
 			}
-			GraphMind.i.stageManager.activeNode = this;
-			GraphMind.i.stageManager.selectedNodeData = new ArrayCollection();
+			MapController.i.activeNode = this;
+			MapController.i.selectedNodeData = new ArrayCollection();
 			for (var key:* in nodeData.data) {
-				GraphMind.i.stageManager.selectedNodeData.addItem({
+				MapController.i.selectedNodeData.addItem({
 					key: key,
 					value: nodeData.data[key]
 				});
@@ -266,7 +268,7 @@ package com.graphmind.display {
 		 * Deselect node.
 		 */
 		public function deselectNode():void {
-		  GraphMind.i.stageManager.activeNode = null;
+		  MapController.i.activeNode = null;
 			_setBackgroundEffect(EFFECT_NORMAL);
 		}
 		
@@ -301,7 +303,8 @@ package com.graphmind.display {
 			}
 			
 			if (nodeData.source) {
-				output = output + '<site URL="' + escape(nodeData.source.url) + '" USERNAME="' + escape(nodeData.source.username) + '"/>' + "\n";
+//				output = output + '<site URL="' + escape(nodeData.source.target) + '" USERNAME="' + escape(nodeData.source.username) + '"/>' + "\n";
+        output = output + '<site URL="' + escape(nodeData.source.target) + '" />' + "\n";
 			}
 			
 			for each (var iconName:* in nodeData._icons) {
@@ -355,7 +358,7 @@ package com.graphmind.display {
 		 */
 		public function kill(killedDirectly:Boolean = true):void {
 		  // Root can't be deleted.
-			if (GraphMind.i.stageManager.rootNode === this) return;
+			if (MapController.i.rootNode === this) return;
 			
 			// @HOOK
 			PluginManager.callHook(HOOK_NODE_DELETE, {node: this, directKill: killedDirectly});
@@ -386,8 +389,8 @@ package com.graphmind.display {
 			nodes.removeItemAt(nodes.getItemIndex(this));
 			
 			// Update tree.
-			GraphMind.i.stageManager.setMindmapUpdated();
-			GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+			MapController.i.setMindmapUpdated();
+			MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 			
 			update(UP_SUBTREE_UI);
 			
@@ -428,7 +431,7 @@ package com.graphmind.display {
 			if (callEvent) {
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-				GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+				MapController.i.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
 			}
 			
 			source.update(UP_TREE_UI);
@@ -453,12 +456,12 @@ package com.graphmind.display {
 				target.parent._childs.setItemAt(source, siblingIDX);
 				
 				// Refresh after reordering
-				GraphMind.i.stageManager.setMindmapUpdated();
-				GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+				MapController.i.setMindmapUpdated();
+				MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
 				
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-				GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+				MapController.i.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
 			}
 		}    
 		
@@ -479,12 +482,12 @@ package com.graphmind.display {
         target.parent._childs.setItemAt(source, siblingIDX);
         
         // Refresh after reordering
-        GraphMind.i.stageManager.setMindmapUpdated();
-        GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+        MapController.i.setMindmapUpdated();
+        MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
         
         // Call hook
         PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-        GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+        MapController.i.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
       }
     }
 		
@@ -580,7 +583,8 @@ package com.graphmind.display {
 			var tild:TempItemLoadData = new TempItemLoadData();
 			tild.nodeItemData = nodeData;
 			tild.success = updateDrupalItem_result;
-			ConnectionManager.itemLoad(tild);
+			// @todo implement
+//			ConnectionManager.itemLoad(tild);
 		}
 		
 		/**
@@ -685,7 +689,7 @@ package com.graphmind.display {
       if (updateSet & (UP_SUBTREE_UI | UP_TREE_UI)) {
         nodeView.isGraphicsUpdated = true;
         nodeView.refreshGraphics();
-        GraphMind.i.stageManager.dispatchEvent(new StageEvent(StageManager.EVENT_MINDMAP_UPDATED));
+        MapController.i.dispatchEvent(new MapEvent(MapController.EVENT_MINDMAP_UPDATED));
       }
       
       if (updateSet & UP_STAGE_NODE_DATA) {
@@ -699,7 +703,7 @@ package com.graphmind.display {
      */
     public function addData(attribute:String, value:String):void {
       nodeData.dataAdd(attribute, value);
-      GraphMind.i.stageManager.setMindmapUpdated();
+      MapController.i.setMindmapUpdated();
       update(UP_TIME | UP_STAGE_NODE_DATA);
     }
     
@@ -720,7 +724,7 @@ package com.graphmind.display {
 
     public function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(selectNode, 400);
-      nodeView._displayComp.icon_add.visible = GraphMind.i.applicationManager.isEditable();
+      nodeView._displayComp.icon_add.visible = ApplicationController.i.isEditable();
       nodeView._displayComp.icon_anchor.visible = nodeData.link.length > 0;
     }
     
@@ -730,7 +734,7 @@ package com.graphmind.display {
       nodeView._displayComp.icon_anchor.visible = false;
       
       if (NodeController.isPrepairedNodeDragAndDrop) {
-        GraphMind.i.stageManager.openDragAndDrop(this);
+        MapController.i.openDragAndDrop(this);
       }
       
       nodeView._displayComp.insertLeft.visible = false;
@@ -738,7 +742,7 @@ package com.graphmind.display {
     }
     
     public function onDoubleClick(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       nodeView._displayComp.currentState = 'edit_title';
       nodeView._displayComp.title_new.text = nodeView._displayComp.title_label.text;
@@ -746,7 +750,7 @@ package com.graphmind.display {
     }
     
     public function onKeyUp_TitleTextField(event:KeyboardEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       if (event.keyCode == Keyboard.ENTER) {
         nodeView._displayComp.currentState = '';
@@ -760,7 +764,7 @@ package com.graphmind.display {
     }
     
     public function onFocusOut_TitleTextField(event:FocusEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       // @TODO this is a duplication of the onNewTitleKeyUp() (above)
       nodeView._displayComp.currentState = '';
@@ -775,7 +779,7 @@ package com.graphmind.display {
     }
     
     public function onClick_AddSimpleNodeButton(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       event.stopPropagation();
       event.stopImmediatePropagation();
@@ -799,14 +803,14 @@ package com.graphmind.display {
     }
     
     public function onMouseDown(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
-      GraphMind.i.stageManager.prepaireDragAndDrop();
+      MapController.i.prepaireDragAndDrop();
       event.stopImmediatePropagation();
     }
     
     public function onMouseUp(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       if ((!NodeController.isPrepairedNodeDragAndDrop) && NodeController.isNodeDragAndDrop) {
         
@@ -815,14 +819,14 @@ package com.graphmind.display {
         } else {
           NodeController.moveToPrevSibling(NodeController.dragAndDrop_sourceNode, this);
         }
-        GraphMind.i.stageManager.onMouseUp_MindmapStage();
+        MapController.i.onMouseUp_MindmapStage();
         
-        GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.DRAG_AND_DROP_FINISHED, this));
+        MapController.i.dispatchEvent(new NodeEvent(NodeEvent.DRAG_AND_DROP_FINISHED, this));
       }
     }
     
     public function onMouseMove(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       if ((!NodeController.isPrepairedNodeDragAndDrop) && NodeController.isNodeDragAndDrop) {
         if (nodeView.mouseX / getUI().getWidth() > (1 - nodeView.mouseY / NodeUI.HEIGHT)) {
@@ -861,8 +865,8 @@ package com.graphmind.display {
       } else {
         uncollapse();
       }
-      GraphMind.i.stageManager.setMindmapUpdated();
-      GraphMind.i.stageManager.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
+      MapController.i.setMindmapUpdated();
+      MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
       event.stopPropagation();
     }
     
@@ -886,7 +890,7 @@ package com.graphmind.display {
     
     public function onUpdateGraphics(event:NodeEvent):void {
       //redrawMindmapStage();
-      GraphMind.i.stageManager.structureDrawer.refreshGraphics();
+      MapController.i.structureDrawer.refreshGraphics();
     }
     
     public function onDoubleClick_arrowLink(event:MouseEvent):void {
@@ -988,7 +992,7 @@ package com.graphmind.display {
       nodeView.addIcon(icon);
       nodeData.addIcon(iconName);
       
-      if (GraphMind.i.applicationManager.isEditable()) {
+      if (ApplicationController.i.isEditable()) {
         icon.doubleClickEnabled = true;
         icon.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick_icon);
       }

@@ -11,7 +11,7 @@
 	<mx:Style source="style/stage.css" />
 	
 	<mx:Metadata>
-	  [Event(name="mindmapCreationComplete", type="com.graphmind.event.StageEvent")]
+	  [Event(name="mindmapCreationComplete", type="com.graphmind.event.MapEvent")]
 	</mx:Metadata>
 		
 	<mx:Script>
@@ -21,7 +21,7 @@
 		  import com.graphmind.IWorkflowComposite;
 		  import com.graphmind.display.NodeController;
 		  import com.graphmind.view.FuturesWheelDrawer;
-			import com.graphmind.StageManager;
+			import com.graphmind.MapController;
 			import com.graphmind.view.NodeUI;
 			import com.graphmind.view.TreeDrawer;
 			import com.graphmind.util.OSD;
@@ -36,7 +36,7 @@
 			import com.graphmind.net.SiteConnection;
 			import com.graphmind.util.Log;
 			import com.graphmind.data.ViewsCollection;
-			import com.graphmind.ApplicationManager;
+			import com.graphmind.ApplicationController;
 			
 			// 'Singleton' instance.
 			[Bindable] public static var i:GraphMind;
@@ -47,22 +47,9 @@
 			public static var HOOK_PRE_INIT:String = 'pre_init';
 			
 			/**
-			 * Stage manager.
-			 */
-			[Bindable] public var stageManager:StageManager;
-			
-			/**
 			 * Application manager.
 			 */
-			[Bindable] public var applicationManager:ApplicationManager;
-			
-			/**
-			 * Workflow manager - kinda factory for different composites.
-			 * For example:
-			 *  - tree composite creates tree nodes and tree structure...
-			 *  - futures wheel composite creates f.w. related objects
-			 */
-			public var workflowComposite:IWorkflowComposite; 
+			[Bindable] public var applicationController:ApplicationController;
 			
 			/**
 			 * Callback for initialize event.
@@ -80,29 +67,17 @@
 			private function onApplicationComplete():void {
 //				var md:MonsterDebugger = new MonsterDebugger(this);
 				
-				Log.debug('Grapmind started.');
+				Log.info('Grapmind started.');
 				
 				// Init managers
 				OSD.init(OSDContainer, 300);
-				
-				if (Application.application.parameters.hasOwnProperty('workflow')) {
-				  if (Application.application.parameters['workflow'] == 'futures_wheel') {
-            workflowComposite = new FuturesWheelWorkflow();
-          }
-				}
-			
-				if (workflowComposite == null) {
-          workflowComposite = new TreeWorkflow();
-        }
 				
         // Plugins should be the first
         PluginManager.init();
 				// @HOOK
 				PluginManager.callHook(HOOK_PRE_INIT);
         
-				applicationManager = new ApplicationManager();
-				
-        stageManager = workflowComposite.createStageManager();
+				applicationController = new ApplicationController();
 				
 				OSD.show('Graphmind started.');
 			}

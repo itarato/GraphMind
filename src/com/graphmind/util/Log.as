@@ -1,6 +1,6 @@
 package com.graphmind.util {
 	
-	import com.graphmind.ApplicationManager;
+	import com.graphmind.ApplicationController;
 	
 	import mx.controls.Alert;
 //	import com.graphmind.StageManager;
@@ -13,7 +13,7 @@ package com.graphmind.util {
 		public static var LOG_ERROR:String = 'ERROR';
 		
 		public static function log(text:String, level:String = 'INFO'):void {
-			if (!ApplicationManager.LOG_MODE) {
+			if (!ApplicationController.LOG_MODE) {
 				return;
 			}
 			

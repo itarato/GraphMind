@@ -1,6 +1,7 @@
 package com.graphmind.data {
 	
 	import com.graphmind.net.SiteConnection;
+	import com.kitten.network.Connection;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -20,7 +21,7 @@ package com.graphmind.data {
 		 * Origin that data comes from.
 		 * If it's a normal node, that it's null.
 		 */
-		public var source:SiteConnection = SiteConnection.createSiteConnection();
+		public var source:Connection;
 		
 		/**
 		 * Associated Drupal type: one from NodeType.
@@ -79,7 +80,7 @@ package com.graphmind.data {
 		/**
 		 * Contructor.
 		 */
-		public function NodeData(data:Object, type:String = NodeType.NORMAL, source:SiteConnection = null) {
+		public function NodeData(data:Object, type:String = NodeType.NORMAL, source:Connection = null) {
 		  // Data.
 			this.modified = this.created = new Date().time;
 			this.data   = data;
@@ -115,8 +116,8 @@ package com.graphmind.data {
 			
 			var newLink:String = '';
 			
-			if (source && source.url && drupalID) {
-				var url:String = source.url.toString().replace(/services\/amfphp/gi, '');
+			if (source && source.target && drupalID) {
+				var url:String = source.target.toString().replace(/services\/amfphp/gi, '');
 				switch (type) {
 					case NodeType.NODE: 
 					  newLink = url + '/node/' + drupalID;

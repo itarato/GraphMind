@@ -1,4 +1,7 @@
 package com.graphmind.display {
+  
+  import com.graphmind.ApplicationController;
+  import com.graphmind.MapController;
   import com.graphmind.data.NodeData;
   import com.graphmind.util.Log;
   import com.graphmind.view.FuturesWheelNodeUI;
@@ -30,10 +33,10 @@ package com.graphmind.display {
     }
     
     public override function onMouseDown(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
 
-      if (this != GraphMind.i.stageManager.rootNode) {
-        GraphMind.i.stageManager.prepaireDragAndDrop();
+      if (this != MapController.i.rootNode) {
+        MapController.i.prepaireDragAndDrop();
         dragAndDrop_sourceNode = this;
       }
       
@@ -50,7 +53,7 @@ package com.graphmind.display {
       }
       
       arrowLinkConnFirst = null;
-      GraphMind.i.stageManager.closeNodeDragAndDrop();
+      MapController.i.closeNodeDragAndDrop();
     }
     
     public override function onMouseMove(event:MouseEvent):void {
@@ -64,7 +67,7 @@ package com.graphmind.display {
     
     public override function onMouseOver(event:MouseEvent):void {
       super.onMouseOver(event);
-      (nodeView as FuturesWheelNodeUI).arrowLinkIcon.visible = GraphMind.i.applicationManager.isEditable();
+      (nodeView as FuturesWheelNodeUI).arrowLinkIcon.visible = ApplicationController.i.isEditable();
     }
     
     public override function onMouseOut(event:MouseEvent):void {
@@ -73,7 +76,7 @@ package com.graphmind.display {
     }
     
     protected function onMouseDown_arrowLinkIcon(event:MouseEvent):void {
-      if (!GraphMind.i.applicationManager.isEditable()) return;
+      if (!ApplicationController.i.isEditable()) return;
       
       arrowLinkConnFirst = this;
       
@@ -82,7 +85,7 @@ package com.graphmind.display {
     
     protected function finishDragAndDrop():void {
       var vangle:Number;
-      if (this == GraphMind.i.stageManager.rootNode) {
+      if (this == MapController.i.rootNode) {
         // Root node only has child.
         vangle = 180;
       } else {

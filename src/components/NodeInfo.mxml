@@ -5,19 +5,20 @@
 	
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.MapController;
 		]]>
 	</mx:Script>
 
 	<mx:RichTextEditor title="Node title" width="100%" height="240" left="0" top="0"
 		id="nodeLabelRTE">
 	</mx:RichTextEditor>
-	<mx:Button x="10" y="248" label="Save node title" click="{GraphMind.i.stageManager.onClick_RTESaveButton();}" icon="@Embed(source='assets/images/pencil.png')"/>
+	<mx:Button x="10" y="248" label="Save node title" click="{MapController.i.onClick_RTESaveButton();}" icon="@Embed(source='assets/images/pencil.png')"/>
 	<mx:HRule left="10" y="278" right="10"/>
 	<mx:TextInput y="288" id="link" right="10" left="10"/>
-	<mx:Button x="10" y="318" label="Save external link" click="{GraphMind.i.stageManager.onClick_SaveNodeLink();}" icon="@Embed(source='assets/images/anchor.png')"/>
+	<mx:Button x="10" y="318" label="Save external link" click="{MapController.i.onClick_SaveNodeLink();}" icon="@Embed(source='assets/images/anchor.png')"/>
 	<mx:HRule left="10" y="348" right="10"/>
 	<mx:Button x="10" y="358" label="Toggle cloud" icon="@Embed(source='assets/images/weather_clouds.png')">
-		<mx:click>{GraphMind.i.stageManager.onClick_ToggleCloudButton();}</mx:click>
+		<mx:click>{MapController.i.onClick_ToggleCloudButton();}</mx:click>
 	</mx:Button>
 
 </mx:Canvas>

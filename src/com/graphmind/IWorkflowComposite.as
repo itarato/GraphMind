@@ -9,7 +9,7 @@ package com.graphmind {
     
     function createNodeUI():NodeUI;
     
-    function createStageManager():StageManager;
+    function createStageManager():MapController;
     
     function getNodeControllerClass():Class;
     

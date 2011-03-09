@@ -17,8 +17,8 @@ package com.graphmind {
       return new FuturesWheelNodeUI();
     }
     
-    public function createStageManager():StageManager {
-      return new StageManager(
+    public function createStageManager():MapController {
+      return new MapController(
         new FuturesWheelDrawer(
           GraphMind.i.mindmapCanvas.desktop,
           GraphMind.i.mindmapCanvas.desktop_cloud,

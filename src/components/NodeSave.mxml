@@ -4,15 +4,16 @@
 	
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.MapController;
 		]]>
 	</mx:Script>
 
 	<mx:TextArea x="0" width="100%" id="freemindExportTextarea" top="40" bottom="0"/>
 	<mx:Button x="10" y="10" label="Save"
-		click="{GraphMind.i.stageManager.onClick_SaveGraphmindButton();}"
+		click="{MapController.i.onClick_SaveGraphmindButton();}"
 		icon="@Embed(source='assets/images/disk.png')"/>
 	<mx:Button x="104" y="10" label="Dump XML"
-		click="{GraphMind.i.stageManager.onClick_DumpFreemindXMLButton();}"
+		click="{MapController.i.onClick_DumpFreemindXMLButton();}"
 		icon="@Embed(source='assets/images/tag.png')"/>
 				
 </mx:Canvas>

@@ -1,6 +1,7 @@
 package com.graphmind.view {
 	
-	import com.graphmind.StageManager;
+	import com.graphmind.ApplicationController;
+	import com.graphmind.MapController;
 	import com.graphmind.display.ICloud;
 	import com.graphmind.display.ITreeItem;
 	import com.graphmind.display.NodeController;
@@ -25,7 +26,6 @@ package com.graphmind.view {
 		
 		// Mindmap stage redraw timer - performance reason
 		protected var _timer:uint;
-//		private var _isRootNodeSet:Boolean = false;
 		
 		public function TreeDrawer (
 			target:UIComponent, 
@@ -36,7 +36,7 @@ package com.graphmind.view {
 			super(target);
 			_cloudDrawer        = new CloudDrawer(cloudContainer);
 			_connectionDrawer   = new TreeConnectionDrawer(connectionContainer);
-			_arrowLinkContainer = GraphMind.i.workflowComposite.createArrowLinkDrawer(arrowLinkContainer);
+			_arrowLinkContainer = ApplicationController.i.workflowComposite.createArrowLinkDrawer(arrowLinkContainer);
 			
 			initGraphics();
 		}
@@ -57,14 +57,14 @@ package com.graphmind.view {
 				_arrowLinkContainer.clearAll();
 				
 				// Refresh the whole tree.
-				GraphMind.i.stageManager.rootNode.getUI().x = 4;
-				GraphMind.i.stageManager.rootNode.getUI().y = _target.height >> 1;
+				MapController.i.rootNode.getUI().x = 4;
+				MapController.i.rootNode.getUI().y = _target.height >> 1;
 				var postProcessObjects:Object = new Object();
 				postProcessObjects.arrowLinks = new Array();
-				var totalHeight:Number = _redrawNode(GraphMind.i.stageManager.rootNode, postProcessObjects);
+				var totalHeight:Number = _redrawNode(MapController.i.rootNode, postProcessObjects);
 				
-				if (totalHeight > (StageManager.DEFAULT_DESKTOP_HEIGHT + (NodeUI.HEIGHT << 2))) {
-					StageManager.DEFAULT_DESKTOP_HEIGHT = totalHeight + 200;
+				if (totalHeight > (MapController.DEFAULT_DESKTOP_HEIGHT + (NodeUI.HEIGHT << 2))) {
+					MapController.DEFAULT_DESKTOP_HEIGHT = totalHeight + 200;
 				}
 				
 				_redrawArrowLinks(postProcessObjects.arrowLinks);
@@ -98,7 +98,6 @@ package com.graphmind.view {
 			}
 			
 			// ArrowLinks
-			//postProcessObjects.arrowLinks = (postProcessObjects.arrowLinks as Array).concat((node as NodeItem).getArrawLinks());
 			(postProcessObjects.arrowLinks as Array).push((node as NodeController).getArrowLinks());
 			
 			return totalChildHeight;
@@ -110,7 +109,6 @@ package com.graphmind.view {
 		protected function _redrawArrowLinks(arrowLinkNodes:Array):void {
 			for each (var arrowLinks:ArrayCollection in arrowLinkNodes) {
 				for each (var arrowLink:TreeArrowLink in arrowLinks) {
-//					trace('Arrow link found');
 					_arrowLinkContainer.draw(arrowLink);
 				}
 			}
@@ -132,12 +130,7 @@ package com.graphmind.view {
 
 			return height;
 		}
-//		
-//		public function setRootNode(node:TreeNodeController):void {
-//			Log.debug('TreeDrawer.setRootNode()');
-//			_root = node;
-//			_isRootNodeSet = true;
-//		}
+
 	}
 	
 }

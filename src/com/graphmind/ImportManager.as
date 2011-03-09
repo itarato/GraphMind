@@ -6,6 +6,7 @@ package com.graphmind {
 	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
+	import com.kitten.network.Connection;
 	
 	
 	public class ImportManager {
@@ -48,18 +49,20 @@ package com.graphmind {
 			var rawTitle:String  = unescape(String(nodeXML.@TEXT));
 			
 			// Site connection
-			var sc:SiteConnection = null;
+			var conn:Connection = null;
 			if (nodeXML.site) {
-				sc = SiteConnection.createSiteConnection(
-					unescape(nodeXML.site.@URL),
-					unescape(nodeXML.site.@USERNAME)
-				);
+//				conn = SiteConnection.createSiteConnection(
+//					unescape(nodeXML.site.@URL),
+//					unescape(nodeXML.site.@USERNAME)
+//				);
+        //trace('Target: <' + unescape(nodeXML.site.@URL) + '>');
+        conn = new Connection(unescape(nodeXML.site.@URL));
 			}
 			
 			var node:NodeController = NodeFactory.createNode(
 			  attributes,
 			  nodeXML.@TYPE ? nodeXML.@TYPE : NodeType.NORMAL,
-			  sc || SiteConnection.createSiteConnection(),
+			  conn,
 			  rawTitle.length > 0 ? rawTitle : htmlTitle
 			);
 			node.nodeData.created  = Number(nodeXML.@CREATED);
@@ -79,7 +82,7 @@ package com.graphmind {
 			
 			// Icons
 			for each (var iconsXML:XML in nodeXML.elements('icon')) {
-				node.addIcon(GraphMind.i.applicationManager.getIconPath() + iconsXML.@BUILTIN + '.png');
+				node.addIcon(ApplicationController.i.getIconPath() + iconsXML.@BUILTIN + '.png');
 			}
 			
 			var nodeChilds:XMLList = nodeXML.elements('node');

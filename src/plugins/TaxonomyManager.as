@@ -1,14 +1,17 @@
 package plugins {
 	
+	import com.graphmind.ApplicationController;
+	import com.graphmind.MapController;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.NodeController;
-	import com.graphmind.event.StageEvent;
+	import com.graphmind.event.MapEvent;
 	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.net.RPCServiceHelper;
 	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
+	import com.kitten.network.Connection;
 	
 	import flash.events.ContextMenuEvent;
 	
@@ -23,10 +26,10 @@ package plugins {
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
 		public static function hook_pre_init(data:Object):void {
-			GraphMind.i.addEventListener(StageEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
+			GraphMind.i.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
 		}
 		
-		private static function onMindmapCreationComplete(event:StageEvent):void {
+		private static function onMindmapCreationComplete(event:MapEvent):void {
 			// Refreshing taxonomy
 			var cursor:int = 0;
 			var parent:NodeController = null;
@@ -58,28 +61,29 @@ package plugins {
 		 * Callback for loading and attaching taxonomy tree.
 		 */
 		public static function loadFullTaxonomyTree(event:ContextMenuEvent):void {
-			var node:NodeController = GraphMind.i.stageManager.activeNode;
-			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
+			var node:NodeController = MapController.i.activeNode;
+			var baseSiteConnection:Connection = ApplicationController.i.baseSiteConnection;
 			
-			RPCServiceHelper.createRPC(
-				'graphmindTaxonomyManager',
-				'getAll',
-				'amfphp',
-				baseSiteConnection.url,
-				function(_event:ResultEvent):void {
-					onSuccess_TaxonomyRequestReady(_event, baseSiteConnection, node);
-				},
-				transactionError
-			).send(baseSiteConnection.sessionID);
+			// @todo implement it
+//			RPCServiceHelper.createRPC(
+//				'graphmindTaxonomyManager',
+//				'getAll',
+//				'amfphp',
+//				baseSiteConnection.target,
+//				function(_event:ResultEvent):void {
+//					onSuccess_TaxonomyRequestReady(_event, baseSiteConnection, node);
+//				},
+//				transactionError
+//			).send(baseSiteConnection.sessionID);
 		}
 		
-		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, sc:SiteConnection, baseNode:NodeController):void {
+		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, conn:Connection, baseNode:NodeController):void {
 			for each (var vocabulary:Object in event.result) {
 				vocabulary.plugin = 'TaxonomyManager';
 				var vocabularyNodeItemData:NodeData = new NodeData(
 					vocabulary,
 					NodeType.NORMAL, // @TODO make it as a VOCABULARY
-					sc
+					conn
 				);
 				vocabularyNodeItemData.title = vocabulary.name;
 				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
@@ -95,7 +99,7 @@ package plugins {
 					var termNodeItemData:NodeData = new NodeData(
 						term,
 						NodeType.TERM,
-						sc
+						conn
 					);
 					termNodeItemData.title = term.name;
 					termNodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;

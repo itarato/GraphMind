@@ -1,5 +1,6 @@
 package com.graphmind.view {
   
+  import com.graphmind.MapController;
   import com.graphmind.display.FuturesWheelNodeController;
   import com.graphmind.display.ICloud;
   import com.graphmind.display.ITreeItem;
@@ -50,15 +51,15 @@ package com.graphmind.view {
         _arrowLinkContainer.clearAll();
         
         // Refresh the whole tree.
-        center.x = GraphMind.i.stageManager.rootNode.getUI().x = (_target.width >> 1);
-        center.y = GraphMind.i.stageManager.rootNode.getUI().y = (_target.height >> 1);
+        center.x = MapController.i.rootNode.getUI().x = (_target.width >> 1);
+        center.y = MapController.i.rootNode.getUI().y = (_target.height >> 1);
         var postProcessObjects:Object = new Object();
         postProcessObjects.arrowLinks = new Array();
         
-        countLevels(GraphMind.i.stageManager.rootNode);
+        countLevels(MapController.i.rootNode);
         drawLevelCircle(GraphMind.i.mindmapCanvas.desktop_overlay, maxLevel - 1);
         
-        _redrawFuturesWheenNode(GraphMind.i.stageManager.rootNode, postProcessObjects);
+        _redrawFuturesWheenNode(MapController.i.rootNode, postProcessObjects);
         
         _redrawArrowLinks(postProcessObjects.arrowLinks);
         _recheckArrowLinkVisibility();

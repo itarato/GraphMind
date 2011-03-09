@@ -16,8 +16,8 @@ package com.graphmind
       return new NodeUI();
     }
     
-    public function createStageManager():StageManager {
-      return new StageManager(
+    public function createStageManager():MapController {
+      return new MapController(
         new TreeDrawer(
           GraphMind.i.mindmapCanvas.desktop,
           GraphMind.i.mindmapCanvas.desktop_cloud,
