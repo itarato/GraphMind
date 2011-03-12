@@ -3,7 +3,7 @@
 	width="240" height="100%" 
 	styleName="toolPanel"
 	xmlns:components="components.*">
-
+	
 	<mx:Canvas id="panelMain" width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" 

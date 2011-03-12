@@ -7,9 +7,13 @@
 	
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.ApplicationController;
+		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeMapViewController;
 			import com.graphmind.net.SiteConnection;
 			import com.graphmind.net.UniqueItemLoader;
+			
+			public var controller:AppFormController;
 		]]>
 	</mx:Script>
 	
@@ -28,10 +32,10 @@
 		</mx:FormItem>
 		<mx:ControlBar>
 			<mx:Button label="Submit" 
-				click="{TreeMapViewController.i.onClick_LoadItemSubmit();}"
+				click="{controller.onClick_LoadItemSubmit();}"
 				icon="@Embed(source='assets/images/accept.png')"/>
 			<mx:Button label="Cancel" 
-				click="{TreeMapViewController.i.onClick_LoadItemCancel();}"
+				click="{controller.onClick_LoadItemCancel();}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>

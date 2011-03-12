@@ -12,6 +12,7 @@ package com.graphmind.event {
     public static var NODE_FINISH_DRAG:String   = 'nodeFinishDrag';
     
     public static var MAP_UPDATED:String        = 'mapUpdated';
+    public static var MAP_SAVED:String          = 'mapSaved';
     
     /**
     * Object that emitted the event.

@@ -13,7 +13,7 @@ package com.graphmind {
 		public static function importNodesFromDrupalResponse(response:Object):NodeViewController {
 		  var rootNode:NodeViewController;
 		  var is_valid_mm_xml:Boolean = false;
-      var body:String = result.body.toString();
+      var body:String = response.body.toString();
       if (body.length > 0) {
         var xmlData:XML = new XML(body);
         var nodes:XML = xmlData.child('node')[0];
@@ -32,7 +32,7 @@ package com.graphmind {
           {},
           NodeType.NODE,
           null,
-          result.title
+          response.title
         );
       }
       
@@ -57,6 +57,7 @@ package com.graphmind {
 			
 			return _baseNode;
 		}
+		
 		
 		public static function buildGrapMindNode(nodeXML:XML, postProcessObject:Object):NodeViewController {
 			// @TODO write node checking - if those are exist

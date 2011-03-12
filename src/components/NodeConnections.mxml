@@ -4,8 +4,10 @@
 
 	<mx:Script>
 		<![CDATA[
-		  import com.graphmind.TreeMapViewController;
-			import com.graphmind.net.SiteConnection;
+		  import com.graphmind.AppFormController;
+		  
+		  [Bindable]
+    	public var controller:AppFormController;
 		]]>
 	</mx:Script>
 					
@@ -14,14 +16,14 @@
 	<mx:TextInput id="connectFormUsername" left="10" right="10" bottom="96" tabIndex="11"/>
 	<mx:TextInput id="connectFormPassword" left="10" right="10" bottom="40" displayAsPassword="true" tabIndex="12"/>
 	<mx:Button x="10" label="Add new site" bottom="10" 
-		click="{TreeMapViewController.i.onClick_AddNewSiteConnectionButton();}" 
+		click="{controller.onClick_AddNewSiteConnectionButton();}" 
 		id="button1"
 		tabIndex="3" icon="@Embed(source='assets/images/world_add.png')"/>
 	<mx:Label x="10" text="Password:" bottom="70" id="label3"/>
 	<mx:Label x="10" text="Username:" bottom="126" id="label2"/>
 	<mx:Label x="10" text="URL.:" bottom="182" id="label1"/>
 	<mx:DataGrid width="100%" top="0" bottom="208" left="0"
-		dataProvider="{SiteConnection.connections}">
+		dataProvider="{controller.connections}">
 		<mx:columns>
 			<mx:DataGridColumn headerText="ID" dataField="id" width="30"/>
 			<mx:DataGridColumn headerText="Name" dataField="shortName"/>

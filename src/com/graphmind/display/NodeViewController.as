@@ -2,7 +2,6 @@ package com.graphmind.display {
 	
 	import com.graphmind.ApplicationController;
 	import com.graphmind.PluginManager;
-	import com.graphmind.TreeMapViewController;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.event.EventCenter;
@@ -63,6 +62,11 @@ package com.graphmind.display {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
+		
+		/**
+		 * Active node.
+		 */
+		public static var activeNode:NodeViewController;
 		
 		public static const HOOK_NODE_CONTEXT_MENU:String  = 'node_context_menu';
 		public static const HOOK_NODE_MOVED:String         = 'node_moved';

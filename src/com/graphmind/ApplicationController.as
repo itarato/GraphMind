@@ -36,6 +36,12 @@ package com.graphmind {
      */
     [Bindable]
     public var treeMapViewController:TreeMapViewController;
+    
+    /**
+    * Application form elemets' controller.
+    */
+    [Bindable]
+    public var appFormController:AppFormController;
 		
 		/** 
 		 * Base site connection.
@@ -152,8 +158,8 @@ package com.graphmind {
       Log.info("Root node is loaded: " + result.nid);
 //      TreeMapViewController.i.initMapWithBaseNode(result);
       setEditMode(result.graphmindEditable == '1');
-      this.treeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
-      this.treeMapViewController.view.refreshDisplay(); 
+      TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
+      treeMapViewController.view.refreshDisplay(); 
       
       // Load base node
       dispatchEvent(new ApplicationEvent(ApplicationEvent.APPLICATION_DATA_COMPLETE));
@@ -203,8 +209,6 @@ package com.graphmind {
 		public function isBaseConnectionLive():Boolean {
 		  return true;
 		}
-		
-		
 		
 
 	}

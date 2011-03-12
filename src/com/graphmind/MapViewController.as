@@ -5,7 +5,7 @@ package com.graphmind {
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.MapEvent;
   import com.graphmind.view.MapView;
-  import com.graphmind.view.StructureDrawer;
+  import com.graphmind.view.TreeDrawer;
   
   import flash.events.EventDispatcher;
   
@@ -20,7 +20,7 @@ package com.graphmind {
     /**
      * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)
      */
-    public var treeDrawer:StructureDrawer;
+    public var treeDrawer:TreeDrawer;
     
     /**
      * Desktop UI size.
