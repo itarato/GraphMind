@@ -1,12 +1,12 @@
 package com.graphmind.temp {
 	import com.graphmind.data.NodeData;
-	import com.graphmind.display.NodeController;
+	import com.graphmind.display.NodeViewController;
 	
 	
 	public class TempItemLoadData {
 	
 		// Parent node
-		public var nodeItem:NodeController = null;	
+		public var nodeItem:NodeViewController = null;	
 		// Node data.
 		public var nodeItemData:NodeData = null;
 		// Success callback on load.

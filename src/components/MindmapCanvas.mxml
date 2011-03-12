@@ -4,7 +4,7 @@
 	
 	<mx:Script>
 		<![CDATA[
-		  import com.graphmind.MapController;
+		  import com.graphmind.TreeMapViewController;
 			import com.graphmind.ApplicationController;
 			
       [Embed(source='assets/images/draganddrop.png')]
@@ -14,37 +14,37 @@
 
 	<!-- Mindmap editor area -->
 	<mx:Canvas right="0" top="30" bottom="0" left="0" id="desktop_wrapper" focusEnabled="true"
-		mouseUp="{MapController.i.onMouseUp_MindmapStage();}"
-		mouseDownOutside="{MapController.i.onMouseDownOutside_MindmapStage();}"
-		mouseOut="{MapController.i.onMouseOut_MindmapStage();}">
+		mouseUp="{TreeMapViewController.i.onMouseUp_MindmapStage();}"
+		mouseDownOutside="{TreeMapViewController.i.onMouseDownOutside_MindmapStage();}"
+		mouseOut="{TreeMapViewController.i.onMouseOut_MindmapStage();}">
     
     <mx:Canvas id="desktop_overlay" 
-      width="{MapController.DEFAULT_DESKTOP_WIDTH}" 
-      height="{MapController.DEFAULT_DESKTOP_HEIGHT}" 
+      width="{TreeMapViewController.DEFAULT_DESKTOP_WIDTH}" 
+      height="{TreeMapViewController.DEFAULT_DESKTOP_HEIGHT}" 
       focusEnabled="false"
       scaleX="{desktopScaleHSlider.value/100}"
       scaleY="{desktopScaleHSlider.value/100}"/>
       
     <!-- sublayer for cloud grapics -->
-		<mx:Canvas id="desktop_cloud" width="{MapController.DEFAULT_DESKTOP_WIDTH}" height="{MapController.DEFAULT_DESKTOP_HEIGHT}"
+		<mx:Canvas id="desktop_cloud" width="{TreeMapViewController.DEFAULT_DESKTOP_WIDTH}" height="{TreeMapViewController.DEFAULT_DESKTOP_HEIGHT}"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}"/>
           
     <!-- Image for imitating drag-and-drop -->
     <!--<mx:Container id="dragAndDrop_shape_container">-->
-      <mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="{MapController.i.onMouseUp_DragAndDropImage();}"/>
+      <mx:Image source="{image_dragAndDrop}" visible="false" id="dragAndDrop_shape" mouseUp="{TreeMapViewController.i.onMouseUp_DragAndDropImage();}"/>
     <!--</mx:Container>-->
       
       
-		<mx:Canvas id="desktop" width="{MapController.DEFAULT_DESKTOP_WIDTH}" height="{MapController.DEFAULT_DESKTOP_HEIGHT}" 
-			mouseDown="{MapController.i.onMouseDown_InnerMindmapStage();}"
-			mouseUp="{MapController.i.onMouseUp_InnerMindmapStage();}"
-			mouseMove="{MapController.i.onMouseMove_InnerMindmapStage();}"
+		<mx:Canvas id="desktop" width="{TreeMapViewController.DEFAULT_DESKTOP_WIDTH}" height="{TreeMapViewController.DEFAULT_DESKTOP_HEIGHT}" 
+			mouseDown="{TreeMapViewController.i.onMouseDown_InnerMindmapStage();}"
+			mouseUp="{TreeMapViewController.i.onMouseUp_InnerMindmapStage();}"
+			mouseMove="{TreeMapViewController.i.onMouseMove_InnerMindmapStage();}"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}">
     <mx:Canvas id="desktop_arrowlink" 
-      width="{MapController.DEFAULT_DESKTOP_WIDTH}" 
-      height="{MapController.DEFAULT_DESKTOP_HEIGHT}" 
+      width="{TreeMapViewController.DEFAULT_DESKTOP_WIDTH}" 
+      height="{TreeMapViewController.DEFAULT_DESKTOP_HEIGHT}" 
       focusEnabled="true"/>
 			</mx:Canvas>
 	</mx:Canvas>
@@ -55,7 +55,7 @@
 		backgroundColor="0x000000"
 		color="0xFFFFFF">
 		<mx:HBox paddingTop="4" paddingLeft="4">
-			<mx:LinkButton top="4" label="Fullscreen" click="{MapController.i.onClick_FullscreenButton();}"
+			<mx:LinkButton top="4" label="Fullscreen" click="{TreeMapViewController.i.onClick_FullscreenButton();}"
 				id="fullScreenLinkButton"/>
 			
 			<mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
@@ -65,8 +65,8 @@
 			<mx:Label paddingTop="2" text="{desktopScaleHSlider.value + '%'}"
 				id="desktopScaleLabel"/>
 				
-			<mx:LinkButton top="4" label="Save" click="{MapController.i.onClick_SaveGraphmindButton();}" color="#FFDBA1"
-				visible="{MapController.i.isTreeUpdated}"
+			<mx:LinkButton top="4" label="Save" click="{TreeMapViewController.i.onClick_SaveGraphmindButton();}" color="#FFDBA1"
+				visible="{TreeMapViewController.i.isTreeUpdated}"
 				id="saveLinkButton"/>
 		</mx:HBox>
 	</mx:Canvas>

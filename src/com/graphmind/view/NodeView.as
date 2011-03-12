@@ -12,7 +12,7 @@ package com.graphmind.view {
 	import mx.core.UIComponent;
 	
 	
-	public class NodeUI extends UIComponent implements IDisplayItem, IDrawable {
+	public class NodeView extends UIComponent implements IDisplayItem, IDrawable {
 		
 		public static const WIDTH_MC_DEFAULT:int = 168;
 		public static const WIDTH_DEFAULT:int = 162;
@@ -56,7 +56,7 @@ package com.graphmind.view {
 		 */
 		public var backgroundColor:uint = 0xDFD9D1;
 		
-		public function NodeUI():void {
+		public function NodeView():void {
 			super();
 			
 			addChild(_backgroundComp);
@@ -68,7 +68,7 @@ package com.graphmind.view {
 		}
 		
 		public function initGraphics():void {
-			Log.debug('TreeNodeUI.initGraphics()');
+			Log.debug('TreeNodeView.initGraphics()');
 			
 			// Background component - what a surprise, huh?
 			_backgroundComp.height = getHeight();

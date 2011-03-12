@@ -1,17 +1,17 @@
 package com.graphmind.display {
   
   import com.graphmind.ApplicationController;
-  import com.graphmind.MapController;
+  import com.graphmind.TreeMapViewController;
   import com.graphmind.data.NodeData;
   import com.graphmind.util.Log;
-  import com.graphmind.view.FuturesWheelNodeUI;
-  import com.graphmind.view.NodeUI;
+  import com.graphmind.view.FuturesWheelNodeView;
+  import com.graphmind.view.NodeView;
   
   import flash.events.MouseEvent;
   import flash.filters.GlowFilter;
   
   
-  public class FuturesWheelNodeController extends NodeController {
+  public class FuturesWheelNodeViewController extends NodeViewController {
     
     private static var _nodeGlowFilter1:GlowFilter = new GlowFilter(0x6688AA, 1, 8, 8, 10, 1);
     private static var _nodeGlowFilter2:GlowFilter = new GlowFilter(0xFFFFFF, 1, 5, 5, 10, 1);
@@ -19,24 +19,24 @@ package com.graphmind.display {
     public var angle:Number = 0;
    
     // @TODO make it safe
-    private static var arrowLinkConnFirst:FuturesWheelNodeController;
+    private static var arrowLinkConnFirst:FuturesWheelNodeViewController;
     
-    public function FuturesWheelNodeController(nodeData:NodeData, newNodeView:NodeUI = null):void {
+    public function FuturesWheelNodeViewController(nodeData:NodeData, newNodeView:NodeView = null):void {
       //TODO: implement function
       super(nodeData, newNodeView);
       
-      (nodeView as FuturesWheelNodeUI).arrowLinkIcon.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_arrowLinkIcon);
+      (view as FuturesWheelNodeView).arrowLinkIcon.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_arrowLinkIcon);
     }
     
     public override function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
-      nodeView._backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeGlowFilter2, _nodeGlowFilter1];
+      view._backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeGlowFilter2, _nodeGlowFilter1];
     }
     
     public override function onMouseDown(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
 
-      if (this != MapController.i.rootNode) {
-        MapController.i.prepaireDragAndDrop();
+      if (this != TreeMapViewController.i.rootNode) {
+        TreeMapViewController.i.prepaireDragAndDrop();
         dragAndDrop_sourceNode = this;
       }
       
@@ -44,7 +44,7 @@ package com.graphmind.display {
     }
     
     public override function onMouseUp(event:MouseEvent):void {
-      if ((!NodeController.isPrepairedNodeDragAndDrop) && NodeController.isNodeDragAndDrop) {
+      if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
         finishDragAndDrop();
       }
       
@@ -53,11 +53,11 @@ package com.graphmind.display {
       }
       
       arrowLinkConnFirst = null;
-      MapController.i.closeNodeDragAndDrop();
+      TreeMapViewController.i.closeNodeDragAndDrop();
     }
     
     public override function onMouseMove(event:MouseEvent):void {
-//      if ((!NodeController.isPrepairedNodeDragAndDrop) && NodeController.isNodeDragAndDrop) {
+//      if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
 //        var vangle:Number = (Math.atan2(nodeView.mouseY - (nodeView.getHeight() >> 1), 
 //                                      nodeView.mouseX - (nodeView.getWidth() >> 1)) * (180.0 / Math.PI) - 90);
 //        vangle += angle - 180;
@@ -67,12 +67,12 @@ package com.graphmind.display {
     
     public override function onMouseOver(event:MouseEvent):void {
       super.onMouseOver(event);
-      (nodeView as FuturesWheelNodeUI).arrowLinkIcon.visible = ApplicationController.i.isEditable();
+      (view as FuturesWheelNodeView).arrowLinkIcon.visible = ApplicationController.i.isEditable();
     }
     
     public override function onMouseOut(event:MouseEvent):void {
       super.onMouseOut(event);
-      (nodeView as FuturesWheelNodeUI).arrowLinkIcon.visible = false;
+      (view as FuturesWheelNodeView).arrowLinkIcon.visible = false;
     }
     
     protected function onMouseDown_arrowLinkIcon(event:MouseEvent):void {
@@ -85,12 +85,12 @@ package com.graphmind.display {
     
     protected function finishDragAndDrop():void {
       var vangle:Number;
-      if (this == MapController.i.rootNode) {
+      if (this == TreeMapViewController.i.rootNode) {
         // Root node only has child.
         vangle = 180;
       } else {
-        vangle = (Math.atan2(nodeView.mouseY - (nodeView.getHeight() >> 1), 
-                                    nodeView.mouseX - (nodeView.getWidth() >> 1)) * (180.0 / Math.PI) - 90);
+        vangle = (Math.atan2(view.mouseY - (view.getHeight() >> 1), 
+                                    view.mouseX - (view.getWidth() >> 1)) * (180.0 / Math.PI) - 90);
         vangle += angle - 180;
         while (vangle < 0) vangle += 360;
       }
@@ -98,15 +98,15 @@ package com.graphmind.display {
       if (vangle < 120) {
         // Left
         trace('Left');
-        NodeController.moveToPrevSibling(dragAndDrop_sourceNode, this);
+        NodeViewController.moveToPrevSibling(dragAndDrop_sourceNode, this);
       } else if (vangle < 240) {
         // Child
         trace('Child');
-        NodeController.move(dragAndDrop_sourceNode, this);
+        NodeViewController.move(dragAndDrop_sourceNode, this);
       } else {
         // Right
         trace('Right');
-        NodeController.moveToNextSibling(dragAndDrop_sourceNode, this);
+        NodeViewController.moveToNextSibling(dragAndDrop_sourceNode, this);
       }
     }
     
@@ -132,7 +132,7 @@ package com.graphmind.display {
     }
     
     public override function toString():String {
-      return '[FuturesWheelNodeController: ' + this.nodeData.id + ' - ' + getUI().x + ',' + getUI().y + ']';
+      return '[FuturesWheelNodeViewController: ' + this.nodeData.id + ' - ' + getUI().x + ',' + getUI().y + ']';
     }
     
   }

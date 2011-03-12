@@ -1,16 +1,22 @@
 package com.graphmind.view {
   
 	import com.graphmind.display.TreeArrowLink;
-	
 	import mx.containers.Canvas;
 	import mx.core.UIComponent;
 
-	public class TreeArrowLinkUI extends Drawer {
-	  
-		public function TreeArrowLinkUI(target:UIComponent) {
+	public class TreeArrowLinkDrawer extends Drawer {
+
+    /**
+    * Constructor.
+    */
+		public function TreeArrowLinkDrawer(target:UIComponent) {
 			super(target);
 		}
 		
+		
+		/**
+		 * Draw the arrow link.
+		 */
 		public function draw(arrowLink:TreeArrowLink):void {
 			if (!arrowLink.isReady) return;
 			if (arrowLink.destinationNode.getParentNode() && arrowLink.destinationNode.getParentNode().isCollapsed()) return;

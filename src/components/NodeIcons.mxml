@@ -4,7 +4,7 @@
 
 	<mx:Script>
 		<![CDATA[
-		  import com.graphmind.MapController;
+		  import com.graphmind.TreeMapViewController;
 			import com.graphmind.ApplicationController;
     
       [Bindable]
@@ -33,7 +33,7 @@
 	<mx:Tile left="10" top="10" right="10" height="100%">
 		<mx:Repeater dataProvider="{icons}" id="icon_repeater">
 			<mx:Image source="{ApplicationController.i.getIconPath()}{icon_repeater.currentItem}.png" 
-				click="{MapController.i.onClick_Icon(event);}"/>
+				click="{TreeMapViewController.i.onClick_Icon(event);}"/>
 		</mx:Repeater>
 	</mx:Tile>
 </mx:Canvas>

@@ -1,19 +1,25 @@
-package com.graphmind.view
-{
+package com.graphmind.view {
+  
 	import com.graphmind.display.ITreeItem;
-	
 	import flash.geom.Point;
-	
 	import mx.core.UIComponent;
 	
 	public class CloudDrawer extends Drawer {
 		
+		/**
+		 * Default display settings.
+		 */
 		public static const MARGIN:int = 8;
 		public static const PADDING:int = 6;
 		
+		
+		/**
+		 * Constructor.
+		 */
 		public function CloudDrawer(target:UIComponent) {
 			super(target);
 		}
+		
 		
 		/**
 		 * Draw a cloud around a node and it's subtree
@@ -117,6 +123,7 @@ package com.graphmind.view
 			_target.graphics.endFill();
 		}
 		
+		
 		private function _getSubtreePointsInOrdered(node:ITreeItem):Array {
 			var points:Array = [
 				[node.getUI().x - PADDING,
@@ -138,10 +145,12 @@ package com.graphmind.view
 			return points;
 		}
 		
+		
 		private function _getCurrentAngle(relX:Number, relY:Number):int {
 			var relDegree:Number = Math.atan(relY / relX) / Math.PI * 180;
 			return (360 - (relX < 0 ? 180.0 + relDegree : relDegree)) % 360;
 		}
+		
 		
 		private function _isBiggerDistance(p0:Point, p1:Array, p2:Array):Boolean {
 			var d1:Number = Math.pow(p0.x - p1[0], 2) + Math.pow(p0.y - p1[1], 2);
@@ -149,9 +158,11 @@ package com.graphmind.view
 			return d2 > d1;
 		}
 		
+		
 		private function _ifPointOnTheRight(tm2:Array, tm1:Array, p:Array):Boolean {
 			return ((tm1[0] - tm2[0]) * (p[1] - tm2[1]) - (p[0] - tm2[0]) * (tm1[1] - tm2[1])) >= 0;
 		}
+		
 		
 		private function _convexHull_getMostBottomLeftPoint(points:Array):Point {
 			// Search for most-bottom-left point
@@ -166,6 +177,7 @@ package com.graphmind.view
 			return p0;
 		}
 		
+		
 		private function _convexHull_getOrderedPointContainer(points:Array, p0:Point):Object {
 			var orderedPoints:Object = {};
 			for (var idx:* in points) {
@@ -179,6 +191,7 @@ package com.graphmind.view
 			}
 			return orderedPoints;
 		}
+		
 		
 		private function _convexHull_angleHalfCut(v1:Array, v2:Array, length:Number):Array {
 			// Relatice choords

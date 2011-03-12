@@ -1,19 +1,19 @@
 package com.graphmind {
   
-  import com.graphmind.view.NodeUI;
-  import com.graphmind.view.TreeArrowLinkUI;
+  import com.graphmind.view.NodeView;
+  import com.graphmind.view.TreeArrowLinkDrawer;
   
   import mx.core.UIComponent;
   
   public interface IWorkflowComposite {
     
-    function createNodeUI():NodeUI;
+    function createNodeView():NodeView;
     
-    function createStageManager():MapController;
+    function createStageManager():TreeMapViewController;
     
-    function getNodeControllerClass():Class;
+    function getNodeViewControllerClass():Class;
     
-    function createArrowLinkDrawer(target:UIComponent):TreeArrowLinkUI;
+    function createArrowLinkDrawer(target:UIComponent):TreeArrowLinkDrawer;
     
   }
   

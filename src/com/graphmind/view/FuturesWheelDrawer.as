@@ -1,10 +1,10 @@
 package com.graphmind.view {
   
-  import com.graphmind.MapController;
-  import com.graphmind.display.FuturesWheelNodeController;
+  import com.graphmind.TreeMapViewController;
+  import com.graphmind.display.FuturesWheelNodeViewController;
   import com.graphmind.display.ICloud;
   import com.graphmind.display.ITreeItem;
-  import com.graphmind.display.NodeController;
+  import com.graphmind.display.NodeViewController;
   import com.graphmind.display.TreeArrowLink;
   import com.graphmind.util.Log;
   
@@ -51,15 +51,15 @@ package com.graphmind.view {
         _arrowLinkContainer.clearAll();
         
         // Refresh the whole tree.
-        center.x = MapController.i.rootNode.getUI().x = (_target.width >> 1);
-        center.y = MapController.i.rootNode.getUI().y = (_target.height >> 1);
+        center.x = TreeMapViewController.i.rootNode.getUI().x = (_target.width >> 1);
+        center.y = TreeMapViewController.i.rootNode.getUI().y = (_target.height >> 1);
         var postProcessObjects:Object = new Object();
         postProcessObjects.arrowLinks = new Array();
         
-        countLevels(MapController.i.rootNode);
+        countLevels(TreeMapViewController.i.rootNode);
         drawLevelCircle(GraphMind.i.mindmapCanvas.desktop_overlay, maxLevel - 1);
         
-        _redrawFuturesWheenNode(MapController.i.rootNode, postProcessObjects);
+        _redrawFuturesWheenNode(TreeMapViewController.i.rootNode, postProcessObjects);
         
         _redrawArrowLinks(postProcessObjects.arrowLinks);
         _recheckArrowLinkVisibility();
@@ -85,7 +85,7 @@ package com.graphmind.view {
       node.getUI().refreshGraphics();
       node.getUI().x -= node.getUI().getWidth() >> 1;
       node.getUI().y -= node.getUI().getHeight() >> 1;
-      (node as NodeController).nodeView._backgroundComp.setStyle('borderColor', getLevelColor(circleLevel));
+      (node as NodeViewController).view._backgroundComp.setStyle('borderColor', getLevelColor(circleLevel));
       
       // Walking through all the children.
       var childs:ArrayCollection = node.getChildNodeAll();
@@ -98,7 +98,7 @@ package com.graphmind.view {
         angle = (parentAngle - sliceAngle / 2) + (sliceAngle / childNum) * idx + (sliceAngle / (childNum + 1));
         
         var p:Point = _angleTransformation(angle, FUTURE_WHEEL_CIRCLE_SLICE_HEIGHT * circleLevel);
-        (child as FuturesWheelNodeController).angle = angle;
+        (child as FuturesWheelNodeViewController).angle = angle;
         child.getUI().x = p.x + center.x;
         child.getUI().y = p.y + center.y;
         _redrawFuturesWheenNode(child, postProcessObjects, circleLevel + 1, angle, sliceAngle / childNum);
@@ -114,7 +114,7 @@ package com.graphmind.view {
       }
       
       // ArrowLinks
-      (postProcessObjects.arrowLinks as Array).push((node as NodeController).getArrowLinks());
+      (postProcessObjects.arrowLinks as Array).push((node as NodeViewController).getArrowLinks());
       
       return 0;
     }

@@ -1,6 +1,6 @@
 package com.graphmind.event {
 	
-	import com.graphmind.display.NodeController;
+	import com.graphmind.display.NodeViewController;
 	
 	import flash.events.Event;
 	
@@ -43,7 +43,7 @@ package com.graphmind.event {
 		/**
 		 * Node that emitted the event.
 		 */
-		public var node:NodeController;
+		public var node:NodeViewController;
 		
 		/**
 		 * Original event object.
@@ -54,7 +54,7 @@ package com.graphmind.event {
 		/**
 		 * Constructor.
 		 */
-		public function NodeEvent(type:String, node:NodeController = null, originalEvent:Event = null, bubbles:Boolean = false, cancelable:Boolean = false) {
+		public function NodeEvent(type:String, node:NodeViewController = null, originalEvent:Event = null, bubbles:Boolean = false, cancelable:Boolean = false) {
 			super(type, bubbles, cancelable);
 			this.node = node;
 			this.originalEvent = originalEvent;

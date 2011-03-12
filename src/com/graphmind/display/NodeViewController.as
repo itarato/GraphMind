@@ -1,17 +1,18 @@
 package com.graphmind.display {
 	
 	import com.graphmind.ApplicationController;
-	import com.graphmind.MapController;
 	import com.graphmind.PluginManager;
+	import com.graphmind.TreeMapViewController;
 	import com.graphmind.data.NodeData;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.event.MapEvent;
+	import com.graphmind.event.EventCenter;
+	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.event.NodeEvent;
 	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.StringUtility;
-	import com.graphmind.view.NodeUI;
+	import com.graphmind.view.NodeView;
 	
 	import flash.events.ContextMenuEvent;
 	import flash.events.EventDispatcher;
@@ -58,7 +59,7 @@ package com.graphmind.display {
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuAddDrupalViews")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveNode")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveChilds")]
-	public class NodeController extends EventDispatcher implements IHasUI, ITreeItem, ICloud {
+	public class NodeViewController extends EventDispatcher implements IHasUI, ITreeItem, ICloud {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
@@ -79,7 +80,7 @@ package com.graphmind.display {
 		protected var _mouseSelectionTimeout:uint;
 
     // Drag and drop info.    
-    public static var dragAndDrop_sourceNode:NodeController;
+    public static var dragAndDrop_sourceNode:NodeViewController;
     public static var isNodeDragAndDrop:Boolean = false;
     public static var isPrepairedNodeDragAndDrop:Boolean = false;
 
@@ -103,7 +104,7 @@ package com.graphmind.display {
     /**
      * View.
      */
-    public var nodeView:NodeUI;
+    public var view:NodeView;
     
     /**
      * Child nodes.
@@ -124,7 +125,7 @@ package com.graphmind.display {
      * Parent node.
      * For the root it's null.
      */
-    public var parent:NodeController = null;
+    public var parent:NodeViewController = null;
     
     /**
      * ArrowLinks
@@ -132,15 +133,20 @@ package com.graphmind.display {
     protected var _arrowLinks:ArrayCollection = new ArrayCollection();
     
     /**
+    * Selection flag - true if the node is selected.
+    */
+    public var isSelected:Boolean = false;
+    
+    /**
      * Constructor.
      */ 
-		public function NodeController(nodeData:NodeData, newNodeView:NodeUI = null):void {
+		public function NodeViewController(nodeData:NodeData, newNodeView:NodeView = null):void {
 			super();
 			
 			this.nodeData = nodeData;
 			
 			if (newNodeView == null) {
-			  newNodeView = ApplicationController.i.workflowComposite.createNodeUI();
+			  newNodeView = ApplicationController.i.workflowComposite.createNodeView();
 			}
 			
       // Event listeners
@@ -159,16 +165,19 @@ package com.graphmind.display {
   
       newNodeView._displayComp.contextMenu = getContextMenu();
 			
-			nodeView = newNodeView;
+			view = newNodeView;
 			
 			nodeData.recalculateTitle(true);
 			setTitle(nodeData.title);
 			
 			nodeData.recalculateDrupalID();
 			
-			nodeView.backgroundColor = nodeData.color;
+			view.backgroundColor = nodeData.color;
 			
 			nodes.addItem(this);
+			     
+      // HOOK
+      PluginManager.callHook(NodeViewController.HOOK_NODE_CREATED, {node: this});
 		}
 		
 		/**
@@ -176,7 +185,7 @@ package com.graphmind.display {
 		 * Don't use it for creating nodes. Use NodeFactory instead.
 		 */
     public function createSimpleNodeChild():void {
-      var node:NodeController = NodeFactory.createNode({}, NodeType.NORMAL);
+      var node:NodeViewController = NodeFactory.createNode({}, NodeType.NORMAL);
       addChildNode(node);
       node.selectNode();
     }
@@ -219,14 +228,6 @@ package com.graphmind.display {
 			return contextMenu;
 		}
     
-    /**
-     * Check if the node is selected.
-     * @return Boolean
-     */
-    public function isSelected():Boolean {
-      // @todo rethink - too many levels
-      return MapController.i.activeNode == this;
-    }
 		
 		/**
 		 * Select a single node on the mindmap stage.
@@ -234,43 +235,26 @@ package com.graphmind.display {
 		 * Accessing to this node: TreeManager.getInstance().activeNode():NodeItem.
 		 */
 		public function selectNode():void {
-			var isTheSameSelected:Boolean = isSelected();
+		  EventCenter.notify(EventCenterEvent.NODE_SELECTED, this, this);
+			var isTheSameSelected:Boolean = isSelected;
 			
 			// Not to lose focus from textfield
-			if (!isTheSameSelected) nodeView.setFocus();
+			if (!isTheSameSelected) view.setFocus();
 			
-			// @TODO mystery bug steal highlight somethimes from nodes
-			// @todo rethink too many levels
-			if (MapController.i.activeNode) {
-				MapController.i.activeNode.deselectNode();
-			}
-			MapController.i.activeNode = this;
-			MapController.i.selectedNodeData = new ArrayCollection();
-			for (var key:* in nodeData.data) {
-				MapController.i.selectedNodeData.addItem({
-					key: key,
-					value: nodeData.data[key]
-				});
-			}
-			
-			GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = nodeView._displayComp.title_label.htmlText || nodeView._displayComp.title_label.text;
-				
-			if (!isTheSameSelected) {
-				GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = nodeData.link;
-				GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
-				GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
-			}
-				
+			isSelected = true;
+
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
+		
 		
 		/**
 		 * Deselect node.
 		 */
 		public function deselectNode():void {
-		  MapController.i.activeNode = null;
+		  EventCenter.notify(EventCenterEvent.NODE_UNSELECTED, this, this);
 			_setBackgroundEffect(EFFECT_NORMAL);
 		}
+		
 		
 		/**
 		 * Create Freemind compatible XML string output.
@@ -320,7 +304,7 @@ package com.graphmind.display {
 			}
 			
 			// Add childs
-			for each (var child:NodeController in _childs) {
+			for each (var child:NodeViewController in _childs) {
 				output = output + child.exportToFreeMindFormat();
 			}
 			
@@ -349,7 +333,7 @@ package com.graphmind.display {
 		 */
 		protected function _removeNodeChilds(killedDirectly:Boolean = false):void {
 			while (_childs.length > 0) {
-				(_childs.getItemAt(0) as NodeController).kill(killedDirectly);
+				(_childs.getItemAt(0) as NodeViewController).kill(killedDirectly);
 			}
 		}
 		
@@ -358,7 +342,7 @@ package com.graphmind.display {
 		 */
 		public function kill(killedDirectly:Boolean = true):void {
 		  // Root can't be deleted.
-			if (MapController.i.rootNode === this) return;
+			if (!parent) return;
 			
 			// @HOOK
 			PluginManager.callHook(HOOK_NODE_DELETE, {node: this, directKill: killedDirectly});
@@ -370,7 +354,7 @@ package com.graphmind.display {
 				// Remove parent's child (this child).
 				parent._childs.removeItemAt(parent._childs.getItemIndex(this));
 				// Check parent's toggle-subtree button. With no child it should be hidden.
-				parent.nodeView._displayComp.icon_has_child.visible = parent._childs.length > 0;
+				parent.view._displayComp.icon_has_child.visible = parent._childs.length > 0;
 			}
 
       // Remove arrow links.			
@@ -381,16 +365,15 @@ package com.graphmind.display {
       }
 			
 			// Remove main UI element.
-			nodeView._displayComp.parent.removeChild(nodeView._displayComp);
+			view._displayComp.parent.removeChild(view._displayComp);
 			// Remove the whole UI.
-			nodeView.parent.removeChild(this.nodeView);
+			view.parent.removeChild(this.view);
 			
 			// Remove from the global storage
 			nodes.removeItemAt(nodes.getItemIndex(this));
 			
 			// Update tree.
-			MapController.i.setMindmapUpdated();
-			MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+			EventCenter.notify(EventCenterEvent.MAP_UPDATED, this, this);
 			
 			update(UP_SUBTREE_UI);
 			
@@ -400,8 +383,8 @@ package com.graphmind.display {
 		/**
 		 * Check if the giveth node is a child of the self node.
 		 */
-		public function isChild(node:NodeController):Boolean {
-			for each (var child:NodeController in _childs) {
+		public function isChild(node:NodeViewController):Boolean {
+			for each (var child:NodeViewController in _childs) {
 				if (child == node) {
 					return true;
 				}
@@ -414,7 +397,7 @@ package com.graphmind.display {
 		/**
 		 * Move a node.
 		 */
-		public static function move(source:NodeController, target:NodeController, callEvent:Boolean = true):Boolean {
+		public static function move(source:NodeViewController, target:NodeViewController, callEvent:Boolean = true):Boolean {
 			// No parent can detach child.
 			if (!source || !source.parent || !target) return false;
 			// Target is an ascendant of the source.
@@ -431,7 +414,7 @@ package com.graphmind.display {
 			if (callEvent) {
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-				MapController.i.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+				EventCenter.notify(EventCenterEvent.NODE_MOVED, source, source);
 			}
 			
 			source.update(UP_TREE_UI);
@@ -442,7 +425,7 @@ package com.graphmind.display {
 		/**
 		 * Move a node to a next sibling.
 		 */
-		public static function moveToPrevSibling(source:NodeController, target:NodeController):void {
+		public static function moveToPrevSibling(source:NodeViewController, target:NodeViewController):void {
 			if (move(source, target.parent, false)) {
 				var siblingIDX:int = target.parent._childs.getItemIndex(target) + 1;
 				if (siblingIDX == -1) {
@@ -456,19 +439,18 @@ package com.graphmind.display {
 				target.parent._childs.setItemAt(source, siblingIDX);
 				
 				// Refresh after reordering
-				MapController.i.setMindmapUpdated();
-				MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+				EventCenter.notify(EventCenterEvent.MAP_UPDATED);
 				
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-				MapController.i.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+				EventCenter.notify(EventCenterEvent.NODE_MOVED, source, source);
 			}
 		}    
 		
     /**
      * Move a node to a next sibling.
      */
-    public static function moveToNextSibling(source:NodeController, target:NodeController):void {
+    public static function moveToNextSibling(source:NodeViewController, target:NodeViewController):void {
       if (move(source, target.parent, false)) {
         var siblingIDX:int = target.parent._childs.getItemIndex(target);
         if (siblingIDX == -1) {
@@ -482,12 +464,11 @@ package com.graphmind.display {
         target.parent._childs.setItemAt(source, siblingIDX);
         
         // Refresh after reordering
-        MapController.i.setMindmapUpdated();
-        MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS));
+        EventCenter.notify(EventCenterEvent.MAP_UPDATED);
         
         // Call hook
         PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-        MapController.i.dispatchEvent(new NodeEvent(NodeEvent.MOVED, source));
+        EventCenter.notify(EventCenterEvent.NODE_MOVED, source, source);
       }
     }
 		
@@ -501,7 +482,7 @@ package com.graphmind.display {
 				this.parent._childs.removeItemAt(childIDX);
 			}
 			
-			parent.nodeView._displayComp.icon_has_child.visible = parent._childs.length > 0;
+			parent.view._displayComp.icon_has_child.visible = parent._childs.length > 0;
 		}
  		
  		protected function onDoubleClick_icon(event:MouseEvent):void {
@@ -514,7 +495,7 @@ package com.graphmind.display {
  		public function removeIcon(icon:Image):void {
       var iconName:String = StringUtility.iconUrlToIconName(icon.source.toString());
       nodeData._icons.removeItemAt(nodeData._icons.getItemIndex(iconName));
-      nodeView.removeIcon(icon.source.toString());
+      view.removeIcon(icon.source.toString());
       update(UP_TIME | UP_SUBTREE_UI);
  		}
  		
@@ -523,7 +504,7 @@ package com.graphmind.display {
  		 */
 		public function setLink(link:String):void {
 			nodeData.link = link;
-			nodeView._displayComp.icon_anchor.visible = (link.length > 0);
+			view._displayComp.icon_anchor.visible = (link.length > 0);
 			update(UP_TIME | UP_NODE_UI);
 		}
 		
@@ -637,8 +618,8 @@ package com.graphmind.display {
 		/**
 		 * Get a child node that has equal data.
 		 */
-		public function getEqualChild(data:Object, type:String):NodeController {
-			for each (var child:NodeController in _childs) {
+		public function getEqualChild(data:Object, type:String):NodeViewController {
+			for each (var child:NodeViewController in _childs) {
 				if (child.nodeData.equalTo(data, type)) return child;
 			}
 			return null;
@@ -650,7 +631,7 @@ package com.graphmind.display {
      * @param boolean userChange - indicates if the change was done by user interaction.
      */
 		public function setTitle(title:String, userChange:Boolean = false):void {
-			nodeData.title = nodeView._displayComp.title_label.htmlText = title;
+			nodeData.title = view._displayComp.title_label.htmlText = title;
 			
 			if (userChange) {
 			  PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
@@ -664,7 +645,7 @@ package com.graphmind.display {
 		}
     
     public override function toString():String {
-      return '[NodeController: ' + this.nodeData.id + ']';
+      return '[NodeViewController: ' + this.nodeData.id + ']';
     }
 		
     /**
@@ -682,14 +663,14 @@ package com.graphmind.display {
       }
       
       if (updateSet & UP_NODE_UI) {
-        nodeView.isGraphicsUpdated = true;
-        nodeView.refreshGraphics();
+        view.isGraphicsUpdated = true;
+        view.refreshGraphics();
       }
       
       if (updateSet & (UP_SUBTREE_UI | UP_TREE_UI)) {
-        nodeView.isGraphicsUpdated = true;
-        nodeView.refreshGraphics();
-        MapController.i.dispatchEvent(new MapEvent(MapController.EVENT_MINDMAP_UPDATED));
+        view.isGraphicsUpdated = true;
+        view.refreshGraphics();
+        EventCenter.notify(EventCenterEvent.MAP_UPDATED);
       }
       
       if (updateSet & UP_STAGE_NODE_DATA) {
@@ -703,7 +684,7 @@ package com.graphmind.display {
      */
     public function addData(attribute:String, value:String):void {
       nodeData.dataAdd(attribute, value);
-      MapController.i.setMindmapUpdated();
+      EventCenter.notify(EventCenterEvent.MAP_UPDATED);
       update(UP_TIME | UP_STAGE_NODE_DATA);
     }
     
@@ -719,47 +700,47 @@ package com.graphmind.display {
      * Implementation of getUI().
      */
     public function getUI():IDrawable {
-      return nodeView;
+      return view;
     }
 
     public function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(selectNode, 400);
-      nodeView._displayComp.icon_add.visible = ApplicationController.i.isEditable();
-      nodeView._displayComp.icon_anchor.visible = nodeData.link.length > 0;
+      view._displayComp.icon_add.visible = ApplicationController.i.isEditable();
+      view._displayComp.icon_anchor.visible = nodeData.link.length > 0;
     }
     
     public function onMouseOut(event:MouseEvent):void {
       clearTimeout(_mouseSelectionTimeout);
-      nodeView._displayComp.icon_add.visible = false;
-      nodeView._displayComp.icon_anchor.visible = false;
+      view._displayComp.icon_add.visible = false;
+      view._displayComp.icon_anchor.visible = false;
       
-      if (NodeController.isPrepairedNodeDragAndDrop) {
-        MapController.i.openDragAndDrop(this);
+      if (NodeViewController.isPrepairedNodeDragAndDrop) {
+        EventCenter.notify(EventCenterEvent.NODE_START_DRAG, this, this);
       }
       
-      nodeView._displayComp.insertLeft.visible = false;
-      nodeView._displayComp.insertUp.visible = false;
+      view._displayComp.insertLeft.visible = false;
+      view._displayComp.insertUp.visible = false;
     }
     
     public function onDoubleClick(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
-      nodeView._displayComp.currentState = 'edit_title';
-      nodeView._displayComp.title_new.text = nodeView._displayComp.title_label.text;
-      nodeView._displayComp.title_new.setFocus();
+      view._displayComp.currentState = 'edit_title';
+      view._displayComp.title_new.text = view._displayComp.title_label.text;
+      view._displayComp.title_new.setFocus();
     }
     
     public function onKeyUp_TitleTextField(event:KeyboardEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if (event.keyCode == Keyboard.ENTER) {
-        nodeView._displayComp.currentState = '';
-        setTitle(nodeView._displayComp.title_new.text, true);
+        view._displayComp.currentState = '';
+        setTitle(view._displayComp.title_new.text, true);
         GraphMind.i.setFocus();
         selectNode();
       } else if (event.keyCode == Keyboard.ESCAPE) {
-        nodeView._displayComp.currentState = '';
-        nodeView._displayComp.title_new.text = nodeView._displayComp.title_label.text;
+        view._displayComp.currentState = '';
+        view._displayComp.title_new.text = view._displayComp.title_label.text;
       }
     }
     
@@ -767,8 +748,8 @@ package com.graphmind.display {
       if (!ApplicationController.i.isEditable()) return;
       
       // @TODO this is a duplication of the onNewTitleKeyUp() (above)
-      nodeView._displayComp.currentState = '';
-      setTitle(nodeView._displayComp.title_new.text, true);
+      view._displayComp.currentState = '';
+      setTitle(view._displayComp.title_new.text, true);
       GraphMind.i.setFocus();
     }
     
@@ -805,36 +786,34 @@ package com.graphmind.display {
     public function onMouseDown(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
-      MapController.i.prepaireDragAndDrop();
+      EventCenter.notify(EventCenterEvent.NODE_PREPARE_DRAG, this, this);
       event.stopImmediatePropagation();
     }
     
     public function onMouseUp(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
-      if ((!NodeController.isPrepairedNodeDragAndDrop) && NodeController.isNodeDragAndDrop) {
+      if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
         
-        if (nodeView.mouseX / nodeView.getWidth() > (1 - nodeView.mouseY / nodeView.getHeight())) {
-          NodeController.move(NodeController.dragAndDrop_sourceNode, this);
+        if (view.mouseX / view.getWidth() > (1 - view.mouseY / view.getHeight())) {
+          NodeViewController.move(NodeViewController.dragAndDrop_sourceNode, this);
         } else {
-          NodeController.moveToPrevSibling(NodeController.dragAndDrop_sourceNode, this);
+          NodeViewController.moveToPrevSibling(NodeViewController.dragAndDrop_sourceNode, this);
         }
-        MapController.i.onMouseUp_MindmapStage();
-        
-        MapController.i.dispatchEvent(new NodeEvent(NodeEvent.DRAG_AND_DROP_FINISHED, this));
+        EventCenter.notify(EventCenterEvent.NODE_FINISH_DRAG, this, this);
       }
     }
     
     public function onMouseMove(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
-      if ((!NodeController.isPrepairedNodeDragAndDrop) && NodeController.isNodeDragAndDrop) {
-        if (nodeView.mouseX / getUI().getWidth() > (1 - nodeView.mouseY / NodeUI.HEIGHT)) {
-          nodeView._displayComp.insertLeft.visible = true;
-          nodeView._displayComp.insertUp.visible = false;
+      if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
+        if (view.mouseX / getUI().getWidth() > (1 - view.mouseY / NodeView.HEIGHT)) {
+          view._displayComp.insertLeft.visible = true;
+          view._displayComp.insertUp.visible = false;
         } else {
-          nodeView._displayComp.insertLeft.visible = false;
-          nodeView._displayComp.insertUp.visible = true;
+          view._displayComp.insertLeft.visible = false;
+          view._displayComp.insertUp.visible = true;
         }
       }
     }
@@ -854,10 +833,12 @@ package com.graphmind.display {
     public function onContextMenuSelected_RemoveNode(event:ContextMenuEvent):void {
       kill();
     }
+  
     
     public function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
       _removeNodeChilds(true);
     }
+  
     
     public function onClick_ToggleSubtreeButton(event:MouseEvent):void {
       if (!this._isCollapsed) {
@@ -865,19 +846,20 @@ package com.graphmind.display {
       } else {
         uncollapse();
       }
-      MapController.i.setMindmapUpdated();
-      MapController.i.dispatchEvent(new NodeEvent(NodeEvent.UPDATE_GRAPHICS, this));
+      EventCenter.notify(EventCenterEvent.MAP_UPDATED);
       event.stopPropagation();
     }
     
     public function onContextMenuSelected_OpenSubtree(event:ContextMenuEvent):void {
       uncollapseChilds(true);
     }
+  
     
     public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
       toggleCloud();
       update();
     }
+  
   
     public function onContextMenuSelected_UpdateDrupalItem(event:ContextMenuEvent):void {
       updateDrupalItem();
@@ -888,27 +870,26 @@ package com.graphmind.display {
       update(UP_SUBTREE_UI);
     }
     
-    public function onUpdateGraphics(event:NodeEvent):void {
-      //redrawMindmapStage();
-      MapController.i.structureDrawer.refreshGraphics();
-    }
     
     public function onDoubleClick_arrowLink(event:MouseEvent):void {
       removeArrowLink(event.target as TreeArrowLink);
-      trace(event);
     }
+        
         
     public function getChildNodeAll():ArrayCollection {
       return _childs;
     }
     
+    
     public function getChildNodeAt(index:int):ITreeNode {
       return _childs.getItemAt(index) as ITreeNode;
     }
     
+    
     public function getChildNodeIndex(child:ITreeNode):int {
       return _childs.getItemIndex(child);
     }
+    
     
     public function removeChildNodeAll():void {
       _childs.removeAll();
@@ -921,7 +902,7 @@ package com.graphmind.display {
     /**
      * Add a new child node.
      */
-    public function addChildNode(node:NodeController):void {
+    public function addChildNode(node:NodeViewController):void {
       // Add node as a new child
       this._childs.addItem(node);
       node.parent = this;
@@ -930,7 +911,7 @@ package com.graphmind.display {
       uncollapseChilds();
       
       // Showing toggle-subtree button.
-      nodeView._displayComp.icon_has_child.visible = true;
+      view._displayComp.icon_has_child.visible = true;
       
       // Not necessary to fire NODE_ATTCHED event. MOVED and CREATED covers this.
       update(UP_SUBTREE_UI);
@@ -943,9 +924,9 @@ package com.graphmind.display {
     
     public function collapseChilds():void {
       _isCollapsed = true;
-      nodeView._displayComp.icon_has_child.source = nodeView._displayComp.image_node_uncollapse;
-      for each (var nodeItem:NodeController in _childs) {
-        nodeItem.nodeView.visible = false;
+      view._displayComp.icon_has_child.source = view._displayComp.image_node_uncollapse;
+      for each (var nodeItem:NodeViewController in _childs) {
+        nodeItem.view.visible = false;
         nodeItem.collapseChilds();
       }
       update(UP_TIME | UP_SUBTREE_UI);
@@ -958,9 +939,9 @@ package com.graphmind.display {
     
     public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
       _isCollapsed = false;
-      nodeView._displayComp.icon_has_child.source = nodeView._displayComp.image_node_collapse;
-      for each (var nodeItem:NodeController in _childs) {
-        nodeItem.nodeView.visible = true;
+      view._displayComp.icon_has_child.source = view._displayComp.image_node_collapse;
+      for each (var nodeItem:NodeViewController in _childs) {
+        nodeItem.view.visible = true;
         if (!nodeItem._isForcedCollapsed || forceOpenSubtree) {
           nodeItem.uncollapseChilds(forceOpenSubtree);
         }
@@ -969,7 +950,7 @@ package com.graphmind.display {
     }
     
     public function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
-      nodeView._backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
+      view._backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
     }
 
     /**
@@ -989,7 +970,7 @@ package com.graphmind.display {
       icon.source = source;
       icon.y = 2;
       
-      nodeView.addIcon(icon);
+      view.addIcon(icon);
       nodeData.addIcon(iconName);
       
       if (ApplicationController.i.isEditable()) {

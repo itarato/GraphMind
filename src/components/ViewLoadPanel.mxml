@@ -7,14 +7,14 @@
 	
 	<mx:Script>
 		<![CDATA[
-		  import com.graphmind.MapController;
+		  import com.graphmind.TreeMapViewController;
 			import com.graphmind.data.ViewsCollection;
 		]]>
 	</mx:Script>
 	
 	<mx:DataGrid x="10" y="10" width="260" height="340"
 		dataProvider="{ViewsCollection.collection}"
-		itemClick="{MapController.i.onItemClick_LoadViewDataGrid(event);}"
+		itemClick="{TreeMapViewController.i.onItemClick_LoadViewDataGrid(event);}"
 		id="view_views_datagrid">
 		<mx:columns>
 			<mx:DataGridColumn headerText="ID"   dataField="siteConnectionID" width="30"/>
@@ -40,9 +40,9 @@
 			<mx:TextInput id="view_limit" text="10"/>
 		</mx:FormItem>
 		<mx:ControlBar>
-			<mx:Button label="Submit" click="{MapController.i.onClick_LoadViewsSubmitButton();}"
+			<mx:Button label="Submit" click="{TreeMapViewController.i.onClick_LoadViewsSubmitButton();}"
 				icon="@Embed(source='assets/images/accept.png')"/>
-			<mx:Button label="Cancel" click="{MapController.i.onClick_LoadViewsCancelButton();}"
+			<mx:Button label="Cancel" click="{TreeMapViewController.i.onClick_LoadViewsCancelButton();}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>

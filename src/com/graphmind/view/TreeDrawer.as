@@ -1,76 +1,88 @@
 package com.graphmind.view {
 	
-	import com.graphmind.ApplicationController;
-	import com.graphmind.MapController;
+	import com.graphmind.MapViewController;
 	import com.graphmind.display.ICloud;
 	import com.graphmind.display.ITreeItem;
-	import com.graphmind.display.NodeController;
+	import com.graphmind.display.NodeViewController;
 	import com.graphmind.display.TreeArrowLink;
-	import com.graphmind.util.Log;
-	
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-	
 	import mx.collections.ArrayCollection;
-	import mx.core.UIComponent;
+	import mx.core.Container;
 	
-	
-	public class TreeDrawer extends StructureDrawer {
+	public class TreeDrawer {
 		
+		/**
+		 * Default display settings.
+		 */
 		public static const MARGIN_BOTTOM:int = 4;
 		public static const MARGIN_RIGHT:int = 34;
-		
-		protected var _cloudDrawer:CloudDrawer;
-		protected var _connectionDrawer:TreeConnectionDrawer;
-		protected var _arrowLinkContainer:TreeArrowLinkUI;
-		
-		// Mindmap stage redraw timer - performance reason
+
+    /**
+    * Layers.
+    */
+    protected var _nodeLayer:Container;
+    protected var _connectionLayer:Container;
+    protected var _cloudLayer:Container;
+    		
+    /**
+    * Drawers.
+    */
+    protected var _connectionDrawer:TreeConnectionDrawer;	
+    protected var _cloudDrawer:CloudDrawer;
+    protected var _arrowLinkDrawer:TreeArrowLinkDrawer;
+    	
+		/**
+		 * Mindmap stage redraw timer - performance reason
+		 */
 		protected var _timer:uint;
 		
-		public function TreeDrawer (
-			target:UIComponent, 
-			cloudContainer:UIComponent, 
-			connectionContainer:UIComponent,
-			arrowLinkContainer:UIComponent
-		) {
-			super(target);
-			_cloudDrawer        = new CloudDrawer(cloudContainer);
-			_connectionDrawer   = new TreeConnectionDrawer(connectionContainer);
-			_arrowLinkContainer = ApplicationController.i.workflowComposite.createArrowLinkDrawer(arrowLinkContainer);
+		
+		/**
+		 * Constructor.
+		 */
+		public function TreeDrawer(nodeLayer:Container, connectionLayer:Container, cloudLayer:Container) {
+			super();
 			
-			initGraphics();
+			this._nodeLayer       = nodeLayer;
+			this._connectionLayer = connectionLayer;
+			this._cloudLayer      = cloudLayer;
+			
+			_connectionDrawer = new TreeConnectionDrawer(this._connectionLayer);
+			_cloudDrawer      = new CloudDrawer(this._cloudLayer);
+			_arrowLinkDrawer  = new TreeArrowLinkDrawer(this._connectionLayer);
 		}
 		
-		public override function initGraphics():void {
-		
-		}
-		
-		public override function refreshGraphics():void {
-			if (_isLocked) return;
-			
+
+    /**
+    * Refresh ui.
+    */
+		public function refreshGraphics(rootNode:NodeViewController):void {
 			clearTimeout(_timer);
-			Log.debug('TreeDrawer.rerfreshGraphics()');
 			_timer = setTimeout(function():void {
 				
-				_connectionDrawer.clearAll();
-				_cloudDrawer.clearAll();
-				_arrowLinkContainer.clearAll();
+				_connectionLayer.graphics.clear();
+				_cloudLayer.graphics.clear();
 				
 				// Refresh the whole tree.
-				MapController.i.rootNode.getUI().x = 4;
-				MapController.i.rootNode.getUI().y = _target.height >> 1;
+				rootNode.view.x = 4;
+				rootNode.view.y = _nodeLayer.height >> 1;
 				var postProcessObjects:Object = new Object();
 				postProcessObjects.arrowLinks = new Array();
-				var totalHeight:Number = _redrawNode(MapController.i.rootNode, postProcessObjects);
+				var totalHeight:Number = _redrawNode(rootNode, postProcessObjects);
 				
-				if (totalHeight > (MapController.DEFAULT_DESKTOP_HEIGHT + (NodeUI.HEIGHT << 2))) {
-					MapController.DEFAULT_DESKTOP_HEIGHT = totalHeight + 200;
+				if (totalHeight > (MapViewController.MAP_DEFAULT_HEIGHT + (NodeView.HEIGHT << 2))) {
+					MapViewController.MAP_DEFAULT_HEIGHT = totalHeight + 200;
 				}
 				
 				_redrawArrowLinks(postProcessObjects.arrowLinks);
 			}, 10);
 		}
 		
+		
+		/**
+		 * Refresh a single node's ui.
+		 */
 		protected function _redrawNode(node:ITreeItem, postProcessObjects:Object):Number {
 		  node.getUI().refreshGraphics();
 		  
@@ -98,10 +110,11 @@ package com.graphmind.view {
 			}
 			
 			// ArrowLinks
-			(postProcessObjects.arrowLinks as Array).push((node as NodeController).getArrowLinks());
+			(postProcessObjects.arrowLinks as Array).push((node as NodeViewController).getArrowLinks());
 			
 			return totalChildHeight;
 		}
+		
 		
 		/**
 		 * Draw arrow links.
@@ -109,11 +122,15 @@ package com.graphmind.view {
 		protected function _redrawArrowLinks(arrowLinkNodes:Array):void {
 			for each (var arrowLinks:ArrayCollection in arrowLinkNodes) {
 				for each (var arrowLink:TreeArrowLink in arrowLinks) {
-					_arrowLinkContainer.draw(arrowLink);
+					_arrowLinkDrawer.draw(arrowLink);
 				}
 			}
 		}
 		
+		
+		/**
+		 * Get height of a subtree.
+		 */
 		protected function _getSubtreeHeight(node:ITreeItem):int {
 			var height:int = 0;
 			if (node.getChildNodeAll().length == 0 || node.isCollapsed()) {

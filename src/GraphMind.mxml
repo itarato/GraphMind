@@ -19,10 +19,10 @@
 		  import com.graphmind.TreeWorkflow;
 		  import com.graphmind.FuturesWheelWorkflow;
 		  import com.graphmind.IWorkflowComposite;
-		  import com.graphmind.display.NodeController;
+		  import com.graphmind.display.NodeViewController;
 		  import com.graphmind.view.FuturesWheelDrawer;
-			import com.graphmind.MapController;
-			import com.graphmind.view.NodeUI;
+			import com.graphmind.TreeMapViewController;
+			import com.graphmind.view.NodeView;
 			import com.graphmind.view.TreeDrawer;
 			import com.graphmind.util.OSD;
 			import com.graphmind.PluginManager;
@@ -77,7 +77,7 @@
 				// @HOOK
 				PluginManager.callHook(HOOK_PRE_INIT);
         
-				applicationController = new ApplicationController();
+				this.applicationController = new ApplicationController();
 				
 				OSD.show('Graphmind started.');
 			}
@@ -110,19 +110,10 @@
 		</mx:State>
 	</mx:states>
 
-	<!-- Debug textarea -->
-	<!--
-	<mx:TextArea right="10" bottom="40" top="10" width="200" id="debugTextarea" 
-		backgroundAlpha="0"
-		borderThickness="0"
-		color="#FFFFFF"/>
-	-->
-	<!-- END Debug textarea -->
-
 	<!-- Main mindmap area -->
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
-		<components:MindmapCanvas id="mindmapCanvas"/>
+		<mx:Box id="map" width="100%" height="100%"/>
 	</mx:HDividedBox>
 	
 	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>

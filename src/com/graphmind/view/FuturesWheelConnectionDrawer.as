@@ -1,6 +1,6 @@
 package com.graphmind.view {
   
-  import com.graphmind.display.FuturesWheelNodeController;
+  import com.graphmind.display.FuturesWheelNodeViewController;
   import com.graphmind.display.ITreeItem;
   
   import mx.core.UIComponent;

@@ -5,7 +5,7 @@ package com.graphmind.view
   
   import mx.core.UIComponent;
 
-  public class FuturesWheelArrowLinkUI extends TreeArrowLinkUI {
+  public class FuturesWheelArrowLinkUI extends TreeArrowLinkDrawer {
     private static var PI_IN_DEG:Number = 180.0 / Math.PI;
     
     public function FuturesWheelArrowLinkUI(target:UIComponent) {

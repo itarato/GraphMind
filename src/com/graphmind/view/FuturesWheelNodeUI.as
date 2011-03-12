@@ -4,13 +4,13 @@ package com.graphmind.view {
   
   import mx.controls.Image;
 
-  public class FuturesWheelNodeUI extends NodeUI {
+  public class FuturesWheelNodeView extends NodeView {
     
     [Embed(source="assets/images/arrow_switch.png")]
     public var arrowLinkIconImage:Class;
     public var arrowLinkIcon:Image = new Image();
     
-    public function FuturesWheelNodeUI():void {
+    public function FuturesWheelNodeView():void {
       super();
     }
     

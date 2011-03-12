@@ -1,23 +1,52 @@
 package com.graphmind {
   
 	import com.graphmind.data.NodeType;
-	import com.graphmind.display.NodeController;
+	import com.graphmind.display.NodeViewController;
 	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.factory.NodeFactory;
-	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
 	import com.kitten.network.Connection;
 	
 	
 	public class ImportManager {
 		
-		public static function importMapFromString(stringData:String):NodeController {
+		public static function importNodesFromDrupalResponse(response:Object):NodeViewController {
+		  var rootNode:NodeViewController;
+		  var is_valid_mm_xml:Boolean = false;
+      var body:String = result.body.toString();
+      if (body.length > 0) {
+        var xmlData:XML = new XML(body);
+        var nodes:XML = xmlData.child('node')[0];
+        is_valid_mm_xml = nodes !== null;
+      }
+        
+      if (is_valid_mm_xml) {
+        // Subtree
+        var importedBaseNode:NodeViewController = ImportManager.importMapFromString(body);
+        rootNode = importedBaseNode;
+      } else {
+        // New node
+        // ! Removed original data object: result.result.
+        // This caused a mailformed export string.
+        rootNode = NodeFactory.createNode(
+          {},
+          NodeType.NODE,
+          null,
+          result.title
+        );
+      }
+      
+      return rootNode;
+		}
+		
+		
+		public static function importMapFromString(stringData:String):NodeViewController {
 			var xmlData:XML = new XML(stringData);
 			
 			var postProcessObject:Object = new Object();
 			postProcessObject.arrowLinks = new Array();
 			
-			var _baseNode:NodeController = buildGrapMindNode(xmlData.child('node')[0], postProcessObject);
+			var _baseNode:NodeViewController = buildGrapMindNode(xmlData.child('node')[0], postProcessObject);
 			
 			// Post process arrow links
 			for each (var arrowLink:TreeArrowLink in postProcessObject.arrowLinks) {
@@ -29,7 +58,7 @@ package com.graphmind {
 			return _baseNode;
 		}
 		
-		public static function buildGrapMindNode(nodeXML:XML, postProcessObject:Object):NodeController {
+		public static function buildGrapMindNode(nodeXML:XML, postProcessObject:Object):NodeViewController {
 			// @TODO write node checking - if those are exist
 			var attributes:Object = {};
 			var information:Object = {};
@@ -59,7 +88,7 @@ package com.graphmind {
         conn = new Connection(unescape(nodeXML.site.@URL));
 			}
 			
-			var node:NodeController = NodeFactory.createNode(
+			var node:NodeViewController = NodeFactory.createNode(
 			  attributes,
 			  nodeXML.@TYPE ? nodeXML.@TYPE : NodeType.NORMAL,
 			  conn,
@@ -87,7 +116,7 @@ package com.graphmind {
 			
 			var nodeChilds:XMLList = nodeXML.elements('node');
 			for each (var childXML:XML in nodeChilds) {
-				var childNode:NodeController = buildGrapMindNode(childXML, postProcessObject);
+				var childNode:NodeViewController = buildGrapMindNode(childXML, postProcessObject);
 				node.addChildNode(childNode);
 			}
 			

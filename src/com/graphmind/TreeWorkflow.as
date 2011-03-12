@@ -1,8 +1,8 @@
 package com.graphmind
 {
-  import com.graphmind.display.NodeController;
-  import com.graphmind.view.NodeUI;
-  import com.graphmind.view.TreeArrowLinkUI;
+  import com.graphmind.display.NodeViewController;
+  import com.graphmind.view.NodeView;
+  import com.graphmind.view.TreeArrowLinkDrawer;
   import com.graphmind.view.TreeDrawer;
   
   import mx.core.UIComponent;
@@ -12,12 +12,12 @@ package com.graphmind
     public function TreeWorkflow():void {
     }
 
-    public function createNodeUI():NodeUI {
-      return new NodeUI();
+    public function createNodeView():NodeView {
+      return new NodeView();
     }
     
-    public function createStageManager():MapController {
-      return new MapController(
+    public function createStageManager():TreeMapViewController {
+      return new TreeMapViewController(
         new TreeDrawer(
           GraphMind.i.mindmapCanvas.desktop,
           GraphMind.i.mindmapCanvas.desktop_cloud,
@@ -27,12 +27,12 @@ package com.graphmind
       );
     }
     
-    public function getNodeControllerClass():Class {
-      return NodeController;
+    public function getNodeViewControllerClass():Class {
+      return NodeViewController;
     }
     
-    public function createArrowLinkDrawer(target:UIComponent):TreeArrowLinkUI {
-      return new TreeArrowLinkUI(target);
+    public function createArrowLinkDrawer(target:UIComponent):TreeArrowLinkDrawer {
+      return new TreeArrowLinkDrawer(target);
     }
     
   }

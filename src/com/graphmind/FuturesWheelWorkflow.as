@@ -1,11 +1,11 @@
 package com.graphmind {
   
-  import com.graphmind.display.FuturesWheelNodeController;
+  import com.graphmind.display.FuturesWheelNodeViewController;
   import com.graphmind.view.FuturesWheelArrowLinkUI;
   import com.graphmind.view.FuturesWheelDrawer;
-  import com.graphmind.view.FuturesWheelNodeUI;
-  import com.graphmind.view.NodeUI;
-  import com.graphmind.view.TreeArrowLinkUI;
+  import com.graphmind.view.FuturesWheelNodeView;
+  import com.graphmind.view.NodeView;
+  import com.graphmind.view.TreeArrowLinkDrawer;
   
   import mx.core.UIComponent;
 
@@ -13,12 +13,12 @@ package com.graphmind {
     public function FuturesWheelWorkflow() {
     }
 
-    public function createNodeUI():NodeUI {
-      return new FuturesWheelNodeUI();
+    public function createNodeView():NodeView {
+      return new FuturesWheelNodeView();
     }
     
-    public function createStageManager():MapController {
-      return new MapController(
+    public function createStageManager():TreeMapViewController {
+      return new TreeMapViewController(
         new FuturesWheelDrawer(
           GraphMind.i.mindmapCanvas.desktop,
           GraphMind.i.mindmapCanvas.desktop_cloud,
@@ -28,11 +28,11 @@ package com.graphmind {
       );
     }
     
-    public function getNodeControllerClass():Class {
-      return FuturesWheelNodeController;
+    public function getNodeViewControllerClass():Class {
+      return FuturesWheelNodeViewController;
     }
     
-    public function createArrowLinkDrawer(target:UIComponent):TreeArrowLinkUI {
+    public function createArrowLinkDrawer(target:UIComponent):TreeArrowLinkDrawer {
       return new FuturesWheelArrowLinkUI(target);
     }
     
