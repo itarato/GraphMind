@@ -150,7 +150,7 @@ package com.graphmind.display {
 			this.nodeData = nodeData;
 			
 			if (newNodeView == null) {
-			  newNodeView = ApplicationController.i.workflowComposite.createNodeView();
+			  newNodeView = new NodeView();
 			}
 			
       // Event listeners

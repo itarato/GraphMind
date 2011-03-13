@@ -116,7 +116,7 @@
 	<!-- Main mindmap area -->
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
-		<mx:VBox width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%">
     	<mx:Canvas height="30" left="0" right="0" top="0"
         backgroundAlpha="0.5"
         backgroundColor="0x000000"
@@ -137,7 +137,7 @@
         </mx:HBox>
       </mx:Canvas>
       <mx:Box id="map" top="30" left="0" right="0" bottom="0"/>
-		</mx:VBox>
+		</mx:Canvas>
 	</mx:HDividedBox>
 	
 	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>

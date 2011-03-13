@@ -25,9 +25,7 @@ package com.graphmind {
     /**
      * Desktop UI size.
      */
-    [Bindable]
     public static var MAP_DEFAULT_HEIGHT:int = 2000;
-    [Bindable]
     public static var MAP_DEFAULT_WIDTH:int = 3000;
 
 
@@ -35,8 +33,11 @@ package com.graphmind {
     * Constructor.
     */    
     public function MapViewController() {
-      this.view = new MapView();
-      this.view.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onLoadMap);
+      view = new MapView();
+      view.setStyle('height', '100%');
+      view.setStyle('width', '100%');
+      view.setContainerSize(MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT);
+      view.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onLoadMap);
     }
 
 

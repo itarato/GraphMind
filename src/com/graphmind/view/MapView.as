@@ -2,12 +2,13 @@ package com.graphmind.view {
   
   import com.graphmind.event.MapEvent;
   
+  import mx.containers.Canvas;
   import mx.core.Container;
   import mx.core.ScrollPolicy;
   import mx.core.UIComponent;
   
   [Event(name="mindmapCreationComplete", type="com.graphmind.event.MapEvent")]
-  public class MapView extends Container {
+  public class MapView extends Canvas {
 
     /**
     * Inner scrollable container view.

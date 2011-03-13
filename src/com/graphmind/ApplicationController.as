@@ -73,7 +73,7 @@ package com.graphmind {
      *  - tree composite creates tree nodes and tree structure...
      *  - futures wheel composite creates f.w. related objects
      */
-    public var workflowComposite:IWorkflowComposite; 
+//    public var workflowComposite:IWorkflowComposite; 
     
 		/**
 		 * Constructor.
@@ -85,7 +85,7 @@ package com.graphmind {
       // Editing privileges have to be arrived from the backend with the user object.
       setEditMode(false);
       
-      this.treeMapViewController = new TreeMapViewController();
+      treeMapViewController = new TreeMapViewController();
       GraphMind.i.map.addChild(this.treeMapViewController.view);
       
 		  // Establish connection to the Drupal site.
