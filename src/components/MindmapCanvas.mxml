@@ -42,11 +42,11 @@
 			mouseMove="{TreeMapViewController.i.onMouseMove_InnerMindmapStage();}"
 			scaleX="{desktopScaleHSlider.value/100}"
 			scaleY="{desktopScaleHSlider.value/100}">
-    <mx:Canvas id="desktop_arrowlink" 
-      width="{TreeMapViewController.DEFAULT_DESKTOP_WIDTH}" 
-      height="{TreeMapViewController.DEFAULT_DESKTOP_HEIGHT}" 
-      focusEnabled="true"/>
-			</mx:Canvas>
+      <mx:Canvas id="desktop_arrowlink" 
+        width="{TreeMapViewController.DEFAULT_DESKTOP_WIDTH}" 
+        height="{TreeMapViewController.DEFAULT_DESKTOP_HEIGHT}" 
+        focusEnabled="true"/>
+		</mx:Canvas>
 	</mx:Canvas>
 	<!-- END mindmap editor -->
 	

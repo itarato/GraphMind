@@ -16,6 +16,7 @@
 		
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeWorkflow;
 		  import com.graphmind.FuturesWheelWorkflow;
 		  import com.graphmind.IWorkflowComposite;
@@ -50,6 +51,8 @@
 			 * Application manager.
 			 */
 			[Bindable] public var applicationController:ApplicationController;
+			
+			public var controller:AppFormController;
 			
 			/**
 			 * Callback for initialize event.
@@ -104,8 +107,8 @@
 		<!-- Read-only mode state -->
 		<mx:State name="only_view_mode">
 			<mx:RemoveChild target="{mindmapToolsPanel}" />
-			<mx:RemoveChild target="{mindmapCanvas.saveLinkButton}" />
-			<mx:SetProperty name="visible" target="{mindmapCanvas.saveLinkButton}" value="false"/>
+			<mx:RemoveChild target="{saveLinkButton}" />
+			<mx:SetProperty name="visible" target="{saveLinkButton}" value="false"/>
 			<mx:SetProperty name="visible" target="{mindmapToolsPanel.icon_outer_container}" value="false"/>
 		</mx:State>
 	</mx:states>
@@ -113,7 +116,28 @@
 	<!-- Main mindmap area -->
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
-		<mx:Box id="map" width="100%" height="100%"/>
+		<mx:VBox width="100%" height="100%">
+    	<mx:Canvas height="30" left="0" right="0" top="0"
+        backgroundAlpha="0.5"
+        backgroundColor="0x000000"
+        color="0xFFFFFF">
+        <mx:HBox paddingTop="4" paddingLeft="4">
+          <mx:LinkButton top="4" label="Fullscreen" click="{controller.onClick_FullscreenButton();}"
+            id="fullScreenLinkButton"/>
+          
+          <mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
+            value="100"
+            id="desktopScaleHSlider"/>
+          
+          <mx:Label paddingTop="2" text="{desktopScaleHSlider.value + '%'}"
+            id="desktopScaleLabel"/>
+            
+          <mx:LinkButton top="4" label="Save" click="{controller.onClick_SaveGraphmindButton();}" color="#FFDBA1"
+            id="saveLinkButton"/>
+        </mx:HBox>
+      </mx:Canvas>
+      <mx:Box id="map" top="30" left="0" right="0" bottom="0"/>
+		</mx:VBox>
 	</mx:HDividedBox>
 	
 	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>

@@ -1,22 +1,16 @@
 package com.graphmind {
 
-	import com.graphmind.data.ViewsCollection;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
-	import com.graphmind.view.TreeMapView;
 	
 	import flash.display.MovieClip;
-	import flash.display.StageDisplayState;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
 	
 	import mx.controls.Image;
-	import mx.core.Application;
 	import mx.core.BitmapAsset;
-	import mx.events.ListEvent;
 	
 	/**
 	 * Stage manager
@@ -59,24 +53,17 @@ package com.graphmind {
     /**
     * Drag and drop image.
     */
-    public var dragAndDropImage:Image;
+    public var dragAndDropImage:Image = new Image();
     
     
 		/**
 		 * Constructor.
 		 */
 		public function TreeMapViewController() {
-		  super(false);
-		  
-		  // Init custom view - tree map view.
-		  view = new TreeMapView();
+		  super();
 		  
 		  // Set the structure drawer.
-		  this.treeDrawer = new TreeDrawer(
-		    (view as TreeMapView).nodeLayer,
-		    (view as TreeMapView).connectionLayer,
-		    (view as TreeMapView).cloudLayer
-		  );
+		  this.treeDrawer = new TreeDrawer(view.nodeLayer, view.connectionLayer, view.cloudLayer);
 		  
 		  // Event listener - the stage UI is updated
 			addEventListener(EVENT_MINDMAP_UPDATED, onMindmapUpdated);
@@ -118,16 +105,7 @@ package com.graphmind {
     public function setMindmapUpdated():void {
       isTreeUpdated = true;
     }
-    
 
-    /**
-     * Select a views from datagrid on the views load panel.
-     */
-    public function onItemClick_LoadViewDataGrid(event:ListEvent):void {
-      var selectedViewsCollection:ViewsCollection = event.itemRenderer.data as ViewsCollection;
-      
-      GraphMind.i.panelLoadView.view_name.text = selectedViewsCollection.name;
-    }
 
     /**
      * Refresh the whole mindmap stage.
@@ -140,29 +118,6 @@ package com.graphmind {
       treeDrawer.refreshGraphics(rootNode);
     }
 
-    
-    
-    public function onClick_FullscreenButton():void {
-      toggleFullscreenMode();
-    }
-    
-    /**
-     * Toggle fullscreen mode.
-     */
-    protected function toggleFullscreenMode():void {
-      try {
-        
-        switch (Application.application.stage.displayState) {
-          case StageDisplayState.FULL_SCREEN:
-            Application.application.stage.displayState = StageDisplayState.NORMAL;
-            break;
-          case StageDisplayState.NORMAL:
-            Application.application.stage.displayState = StageDisplayState.FULL_SCREEN;
-            break;
-        }
-      } catch (e:Error) {}
-    }
-    
     
     public function onMouseUp_DragAndDropImage():void {
       dragAndDropImage.visible = false;
@@ -271,7 +226,7 @@ package com.graphmind {
 
     
     public function addNodeToStage(node:NodeViewController):void {
-      (view as TreeMapView).nodeLayer.addChild(node.view);
+      view.nodeLayer.addChild(node.view);
     }
 
 	}

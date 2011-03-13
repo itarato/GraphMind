@@ -5,12 +5,14 @@
 	<mx:Script>
 		<![CDATA[
 		  import com.graphmind.AppFormController;
+		  
+		  [Bindable]
 		  public var controller:AppFormController;
 		]]>
 	</mx:Script>
 			
 	<mx:DataGrid width="100%" 
-		dataProvider="{TreeMapViewController.i.selectedNodeData}" 
+		dataProvider="{controller.selectedNodeData}" 
 		top="0" bottom="190" left="0"
 		id="attributesDataGrid">
 		<mx:click>

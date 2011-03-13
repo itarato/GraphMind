@@ -12,7 +12,23 @@ package com.graphmind.view {
     /**
     * Inner scrollable container view.
     */
-    public var container:UIComponent;
+    public var container:UIComponent = new Container();    
+    
+    /**
+    * Layer for the node connections.
+    */
+    public var connectionLayer:Container = new Container();
+    
+    /**
+    * Layer for the clouds.
+    */
+    public var cloudLayer:Container = new Container();
+    
+    /**
+    * Layer for the node objects.
+    */
+    public var nodeLayer:Container = new Container();
+    
   
   
     /**
@@ -20,8 +36,13 @@ package com.graphmind.view {
     */    
     public function MapView() {
       super();
-      
+
+      // Add UI layers.      
       addChild(container);
+      container.addChild(cloudLayer);
+      container.addChild(connectionLayer);
+      container.addChild(nodeLayer);
+      
       horizontalScrollPolicy = ScrollPolicy.ON;
       verticalScrollPolicy   = ScrollPolicy.ON;
       

@@ -12,10 +12,13 @@ package com.graphmind {
   import com.graphmind.util.OSD;
   import com.kitten.network.Connection;
   
+  import flash.display.StageDisplayState;
   import flash.events.MouseEvent;
   
   import mx.collections.ArrayCollection;
   import mx.controls.Image;
+  import mx.core.Application;
+  import mx.events.ListEvent;
   
   public class AppFormController {
                 
@@ -38,11 +41,16 @@ package com.graphmind {
     */
     public function AppFormController() {
       // Set MXML file controllers.
+      GraphMind.i.controller = this;
+      
       GraphMind.i.panelLoadDrupalItem.controller = this;
+      GraphMind.i.panelLoadView.controller = this;
+      
       GraphMind.i.mindmapToolsPanel.node_save_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.node_info_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
+      GraphMind.i.mindmapToolsPanel.icon_outer_container.controller = this;
       
       EventCenter.subscribe(EventCenterEvent.NODE_SELECTED, onNodeSelected);
     }
@@ -263,7 +271,41 @@ package com.graphmind {
       if (!NodeViewController.activeNode) return;
       
       NodeViewController.activeNode.addIcon(icon.source.toString());
+    }    
+
+
+    /**
+     * Select a views from datagrid on the views load panel.
+     */
+    public function onItemClick_LoadViewDataGrid(event:ListEvent):void {
+      var selectedViewsCollection:ViewsCollection = event.itemRenderer.data as ViewsCollection;
+      
+      GraphMind.i.panelLoadView.view_name.text = selectedViewsCollection.name;
     }
+
+       
+    public function onClick_FullscreenButton():void {
+      toggleFullscreenMode();
+    }
+    
+    
+    /**
+     * Toggle fullscreen mode.
+     */
+    protected function toggleFullscreenMode():void {
+      try {
+        
+        switch (Application.application.stage.displayState) {
+          case StageDisplayState.FULL_SCREEN:
+            Application.application.stage.displayState = StageDisplayState.NORMAL;
+            break;
+          case StageDisplayState.NORMAL:
+            Application.application.stage.displayState = StageDisplayState.FULL_SCREEN;
+            break;
+        }
+      } catch (e:Error) {}
+    }
+    
     
     
   }

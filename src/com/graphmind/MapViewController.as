@@ -34,11 +34,8 @@ package com.graphmind {
     /**
     * Constructor.
     */    
-    public function MapViewController(initView:Boolean = true) {
-      if (initView) {
-        this.view = new MapView();
-      }
-      
+    public function MapViewController() {
+      this.view = new MapView();
       this.view.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onLoadMap);
     }
 

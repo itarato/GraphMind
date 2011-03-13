@@ -89,7 +89,7 @@ package com.graphmind {
       GraphMind.i.map.addChild(this.treeMapViewController.view);
       
 		  // Establish connection to the Drupal site.
-      baseSiteConnection = new Connection(this.getBaseDrupalURL());
+      baseSiteConnection = new Connection(getBaseDrupalURL());
       baseSiteConnection.isSessionAuthentication = true;
       baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
       baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionManager.defaultErrorHandler);
@@ -99,21 +99,21 @@ package com.graphmind {
 		/**
 		 * Get the host Drupal site's URL
 		 */
-		protected function getBaseDrupalURL():String {
+		public static function getBaseDrupalURL():String {
 			return Application.application.parameters.basePath;
 		}
 		
 		/**
 		 * Get hosting node's NID
 		 */
-		public function getHostNodeID():int {
+		public static function getHostNodeID():int {
 			return Application.application.parameters.nid;
 		}
 		
 		/**
 		 * URL for the icons.
 		 */
-		public function getIconPath():String {
+		public static function getIconPath():String {
 			return Application.application.parameters.iconDir;
 		}
 
@@ -123,9 +123,9 @@ package com.graphmind {
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
 			// Get all the available features
-			baseSiteConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, this.getHostNodeID());
+			baseSiteConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, getHostNodeID());
 			baseSiteConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded);
-			baseSiteConnection.call('node.get', onSuccess_rootNodeIsLoaded, this.getHostNodeID());
+			baseSiteConnection.call('node.get', onSuccess_rootNodeIsLoaded, getHostNodeID());
 		}
 		
 		

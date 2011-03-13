@@ -112,7 +112,7 @@ package com.graphmind {
 			
 			// Icons
 			for each (var iconsXML:XML in nodeXML.elements('icon')) {
-				node.addIcon(ApplicationController.i.getIconPath() + iconsXML.@BUILTIN + '.png');
+				node.addIcon(ApplicationController.getIconPath() + iconsXML.@BUILTIN + '.png');
 			}
 			
 			var nodeChilds:XMLList = nodeXML.elements('node');

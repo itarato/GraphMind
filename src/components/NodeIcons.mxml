@@ -4,6 +4,7 @@
 
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeMapViewController;
 			import com.graphmind.ApplicationController;
     
@@ -27,13 +28,15 @@
         "decrypted", "gohome", "xmag", "desktop_new", "folder", 
         "group", "messagebox_warning"
       ];
+      
+      public var controller:AppFormController;
 		]]>
 	</mx:Script>
 
 	<mx:Tile left="10" top="10" right="10" height="100%">
 		<mx:Repeater dataProvider="{icons}" id="icon_repeater">
-			<mx:Image source="{ApplicationController.i.getIconPath()}{icon_repeater.currentItem}.png" 
-				click="{TreeMapViewController.i.onClick_Icon(event);}"/>
+			<mx:Image source="{ApplicationController.getIconPath()}{icon_repeater.currentItem}.png" 
+				click="{controller.onClick_Icon(event);}"/>
 		</mx:Repeater>
 	</mx:Tile>
 </mx:Canvas>
