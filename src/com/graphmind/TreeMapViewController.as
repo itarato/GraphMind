@@ -4,6 +4,7 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.DesktopDragInfo;
+	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
 	
@@ -57,6 +58,17 @@ package com.graphmind {
 		public function TreeMapViewController() {
 		  super();
 		  
+//		  view.horizontalScrollPosition = view.container.width  >> 1;
+//      view.verticalScrollPosition   = view.container.height >> 1;
+//      view.addEventListener(FlexEvent.CREATION_COMPLETE, function(event:FlexEvent):void{
+//        var map:MapView = event.currentTarget as MapView;
+//        map.horizontalScrollPosition = 1000;
+//        map.verticalScrollPosition   = 1000;
+//        Log.info("Height: " + map.height + " inner: " + map.container.height + " scroll: " + map.verticalScrollPosition);
+//      });
+      view.verticalScrollPosition   = 1000;
+      view.horizontalScrollPosition = 1000;
+		  
 		  // Set the structure drawer.
 		  this.treeDrawer = new TreeDrawer(view.nodeLayer, view.connectionLayer, view.cloudLayer);
 		  
@@ -73,7 +85,7 @@ package com.graphmind {
       // Add drag and drop iamge.
       var bmd:BitmapAsset = (new _dragAndDropImageSource()) as BitmapAsset;
       dragAndDropImage.source = bmd;
-      view.container.addChild(dragAndDropImage);
+      view.overlayLayer.addChild(dragAndDropImage);
       
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
 		}

@@ -71,9 +71,6 @@ package com.graphmind.view {
 				// Refresh the whole tree.
 				rootNode.view.x = 4;
 				rootNode.view.y = _nodeLayer.height >> 1;
-				Log.info('Layer height: ' + _nodeLayer.height);
-        Log.info('Layer height: ' + _connectionLayer.height);
-        Log.info('Layer height: ' + _cloudLayer.height);
 				var postProcessObjects:Object = new Object();
 				postProcessObjects.arrowLinks = new Array();
 				var totalHeight:Number = _redrawNode(rootNode, postProcessObjects);

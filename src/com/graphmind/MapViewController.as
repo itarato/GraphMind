@@ -34,8 +34,6 @@ package com.graphmind {
     */    
     public function MapViewController() {
       view = new MapView();
-      view.setStyle('height', '100%');
-      view.setStyle('width', '100%');
       view.setContainerSize(MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT);
       view.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onLoadMap);
     }
