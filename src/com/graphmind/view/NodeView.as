@@ -80,6 +80,7 @@ package com.graphmind.view {
 			buttonMode = true;
 		}
 		
+		
 		public function refreshGraphics():void {
 		  if (!isGraphicsUpdated) return;
 		  

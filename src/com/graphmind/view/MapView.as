@@ -13,24 +13,23 @@ package com.graphmind.view {
     /**
     * Inner scrollable container view.
     */
-    public var container:UIComponent = new Container();    
+    public var container:Canvas = new Canvas();    
     
     /**
     * Layer for the node connections.
     */
-    public var connectionLayer:Container = new Container();
+    public var connectionLayer:Canvas = new Canvas();
     
     /**
     * Layer for the clouds.
     */
-    public var cloudLayer:Container = new Container();
+    public var cloudLayer:Canvas = new Canvas();
     
     /**
     * Layer for the node objects.
     */
-    public var nodeLayer:Container = new Container();
+    public var nodeLayer:Canvas = new Canvas();
     
-  
   
     /**
     * Constructor.
@@ -43,6 +42,13 @@ package com.graphmind.view {
       container.addChild(cloudLayer);
       container.addChild(connectionLayer);
       container.addChild(nodeLayer);
+      
+//      nodeLayer.setStyle('height', '100%');
+//      nodeLayer.setStyle('width', '100%');
+//      connectionLayer.setStyle('height', '100%');
+//      connectionLayer.setStyle('width', '100%');
+//      cloudLayer.setStyle('height', '100%');
+//      cloudLayer.setStyle('width', '100%');
       
       horizontalScrollPolicy = ScrollPolicy.ON;
       verticalScrollPolicy   = ScrollPolicy.ON;
@@ -57,16 +63,10 @@ package com.graphmind.view {
     * Set the size of the inner view.
     */
     public function setContainerSize(width:uint, height:uint):void {
-      container.width  = width;
-      container.height = height;
+      container.width  = nodeLayer.width = connectionLayer.width = cloudLayer.width = width;
+      container.height = nodeLayer.height = connectionLayer.height = cloudLayer.height = height;
     }
     
-
-    /**
-    * Ask for refreshing the display.
-    */    
-    public function refreshDisplay():void {
-    }
 
   }
   

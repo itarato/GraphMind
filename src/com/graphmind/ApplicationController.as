@@ -1,7 +1,8 @@
 package com.graphmind {
   
 	import com.graphmind.data.ViewsCollection;
-	import com.graphmind.event.ApplicationEvent;
+	import com.graphmind.event.EventCenter;
+	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	import com.kitten.events.ConnectionEvent;
@@ -156,13 +157,11 @@ package com.graphmind {
     */
     protected function onSuccess_rootNodeIsLoaded(result:Object):void {
       Log.info("Root node is loaded: " + result.nid);
-//      TreeMapViewController.i.initMapWithBaseNode(result);
       setEditMode(result.graphmindEditable == '1');
       TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
-      treeMapViewController.view.refreshDisplay(); 
       
-      // Load base node
-      dispatchEvent(new ApplicationEvent(ApplicationEvent.APPLICATION_DATA_COMPLETE));
+      // Call map to draw its contents.
+      EventCenter.notify(EventCenterEvent.MAP_UPDATED);
     }
 
 		

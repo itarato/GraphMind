@@ -113,7 +113,7 @@ package com.graphmind.display {
     /**
      * Child nodes.
      */
-    protected var _childs:ArrayCollection = new ArrayCollection();
+    protected var _children:ArrayCollection = new ArrayCollection();
         
     /**
      * Subtree is collapsed.
@@ -182,6 +182,8 @@ package com.graphmind.display {
 			     
       // HOOK
       PluginManager.callHook(NodeViewController.HOOK_NODE_CREATED, {node: this});
+      
+      EventCenter.notify(EventCenterEvent.NODE_CREATED, this, this);
 		}
 		
 		/**
@@ -308,7 +310,7 @@ package com.graphmind.display {
 			}
 			
 			// Add childs
-			for each (var child:NodeViewController in _childs) {
+			for each (var child:NodeViewController in _children) {
 				output = output + child.exportToFreeMindFormat();
 			}
 			
@@ -336,8 +338,8 @@ package com.graphmind.display {
 		 * Remove each child of the node.
 		 */
 		protected function _removeNodeChilds(killedDirectly:Boolean = false):void {
-			while (_childs.length > 0) {
-				(_childs.getItemAt(0) as NodeViewController).kill(killedDirectly);
+			while (_children.length > 0) {
+				(_children.getItemAt(0) as NodeViewController).kill(killedDirectly);
 			}
 		}
 		
@@ -356,9 +358,9 @@ package com.graphmind.display {
 			
 			if (parent) {
 				// Remove parent's child (this child).
-				parent._childs.removeItemAt(parent._childs.getItemIndex(this));
+				parent._children.removeItemAt(parent._children.getItemIndex(this));
 				// Check parent's toggle-subtree button. With no child it should be hidden.
-				parent.view._displayComp.icon_has_child.visible = parent._childs.length > 0;
+				parent.view._displayComp.icon_has_child.visible = parent._children.length > 0;
 			}
 
       // Remove arrow links.			
@@ -388,7 +390,7 @@ package com.graphmind.display {
 		 * Check if the giveth node is a child of the self node.
 		 */
 		public function isChild(node:NodeViewController):Boolean {
-			for each (var child:NodeViewController in _childs) {
+			for each (var child:NodeViewController in _children) {
 				if (child == node) {
 					return true;
 				}
@@ -431,16 +433,16 @@ package com.graphmind.display {
 		 */
 		public static function moveToPrevSibling(source:NodeViewController, target:NodeViewController):void {
 			if (move(source, target.parent, false)) {
-				var siblingIDX:int = target.parent._childs.getItemIndex(target) + 1;
+				var siblingIDX:int = target.parent._children.getItemIndex(target) + 1;
 				if (siblingIDX == -1) {
 					return;
 				}
 				
-				for (var i:int = target.parent._childs.length - 1; i > siblingIDX; i--) {
-					target.parent._childs[i] = target.parent._childs[i - 1];
+				for (var i:int = target.parent._children.length - 1; i > siblingIDX; i--) {
+					target.parent._children[i] = target.parent._children[i - 1];
 				}
 				
-				target.parent._childs.setItemAt(source, siblingIDX);
+				target.parent._children.setItemAt(source, siblingIDX);
 				
 				// Refresh after reordering
 				EventCenter.notify(EventCenterEvent.MAP_UPDATED);
@@ -456,16 +458,16 @@ package com.graphmind.display {
      */
     public static function moveToNextSibling(source:NodeViewController, target:NodeViewController):void {
       if (move(source, target.parent, false)) {
-        var siblingIDX:int = target.parent._childs.getItemIndex(target);
+        var siblingIDX:int = target.parent._children.getItemIndex(target);
         if (siblingIDX == -1) {
           return;
         }
         
-        for (var i:int = target.parent._childs.length - 1; i > siblingIDX; i--) {
-          target.parent._childs[i] = target.parent._childs[i - 1];
+        for (var i:int = target.parent._children.length - 1; i > siblingIDX; i--) {
+          target.parent._children[i] = target.parent._children[i - 1];
         }
         
-        target.parent._childs.setItemAt(source, siblingIDX);
+        target.parent._children.setItemAt(source, siblingIDX);
         
         // Refresh after reordering
         EventCenter.notify(EventCenterEvent.MAP_UPDATED);
@@ -481,12 +483,12 @@ package com.graphmind.display {
 		 * It doesn't do any delete or kill.
 		 */
 		protected function removeFromParentsChilds():void {
-			var childIDX:int = parent._childs.getItemIndex(this);
+			var childIDX:int = parent._children.getItemIndex(this);
 			if (childIDX >= 0) {
-				this.parent._childs.removeItemAt(childIDX);
+				this.parent._children.removeItemAt(childIDX);
 			}
 			
-			parent.view._displayComp.icon_has_child.visible = parent._childs.length > 0;
+			parent.view._displayComp.icon_has_child.visible = parent._children.length > 0;
 		}
  		
  		protected function onDoubleClick_icon(event:MouseEvent):void {
@@ -623,7 +625,7 @@ package com.graphmind.display {
 		 * Get a child node that has equal data.
 		 */
 		public function getEqualChild(data:Object, type:String):NodeViewController {
-			for each (var child:NodeViewController in _childs) {
+			for each (var child:NodeViewController in _children) {
 				if (child.nodeData.equalTo(data, type)) return child;
 			}
 			return null;
@@ -645,7 +647,7 @@ package com.graphmind.display {
 		}
 		
 		public function hasChild():Boolean {
-			return _childs.length > 0;
+			return _children.length > 0;
 		}
     
     public override function toString():String {
@@ -881,26 +883,26 @@ package com.graphmind.display {
         
         
     public function getChildNodeAll():ArrayCollection {
-      return _childs;
+      return _children;
     }
     
     
     public function getChildNodeAt(index:int):ITreeNode {
-      return _childs.getItemAt(index) as ITreeNode;
+      return _children.getItemAt(index) as ITreeNode;
     }
     
     
     public function getChildNodeIndex(child:ITreeNode):int {
-      return _childs.getItemIndex(child);
+      return _children.getItemIndex(child);
     }
     
     
     public function removeChildNodeAll():void {
-      _childs.removeAll();
+      _children.removeAll();
     }
     
     public function removeChildNodeAt(index:int):void {
-      _childs.removeItemAt(index);
+      _children.removeItemAt(index);
     }
     
     /**
@@ -908,7 +910,7 @@ package com.graphmind.display {
      */
     public function addChildNode(node:NodeViewController):void {
       // Add node as a new child
-      this._childs.addItem(node);
+      this._children.addItem(node);
       node.parent = this;
       
       // Open subtree.
@@ -929,7 +931,7 @@ package com.graphmind.display {
     public function collapseChilds():void {
       _isCollapsed = true;
       view._displayComp.icon_has_child.source = view._displayComp.image_node_uncollapse;
-      for each (var nodeItem:NodeViewController in _childs) {
+      for each (var nodeItem:NodeViewController in _children) {
         nodeItem.view.visible = false;
         nodeItem.collapseChilds();
       }
@@ -944,7 +946,7 @@ package com.graphmind.display {
     public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
       _isCollapsed = false;
       view._displayComp.icon_has_child.source = view._displayComp.image_node_collapse;
-      for each (var nodeItem:NodeViewController in _childs) {
+      for each (var nodeItem:NodeViewController in _children) {
         nodeItem.view.visible = true;
         if (!nodeItem._isForcedCollapsed || forceOpenSubtree) {
           nodeItem.uncollapseChilds(forceOpenSubtree);

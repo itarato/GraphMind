@@ -1,12 +1,13 @@
 package com.graphmind {
 
 	import com.graphmind.display.NodeViewController;
+	import com.graphmind.event.EventCenter;
+	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
 	
 	import flash.display.MovieClip;
-	import flash.events.Event;
 	import flash.ui.ContextMenu;
 	
 	import mx.controls.Image;
@@ -32,12 +33,6 @@ package com.graphmind {
     // @TODO - rename it to: isStageUpdated
     public var isTreeUpdated:Boolean = false;
     
-    /**
-     * Event that happens when
-     */
-    // @TODO rename to EVENT_STAGE_UPDATED
-		public static var EVENT_MINDMAP_UPDATED:String = 'mindmapUpdated';
-
     /**
      * Stage UI drag and drop properties.
      */    
@@ -65,9 +60,8 @@ package com.graphmind {
 		  // Set the structure drawer.
 		  this.treeDrawer = new TreeDrawer(view.nodeLayer, view.connectionLayer, view.cloudLayer);
 		  
-		  // Event listener - the stage UI is updated
-			addEventListener(EVENT_MINDMAP_UPDATED, onMindmapUpdated);
-      
+		  EventCenter.subscribe(EventCenterEvent.MAP_UPDATED, onMindmapUpdated);
+		  
       // Node title RTE editor's default color
       GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
       
@@ -81,19 +75,14 @@ package com.graphmind {
       dragAndDropImage.source = bmd;
       view.container.addChild(dragAndDropImage);
       
-//      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop));
-//      trace(GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink));
-//      GraphMind.i.mindmapCanvas.desktop_wrapper.swapChildrenAt(
-//        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop),
-//        GraphMind.i.mindmapCanvas.desktop_wrapper.getChildIndex(GraphMind.i.mindmapCanvas.desktop_arrowlink)
-//      );
+      EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
 		}
 		
 		
     /**
      * Event handler: stage is updated.
      */
-		protected function onMindmapUpdated(event:Event):void {
+		protected function onMindmapUpdated(event:EventCenterEvent):void {
 			redrawMindmapStage();
 			setMindmapUpdated();
 		}
@@ -192,9 +181,11 @@ package com.graphmind {
       startNodeDragAndDrop();
     }
     
+    
     public function onMouseMove_InnerMindmapStage():void {
       doNodeDragAndDrop();
     }
+    
     
     /**
      * Start the dragged node's drag and drop session.
@@ -209,6 +200,7 @@ package com.graphmind {
       _desktopDragInfo.oldScrollbarVPos = view.verticalScrollPosition;
       _desktopDragInfo.oldScrollbarHPos = view.horizontalScrollPosition;
     }
+    
     
     protected function doNodeDragAndDrop():void {
       if (isDesktopDragged) {
@@ -225,8 +217,9 @@ package com.graphmind {
     }
 
     
-    public function addNodeToStage(node:NodeViewController):void {
-      view.nodeLayer.addChild(node.view);
+    public function onNodeCreated(event:EventCenterEvent):void {
+      com.graphmind.util.Log.info('Node added to stage');
+      view.nodeLayer.addChild((event.sender as NodeViewController).view);
     }
 
 	}

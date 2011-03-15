@@ -5,10 +5,13 @@ package com.graphmind.view {
 	import com.graphmind.display.ITreeItem;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.display.TreeArrowLink;
+	import com.graphmind.util.Log;
+	
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
+	
 	import mx.collections.ArrayCollection;
-	import mx.core.Container;
+	import mx.containers.Canvas;
 	
 	public class TreeDrawer {
 		
@@ -21,9 +24,9 @@ package com.graphmind.view {
     /**
     * Layers.
     */
-    protected var _nodeLayer:Container;
-    protected var _connectionLayer:Container;
-    protected var _cloudLayer:Container;
+    protected var _nodeLayer:Canvas;
+    protected var _connectionLayer:Canvas;
+    protected var _cloudLayer:Canvas;
     		
     /**
     * Drawers.
@@ -41,7 +44,7 @@ package com.graphmind.view {
 		/**
 		 * Constructor.
 		 */
-		public function TreeDrawer(nodeLayer:Container, connectionLayer:Container, cloudLayer:Container) {
+		public function TreeDrawer(nodeLayer:Canvas, connectionLayer:Canvas, cloudLayer:Canvas) {
 			super();
 			
 			this._nodeLayer       = nodeLayer;
@@ -60,13 +63,17 @@ package com.graphmind.view {
 		public function refreshGraphics(rootNode:NodeViewController):void {
 			clearTimeout(_timer);
 			_timer = setTimeout(function():void {
-				
+         Log.info('Map drawed.');
+         
 				_connectionLayer.graphics.clear();
 				_cloudLayer.graphics.clear();
 				
 				// Refresh the whole tree.
 				rootNode.view.x = 4;
 				rootNode.view.y = _nodeLayer.height >> 1;
+				Log.info('Layer height: ' + _nodeLayer.height);
+        Log.info('Layer height: ' + _connectionLayer.height);
+        Log.info('Layer height: ' + _cloudLayer.height);
 				var postProcessObjects:Object = new Object();
 				postProcessObjects.arrowLinks = new Array();
 				var totalHeight:Number = _redrawNode(rootNode, postProcessObjects);

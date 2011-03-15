@@ -10,6 +10,7 @@ package com.graphmind.event {
     public static var NODE_START_DRAG:String    = 'nodeStartDrag';
     public static var NODE_PREPARE_DRAG:String  = 'nodePrepareDrag';
     public static var NODE_FINISH_DRAG:String   = 'nodeFinishDrag';
+    public static var NODE_CREATED:String       = 'nodeCreated';
     
     public static var MAP_UPDATED:String        = 'mapUpdated';
     public static var MAP_SAVED:String          = 'mapSaved';
