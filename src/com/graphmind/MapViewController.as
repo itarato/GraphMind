@@ -9,6 +9,8 @@ package com.graphmind {
   
   import flash.events.EventDispatcher;
   
+  import mx.events.FlexEvent;
+  
   [Event(name="mindmapUpdated", type="com.graphmind.event.MapEvent")]
   public class MapViewController extends EventDispatcher implements IMapViewData, IMapViewEvent {
 
@@ -35,7 +37,7 @@ package com.graphmind {
     public function MapViewController() {
       view = new MapView();
       view.setContainerSize(MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT);
-      view.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onLoadMap);
+      view.container.addEventListener(FlexEvent.CREATION_COMPLETE, onMapDidLoaded);
     }
 
 
@@ -72,7 +74,7 @@ package com.graphmind {
     }
     
     
-    public function onLoadMap():void {
+    public function onMapDidLoaded(event:FlexEvent):void {
     }
     
     

@@ -66,9 +66,6 @@ package com.graphmind.view {
     public function setContainerSize(width:uint, height:uint):void {
       nodeLayer.width  = connectionLayer.width  = cloudLayer.width  = overlayLayer.width  = width;
       nodeLayer.height = connectionLayer.height = cloudLayer.height = overlayLayer.height = height;
-      verticalScrollPosition = height >> 1;
-      horizontalScrollPosition = width >> 1;
-      setStyle('verticalScrollPosition', '1000');
     }
     
 

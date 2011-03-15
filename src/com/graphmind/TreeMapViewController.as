@@ -13,6 +13,7 @@ package com.graphmind {
 	
 	import mx.controls.Image;
 	import mx.core.BitmapAsset;
+	import mx.events.FlexEvent;
 	
 	/**
 	 * Stage manager
@@ -66,8 +67,6 @@ package com.graphmind {
 //        map.verticalScrollPosition   = 1000;
 //        Log.info("Height: " + map.height + " inner: " + map.container.height + " scroll: " + map.verticalScrollPosition);
 //      });
-      view.verticalScrollPosition   = 1000;
-      view.horizontalScrollPosition = 1000;
 		  
 		  // Set the structure drawer.
 		  this.treeDrawer = new TreeDrawer(view.nodeLayer, view.connectionLayer, view.cloudLayer);
@@ -232,6 +231,11 @@ package com.graphmind {
     public function onNodeCreated(event:EventCenterEvent):void {
       com.graphmind.util.Log.info('Node added to stage');
       view.nodeLayer.addChild((event.sender as NodeViewController).view);
+    }
+    
+    
+    public override function onMapDidLoaded(event:FlexEvent):void {
+      view.verticalScrollPosition   = (view.container.height - view.height) >> 1;
     }
 
 	}

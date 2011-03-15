@@ -1,6 +1,6 @@
 package com.graphmind.data {
   
-  import com.graphmind.display.NodeViewController;
+  import mx.events.FlexEvent;
   
   public interface IMapViewEvent {
   
@@ -9,7 +9,7 @@ package com.graphmind.data {
     function onMoveMap():void;
     function onDragEndMap():void;
     function onRequestRefreshMap():void;
-    function onLoadMap():void;
+    function onMapDidLoaded(event:FlexEvent):void;
     function onCloseMap():void;
     
   }
