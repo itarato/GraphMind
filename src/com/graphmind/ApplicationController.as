@@ -76,11 +76,15 @@ package com.graphmind {
      */
 //    public var workflowComposite:IWorkflowComposite; 
     
+    
 		/**
 		 * Constructor.
 		 */
 		public function ApplicationController() {
 		  ApplicationController.i = this;
+		  
+		  // Add general ui form controller
+		  appFormController = new AppFormController();
 		  
       // Edit mode has to be false by default.
       // Editing privileges have to be arrived from the backend with the user object.
@@ -95,7 +99,10 @@ package com.graphmind {
       baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
       baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionManager.defaultErrorHandler);
       baseSiteConnection.connect();
+      
+      EventCenter.subscribe(EventCenterEvent.APP_FORM_REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
 		}
+			
 			
 		/**
 		 * Get the host Drupal site's URL
@@ -104,6 +111,7 @@ package com.graphmind {
 			return Application.application.parameters.basePath;
 		}
 		
+		
 		/**
 		 * Get hosting node's NID
 		 */
@@ -111,12 +119,14 @@ package com.graphmind {
 			return Application.application.parameters.nid;
 		}
 		
+		
 		/**
 		 * URL for the icons.
 		 */
 		public static function getIconPath():String {
 			return Application.application.parameters.iconDir;
 		}
+
 
 		/**
 		 * Site is connected already
@@ -209,6 +219,11 @@ package com.graphmind {
 		  return true;
 		}
 		
+		
+		protected function onAppFormRequestForFreemindXml(event:EventCenterEvent):void {
+		  var xml:String = ExportController.getFreeMindXML(TreeMapViewController.rootNode);
+		  (event.data as Function)(xml);
+		}
 
 	}
 

@@ -52,7 +52,7 @@ package com.graphmind {
       GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.icon_outer_container.controller = this;
       
-      EventCenter.subscribe(EventCenterEvent.NODE_SELECTED, onNodeSelected);
+      EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeSelected);
     }
 
     
@@ -189,28 +189,22 @@ package com.graphmind {
       requestData.nodeItemData.data = result;
       var nodeItem:NodeViewController = new NodeViewController(requestData.nodeItemData);
       requestData.nodeItem.addChildNode(nodeItem);
-      nodeItem.selectNode();
+      nodeItem.select();
     }
     
         
-    public function onClick_RTESaveButton():void {
-      if (!NodeViewController.activeNode) return;
-      
-      NodeViewController.activeNode.setTitle(GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText);
+    public function onClick_RTESaveButton(text:String):void {
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_TITLE_IS_CHANGED, null, text); 
     }
     
     
-    public function onClick_SaveNodeLink():void {
-      if (!NodeViewController.activeNode) return;
-      
-      NodeViewController.activeNode.setLink(GraphMind.i.mindmapToolsPanel.node_info_panel.link.text);
+    public function onClick_SaveNodeLink(text:String):void {
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_LINK_IS_CHANGED, null, text);
     }
     
     
     public function onClick_ToggleCloudButton():void {
-      if (!NodeViewController.activeNode) return;
-      
-      NodeViewController.activeNode.toggleCloud();
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_TOGGLE_CLOUD);
     }
     
         
@@ -220,21 +214,22 @@ package com.graphmind {
     
     
     public function onClick_DumpFreemindXMLButton():void {
-      GraphMind.i.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = ExportController.getFreeMindXML(TreeMapViewController.rootNode);
-    }    
+      EventCenter.notify(EventCenterEvent.APP_FORM_REQUEST_FOR_FREEMIND_XML, null, onFreemindXmlReveived);
+    }
     
     
-    public function onClick_NodeAttributeAddOrUpdateButton():void {
-      updateNodeAttribute(
-        NodeViewController.activeNode,
-        GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text,
-        GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text
-      );
+    protected function onFreemindXmlReveived(xml:String):void {
+      GraphMind.i.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = xml;
+    }
+    
+    
+    public function onClick_NodeAttributeAddOrUpdateButton(param:String, value:String):void {
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_SAVE_ATTRIBUTE, null, {param: param, value: value});
     }
     
         
-    public function onClick_NodeAttributeRemoveButton():void {
-      removeNodeAttribute(NodeViewController.activeNode, GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text);
+    public function onClick_NodeAttributeRemoveButton(param:String):void {
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, null, param);
     }
 
     
@@ -243,7 +238,7 @@ package com.graphmind {
       if (!node || !attribute) return;
       
       node.addData(attribute, value);
-      node.selectNode();
+      node.select();
       
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
     }
@@ -256,22 +251,15 @@ package com.graphmind {
       if (!node || attribute.length == 0) return;
       
       node.deleteData(attribute);
-      node.selectNode();
+      node.select();
       
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
     }
     
        
     public function onClick_Icon(event:MouseEvent):void {
-      addIconToNode(event.currentTarget as Image);
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_ADD_ICON, null, (event.currentTarget as Image).source.toString());
     }
-    
-    
-    public function addIconToNode(icon:Image):void {
-      if (!NodeViewController.activeNode) return;
-      
-      NodeViewController.activeNode.addIcon(icon.source.toString());
-    }    
 
 
     /**
@@ -283,7 +271,7 @@ package com.graphmind {
       GraphMind.i.panelLoadView.view_name.text = selectedViewsCollection.name;
     }
 
-       
+    
     public function onClick_FullscreenButton():void {
       toggleFullscreenMode();
     }

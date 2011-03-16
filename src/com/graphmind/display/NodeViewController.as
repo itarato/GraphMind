@@ -63,11 +63,6 @@ package com.graphmind.display {
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
 		
-		/**
-		 * Active node.
-		 */
-		public static var activeNode:NodeViewController;
-		
 		public static const HOOK_NODE_CONTEXT_MENU:String  = 'node_context_menu';
 		public static const HOOK_NODE_MOVED:String         = 'node_moved';
 		public static const HOOK_NODE_DELETE:String		     = 'node_delete';
@@ -193,7 +188,7 @@ package com.graphmind.display {
     public function createSimpleNodeChild():void {
       var node:NodeViewController = NodeFactory.createNode({}, NodeType.NORMAL);
       addChildNode(node);
-      node.selectNode();
+      node.select();
     }
     
 		/**
@@ -225,7 +220,7 @@ package com.graphmind.display {
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
 				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, function(_event:ContextMenuEvent):void {
-					selectNode();
+					select();
 				});
 				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
 				contextMenu.customItems.push(cmi);
@@ -240,8 +235,8 @@ package com.graphmind.display {
 		 * Only one node can be active at a time.
 		 * Accessing to this node: TreeManager.getInstance().activeNode():NodeItem.
 		 */
-		public function selectNode():void {
-		  EventCenter.notify(EventCenterEvent.NODE_SELECTED, this, this);
+		public function select():void {
+		  EventCenter.notify(EventCenterEvent.NODE_IS_SELECTED, this, this);
 			var isTheSameSelected:Boolean = isSelected;
 			
 			// Not to lose focus from textfield
@@ -256,8 +251,8 @@ package com.graphmind.display {
 		/**
 		 * Deselect node.
 		 */
-		public function deselectNode():void {
-		  EventCenter.notify(EventCenterEvent.NODE_UNSELECTED, this, this);
+		public function unselect():void {
+		  EventCenter.notify(EventCenterEvent.NODE_IS_UNSELECTED, this, this);
 			_setBackgroundEffect(EFFECT_NORMAL);
 		}
 		
@@ -321,7 +316,7 @@ package com.graphmind.display {
 		 * Show the dialog for loading a Drupal item.
 		 */
 		protected function loadItem():void {
-			selectNode();
+			select();
 			GraphMind.i.currentState = 'load_item_state';
 		}
 		
@@ -329,7 +324,7 @@ package com.graphmind.display {
 		 * Show the dialog for loading a Drupal Views list.
 		 */
 		protected function loadViews():void {
-			selectNode();
+			select();
 			GraphMind.i.currentState = 'load_view_state';
 			GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
 		}
@@ -585,7 +580,7 @@ package com.graphmind.display {
 			}
 			nodeData.recalculateTitle();
 			setTitle(nodeData.title);
-			selectNode();
+			select();
 			update(UP_TIME | UP_NODE_UI);
 		}
 		
@@ -680,8 +675,8 @@ package com.graphmind.display {
       }
       
       if (updateSet & UP_STAGE_NODE_DATA) {
-        deselectNode();
-        selectNode();
+        unselect();
+        select();
       }
     }
     
@@ -710,7 +705,7 @@ package com.graphmind.display {
     }
 
     public function onMouseOver(event:MouseEvent):void {
-      _mouseSelectionTimeout = setTimeout(selectNode, 400);
+      _mouseSelectionTimeout = setTimeout(select, 400);
       view._displayComp.icon_add.visible = ApplicationController.i.isEditable();
       view._displayComp.icon_anchor.visible = nodeData.link.length > 0;
     }
@@ -743,7 +738,7 @@ package com.graphmind.display {
         view._displayComp.currentState = '';
         setTitle(view._displayComp.title_new.text, true);
         GraphMind.i.setFocus();
-        selectNode();
+        select();
       } else if (event.keyCode == Keyboard.ESCAPE) {
         view._displayComp.currentState = '';
         view._displayComp.title_new.text = view._displayComp.title_label.text;
@@ -761,7 +756,7 @@ package com.graphmind.display {
     
     public function onItemLoaderSelectorClick(event:MouseEvent):void {
       event.stopPropagation();
-      selectNode();
+      select();
       GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
     }
     

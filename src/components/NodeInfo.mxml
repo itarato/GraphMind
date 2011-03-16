@@ -10,11 +10,22 @@
 		]]>
 	</mx:Script>
 
-	<mx:RichTextEditor title="Node title" width="100%" height="240" left="0" top="0" id="nodeLabelRTE" />
-	<mx:Button x="10" y="248" label="Save node title" click="{controller.onClick_RTESaveButton();}" icon="@Embed(source='assets/images/pencil.png')"/>
+	<mx:RichTextEditor 
+	  title="Node title" 
+	  width="100%" height="240" left="0" top="0" 
+	  id="nodeLabelRTE" />
+	<mx:Button 
+	  x="10" y="248" 
+	  label="Save node title" 
+	  click="{controller.onClick_RTESaveButton(nodeLabelRTE.htmlText);}" 
+	  icon="@Embed(source='assets/images/pencil.png')"/>
 	<mx:HRule left="10" y="278" right="10"/>
 	<mx:TextInput y="288" id="link" right="10" left="10"/>
-	<mx:Button x="10" y="318" label="Save external link" click="{controller.onClick_SaveNodeLink();}" icon="@Embed(source='assets/images/anchor.png')"/>
+	<mx:Button 
+	  x="10" y="318" 
+	  label="Save external link" 
+	  click="{controller.onClick_SaveNodeLink(link.text);}" 
+	  icon="@Embed(source='assets/images/anchor.png')"/>
 	<mx:HRule left="10" y="348" right="10"/>
 	<mx:Button x="10" y="358" label="Toggle cloud" icon="@Embed(source='assets/images/weather_clouds.png')">
 		<mx:click>{controller.onClick_ToggleCloudButton();}</mx:click>

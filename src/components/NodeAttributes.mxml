@@ -29,7 +29,7 @@
 		</mx:columns>
 	</mx:DataGrid>
 	<mx:Button label="Save" left="10" bottom="10" 
-		click="{controller.onClick_NodeAttributeAddOrUpdateButton();}"
+		click="{controller.onClick_NodeAttributeAddOrUpdateButton(attributes_update_param.text, attributes_update_value.text);}"
 		tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
 	<mx:Label text="Value" left="10" bottom="108"/>
 	<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" right="10"/>
@@ -37,6 +37,8 @@
 	<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" right="10" height="60"/>
 	<mx:Button label="Remove"
 		tabIndex="23"
-		click="{controller.onClick_NodeAttributeRemoveButton()};" left="90" bottom="10" icon="@Embed(source='assets/images/delete.png')"/>
+		click="{controller.onClick_NodeAttributeRemoveButton(attributes_update_param.text)};" 
+		left="90" bottom="10" 
+		icon="@Embed(source='assets/images/delete.png')"/>
 				
 </mx:Canvas>

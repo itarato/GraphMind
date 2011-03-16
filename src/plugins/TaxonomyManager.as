@@ -45,7 +45,7 @@ package plugins {
 			}
 			
 			if (parent !== null) {
-				parent.selectNode();
+				parent.select();
 				loadFullTaxonomyTree(null);
 			}
 		} 

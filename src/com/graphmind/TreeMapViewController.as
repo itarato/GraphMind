@@ -5,7 +5,6 @@ package com.graphmind {
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.Log;
-	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
 	
 	import flash.display.MovieClip;
@@ -27,6 +26,11 @@ package com.graphmind {
      * Root node. At the creation of the map it's the host Drupal node.
      */
     public static var rootNode:NodeViewController  = null;
+        
+    /**
+     * Active node.
+     */
+    public static var activeNode:NodeViewController;
     
 		/** 
 		 * Indicates if the stage has a newer state or new elements.
@@ -59,15 +63,6 @@ package com.graphmind {
 		public function TreeMapViewController() {
 		  super();
 		  
-//		  view.horizontalScrollPosition = view.container.width  >> 1;
-//      view.verticalScrollPosition   = view.container.height >> 1;
-//      view.addEventListener(FlexEvent.CREATION_COMPLETE, function(event:FlexEvent):void{
-//        var map:MapView = event.currentTarget as MapView;
-//        map.horizontalScrollPosition = 1000;
-//        map.verticalScrollPosition   = 1000;
-//        Log.info("Height: " + map.height + " inner: " + map.container.height + " scroll: " + map.verticalScrollPosition);
-//      });
-		  
 		  // Set the structure drawer.
 		  this.treeDrawer = new TreeDrawer(view.nodeLayer, view.connectionLayer, view.cloudLayer);
 		  
@@ -87,6 +82,15 @@ package com.graphmind {
       view.overlayLayer.addChild(dragAndDropImage);
       
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
+      
+      // Active node events
+      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_TITLE_IS_CHANGED, onActiveNodeTitleIsChanged);
+      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_LINK_IS_CHANGED, onActiveNodeLinkIsChanged);
+      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_TOGGLE_CLOUD, onActiveNodeToggleCloud);
+      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_SAVE_ATTRIBUTE, onActiveNodeSaveAttribute);
+      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, onActiveNodeRemoveAttribute);
+      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
+      EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
 		}
 		
 		
@@ -141,21 +145,26 @@ package com.graphmind {
       dragAndDropImage.startDrag(false);
     }
     
+    
     public function onMouseUp_MindmapStage():void {
       closeNodeDragAndDrop();
     }
+    
     
     public function onMouseDownOutside_MindmapStage():void {
       closeNodeDragAndDrop();
     }
     
+    
     public function onMouseOut_MindmapStage():void {
       closeDesktopDragAndDrop();
     }
     
+    
     public function onMouseUp_InnerMindmapStage():void {
       closeDesktopDragAndDrop();
     }
+    
     
     /**
      * Finishes drag and drop session for a node.
@@ -167,6 +176,7 @@ package com.graphmind {
       NodeViewController.dragAndDrop_sourceNode = null;
     }
     
+    
     /**
      * Finishes drag and drop session for the mindmap area.
      */
@@ -174,19 +184,6 @@ package com.graphmind {
       isDesktopDragged = false;
     }
 
-    
-    /**
-     * Check if there is any node selected.
-     */
-    public function isActiveNodeExists(showError:Boolean = false):Boolean {
-      if (!NodeViewController.activeNode) {
-        if (showError) OSD.show("Please, select a node first.", OSD.WARNING);
-        return false;
-      }
-      
-      return true;
-    }
- 
     
     public function onMouseDown_InnerMindmapStage():void {
       startNodeDragAndDrop();
@@ -235,9 +232,53 @@ package com.graphmind {
     
     
     public override function onMapDidLoaded(event:FlexEvent):void {
-      view.verticalScrollPosition   = (view.container.height - view.height) >> 1;
+      view.verticalScrollPosition = (view.container.height - view.height) >> 1;
+    }
+    
+    
+    protected function onActiveNodeTitleIsChanged(event:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.setTitle(event.data.toString(), true);
     }
 
+    
+    protected function onActiveNodeLinkIsChanged(event:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.setLink(event.data as String);
+    }
+    
+    
+    protected function onActiveNodeToggleCloud(event:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.toggleCloud();
+    }
+    
+    
+    protected function onActiveNodeSaveAttribute(event:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.addData(event.data.param.toString(), event.data.value.toString());
+    }
+    
+    
+    protected function onActiveNodeRemoveAttribute(event:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.deleteData(event.data.toString());
+    }
+    
+    
+    protected function onActiveNodeAddIcon(event:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.addIcon(event.data.toString());
+    }
+    
+    
+    protected function onNodeIsSelected(event:EventCenterEvent):void {
+      if (activeNode) {
+        activeNode.unselect();
+      }
+      activeNode = event.data as NodeViewController;
+    }
+    
 	}
 	
 }
