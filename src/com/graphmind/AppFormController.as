@@ -62,6 +62,7 @@ package com.graphmind {
     public function onNodeSelected(event:EventCenterEvent):void {
       var node:NodeViewController = event.data as NodeViewController;
       
+      selectedNodeData.removeAll();
       for (var key:* in node.nodeData.data) {
         selectedNodeData.addItem({
           key: key,

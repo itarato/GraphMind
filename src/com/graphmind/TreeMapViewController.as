@@ -8,6 +8,7 @@ package com.graphmind {
 	import com.graphmind.view.TreeDrawer;
 	
 	import flash.display.MovieClip;
+	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
 	
 	import mx.controls.Image;
@@ -91,6 +92,10 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, onActiveNodeRemoveAttribute);
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
+      
+      view.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_InnerMindmapStage);
+      view.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_InnerMindmapStage);
+      view.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp_InnerMindmapStage);
 		}
 		
 		
@@ -161,7 +166,7 @@ package com.graphmind {
     }
     
     
-    public function onMouseUp_InnerMindmapStage():void {
+    public function onMouseUp_InnerMindmapStage(event:MouseEvent):void {
       closeDesktopDragAndDrop();
     }
     
@@ -185,12 +190,12 @@ package com.graphmind {
     }
 
     
-    public function onMouseDown_InnerMindmapStage():void {
+    public function onMouseDown_InnerMindmapStage(event:MouseEvent):void {
       startNodeDragAndDrop();
     }
     
     
-    public function onMouseMove_InnerMindmapStage():void {
+    public function onMouseMove_InnerMindmapStage(event:MouseEvent):void {
       doNodeDragAndDrop();
     }
     
