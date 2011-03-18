@@ -9,6 +9,7 @@ package com.graphmind {
   import com.graphmind.factory.NodeFactory;
   import com.graphmind.temp.TempItemLoadData;
   import com.graphmind.temp.TempViewLoadData;
+  import com.graphmind.util.Log;
   import com.graphmind.util.OSD;
   import com.kitten.network.Connection;
   
@@ -283,7 +284,6 @@ package com.graphmind {
      */
     protected function toggleFullscreenMode():void {
       try {
-        
         switch (Application.application.stage.displayState) {
           case StageDisplayState.FULL_SCREEN:
             Application.application.stage.displayState = StageDisplayState.NORMAL;
@@ -292,10 +292,15 @@ package com.graphmind {
             Application.application.stage.displayState = StageDisplayState.FULL_SCREEN;
             break;
         }
-      } catch (e:Error) {}
+      } catch (e:Error) {
+        Log.error('Toggling full screen mode is not working.');
+      }
     }
     
     
+    public function onChange_ScaleSlider(value:Number):void {
+      EventCenter.notify(EventCenterEvent.MAP_SCALE_CHANGED, null, value);
+    }
     
   }
   

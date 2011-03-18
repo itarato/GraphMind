@@ -2,8 +2,6 @@ package com.graphmind.view {
   
   import com.graphmind.event.MapEvent;
   
-  import flash.events.MouseEvent;
-  
   import mx.containers.Canvas;
   import mx.core.ScrollPolicy;
   
@@ -69,6 +67,12 @@ package com.graphmind.view {
     public function setContainerSize(width:uint, height:uint):void {
       nodeLayer.width  = connectionLayer.width  = cloudLayer.width  = overlayLayer.width  = width;
       nodeLayer.height = connectionLayer.height = cloudLayer.height = overlayLayer.height = height;
+    }
+    
+    
+    public function setScale(scale:Number):void {
+      container.scaleX = scale * 0.01;
+      container.scaleY = scale * 0.01;
     }
     
     

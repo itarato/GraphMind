@@ -92,6 +92,7 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, onActiveNodeRemoveAttribute);
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
+      EventCenter.subscribe(EventCenterEvent.MAP_SCALE_CHANGED, onMapScaleChanged);
       
       view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
       view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
@@ -283,6 +284,11 @@ package com.graphmind {
         activeNode.unselect();
       }
       activeNode = event.data as NodeViewController;
+    }
+    
+    
+    protected function onMapScaleChanged(event:EventCenterEvent):void {
+      view.setScale(event.data as Number);
     }
     
 	}

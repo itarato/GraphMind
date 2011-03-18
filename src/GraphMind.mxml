@@ -127,7 +127,8 @@
           
           <mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
             value="100"
-            id="desktopScaleHSlider"/>
+            id="desktopScaleHSlider"
+            change="{controller.onChange_ScaleSlider(desktopScaleHSlider.value);}"/>
           
           <mx:Label paddingTop="2" text="{desktopScaleHSlider.value + '%'}"
             id="desktopScaleLabel"/>
