@@ -7,6 +7,7 @@ package com.graphmind {
   import com.graphmind.view.MapView;
   import com.graphmind.view.TreeDrawer;
   
+  import flash.events.Event;
   import flash.events.EventDispatcher;
   
   import mx.events.FlexEvent;
@@ -37,6 +38,7 @@ package com.graphmind {
     public function MapViewController() {
       view = new MapView();
       view.setContainerSize(MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT);
+//      view.container.addEventListener(FlexEvent.CREATION_COMPLETE, onMapDidLoaded);
       view.container.addEventListener(FlexEvent.CREATION_COMPLETE, onMapDidLoaded);
     }
 

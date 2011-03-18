@@ -4,12 +4,12 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.DesktopDragInfo;
-	import com.graphmind.util.Log;
 	import com.graphmind.view.TreeDrawer;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
+	import flash.utils.setTimeout;
 	
 	import mx.controls.Image;
 	import mx.core.BitmapAsset;
@@ -93,9 +93,10 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
       
-      view.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_InnerMindmapStage);
-      view.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_InnerMindmapStage);
-      view.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp_InnerMindmapStage);
+      view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
+      view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
+      view.container.addEventListener(MouseEvent.MOUSE_UP,   onMouseUp_Map);
+      view.container.addEventListener(MouseEvent.MOUSE_OUT,  onMouseOut_Map);
 		}
 		
 		
@@ -161,13 +162,13 @@ package com.graphmind {
     }
     
     
-    public function onMouseOut_MindmapStage():void {
-      closeDesktopDragAndDrop();
+    public function onMouseOut_Map(event:MouseEvent):void {
+      closeMapDragAndDrop();
     }
     
     
-    public function onMouseUp_InnerMindmapStage(event:MouseEvent):void {
-      closeDesktopDragAndDrop();
+    public function onMouseUp_Map(event:MouseEvent):void {
+      closeMapDragAndDrop();
     }
     
     
@@ -185,26 +186,26 @@ package com.graphmind {
     /**
      * Finishes drag and drop session for the mindmap area.
      */
-    protected function closeDesktopDragAndDrop():void {
+    protected function closeMapDragAndDrop():void {
       isDesktopDragged = false;
     }
 
     
-    public function onMouseDown_InnerMindmapStage(event:MouseEvent):void {
-      startNodeDragAndDrop();
+    public function onMouseDown_Map(event:MouseEvent):void {
+      startMapDragAndDrop();
     }
     
     
-    public function onMouseMove_InnerMindmapStage(event:MouseEvent):void {
-      doNodeDragAndDrop();
+    public function onMouseMove_Map(event:MouseEvent):void {
+      doMapDragAndDrop();
     }
     
     
     /**
      * Start the dragged node's drag and drop session.
      */
-    protected function startNodeDragAndDrop():void {
-      view.container.setFocus();
+    protected function startMapDragAndDrop():void {
+      GraphMind.i.map.setFocus();
       
       isDesktopDragged = true;
       
@@ -215,7 +216,7 @@ package com.graphmind {
     }
     
     
-    protected function doNodeDragAndDrop():void {
+    protected function doMapDragAndDrop():void {
       if (isDesktopDragged) {
         var deltaV:Number = view.mouseY - _desktopDragInfo.oldVPos;
         var deltaH:Number = view.mouseX - _desktopDragInfo.oldHPos;
@@ -231,13 +232,13 @@ package com.graphmind {
 
     
     public function onNodeCreated(event:EventCenterEvent):void {
-      com.graphmind.util.Log.info('Node added to stage');
       view.nodeLayer.addChild((event.sender as NodeViewController).view);
     }
     
     
     public override function onMapDidLoaded(event:FlexEvent):void {
-      view.verticalScrollPosition = (view.container.height - view.height) >> 1;
+      // @todo check why it's not working right on the event
+      setTimeout(function():void{view.verticalScrollPosition = (view.container.height - view.height) >> 1;}, 1);
     }
     
     

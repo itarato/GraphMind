@@ -2,6 +2,8 @@ package com.graphmind.view {
   
   import com.graphmind.event.MapEvent;
   
+  import flash.events.MouseEvent;
+  
   import mx.containers.Canvas;
   import mx.core.ScrollPolicy;
   
@@ -53,7 +55,8 @@ package com.graphmind.view {
       container.addChild(cloudLayer);
       container.addChild(connectionLayer);
       container.addChild(nodeLayer);
-      
+      container.addChild(overlayLayer);
+
       // Map is ready to interact.
       // It doesn't mean that there are objects on it.
       dispatchEvent(new MapEvent(MapEvent.MINDMAP_CREATION_COMPLETE));
@@ -68,6 +71,10 @@ package com.graphmind.view {
       nodeLayer.height = connectionLayer.height = cloudLayer.height = overlayLayer.height = height;
     }
     
+    
+    public override function toString():String {
+      return 'MapView [' + width + ' X ' + height + ']';
+    }
 
   }
   
