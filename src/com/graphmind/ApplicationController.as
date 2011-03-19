@@ -55,27 +55,10 @@ package com.graphmind {
 		protected var _isEditable:Boolean = false;
 		
 		/**
-		 * Last timestamp of the saved state.
-		 * Important when checking multi editing collisions.
-		 * If the self's lastSaved is earlier than on the Drupal side, it means
-		 * an other client saved a different state. Currently there is no
-		 * way for multiediting ;.( - Arms of Sorrow - Killswitch Engage
-		 */
-		public var lastSaved:Number = new Date().time;
-		
-		/**
 		 * Feature array.
 		 */
 		public var features:Array;
 		      
-    /**
-     * Workflow manager - kinda factory for different composites.
-     * For example:
-     *  - tree composite creates tree nodes and tree structure...
-     *  - futures wheel composite creates f.w. related objects
-     */
-//    public var workflowComposite:IWorkflowComposite; 
-    
     
 		/**
 		 * Constructor.
@@ -100,7 +83,7 @@ package com.graphmind {
       baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionManager.defaultErrorHandler);
       baseSiteConnection.connect();
       
-      EventCenter.subscribe(EventCenterEvent.APP_FORM_REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
+      EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
 		}
 			
 			
@@ -173,21 +156,6 @@ package com.graphmind {
       // Call map to draw its contents.
       EventCenter.notify(EventCenterEvent.MAP_UPDATED);
     }
-
-		
-		/**
-		 * Save event is done.
-		 */
-		public function _save_stage_saved(result:ResultEvent):void {
-			//MonsterDebugger.trace(this, result.result);
-			if (result.result == '1') {
-				OSD.show('GraphMind data is saved.');
-				lastSaved = new Date().time;
-			} else {
-				OSD.show('This content has been modified by another user, changes cannot be saved.', OSD.WARNING);
-				// @TODO prevent later savings
-			}
-		}
 
     
     /**

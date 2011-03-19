@@ -4,6 +4,7 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.DesktopDragInfo;
+	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
 	
 	import flash.display.MovieClip;
@@ -93,6 +94,8 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
       EventCenter.subscribe(EventCenterEvent.MAP_SCALE_CHANGED, onMapScaleChanged);
+      EventCenter.subscribe(EventCenterEvent.MAP_SAVED, onMapSaved);
+      EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
       
       view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
       view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
@@ -289,6 +292,25 @@ package com.graphmind {
     
     protected function onMapScaleChanged(event:EventCenterEvent):void {
       view.setScale(event.data as Number);
+    }
+    
+    
+    protected function onRequestToSave(event:EventCenterEvent):void {
+      var xml:String = ExportController.getFreeMindXML(rootNode);
+      ExportController.saveFreeMindXMLToDrupal(GraphMind.i.applicationController.baseSiteConnection, xml, ApplicationController.getHostNodeID());
+    }
+    
+    
+    /**
+     * Save event is done.
+     */
+    public function onMapSaved(event:EventCenterEvent):void {
+      if (event.data) {
+        OSD.show('GraphMind data is saved.');
+      } else {
+        OSD.show('This content has been modified by another user, changes cannot be saved.', OSD.WARNING);
+        // @TODO prevent later savings
+      }
     }
     
 	}

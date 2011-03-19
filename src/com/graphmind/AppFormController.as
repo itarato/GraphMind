@@ -211,12 +211,12 @@ package com.graphmind {
     
         
     public function onClick_SaveGraphmindButton():void {
-      ExportController.saveFreeMindXMLToDrupal();
+      EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
     }
     
     
     public function onClick_DumpFreemindXMLButton():void {
-      EventCenter.notify(EventCenterEvent.APP_FORM_REQUEST_FOR_FREEMIND_XML, null, onFreemindXmlReveived);
+      EventCenter.notify(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, null, onFreemindXmlReveived);
     }
     
     

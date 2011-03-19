@@ -3,11 +3,22 @@ package com.graphmind {
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
+  import com.kitten.network.Connection;
   
   public class ExportController {
     
+    /**
+     * Last timestamp of the saved state.
+     * Important when checking multi editing collisions.
+     * If the self's lastSaved is earlier than on the Drupal side, it means
+     * an other client saved a different state. Currently there is no
+     * way for multiediting ;.( - Arms of Sorrow - Killswitch Engage
+     */
+    public static var lastSaved:Number = new Date().time;
+    
+    
     public function ExportController() {}
-
+    
         
     /**
      * Export work to FreeMind XML format
@@ -21,18 +32,14 @@ package com.graphmind {
     /**
      * Save work into host node
      */
-    public static function saveFreeMindXMLToDrupal():String {
-      var mm:String = getFreeMindXML(TreeMapViewController.rootNode);
-      // @TODO implement
-//      ConnectionManager.saveGraphMind(
-//        ApplicationController.i.getHostNodeID(),
-//        mm,
-//        ApplicationController.i.lastSaved,
-//        ApplicationController.i.baseSiteConnection, 
-//        ApplicationController.i._save_stage_saved
-//      );
-      EventCenter.notify(EventCenterEvent.MAP_SAVED);
-      return mm;
+    public static function saveFreeMindXMLToDrupal(conn:Connection, xml:String, nid:uint):void {
+      conn.call('graphmind.saveGraphMind', onSaveFreemindXMLToDrupalSucceed, nid, xml, lastSaved * 0.001);
+    }
+    
+    
+    private static function onSaveFreemindXMLToDrupalSucceed(result:Object):void {
+      lastSaved = new Date().time;
+      EventCenter.notify(EventCenterEvent.MAP_SAVED, null, result);
     }
 
   }
