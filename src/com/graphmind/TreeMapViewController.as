@@ -96,6 +96,7 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
       EventCenter.subscribe(EventCenterEvent.NODE_PREPARE_DRAG, onNodePrepareDrag);
+      EventCenter.subscribe(EventCenterEvent.NODE_START_DRAG, onNodeStartDrag);
       EventCenter.subscribe(EventCenterEvent.NODE_FINISH_DRAG, onNodeFinishDrag);
       EventCenter.subscribe(EventCenterEvent.MAP_SCALE_CHANGED, onMapScaleChanged);
       EventCenter.subscribe(EventCenterEvent.MAP_SAVED, onMapSaved);
@@ -144,12 +145,12 @@ package com.graphmind {
     }
     
     
-    public function prepaireDragAndDrop():void {
+    public function prepareNodeDragAndDrop():void {
       NodeViewController.isPrepairedNodeDragAndDrop = true;
     }
     
     
-    public function prepareNodeDragAndDrop(source:NodeViewController):void {
+    private function startNodeDragAndDrop(source:NodeViewController):void {
       NodeViewController.isPrepairedNodeDragAndDrop = false;
       NodeViewController.isNodeDragAndDrop = true;
       NodeViewController.dragAndDrop_sourceNode = source;
@@ -319,7 +320,12 @@ package com.graphmind {
     
     
     protected function onNodePrepareDrag(event:EventCenterEvent):void {
-      prepareNodeDragAndDrop(event.data as NodeViewController);
+      prepareNodeDragAndDrop();
+    }
+    
+    
+    protected function onNodeStartDrag(event:EventCenterEvent):void {
+      startNodeDragAndDrop(event.data as NodeViewController);
     }
     
     
