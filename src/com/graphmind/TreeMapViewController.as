@@ -178,6 +178,7 @@ package com.graphmind {
     
     public function onMouseUp_Map(event:MouseEvent):void {
       closeMapDragAndDrop();
+      closeNodeDragAndDrop();
     }
     
     
@@ -202,6 +203,7 @@ package com.graphmind {
     
     public function onMouseDown_Map(event:MouseEvent):void {
       startMapDragAndDrop();
+      closeNodeDragAndDrop();
     }
     
     

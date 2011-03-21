@@ -808,13 +808,16 @@ package com.graphmind.display {
     public function onMouseUp(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
-      if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
-        
+      if (NodeViewController.isNodeDragAndDrop) {
         if (view.mouseX / view.getWidth() > (1 - view.mouseY / view.getHeight())) {
           NodeViewController.dragAndDrop_sourceNode.move(this);
         } else {
           NodeViewController.dragAndDrop_sourceNode.moveToPrevSibling(this);
         }
+      }
+      
+      // Kill node drag and drop
+      if (NodeViewController.isNodeDragAndDrop || NodeViewController.isPrepairedNodeDragAndDrop) {
         EventCenter.notify(EventCenterEvent.NODE_FINISH_DRAG, this, this);
       }
     }
