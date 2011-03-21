@@ -287,8 +287,7 @@ package com.graphmind.display {
 				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(nodeData.data[key]) + '"/>' + "\n";
 			}
 			
-			if (nodeData.source) {
-//				output = output + '<site URL="' + escape(nodeData.source.target) + '" USERNAME="' + escape(nodeData.source.username) + '"/>' + "\n";
+			if (nodeData.source.target) {
         output = output + '<site URL="' + escape(nodeData.source.target) + '" />' + "\n";
 			}
 			
@@ -395,39 +394,45 @@ package com.graphmind.display {
 			return false;
 		}
 		
+		
 		/**
 		 * Move a node.
+		 * :: target -> this
 		 */
-		public static function move(source:NodeViewController, target:NodeViewController, callEvent:Boolean = true):Boolean {
+		public function move(target:NodeViewController, callEvent:Boolean = true):Boolean {
 			// No parent can detach child.
-			if (!source || !source.parent || !target) return false;
+			if (!this || !this.parent || !target) return false;
 			// Target is an ascendant of the source.
-			if (source.isChild(target)) return false;
+			if (this.isChild(target)) return false;
 			// Source is equal to target
-			if (source == target) return false;
+			if (this == target) return false;
 			
 			// Remove source from parents childs
-			source.removeFromParentsChilds();
+			this.removeFromParentsChilds();
 			// Add source to target
-			target.addChildNode(source);
+			target.addChildNode(this);
 			// Refresh display
 			
 			if (callEvent) {
 				// Call hook
-				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-				EventCenter.notify(EventCenterEvent.NODE_MOVED, source, source);
+				PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
+				EventCenter.notify(EventCenterEvent.NODE_MOVED, this, this);
 			}
 			
-			source.update(UP_TREE_UI);
+			this.update(UP_TREE_UI);
 
 			return true;
 		}
 		
+		
 		/**
 		 * Move a node to a next sibling.
 		 */
-		public static function moveToPrevSibling(source:NodeViewController, target:NodeViewController):void {
-			if (move(source, target.parent, false)) {
+		public function moveToPrevSibling(target:NodeViewController):void {
+		  trace('This: ' + this + ' target: ' + target);
+		  if (this == target) return;
+		  
+			if (move(target.parent, false)) {
 				var siblingIDX:int = target.parent._children.getItemIndex(target) + 1;
 				if (siblingIDX == -1) {
 					return;
@@ -437,22 +442,25 @@ package com.graphmind.display {
 					target.parent._children[i] = target.parent._children[i - 1];
 				}
 				
-				target.parent._children.setItemAt(source, siblingIDX);
+				target.parent._children.setItemAt(this, siblingIDX);
 				
 				// Refresh after reordering
 				EventCenter.notify(EventCenterEvent.MAP_UPDATED);
 				
 				// Call hook
-				PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-				EventCenter.notify(EventCenterEvent.NODE_MOVED, source, source);
+				PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
+				EventCenter.notify(EventCenterEvent.NODE_MOVED, this, this);
 			}
-		}    
+		}
+		
 		
     /**
      * Move a node to a next sibling.
      */
-    public static function moveToNextSibling(source:NodeViewController, target:NodeViewController):void {
-      if (move(source, target.parent, false)) {
+    public function moveToNextSibling(target:NodeViewController):void {
+      if (this == target) return;
+      
+      if (move(target.parent, false)) {
         var siblingIDX:int = target.parent._children.getItemIndex(target);
         if (siblingIDX == -1) {
           return;
@@ -462,16 +470,17 @@ package com.graphmind.display {
           target.parent._children[i] = target.parent._children[i - 1];
         }
         
-        target.parent._children.setItemAt(source, siblingIDX);
+        target.parent._children.setItemAt(this, siblingIDX);
         
         // Refresh after reordering
         EventCenter.notify(EventCenterEvent.MAP_UPDATED);
         
         // Call hook
-        PluginManager.callHook(HOOK_NODE_MOVED, {node: source});
-        EventCenter.notify(EventCenterEvent.NODE_MOVED, source, source);
+        PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
+        EventCenter.notify(EventCenterEvent.NODE_MOVED, this, this);
       }
     }
+		
 		
 		/**
 		 * Remove this node from it's parent's child collection.
@@ -485,6 +494,7 @@ package com.graphmind.display {
 			
 			parent.view._displayComp.icon_has_child.visible = parent._children.length > 0;
 		}
+ 		
  		
  		protected function onDoubleClick_icon(event:MouseEvent):void {
  		  removeIcon(event.currentTarget as Image);
@@ -774,15 +784,18 @@ package com.graphmind.display {
       loadItem();
     }
     
+    
     public function onLoadViewClick(event:MouseEvent):void {
       event.stopPropagation();
       loadViews();
     }
     
+    
     public function onClick_NodeLinkButton(event:MouseEvent):void {
       var ur:URLRequest = new URLRequest(nodeData.link);
       navigateToURL(ur, '_blank');
     }
+    
     
     public function onMouseDown(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
@@ -791,19 +804,21 @@ package com.graphmind.display {
       event.stopImmediatePropagation();
     }
     
+    
     public function onMouseUp(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
         
         if (view.mouseX / view.getWidth() > (1 - view.mouseY / view.getHeight())) {
-          NodeViewController.move(NodeViewController.dragAndDrop_sourceNode, this);
+          NodeViewController.dragAndDrop_sourceNode.move(this);
         } else {
-          NodeViewController.moveToPrevSibling(NodeViewController.dragAndDrop_sourceNode, this);
+          NodeViewController.dragAndDrop_sourceNode.moveToPrevSibling(this);
         }
         EventCenter.notify(EventCenterEvent.NODE_FINISH_DRAG, this, this);
       }
     }
+    
     
     public function onMouseMove(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;

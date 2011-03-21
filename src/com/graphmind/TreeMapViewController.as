@@ -81,6 +81,8 @@ package com.graphmind {
       // Add drag and drop iamge.
       var bmd:BitmapAsset = (new _dragAndDropImageSource()) as BitmapAsset;
       dragAndDropImage.source = bmd;
+      dragAndDropImage.x = -100;
+      dragAndDropImage.y = -100;
       view.overlayLayer.addChild(dragAndDropImage);
       
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
@@ -93,6 +95,8 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, onActiveNodeRemoveAttribute);
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
+      EventCenter.subscribe(EventCenterEvent.NODE_PREPARE_DRAG, onNodePrepareDrag);
+      EventCenter.subscribe(EventCenterEvent.NODE_FINISH_DRAG, onNodeFinishDrag);
       EventCenter.subscribe(EventCenterEvent.MAP_SCALE_CHANGED, onMapScaleChanged);
       EventCenter.subscribe(EventCenterEvent.MAP_SAVED, onMapSaved);
       EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
@@ -145,7 +149,7 @@ package com.graphmind {
     }
     
     
-    public function openDragAndDrop(source:NodeViewController):void {
+    public function prepareNodeDragAndDrop(source:NodeViewController):void {
       NodeViewController.isPrepairedNodeDragAndDrop = false;
       NodeViewController.isNodeDragAndDrop = true;
       NodeViewController.dragAndDrop_sourceNode = source;
@@ -161,7 +165,7 @@ package com.graphmind {
     }
     
     
-    public function onMouseDownOutside_MindmapStage():void {
+    public function onMouseDown_OutsideMindmapStage():void {
       closeNodeDragAndDrop();
     }
     
@@ -311,6 +315,16 @@ package com.graphmind {
         OSD.show('This content has been modified by another user, changes cannot be saved.', OSD.WARNING);
         // @TODO prevent later savings
       }
+    }
+    
+    
+    protected function onNodePrepareDrag(event:EventCenterEvent):void {
+      prepareNodeDragAndDrop(event.data as NodeViewController);
+    }
+    
+    
+    protected function onNodeFinishDrag(event:EventCenterEvent):void {
+      closeNodeDragAndDrop();
     }
     
 	}

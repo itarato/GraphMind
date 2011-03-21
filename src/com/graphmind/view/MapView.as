@@ -52,8 +52,8 @@ package com.graphmind.view {
       addChild(container);
       container.addChild(cloudLayer);
       container.addChild(connectionLayer);
-      container.addChild(nodeLayer);
       container.addChild(overlayLayer);
+      container.addChild(nodeLayer);
 
       // Map is ready to interact.
       // It doesn't mean that there are objects on it.
