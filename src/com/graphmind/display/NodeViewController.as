@@ -433,7 +433,7 @@ package com.graphmind.display {
 		  if (this == target) return;
 		  
 			if (move(target.parent, false)) {
-				var siblingIDX:int = target.parent._children.getItemIndex(target) + 1;
+				var siblingIDX:int = target.parent._children.getItemIndex(target);
 				if (siblingIDX == -1) {
 					return;
 				}
@@ -461,7 +461,7 @@ package com.graphmind.display {
       if (this == target) return;
       
       if (move(target.parent, false)) {
-        var siblingIDX:int = target.parent._children.getItemIndex(target);
+        var siblingIDX:int = target.parent._children.getItemIndex(target) + 1;
         if (siblingIDX == -1) {
           return;
         }
