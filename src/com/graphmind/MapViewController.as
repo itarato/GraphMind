@@ -38,7 +38,6 @@ package com.graphmind {
     public function MapViewController() {
       view = new MapView();
       view.setContainerSize(MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT);
-//      view.container.addEventListener(FlexEvent.CREATION_COMPLETE, onMapDidLoaded);
       view.container.addEventListener(FlexEvent.CREATION_COMPLETE, onMapDidLoaded);
     }
 

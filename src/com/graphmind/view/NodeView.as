@@ -12,7 +12,7 @@ package com.graphmind.view {
 	import mx.core.UIComponent;
 	
 	
-	public class NodeView extends UIComponent implements IDisplayItem, IDrawable {
+	public class NodeView extends UIComponent {
 		
 		public static const WIDTH_MC_DEFAULT:int = 168;
 		public static const WIDTH_DEFAULT:int = 162;
@@ -34,12 +34,12 @@ package com.graphmind.view {
 		/**
 		 * Backgroung shape.
 		 */
-		public var _backgroundComp:Container = new Container();
+		public var backgroundView:Container = new Container();
 		
 		/**
 		 * Various UI elements.
 		 */
-		public var _displayComp:ItemBaseComponent = new ItemBaseComponent();
+		public var nodeComponentView:ItemBaseComponent = new ItemBaseComponent();
 		
 		/**
 		 * Images (icons).
@@ -56,28 +56,26 @@ package com.graphmind.view {
 		 */
 		public var backgroundColor:uint = 0xDFD9D1;
 		
+		
+		/**
+		 * Constructor.
+		 */
 		public function NodeView():void {
 			super();
 			
-			addChild(_backgroundComp);
-			addChild(_displayComp);
+			addChild(backgroundView);
+			addChild(nodeComponentView);
 			
-			initGraphics();
-			// Event when a drag-and-drop process ends
-//			GraphMind.i.addEventListener(NodeEvent.DRAG_AND_DROP_FINISHED, onDragAndDropFinished);
-		}
-		
-		public function initGraphics():void {
-			Log.debug('TreeNodeView.initGraphics()');
-			
-			// Background component - what a surprise, huh?
-			_backgroundComp.height = getHeight();
-			_backgroundComp.setStyle('cornerRadius', '5');
-			_backgroundComp.setStyle('borderStyle', 'solid');
-			
-			_displayComp.title_label.doubleClickEnabled = true;
-			
-			buttonMode = true;
+      // Background component - what a surprise, huh?
+      backgroundView.height = HEIGHT;
+      backgroundView.setStyle('cornerRadius', '5');
+      backgroundView.setStyle('borderStyle', 'solid');
+      
+      nodeComponentView.title_label.doubleClickEnabled = true;
+      
+      buttonMode = true;
+      
+      height = HEIGHT;
 		}
 		
 		
@@ -91,17 +89,19 @@ package com.graphmind.view {
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
 
-			if (_backgroundComp.width != WIDTH_DEFAULT + leftOffset) {
-				_backgroundComp.width = WIDTH_DEFAULT + leftOffset;
+			if (backgroundView.width != WIDTH_DEFAULT + leftOffset) {
+				backgroundView.width = WIDTH_DEFAULT + leftOffset;
 			}
-			_backgroundComp.setStyle('backgroundColor', backgroundColor);
+			backgroundView.setStyle('backgroundColor', backgroundColor);
 			
-			this._displayComp.width = WIDTH_MC_DEFAULT + leftOffset;
-			this._displayComp.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
-			this._displayComp.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
-			this._displayComp.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
-			this._displayComp.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
-			this._displayComp.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
+			this.nodeComponentView.width = WIDTH_MC_DEFAULT + leftOffset;
+			this.nodeComponentView.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
+			this.nodeComponentView.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
+			this.nodeComponentView.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
+			this.nodeComponentView.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
+			this.nodeComponentView.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
+			
+			width = WIDTH_DEFAULT + _getIconsExtraWidth() + _getTitleExtraWidth();
 			
 			isGraphicsUpdated = false;
 		}
@@ -110,24 +110,17 @@ package com.graphmind.view {
 		 * Event callback when a node drag and drop process ends.
 		 */
 		protected function onDragAndDropFinished(event:NodeEvent):void {
-			_displayComp.insertLeft.visible = false;
-			_displayComp.insertUp.visible = false;
+			nodeComponentView.insertLeft.visible = false;
+			nodeComponentView.insertUp.visible = false;
 		}
 		
-		public function getHeight():uint {
-			return HEIGHT;
-		}
-		
-		public function getWidth():uint {
-			return WIDTH_DEFAULT + _getIconsExtraWidth() + _getTitleExtraWidth(); 
-		}
 		
 		protected function _getTitleExtraWidth():int {
-			return _displayComp.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
+			return nodeComponentView.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
 				0 :
-				(_displayComp.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
+				(nodeComponentView.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
 					TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH :
-					_displayComp.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
+					nodeComponentView.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
 		}
 		
 		protected function _getIconsExtraWidth():int {
@@ -143,7 +136,7 @@ package com.graphmind.view {
 		 */
 		public function addIcon(icon:Image):void {
 		  icons.addItem(icon);
-		  _displayComp.addChild(icon);
+		  nodeComponentView.addChild(icon);
 		  isGraphicsUpdated = true;
 		}
 		

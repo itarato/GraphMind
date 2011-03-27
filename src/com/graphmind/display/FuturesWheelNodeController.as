@@ -29,7 +29,7 @@ package com.graphmind.display {
     }
     
     public override function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
-      view._backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeGlowFilter2, _nodeGlowFilter1];
+      view.backgroundView.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeGlowFilter2, _nodeGlowFilter1];
     }
     
     public override function onMouseDown(event:MouseEvent):void {

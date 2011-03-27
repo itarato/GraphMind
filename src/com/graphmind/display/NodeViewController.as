@@ -31,7 +31,6 @@ package com.graphmind.display {
 	import mx.controls.Image;
 	import mx.events.FlexEvent;
 
-
   [Event(name="updateData",           type="com.graphmind.event.NodeEvent")]
   [Event(name="updateGraphics",       type="com.graphmind.event.NodeEvent")]
   [Event(name="moved",                type="com.graphmind.event.NodeEvent")]
@@ -58,7 +57,7 @@ package com.graphmind.display {
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuAddDrupalViews")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveNode")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveChilds")]
-	public class NodeViewController extends EventDispatcher implements IHasUI, ITreeItem, ICloud {
+	public class NodeViewController extends EventDispatcher implements ITreeItem, ICloud {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
@@ -139,33 +138,33 @@ package com.graphmind.display {
     /**
      * Constructor.
      */ 
-		public function NodeViewController(nodeData:NodeData, newNodeView:NodeView = null):void {
+		public function NodeViewController(nodeData:NodeData):void {
 			super();
 			
 			this.nodeData = nodeData;
 			
-			if (newNodeView == null) {
-			  newNodeView = new NodeView();
-			}
+		  view = new NodeView();
 			
       // Event listeners
-      newNodeView._displayComp.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
-      newNodeView._displayComp.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
-      newNodeView._displayComp.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
-      newNodeView._displayComp.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
-      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
-      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
-      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_MOVE,                 onMouseMove);
-      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_OVER,                 onMouseOver);
-      newNodeView._displayComp.addEventListener(MouseEvent.MOUSE_OUT,                  onMouseOut);
-      newNodeView._displayComp.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
-      newNodeView._displayComp.icon_anchor.addEventListener(MouseEvent.CLICK,          onClick_NodeLinkButton);
-      newNodeView._displayComp.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
+      view.nodeComponentView.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
+      view.nodeComponentView.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
+      view.nodeComponentView.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
+      view.nodeComponentView.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
+      view.nodeComponentView.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
+      view.nodeComponentView.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
+      view.nodeComponentView.addEventListener(MouseEvent.MOUSE_MOVE,                 onMouseMove);
+      view.nodeComponentView.addEventListener(MouseEvent.MOUSE_OVER,                 onMouseOver);
+      view.nodeComponentView.addEventListener(MouseEvent.MOUSE_OUT,                  onMouseOut);
+      view.nodeComponentView.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
+      view.nodeComponentView.icon_anchor.addEventListener(MouseEvent.CLICK,          onClick_NodeLinkButton);
+      view.nodeComponentView.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
   
-      newNodeView._displayComp.contextMenu = getContextMenu();
-			
-			view = newNodeView;
-			
+      view.nodeComponentView.contextMenu = getContextMenu();
+//      var cm:ContextMenu = new ContextMenu();
+//      cm.customItems.push(new ContextMenuItem('Foo'));
+//      cm.customItems.push(new ContextMenuItem('Bar'));
+//      view.contextMenu = cm;
+      
 			nodeData.recalculateTitle(true);
 			setTitle(nodeData.title);
 			
@@ -287,7 +286,7 @@ package com.graphmind.display {
 				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(nodeData.data[key]) + '"/>' + "\n";
 			}
 			
-			if (nodeData.source.target) {
+			if (nodeData.source && nodeData.source.target) {
         output = output + '<site URL="' + escape(nodeData.source.target) + '" />' + "\n";
 			}
 			
@@ -354,7 +353,7 @@ package com.graphmind.display {
 				// Remove parent's child (this child).
 				parent._children.removeItemAt(parent._children.getItemIndex(this));
 				// Check parent's toggle-subtree button. With no child it should be hidden.
-				parent.view._displayComp.icon_has_child.visible = parent._children.length > 0;
+				parent.view.nodeComponentView.icon_has_child.visible = parent._children.length > 0;
 			}
 
       // Remove arrow links.			
@@ -365,7 +364,7 @@ package com.graphmind.display {
       }
 			
 			// Remove main UI element.
-			view._displayComp.parent.removeChild(view._displayComp);
+			view.nodeComponentView.parent.removeChild(view.nodeComponentView);
 			// Remove the whole UI.
 			view.parent.removeChild(this.view);
 			
@@ -492,7 +491,7 @@ package com.graphmind.display {
 				this.parent._children.removeItemAt(childIDX);
 			}
 			
-			parent.view._displayComp.icon_has_child.visible = parent._children.length > 0;
+			parent.view.nodeComponentView.icon_has_child.visible = parent._children.length > 0;
 		}
  		
  		
@@ -515,7 +514,7 @@ package com.graphmind.display {
  		 */
 		public function setLink(link:String):void {
 			nodeData.link = link;
-			view._displayComp.icon_anchor.visible = (link.length > 0);
+			view.nodeComponentView.icon_anchor.visible = (link.length > 0);
 			update(UP_TIME | UP_NODE_UI);
 		}
 		
@@ -642,7 +641,7 @@ package com.graphmind.display {
      * @param boolean userChange - indicates if the change was done by user interaction.
      */
 		public function setTitle(title:String, userChange:Boolean = false):void {
-			nodeData.title = view._displayComp.title_label.htmlText = title;
+			nodeData.title = view.nodeComponentView.title_label.htmlText = title;
 			
 			if (userChange) {
 			  PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
@@ -707,51 +706,45 @@ package com.graphmind.display {
       update(UP_TIME | UP_STAGE_NODE_DATA);
     }
     
-    /**
-     * Implementation of getUI().
-     */
-    public function getUI():IDrawable {
-      return view;
-    }
 
     public function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(select, 400);
-      view._displayComp.icon_add.visible = ApplicationController.i.isEditable();
-      view._displayComp.icon_anchor.visible = nodeData.link.length > 0;
+      view.nodeComponentView.icon_add.visible = ApplicationController.i.isEditable();
+      view.nodeComponentView.icon_anchor.visible = nodeData.link.length > 0;
     }
     
     public function onMouseOut(event:MouseEvent):void {
       clearTimeout(_mouseSelectionTimeout);
-      view._displayComp.icon_add.visible = false;
-      view._displayComp.icon_anchor.visible = false;
+      view.nodeComponentView.icon_add.visible = false;
+      view.nodeComponentView.icon_anchor.visible = false;
       
       if (NodeViewController.isPrepairedNodeDragAndDrop) {
         EventCenter.notify(EventCenterEvent.NODE_START_DRAG, this, this);
       }
       
-      view._displayComp.insertLeft.visible = false;
-      view._displayComp.insertUp.visible = false;
+      view.nodeComponentView.insertLeft.visible = false;
+      view.nodeComponentView.insertUp.visible = false;
     }
     
     public function onDoubleClick(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
-      view._displayComp.currentState = 'edit_title';
-      view._displayComp.title_new.text = view._displayComp.title_label.text;
-      view._displayComp.title_new.setFocus();
+      view.nodeComponentView.currentState = 'edit_title';
+      view.nodeComponentView.title_new.text = view.nodeComponentView.title_label.text;
+      view.nodeComponentView.title_new.setFocus();
     }
     
     public function onKeyUp_TitleTextField(event:KeyboardEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if (event.keyCode == Keyboard.ENTER) {
-        view._displayComp.currentState = '';
-        setTitle(view._displayComp.title_new.text, true);
+        view.nodeComponentView.currentState = '';
+        setTitle(view.nodeComponentView.title_new.text, true);
         GraphMind.i.setFocus();
         select();
       } else if (event.keyCode == Keyboard.ESCAPE) {
-        view._displayComp.currentState = '';
-        view._displayComp.title_new.text = view._displayComp.title_label.text;
+        view.nodeComponentView.currentState = '';
+        view.nodeComponentView.title_new.text = view.nodeComponentView.title_label.text;
       }
     }
     
@@ -759,8 +752,8 @@ package com.graphmind.display {
       if (!ApplicationController.i.isEditable()) return;
       
       // @TODO this is a duplication of the onNewTitleKeyUp() (above)
-      view._displayComp.currentState = '';
-      setTitle(view._displayComp.title_new.text, true);
+      view.nodeComponentView.currentState = '';
+      setTitle(view.nodeComponentView.title_new.text, true);
       GraphMind.i.setFocus();
     }
     
@@ -770,6 +763,7 @@ package com.graphmind.display {
       GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
     }
     
+    
     public function onClick_AddSimpleNodeButton(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
@@ -778,6 +772,7 @@ package com.graphmind.display {
       event.preventDefault();
       createSimpleNodeChild();
     }
+    
     
     public function onLoadItemClick(event:MouseEvent):void {
       event.stopPropagation();
@@ -798,6 +793,7 @@ package com.graphmind.display {
     
     
     public function onMouseDown(event:MouseEvent):void {
+      trace('Down: ' + this + ' wh: ' + view.nodeComponentView.width + ':' + view.nodeComponentView.height);
       if (!ApplicationController.i.isEditable()) return;
       
       EventCenter.notify(EventCenterEvent.NODE_PREPARE_DRAG, this, this);
@@ -809,7 +805,7 @@ package com.graphmind.display {
       if (!ApplicationController.i.isEditable()) return;
       
       if (NodeViewController.isNodeDragAndDrop) {
-        if (view.mouseX / view.getWidth() > (1 - view.mouseY / view.getHeight())) {
+        if (view.mouseX / view.width > (1 - view.mouseY / view.height)) {
           NodeViewController.dragAndDrop_sourceNode.move(this);
         } else {
           NodeViewController.dragAndDrop_sourceNode.moveToPrevSibling(this);
@@ -827,12 +823,12 @@ package com.graphmind.display {
       if (!ApplicationController.i.isEditable()) return;
       
       if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
-        if (view.mouseX / getUI().getWidth() > (1 - view.mouseY / NodeView.HEIGHT)) {
-          view._displayComp.insertLeft.visible = true;
-          view._displayComp.insertUp.visible = false;
+        if (view.mouseX / view.width > (1 - view.mouseY / NodeView.HEIGHT)) {
+          view.nodeComponentView.insertLeft.visible = true;
+          view.nodeComponentView.insertUp.visible = false;
         } else {
-          view._displayComp.insertLeft.visible = false;
-          view._displayComp.insertUp.visible = true;
+          view.nodeComponentView.insertLeft.visible = false;
+          view.nodeComponentView.insertUp.visible = true;
         }
       }
     }
@@ -930,7 +926,7 @@ package com.graphmind.display {
       uncollapseChilds();
       
       // Showing toggle-subtree button.
-      view._displayComp.icon_has_child.visible = true;
+      view.nodeComponentView.icon_has_child.visible = true;
       
       // Not necessary to fire NODE_ATTCHED event. MOVED and CREATED covers this.
       update(UP_SUBTREE_UI);
@@ -943,22 +939,24 @@ package com.graphmind.display {
     
     public function collapseChilds():void {
       _isCollapsed = true;
-      view._displayComp.icon_has_child.source = view._displayComp.image_node_uncollapse;
+      view.nodeComponentView.icon_has_child.source = view.nodeComponentView.image_node_uncollapse;
       for each (var nodeItem:NodeViewController in _children) {
         nodeItem.view.visible = false;
         nodeItem.collapseChilds();
       }
       update(UP_TIME | UP_SUBTREE_UI);
     }
+
     
     public function uncollapse():void {
       _isForcedCollapsed = false;
       uncollapseChilds();
     }
+
     
     public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
       _isCollapsed = false;
-      view._displayComp.icon_has_child.source = view._displayComp.image_node_collapse;
+      view.nodeComponentView.icon_has_child.source = view.nodeComponentView.image_node_collapse;
       for each (var nodeItem:NodeViewController in _children) {
         nodeItem.view.visible = true;
         if (!nodeItem._isForcedCollapsed || forceOpenSubtree) {
@@ -967,10 +965,12 @@ package com.graphmind.display {
       }
       update(UP_TIME | UP_SUBTREE_UI);
     }
+
     
     public function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
-      view._backgroundComp.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
+      view.backgroundView.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
     }
+
 
     /**
      * Add icon.
@@ -999,6 +999,7 @@ package com.graphmind.display {
     
       update(UP_TIME | UP_SUBTREE_UI);
     }
+    
     
     public function removeArrowLink(arrowLink:TreeArrowLink):void {
       TreeArrowLink.arrowLinks.removeItemAt(TreeArrowLink.arrowLinks.getItemIndex(arrowLink));

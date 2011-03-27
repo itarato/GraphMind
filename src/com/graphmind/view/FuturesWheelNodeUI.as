@@ -16,25 +16,25 @@ package com.graphmind.view {
     
     public override function initGraphics():void {
       super.initGraphics();
-      _displayComp.height = getHeight();
-      _displayComp.icon_add.x = 12;
-      _displayComp.icon_anchor.x = 32;
-      _displayComp.icon_add.y = 62;
-      _displayComp.icon_anchor.y = 62;
-      _displayComp.icon_has_child.y = 0;
-      _backgroundComp.setStyle('cornerRadius', '100');
-      _backgroundComp.setStyle('borderThickness', '3');
-      _backgroundComp.setStyle('backgroundColor', 0xFFFFFF);
-      _displayComp.title_label.height = 60;
-      _displayComp.title_label.width = 60;
-      _displayComp.title_label.x = 10;
-      _displayComp.title_label.y = 10;
-      _displayComp.title_label.setStyle('textAlign', 'center');
+      nodeComponentView.height = getHeight();
+      nodeComponentView.icon_add.x = 12;
+      nodeComponentView.icon_anchor.x = 32;
+      nodeComponentView.icon_add.y = 62;
+      nodeComponentView.icon_anchor.y = 62;
+      nodeComponentView.icon_has_child.y = 0;
+      backgroundView.setStyle('cornerRadius', '100');
+      backgroundView.setStyle('borderThickness', '3');
+      backgroundView.setStyle('backgroundColor', 0xFFFFFF);
+      nodeComponentView.title_label.height = 60;
+      nodeComponentView.title_label.width = 60;
+      nodeComponentView.title_label.x = 10;
+      nodeComponentView.title_label.y = 10;
+      nodeComponentView.title_label.setStyle('textAlign', 'center');
       
       arrowLinkIcon.x = 52;
       arrowLinkIcon.y = 62;
       arrowLinkIcon.source = arrowLinkIconImage;
-      _displayComp.addChild(arrowLinkIcon);
+      nodeComponentView.addChild(arrowLinkIcon);
       arrowLinkIcon.visible = false
     }
     
@@ -50,11 +50,11 @@ package com.graphmind.view {
 //        Image(icons[idx]).x = 40 + ICON_WIDTH * idx;
 //      }
       
-      _backgroundComp.width = getWidth();
+      backgroundView.width = getWidth();
       
-      _displayComp.width = getWidth();
-      _displayComp.icon_has_child.x = getWidth() - 10;
-      _displayComp.insertLeft.x = getWidth();
+      nodeComponentView.width = getWidth();
+      nodeComponentView.icon_has_child.x = getWidth() - 10;
+      nodeComponentView.insertLeft.x = getWidth();
       //_displayComp.title_label.width = getWidth();
       
       isGraphicsUpdated = false;

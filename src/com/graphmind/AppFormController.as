@@ -71,7 +71,7 @@ package com.graphmind {
         });
       }     
       
-      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = node.view._displayComp.title_label.htmlText || node.view._displayComp.title_label.text;
+      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = node.view.nodeComponentView.title_label.htmlText || node.view.nodeComponentView.title_label.text;
       GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = node.nodeData.link;
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';

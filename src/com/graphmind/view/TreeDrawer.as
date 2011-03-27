@@ -2,7 +2,6 @@ package com.graphmind.view {
 	
 	import com.graphmind.MapViewController;
 	import com.graphmind.display.ICloud;
-	import com.graphmind.display.ITreeItem;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.util.Log;
@@ -87,19 +86,19 @@ package com.graphmind.view {
 		/**
 		 * Refresh a single node's ui.
 		 */
-		protected function _redrawNode(node:ITreeItem, postProcessObjects:Object):Number {
-		  node.getUI().refreshGraphics();
+		protected function _redrawNode(node:NodeViewController, postProcessObjects:Object):Number {
+		  node.view.refreshGraphics();
 		  
 			var totalChildHeight:int = _getSubtreeHeight(node);
-			var currentY:int = node.getUI().y - totalChildHeight / 2;
+			var currentY:int = node.view.y - totalChildHeight / 2;
 			
 			if (node is ICloud && (node as ICloud).hasCloud()) currentY += CloudDrawer.MARGIN;
 			
 			// Walking through all the children.
-			for each (var child:ITreeItem in node.getChildNodeAll()) {
+			for each (var child:NodeViewController in node.getChildNodeAll()) {
 				var subtreeWidth:int = _getSubtreeHeight(child);
-				child.getUI().x = node.getUI().x + node.getUI().getWidth() + MARGIN_RIGHT;
-				child.getUI().y = currentY + subtreeWidth / 2;
+				child.view.x = node.view.x + node.view.backgroundView.width + MARGIN_RIGHT;
+				child.view.y = currentY + subtreeWidth / 2;
 				_redrawNode(child, postProcessObjects);
 				
 				if (!node.isCollapsed()) {
@@ -135,12 +134,12 @@ package com.graphmind.view {
 		/**
 		 * Get height of a subtree.
 		 */
-		protected function _getSubtreeHeight(node:ITreeItem):int {
+		protected function _getSubtreeHeight(node:NodeViewController):int {
 			var height:int = 0;
 			if (node.getChildNodeAll().length == 0 || node.isCollapsed()) {
-				height = node.getUI().getHeight() + MARGIN_BOTTOM;
+				height = node.view.backgroundView.height + MARGIN_BOTTOM;
 			} else {
-				for each (var child:ITreeItem in node.getChildNodeAll()) {
+				for each (var child:NodeViewController in node.getChildNodeAll()) {
 					height += _getSubtreeHeight(child);
 				}
 			}

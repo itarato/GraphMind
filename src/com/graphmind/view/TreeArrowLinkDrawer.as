@@ -24,12 +24,12 @@ package com.graphmind.view {
 			
 			_target.graphics.lineStyle(3, 0x446688, 0.8);
 			_target.graphics.moveTo(
-				arrowLink.sourceNode.getUI().x + (arrowLink.sourceNode.getUI().getWidth() >> 1), 
-				arrowLink.sourceNode.getUI().y + (arrowLink.sourceNode.getUI().getHeight() >> 1)
+				arrowLink.sourceNode.view.x + (arrowLink.sourceNode.view.width >> 1), 
+				arrowLink.sourceNode.view.y + (arrowLink.sourceNode.view.height >> 1)
 			);
 			_target.graphics.lineTo(
-				arrowLink.destinationNode.getUI().x + (arrowLink.destinationNode.getUI().getWidth() >> 1), 
-				arrowLink.destinationNode.getUI().y + (arrowLink.destinationNode.getUI().getHeight() >> 1)
+				arrowLink.destinationNode.view.x + (arrowLink.destinationNode.view.width >> 1), 
+				arrowLink.destinationNode.view.y + (arrowLink.destinationNode.view.height >> 1)
 			);
 		}
 		

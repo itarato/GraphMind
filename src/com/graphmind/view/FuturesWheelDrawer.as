@@ -85,7 +85,7 @@ package com.graphmind.view {
       node.getUI().refreshGraphics();
       node.getUI().x -= node.getUI().getWidth() >> 1;
       node.getUI().y -= node.getUI().getHeight() >> 1;
-      (node as NodeViewController).view._backgroundComp.setStyle('borderColor', getLevelColor(circleLevel));
+      (node as NodeViewController).view.backgroundView.setStyle('borderColor', getLevelColor(circleLevel));
       
       // Walking through all the children.
       var childs:ArrayCollection = node.getChildNodeAll();

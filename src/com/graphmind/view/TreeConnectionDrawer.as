@@ -1,7 +1,9 @@
 package com.graphmind.view {
   
-	import com.graphmind.display.ITreeItem;
+	import com.graphmind.display.NodeViewController;
+	
 	import flash.geom.Point;
+	
 	import mx.core.UIComponent;
 	
 	public class TreeConnectionDrawer extends Drawer {
@@ -17,10 +19,10 @@ package com.graphmind.view {
 		/**
 		 * Draw the connection.
 		 */
-		public function draw(nodeFrom:ITreeItem, nodeTo:ITreeItem):void {
+		public function draw(nodeFrom:NodeViewController, nodeTo:NodeViewController):void {
 			_target.graphics.lineStyle(2, 0x777777);
-			var pFrom:Point = new Point(nodeFrom.getUI().x + nodeFrom.getUI().getWidth(), nodeFrom.getUI().y + (NodeView.HEIGHT >> 1));
-			var pTo:Point   = new Point(nodeTo.getUI().x, nodeTo.getUI().y + (NodeView.HEIGHT >> 1));
+			var pFrom:Point = new Point(nodeFrom.view.x + nodeFrom.view.backgroundView.width, nodeFrom.view.y + (NodeView.HEIGHT >> 1));
+			var pTo:Point   = new Point(nodeTo.view.x, nodeTo.view.y + (NodeView.HEIGHT >> 1));
 			_target.graphics.moveTo((pFrom.x + pTo.x) >> 1, (pFrom.y + pTo.y) >> 1);
 			_target.graphics.curveTo(
 				pFrom.x + ((pTo.x - pFrom.x) >> 2),

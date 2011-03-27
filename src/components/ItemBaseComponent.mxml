@@ -49,7 +49,7 @@
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
-		
+
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
 	<mx:Image source="{image_insertLeft}" x="{NodeView.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
@@ -70,5 +70,6 @@
 	<mx:Image x="{NodeView.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 
 		visible="false"/>
+	
 		
 </mx:Canvas>

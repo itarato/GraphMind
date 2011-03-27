@@ -1,7 +1,10 @@
 package com.graphmind.view {
   
-	import com.graphmind.display.ITreeItem;
+	import com.graphmind.display.NodeViewController;
+	
+	import flash.display.JointStyle;
 	import flash.geom.Point;
+	
 	import mx.core.UIComponent;
 	
 	public class CloudDrawer extends Drawer {
@@ -18,6 +21,7 @@ package com.graphmind.view {
 		 */
 		public function CloudDrawer(target:UIComponent) {
 			super(target);
+			target.alpha = .2;
 		}
 		
 		
@@ -30,7 +34,7 @@ package com.graphmind.view {
 		 * @param NodeItem node
 		 * @param UIComponent target
 		 */
-		public function draw(node:ITreeItem):void {
+		public function draw(node:NodeViewController):void {
 			var points:Array = _getSubtreePointsInOrdered(node);
 			
 			// Search for most-bottom-left point
@@ -61,8 +65,8 @@ package com.graphmind.view {
 			}
 			
 			// Drawing
-			_target.graphics.lineStyle(1, 0x0072B9, .3);
-			_target.graphics.beginFill(0x0072B9, .1);
+//			_target.graphics.lineStyle(10, 0xC5D5E2, 1, false, 'normal', null, JointStyle.ROUND);
+			_target.graphics.beginFill(0x008CFF);
 			var v0:Array = [];
 			var v1:Array = [];
 			var p_cutter_right:Array = [];
@@ -74,70 +78,74 @@ package com.graphmind.view {
 			);
 			
 			for (var pi:* in stack) {
-				if (pi == 0) {
-					v0 = [[stack[pi][0], stack[pi][1]], [stack[pi + 1][0], stack[pi + 1][1]]];
-					v1 = [[stack[pi][0], stack[pi][1]], [stack[stack.length - 1][0], stack[stack.length - 1][1]]];
-					p_cutter_left = [
-						(stack[stack.length - 1][0] + stack[pi][0]) / 2,
-						(stack[stack.length - 1][1] + stack[pi][1]) / 2
-					];
-					p_cutter_right = [
-						(stack[pi + 1][0] + stack[pi][0]) / 2,
-						(stack[pi + 1][1] + stack[pi][1]) / 2
-					];
-				} else if (pi == stack.length - 1) {
-					v0 = [[stack[pi][0], stack[pi][1]], [stack[0][0], stack[0][1]]];
-					v1 = [[stack[pi][0], stack[pi][1]], [stack[pi - 1][0], stack[pi - 1][1]]];
-					p_cutter_left = [
-						(stack[pi - 1][0] + stack[pi][0]) / 2,
-						(stack[pi - 1][1] + stack[pi][1]) / 2
-					];
-					p_cutter_right = [
-						(stack[0][0] + stack[pi][0]) / 2,
-						(stack[0][1] + stack[pi][1]) / 2
-					];
-				} else {
-					v0 = [[stack[pi][0], stack[pi][1]], [stack[pi + 1][0], stack[pi + 1][1]]];
-					v1 = [[stack[pi][0], stack[pi][1]], [stack[pi - 1][0], stack[pi - 1][1]]];
-					p_cutter_left = [
-						(stack[pi - 1][0] + stack[pi][0]) / 2,
-						(stack[pi - 1][1] + stack[pi][1]) / 2
-					];
-					p_cutter_right = [
-						(stack[pi + 1][0] + stack[pi][0]) / 2,
-						(stack[pi + 1][1] + stack[pi][1]) / 2
-					];
-				}
-				
-				// curve sandbox
-				var anchors:Array = _convexHull_angleHalfCut(v0, v1, 10);
-				_target.graphics.curveTo(
-					anchors[1][0], anchors[1][1],
-					stack[pi][0], stack[pi][1]
-				);
-				_target.graphics.curveTo(
-					anchors[0][0], anchors[0][1],
-					p_cutter_right[0], p_cutter_right[1]
-				);
+			   _target.graphics.lineTo(stack[pi][0], stack[pi][1]);
 			}
+			
+//			for (var pi:* in stack) {
+//				if (pi == 0) {
+//					v0 = [[stack[pi][0], stack[pi][1]], [stack[pi + 1][0], stack[pi + 1][1]]];
+//					v1 = [[stack[pi][0], stack[pi][1]], [stack[stack.length - 1][0], stack[stack.length - 1][1]]];
+//					p_cutter_left = [
+//						(stack[stack.length - 1][0] + stack[pi][0]) / 2,
+//						(stack[stack.length - 1][1] + stack[pi][1]) / 2
+//					];
+//					p_cutter_right = [
+//						(stack[pi + 1][0] + stack[pi][0]) / 2,
+//						(stack[pi + 1][1] + stack[pi][1]) / 2
+//					];
+//				} else if (pi == stack.length - 1) {
+//					v0 = [[stack[pi][0], stack[pi][1]], [stack[0][0], stack[0][1]]];
+//					v1 = [[stack[pi][0], stack[pi][1]], [stack[pi - 1][0], stack[pi - 1][1]]];
+//					p_cutter_left = [
+//						(stack[pi - 1][0] + stack[pi][0]) / 2,
+//						(stack[pi - 1][1] + stack[pi][1]) / 2
+//					];
+//					p_cutter_right = [
+//						(stack[0][0] + stack[pi][0]) / 2,
+//						(stack[0][1] + stack[pi][1]) / 2
+//					];
+//				} else {
+//					v0 = [[stack[pi][0], stack[pi][1]], [stack[pi + 1][0], stack[pi + 1][1]]];
+//					v1 = [[stack[pi][0], stack[pi][1]], [stack[pi - 1][0], stack[pi - 1][1]]];
+//					p_cutter_left = [
+//						(stack[pi - 1][0] + stack[pi][0]) / 2,
+//						(stack[pi - 1][1] + stack[pi][1]) / 2
+//					];
+//					p_cutter_right = [
+//						(stack[pi + 1][0] + stack[pi][0]) / 2,
+//						(stack[pi + 1][1] + stack[pi][1]) / 2
+//					];
+//				}
+//				
+//				// curve sandbox
+//				var anchors:Array = _convexHull_angleHalfCut(v0, v1, 10);
+//				_target.graphics.curveTo(
+//					anchors[1][0], anchors[1][1],
+//					stack[pi][0], stack[pi][1]
+//				);
+//				_target.graphics.curveTo(
+//					anchors[0][0], anchors[0][1],
+//					p_cutter_right[0], p_cutter_right[1]
+//				);
+//			}
 			_target.graphics.endFill();
 		}
 		
 		
-		private function _getSubtreePointsInOrdered(node:ITreeItem):Array {
+		private function _getSubtreePointsInOrdered(node:NodeViewController):Array {
 			var points:Array = [
-				[node.getUI().x - PADDING,
-				node.getUI().y - PADDING],
-				[node.getUI().x + node.getUI().getWidth() + PADDING,
-				node.getUI().y - PADDING],
-				[node.getUI().x + node.getUI().getWidth() + PADDING,
-				node.getUI().y + node.getUI().getHeight() + PADDING],
-				[node.getUI().x - PADDING,
-				node.getUI().y + node.getUI().getHeight() + PADDING]
+				[node.view.x - PADDING,
+				node.view.y - PADDING],
+				[node.view.x + node.view.width + PADDING,
+				node.view.y - PADDING],
+				[node.view.x + node.view.width+ PADDING,
+				node.view.y + node.view.height + PADDING],
+				[node.view.x - PADDING,
+				node.view.y + node.view.height + PADDING]
 			];
 			
 			if (!node.isCollapsed()) {
-				for each (var child:ITreeItem in node.getChildNodeAll()) {
+				for each (var child:NodeViewController in node.getChildNodeAll()) {
 					points = points.concat(_getSubtreePointsInOrdered(child));
 				}
 			}
