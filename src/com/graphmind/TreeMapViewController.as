@@ -248,8 +248,8 @@ package com.graphmind {
     
     
     public override function onMapDidLoaded(event:FlexEvent):void {
-      // @todo check why it's not working right on the event
-      setTimeout(function():void{view.verticalScrollPosition = (view.container.height - view.height) >> 1;}, 1);
+      super.onMapDidLoaded(event);
+      view.verticalScrollPosition = (view.container.height - view.height) >> 1;
     }
     
     

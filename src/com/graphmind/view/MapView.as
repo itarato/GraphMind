@@ -47,7 +47,7 @@ package com.graphmind.view {
       setStyle('right', '0');
       horizontalScrollPolicy = ScrollPolicy.ON;
       verticalScrollPolicy   = ScrollPolicy.ON;
-
+      
       // Add UI layers.
       addChild(container);
       container.addChild(cloudLayer);
