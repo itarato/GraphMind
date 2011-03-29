@@ -1,9 +1,9 @@
 package com.graphmind {
   
+	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.display.TreeArrowLink;
-	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.util.Log;
 	import com.kitten.network.Connection;
 	
@@ -26,22 +26,16 @@ package com.graphmind {
         rootNode = importedBaseNode;
       } else {
         // New node
-        // ! Removed original data object: result.result.
-        // This caused a mailformed export string.
-        rootNode = NodeFactory.createNode(
-          {},
-          NodeType.NODE,
-          null,
-          response.title
-        );
+        response.body = null;
+        rootNode = new NodeViewController(new NodeDataObject(response)); 
       }
       
       return rootNode;
 		}
 		
 		
-		public static function importMapFromString(stringData:String):NodeViewController {
-			var xmlData:XML = new XML(stringData);
+		public static function importMapFromString(xmlRawString:String):NodeViewController {
+			var xmlData:XML = new XML(xmlRawString);
 			
 			var postProcessObject:Object = new Object();
 			postProcessObject.arrowLinks = new Array();
@@ -90,16 +84,17 @@ package com.graphmind {
         ConnectionController.addConnection(conn);
 			}
 			
-			var node:NodeViewController = NodeFactory.createNode(
+			var node:NodeViewController = new NodeViewController(new NodeDataObject(
 			  attributes,
 			  nodeXML.@TYPE ? nodeXML.@TYPE : NodeType.NORMAL,
-			  conn,
-			  rawTitle.length > 0 ? rawTitle : htmlTitle
-			);
-			node.nodeData.created  = Number(nodeXML.@CREATED);
+        conn
+			));
+			node.setTitle(rawTitle.length > 0 ? rawTitle : htmlTitle);
+
+			node.nodeData.created = Number(nodeXML.@CREATED);
 			node.nodeData.updated = Number(nodeXML.@MODIFIED);
-			node.nodeData.id       = String(nodeXML.@ID);
-			node.nodeData.link     = unescape(String(nodeXML.@LINK));
+			node.nodeData.id = String(nodeXML.@ID);
+			node.setLink(unescape(String(nodeXML.@LINK)));
 			
 			// ArrowLinks
 			var arrowLinkXMLList:XMLList = nodeXML.elements('arrowlink'); 

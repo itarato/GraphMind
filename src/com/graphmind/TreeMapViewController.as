@@ -1,5 +1,6 @@
 package com.graphmind {
 
+	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
@@ -342,10 +343,7 @@ package com.graphmind {
       ConnectionController.mainConnection.call(
         data.type + '.get',
         function(result:Object):void {      
-          var node:NodeViewController = new NodeViewController();
-          node.nodeData.drupalData = result;
-          node.nodeData.type = data.type;
-          node.nodeData.recalculateData();
+          var node:NodeViewController = new NodeViewController(new NodeDataObject(result, data.type, data.conn));
           data.parentNode.addChildNode(node);
           node.select();
           node.update(NodeViewController.UP_UI);

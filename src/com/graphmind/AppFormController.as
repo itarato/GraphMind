@@ -1,11 +1,11 @@
 package com.graphmind {
   
+  import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.ViewsCollection;
   import com.graphmind.data.ViewsServicesParamsVO;
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
-  import com.graphmind.factory.NodeFactory;
   import com.graphmind.temp.TempItemLoadData;
   import com.graphmind.temp.TempViewLoadData;
   import com.graphmind.util.Log;
@@ -182,11 +182,11 @@ package com.graphmind {
           similarNode.updateDrupalItem(nodeData);
           continue;
         }
-        var nodeItem:NodeViewController = NodeFactory.createNode(
+        var nodeItem:NodeViewController = new NodeViewController(new NodeDataObject(
           nodeData,
           requestData.viewsData.parent.baseTable,
           requestData.viewsData.parent.source
-        );
+        ));
         requestData.nodeItem.addChildNode(nodeItem);
       }
     }

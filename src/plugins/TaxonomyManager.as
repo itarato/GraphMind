@@ -2,7 +2,7 @@ package plugins {
 	
 	import com.graphmind.ApplicationController;
 	import com.graphmind.TreeMapViewController;
-	import com.graphmind.data.NodeObjectData;
+	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.MapEvent;
@@ -80,7 +80,7 @@ package plugins {
 		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, conn:Connection, baseNode:NodeViewController):void {
 			for each (var vocabulary:Object in event.result) {
 				vocabulary.plugin = 'TaxonomyManager';
-				var vocabularyNodeItemData:NodeObjectData = new NodeObjectData(
+				var vocabularyNodeItemData:NodeDataObject = new NodeDataObject(
 					vocabulary,
 					NodeType.NORMAL, // @TODO make it as a VOCABULARY
 					conn
@@ -96,7 +96,7 @@ package plugins {
 				
 				for each (var term:Object in vocabulary.terms) {
 					term.plugin = 'TaxonomyManager';
-					var termNodeItemData:NodeObjectData = new NodeObjectData(
+					var termNodeItemData:NodeDataObject = new NodeDataObject(
 						term,
 						NodeType.TERM,
 						conn

@@ -2,12 +2,11 @@ package com.graphmind.display {
 	
 	import com.graphmind.ApplicationController;
 	import com.graphmind.PluginManager;
-	import com.graphmind.data.NodeObjectData;
+	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.event.NodeEvent;
-	import com.graphmind.factory.NodeFactory;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	import com.graphmind.util.StringUtility;
@@ -25,7 +24,6 @@ package com.graphmind.display {
 	import flash.ui.ContextMenuItem;
 	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
-	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
@@ -95,7 +93,7 @@ package com.graphmind.display {
     /**
      * Model.
      */
-    public var nodeData:NodeObjectData;
+    public var nodeData:NodeDataObject;
     
     /**
      * View.
@@ -136,15 +134,18 @@ package com.graphmind.display {
     /**
      * Constructor.
      */ 
-		public function NodeViewController(_nodeData:NodeObjectData = null) {
+		public function NodeViewController(_nodeData:NodeDataObject = null) {
 			super();
-			
-			if (nodeData == null) {
-			  nodeData = new NodeObjectData({});
+
+      // Setting node data.			
+			if (_nodeData == null) {
+			  nodeData = new NodeDataObject();
 			} else {
         nodeData = _nodeData;
       }
+      nodeData.recalculateData();
 			
+			// Setting view.
 		  view = new NodeView();
 			
       // Event listeners
@@ -162,11 +163,7 @@ package com.graphmind.display {
       view.nodeComponentView.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
   
       view.nodeComponentView.contextMenu = getContextMenu();
-      
-			setTitle(nodeData.title);
-			
-			nodeData.recalculateData()
-			
+			view.nodeComponentView.title_label.text = nodeData.title;
 			view.backgroundColor = nodeData.color;
 			
 			nodes.addItem(this);
@@ -177,15 +174,18 @@ package com.graphmind.display {
       EventCenter.notify(EventCenterEvent.NODE_CREATED, this);
 		}
 		
+		
 		/**
 		 * Create a simple empty child node.
 		 * Don't use it for creating nodes. Use NodeFactory instead.
 		 */
     public function createSimpleNodeChild():void {
-      var node:NodeViewController = NodeFactory.createNode({}, NodeType.NORMAL);
+      var node:NodeViewController = new NodeViewController();
       addChildNode(node);
       node.select();
+      node.setEditMode();
     }
+    
     
 		/**
 		 * Get a complete context menu for the UI.
@@ -649,7 +649,7 @@ package com.graphmind.display {
 			  PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
 			}
 			
-			update();
+			update(UP_UI);
 		}
 		
 		
@@ -974,7 +974,7 @@ package com.graphmind.display {
     }
 
     
-    public function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
+    private function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
       view.backgroundView.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
     }
 
@@ -1011,6 +1011,17 @@ package com.graphmind.display {
     public function removeArrowLink(arrowLink:TreeArrowLink):void {
       TreeArrowLink.arrowLinks.removeItemAt(TreeArrowLink.arrowLinks.getItemIndex(arrowLink));
       _arrowLinks.removeItemAt(_arrowLinks.getItemIndex(arrowLink));
+    }
+    
+    
+    /**
+    * Set edit mode -> entering title.
+    */
+    public function setEditMode():void {
+      view.nodeComponentView.currentState = 'edit_title';
+      view.nodeComponentView.title_new.addEventListener(FlexEvent.CREATION_COMPLETE, function(e:FlexEvent):void{
+        view.nodeComponentView.title_new.setFocus();
+      });
     }
     
 	}
