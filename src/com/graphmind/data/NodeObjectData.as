@@ -1,27 +1,27 @@
 package com.graphmind.data {
 	
-	import com.graphmind.net.SiteConnection;
 	import com.kitten.network.Connection;
 	
 	import mx.collections.ArrayCollection;
 	
-	public class NodeData {
+	public class NodeObjectData {
+	  
 		/**
 		 * Gobal node ID tracker.
 		 */
-		public static var id:uint = 0;
+		private static var uniqueID:uint = 0;
 		
 		/**
 		 * Original data comes from Drupal.
 		 * Node data, File data, User data, Term data ... etc.
 		 */
-		public var data:Object;
+		public var drupalData:Object;
 		
 		/**
 		 * Origin that data comes from.
 		 * If it's a normal node, that it's null.
 		 */
-		public var source:Connection;
+		public var connection:Connection;
 		
 		/**
 		 * Associated Drupal type: one from NodeType.
@@ -32,7 +32,7 @@ package com.graphmind.data {
 		 * 'Unique' string ID for nodes: ID_#.
 		 * @TODO making it really unique.
 		 */
-		private var _id:String = 'ID_' + String(NodeData.id++);
+		private var _id:String = 'ID_' + String(NodeObjectData.uniqueID++);
 		
 		/**
 		 * URL.
@@ -59,13 +59,13 @@ package com.graphmind.data {
 		/**
 		 * Timestamp of modification.
 		 */
-		public var modified:Number;
+		public var updated:Number;
 		
 		/**
 		 * Title.
 		 * This title overrides the default Drupal title.
 		 */
-		public var _title:String;
+		private var _title:String;
     
     /**
      * True if has cloud.
@@ -75,27 +75,27 @@ package com.graphmind.data {
     /**
      * UI icons.
      */
-    public var _icons:ArrayCollection = new ArrayCollection();
+    public var icons:ArrayCollection = new ArrayCollection();
 		
 		/**
 		 * Contructor.
 		 */
-		public function NodeData(data:Object, type:String = NodeType.NORMAL, source:Connection = null) {
+		public function NodeObjectData(data:Object, type:String = NodeType.NORMAL, conn:Connection = null) {
 		  // Data.
-			this.modified = this.created = new Date().time;
-			this.data   = data;
-			this.source = source;
+			this.updated = this.created = new Date().time;
+			this.drupalData   = data;
+			this.connection = conn;
 			this.type   = type;
 			
 			// Get title from arbitrary data.
-			recalculateTitle();
-			recalculateColor();
-			recalculateLink();
-			recalculateDrupalID();
+			_recalculateTitle();
+			_recalculateColor();
+			_recalculateLink();
+			_recalculateDrupalID();
 		}
 		
 		public function get title():String {
-		  return _title;
+		  return _title || '';
 		}
 		
 		public function set title(title:String):void {
@@ -107,17 +107,17 @@ package com.graphmind.data {
 		}
 		
 		public function get drupalID():int {
-		  recalculateDrupalID();
+		  _recalculateDrupalID();
 			return _drupalID;
 		}
 		
-		public function recalculateLink():void {
+		private function _recalculateLink():void {
 			if (_link.length > 0) return;
 			
 			var newLink:String = '';
 			
-			if (source && source.target && drupalID) {
-				var url:String = source.target.toString().replace(/services\/amfphp/gi, '');
+			if (connection && connection.target && drupalID) {
+				var url:String = connection.target.toString().replace(/services\/amfphp/gi, '');
 				switch (type) {
 					case NodeType.NODE: 
 					  newLink = url + '/node/' + drupalID;
@@ -125,8 +125,8 @@ package com.graphmind.data {
 					case NodeType.USER: 
 					  newLink = url + '/user/' + drupalID;
 					case NodeType.COMMENT:
-						if (data.cid && data.comments_nid) {
-							newLink = url + '/node/' + data.comments_nid + '#comment-' + data.cid;
+						if (drupalData.cid && drupalData.comments_nid) {
+							newLink = url + '/node/' + drupalData.comments_nid + '#comment-' + drupalData.cid;
 						}
 						break;
 					case NodeType.TERM: 
@@ -137,31 +137,33 @@ package com.graphmind.data {
 			_link = newLink;
 		}
 
+
 		public function dataDelete(param:String):void {
 			var new_data:Object = {};
-			for (var key:* in data) {
+			for (var key:* in drupalData) {
 				if (key.toString() != param) {
-					new_data[key] = data[key];
+					new_data[key] = drupalData[key];
 				}
 			}
-			data = new_data;
+			drupalData = new_data;
 		}
 		
+		
 		public function dataAdd(attribute:String, value:String):void {
-			data[attribute] = value;
+			drupalData[attribute] = value;
 		}
+		
 		
 		public function equalTo(attributes:Object, nodeType:String):Boolean {
 			// @TODO add node source site filtering
 			return nodeType == type && getDrupalIDFromData(nodeType, attributes) == drupalID;
 		}
 		
-		public function recalculateDrupalID(forceRecalculate:Boolean = false):void {
-		  // It already has a good one.
-		  if (!forceRecalculate && _drupalID && _drupalID > 0) return;
-		  
-		  _drupalID = Number(getDrupalIDFromData(type, data));
+		
+		private function _recalculateDrupalID():void {
+		  _drupalID = Number(getDrupalIDFromData(type, drupalData));
 		}
+		
 		
 		protected static function getDrupalIDFromData(type:String, data:Object):int {
 		  var idString:String;
@@ -186,15 +188,16 @@ package com.graphmind.data {
 			return Number(idString);
 		}
 	
+	
 	  /**
 	   * Get the custom data object.
 	   */ 
     public function getData():Object {
-      return data;
+      return drupalData;
     } 
     
     public function addIcon(iconName:String):void {
-      _icons.addItem(iconName);
+      icons.addItem(iconName);
     }
     
     protected function getTypeColor():uint {
@@ -221,64 +224,71 @@ package com.graphmind.data {
     /**
      * Recalculate title;
      */
-    public function recalculateTitle(forcedRecalculate:Boolean = false):void {
-//      if (!forcedRecalculate && _title && _title.length > 0) {
-      if (_title && _title.length > 0 && _title != ('node #' + id)) {
+    private function _recalculateTitle():void {
+      if (_title && _title.length > 0) {
         return void;
       }
       
       switch (type) {
         case NodeType.NODE:
-          _title = data.title || data.node_title || '';
+          _title = drupalData.title || drupalData.node_title || '';
           break;
         case NodeType.USER:
-          _title = data.name  || data.users_name || '';
+          _title = drupalData.name  || drupalData.users_name || '';
           break;
         case NodeType.COMMENT:
-          _title = data.comments_subject || data.title || data.comments_title || '';
+          _title = drupalData.comments_subject || drupalData.title || drupalData.comments_title || '';
           break;
         case NodeType.FILE:
-          _title = data.files_filename || data.filename || '';
+          _title = drupalData.files_filename || drupalData.filename || '';
           break;
         case NodeType.TERM:
-          _title = data.term_data_name || '';
+          _title = drupalData.term_data_name || '';
           break;
-      }
-      
-      if (!_title || !_title.length) {
-        _title = 'node #' + id;
-      }
-         
+      }         
     }
+    
     
     public function set link(value:String):void {
       _link = value;
     }
     
+    
     public function get link():String {
-      recalculateLink();
+      _recalculateLink();
       return _link;
     }
     
-    public function recalculateColor():void {
+    
+    private function _recalculateColor():void {
       color = getTypeColor();
     }
+    
     
     public function set id(id:String):void {
       //trace('num?');
       if (id.match(/\d+/gi)) {
         var num:int = Number(id.replace(/[^\d]/gi, ''));
         //trace('Num: ' + num);
-        if (num >= NodeData.id) {
-          NodeData.id = num + 1;
+        if (num >= NodeObjectData.uniqueID) {
+          NodeObjectData.uniqueID = num + 1;
         }
       }
       
       _id = id;
     }
     
+    
     public function get id():String {
       return _id;
+    }
+    
+    
+    public function recalculateData():void {
+      _recalculateColor();
+      _recalculateDrupalID();
+      _recalculateLink();
+      _recalculateTitle();
     }
     
 	}

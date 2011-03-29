@@ -4,14 +4,12 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
-	import com.graphmind.util.OSD;
 	import com.kitten.events.ConnectionEvent;
 	import com.kitten.network.Connection;
 	
 	import flash.events.EventDispatcher;
 	
 	import mx.core.Application;
-	import mx.rpc.events.ResultEvent;
 	
 	import plugins.*;
 	
@@ -44,11 +42,6 @@ package com.graphmind {
     [Bindable]
     public var appFormController:AppFormController;
 		
-		/** 
-		 * Base site connection.
-		 */
-		public var baseSiteConnection:Connection;
-		
 		/**
 		 * Indicates the access permissions.
 		 */
@@ -58,7 +51,7 @@ package com.graphmind {
 		 * Feature array.
 		 */
 		public var features:Array;
-		      
+
     
 		/**
 		 * Constructor.
@@ -77,11 +70,12 @@ package com.graphmind {
       GraphMind.i.map.addChild(this.treeMapViewController.view);
       
 		  // Establish connection to the Drupal site.
-      baseSiteConnection = new Connection(getBaseDrupalURL());
-      baseSiteConnection.isSessionAuthentication = true;
-      baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
-      baseSiteConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionManager.defaultErrorHandler);
-      baseSiteConnection.connect();
+      ConnectionController.mainConnection = new Connection(getBaseDrupalURL());
+      ConnectionController.addConnection(ConnectionController.mainConnection);
+      ConnectionController.mainConnection.isSessionAuthentication = true;
+      ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
+      ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionManager.defaultErrorHandler);
+      ConnectionController.mainConnection.connect();
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
 		}
@@ -117,9 +111,9 @@ package com.graphmind {
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
 			// Get all the available features
-			baseSiteConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, getHostNodeID());
-			baseSiteConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded);
-			baseSiteConnection.call('node.get', onSuccess_rootNodeIsLoaded, getHostNodeID());
+			ConnectionController.mainConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, getHostNodeID());
+			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded);
+			ConnectionController.mainConnection.call('node.get', onSuccess_rootNodeIsLoaded, getHostNodeID());
 		}
 		
 		
@@ -140,7 +134,7 @@ package com.graphmind {
 		  Log.info("Views lists are loaded: " + (result as Array).length);
 		  // Populate Views lists.
       for each (var data:Object in result) {
-        new ViewsCollection(data, baseSiteConnection);
+        new ViewsCollection(data, ConnectionController.mainConnection);
       }
 		}
 

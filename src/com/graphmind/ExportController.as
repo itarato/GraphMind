@@ -39,7 +39,7 @@ package com.graphmind {
     
     private static function onSaveFreemindXMLToDrupalSucceed(result:Object):void {
       lastSaved = new Date().time;
-      EventCenter.notify(EventCenterEvent.MAP_SAVED, null, result);
+      EventCenter.notify(EventCenterEvent.MAP_SAVED, result);
     }
 
   }

@@ -1,18 +1,18 @@
 package com.graphmind.temp {
-	import com.graphmind.data.NodeData;
+  
 	import com.graphmind.display.NodeViewController;
-	
+	import com.kitten.network.Connection;
 	
 	public class TempItemLoadData {
+			
+		public var type:String;
+		public var conn:Connection;
+		public var parentNode:NodeViewController;
+		public var id:String;
 	
-		// Parent node
-		public var nodeItem:NodeViewController = null;	
-		// Node data.
-		public var nodeItemData:NodeData = null;
-		// Success callback on load.
-		public var success:Function = null;
 		
 		public function TempItemLoadData() {}
 
 	}
+	
 }

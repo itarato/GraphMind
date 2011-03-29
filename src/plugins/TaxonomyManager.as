@@ -2,7 +2,7 @@ package plugins {
 	
 	import com.graphmind.ApplicationController;
 	import com.graphmind.TreeMapViewController;
-	import com.graphmind.data.NodeData;
+	import com.graphmind.data.NodeObjectData;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.MapEvent;
@@ -80,7 +80,7 @@ package plugins {
 		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, conn:Connection, baseNode:NodeViewController):void {
 			for each (var vocabulary:Object in event.result) {
 				vocabulary.plugin = 'TaxonomyManager';
-				var vocabularyNodeItemData:NodeData = new NodeData(
+				var vocabularyNodeItemData:NodeObjectData = new NodeObjectData(
 					vocabulary,
 					NodeType.NORMAL, // @TODO make it as a VOCABULARY
 					conn
@@ -96,7 +96,7 @@ package plugins {
 				
 				for each (var term:Object in vocabulary.terms) {
 					term.plugin = 'TaxonomyManager';
-					var termNodeItemData:NodeData = new NodeData(
+					var termNodeItemData:NodeObjectData = new NodeObjectData(
 						term,
 						NodeType.TERM,
 						conn
@@ -150,12 +150,12 @@ package plugins {
 
 			var order:Array = [];
 			for each (var child:NodeViewController in parentNode.getChildNodeAll()) {
-				if (child.nodeData.data.hasOwnProperty('tid')) {
-					order.push(child.nodeData.data.tid);
+				if (child.nodeData.drupalData.hasOwnProperty('tid')) {
+					order.push(child.nodeData.drupalData.tid);
 				}
 			}
 			
-			var childNodes:Array = _changeChildsVocabulary(node, parentNode.nodeData.data.vid || 0);
+			var childNodes:Array = _changeChildsVocabulary(node, parentNode.nodeData.drupalData.vid || 0);
 			_changeSiblingsWeight(node);
 			
 			RPCServiceHelper.createRPC(
@@ -169,9 +169,9 @@ package plugins {
 				transactionError
 			).send(
 				baseConnection.sessionID,
-				node.nodeData.data.tid,
-				parentNode.nodeData.data.vid || 0,
-				parentNode.nodeData.data.tid || 0,
+				node.nodeData.drupalData.tid,
+				parentNode.nodeData.drupalData.vid || 0,
+				parentNode.nodeData.drupalData.tid || 0,
 				order.join('|'),
 				childNodes.join('|')
 			);
@@ -181,7 +181,7 @@ package plugins {
 		 * Check if the node created by the TaxonomyManager plugin and has a certain type.
 		 */
 		private static function _isTaxonomyPluginNode(node:NodeViewController, type:String = null):Boolean {
-			if (!node.nodeData.data.hasOwnProperty('plugin') || node.nodeData.data.plugin !== 'TaxonomyManager') {
+			if (!node.nodeData.drupalData.hasOwnProperty('plugin') || node.nodeData.drupalData.plugin !== 'TaxonomyManager') {
 				return false;
 			}
 			return type == null ? true : node.nodeData.type == type;
@@ -195,9 +195,9 @@ package plugins {
 		 * @param integer vid
 		 */
 		private static function _changeChildsVocabulary(node:NodeViewController, vid:int):Array {
-			node.nodeData.data.vid = vid;
+			node.nodeData.drupalData.vid = vid;
 			
-			var nodes:Array = [node.nodeData.data.tid || 0];
+			var nodes:Array = [node.nodeData.drupalData.tid || 0];
 			for each (var child:NodeViewController in node.getChildNodeAll()) {
 				nodes = nodes.concat(_changeChildsVocabulary(child, vid));
 			}
@@ -214,7 +214,7 @@ package plugins {
 			var parentNode:NodeViewController = node.getParentNode() as NodeViewController;
 			var weight:int = 0;
 			for each (var child:NodeViewController in parentNode.getChildNodeAll()) {
-				child.nodeData.data.weight = weight++;
+				child.nodeData.drupalData.weight = weight++;
 			}
 		}
 		
@@ -240,7 +240,7 @@ package plugins {
 				baseSiteConnection.url,
 				onSuccess_TermDeleted,
 				transactionError
-			).send(baseSiteConnection.sessionID, node.nodeData.data.tid || 0);
+			).send(baseSiteConnection.sessionID, node.nodeData.drupalData.tid || 0);
 		}
 		
 		/**
@@ -255,7 +255,7 @@ package plugins {
 		 * De-pluginize a subtree.
 		 */
 		private static function _removePluginInfoFromNode(node:NodeViewController):void {
-			node.nodeData.data.plugin = undefined;
+			node.nodeData.drupalData.plugin = undefined;
 			node.nodeData.type = NodeType.NORMAL;
 			node.nodeData.color = undefined;
 			node.getUI().refreshGraphics();
@@ -299,7 +299,7 @@ package plugins {
 					onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
 				},
 				transactionError
-			).send(baseSiteConnection.sessionID, parent.nodeData.data.tid || 0, parent.nodeData.data.vid || 0, subtree);
+			).send(baseSiteConnection.sessionID, parent.nodeData.drupalData.tid || 0, parent.nodeData.drupalData.vid || 0, subtree);
 		}
 		
 		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:NodeViewController):void {
@@ -354,7 +354,7 @@ package plugins {
 				baseSiteConnection.url,
 				onSuccess_TermRenamed,
 				transactionError
-			).send(baseSiteConnection.sessionID, node.nodeData.data.tid, node.nodeData._title);
+			).send(baseSiteConnection.sessionID, node.nodeData.drupalData.tid, node.nodeData._title);
 		}
 		
 		private static function onSuccess_TermRenamed(event:ResultEvent):void {

@@ -1,6 +1,5 @@
 package com.graphmind {
   
-  import com.graphmind.data.NodeData;
   import com.graphmind.data.ViewsCollection;
   import com.graphmind.data.ViewsServicesParamsVO;
   import com.graphmind.display.NodeViewController;
@@ -64,10 +63,10 @@ package com.graphmind {
       var node:NodeViewController = event.data as NodeViewController;
       
       selectedNodeData.removeAll();
-      for (var key:* in node.nodeData.data) {
+      for (var key:* in node.nodeData.drupalData) {
         selectedNodeData.addItem({
           key: key,
-          value: node.nodeData.data[key]
+          value: node.nodeData.drupalData[key]
         });
       }     
       
@@ -128,6 +127,7 @@ package com.graphmind {
       GraphMind.i.currentState = '';
     }
     
+    
     /**
      * Event on cancelling views load panel.
      */
@@ -135,24 +135,29 @@ package com.graphmind {
       GraphMind.i.currentState = '';
     }
     
+    
     /**
      * Event on submitting item loading panel.
      */
     public function onClick_LoadItemSubmit():void {
-      var nodeItemData:NodeData = new NodeData(
-        {},
-        GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data,
-        GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection
-      );
-      nodeItemData.drupalID = parseInt(GraphMind.i.panelLoadDrupalItem.item_id.text);
+//      var nodeItemData:NodeData = new NodeData(
+//        {},
+//        GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data,
+//        GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection
+//      );
+//      nodeItemData.drupalID = parseInt(GraphMind.i.panelLoadDrupalItem.item_id.text);
+//      
+//      loaderData.nodeItem = TreeMapViewController.rootNode;
+//      loaderData.nodeItemData = nodeItemData;
+//      loaderData.success = onSuccess_DrupalItemLoaded;
       
-      var loaderData:TempItemLoadData = new TempItemLoadData();
-      loaderData.nodeItem = TreeMapViewController.rootNode;
-      loaderData.nodeItemData = nodeItemData;
-      loaderData.success = onSuccess_DrupalItemLoaded;
-      
-      // @TODO Implement it
-//      ConnectionManager.itemLoad(loaderData);
+      var temp:TempItemLoadData = new TempItemLoadData();
+      temp.type = GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data;
+      temp.conn = GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection;
+      temp.id = GraphMind.i.panelLoadDrupalItem.item_id.text;
+      temp.parentNode = TreeMapViewController.activeNode;
+
+      EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_ITEM, temp);
       
       GraphMind.i.currentState = '';
     }
@@ -174,7 +179,7 @@ package com.graphmind {
         // @TODO update or append checkbox for the panel?
         var similarNode:NodeViewController = requestData.nodeItem.getEqualChild(nodeData, requestData.viewsData.parent.baseTable) as NodeViewController;
         if (similarNode) {
-          similarNode.updateDrupalItem_result(nodeData);
+          similarNode.updateDrupalItem(nodeData);
           continue;
         }
         var nodeItem:NodeViewController = NodeFactory.createNode(
@@ -187,21 +192,13 @@ package com.graphmind {
     }
     
     
-    public function onSuccess_DrupalItemLoaded(result:Object, requestData:TempItemLoadData):void {
-      requestData.nodeItemData.data = result;
-      var nodeItem:NodeViewController = new NodeViewController(requestData.nodeItemData);
-      requestData.nodeItem.addChildNode(nodeItem);
-      nodeItem.select();
-    }
-    
-        
     public function onClick_RTESaveButton(text:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_TITLE_IS_CHANGED, null, text); 
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_TITLE_IS_CHANGED, text); 
     }
     
     
     public function onClick_SaveNodeLink(text:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_LINK_IS_CHANGED, null, text);
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_LINK_IS_CHANGED, text);
     }
     
     
@@ -216,7 +213,7 @@ package com.graphmind {
     
     
     public function onClick_DumpFreemindXMLButton():void {
-      EventCenter.notify(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, null, onFreemindXmlReveived);
+      EventCenter.notify(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onFreemindXmlReveived);
     }
     
     
@@ -226,12 +223,12 @@ package com.graphmind {
     
     
     public function onClick_NodeAttributeAddOrUpdateButton(param:String, value:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_SAVE_ATTRIBUTE, null, {param: param, value: value});
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_SAVE_ATTRIBUTE, {param: param, value: value});
     }
     
         
     public function onClick_NodeAttributeRemoveButton(param:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, null, param);
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, param);
     }
 
     
@@ -260,7 +257,7 @@ package com.graphmind {
     
        
     public function onClick_Icon(event:MouseEvent):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_ADD_ICON, null, (event.currentTarget as Image).source.toString());
+      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_ADD_ICON, (event.currentTarget as Image).source.toString());
     }
 
 
@@ -299,7 +296,7 @@ package com.graphmind {
     
     
     public function onChange_ScaleSlider(value:Number):void {
-      EventCenter.notify(EventCenterEvent.MAP_SCALE_CHANGED, null, value);
+      EventCenter.notify(EventCenterEvent.MAP_SCALE_CHANGED, value);
     }
     
   }

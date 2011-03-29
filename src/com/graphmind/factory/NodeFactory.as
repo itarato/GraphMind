@@ -1,6 +1,6 @@
 package com.graphmind.factory {
   
-	import com.graphmind.data.NodeData;
+	import com.graphmind.data.NodeObjectData;
 	import com.graphmind.display.NodeViewController;
 	import com.kitten.network.Connection;
 	
@@ -10,7 +10,7 @@ package com.graphmind.factory {
 	   * Create and preset a node.
 	   */
 		public static function createNode(data:Object, type:String, conn:Connection = null, title:String = null):NodeViewController {
-			var nodeData:NodeData = new NodeData(data, type, conn);
+			var nodeData:NodeObjectData = new NodeObjectData(data, type, conn);
 			
 			// Set extra title
 			if (title) {

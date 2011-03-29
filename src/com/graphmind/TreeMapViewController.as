@@ -3,6 +3,7 @@ package com.graphmind {
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
+	import com.graphmind.temp.TempItemLoadData;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
@@ -10,7 +11,6 @@ package com.graphmind {
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
-	import flash.utils.setTimeout;
 	
 	import mx.controls.Image;
 	import mx.core.BitmapAsset;
@@ -101,6 +101,7 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.MAP_SCALE_CHANGED, onMapScaleChanged);
       EventCenter.subscribe(EventCenterEvent.MAP_SAVED, onMapSaved);
       EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
+      EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_ITEM, onLoadDrupalItem);
       
       view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
       view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
@@ -243,7 +244,7 @@ package com.graphmind {
 
     
     public function onNodeCreated(event:EventCenterEvent):void {
-      view.nodeLayer.addChild((event.sender as NodeViewController).view);
+      view.nodeLayer.addChild((event.data as NodeViewController).view);
     }
     
     
@@ -304,7 +305,7 @@ package com.graphmind {
     
     protected function onRequestToSave(event:EventCenterEvent):void {
       var xml:String = ExportController.getFreeMindXML(rootNode);
-      ExportController.saveFreeMindXMLToDrupal(GraphMind.i.applicationController.baseSiteConnection, xml, ApplicationController.getHostNodeID());
+      ExportController.saveFreeMindXMLToDrupal(ConnectionController.mainConnection, xml, ApplicationController.getHostNodeID());
     }
     
     
@@ -333,6 +334,24 @@ package com.graphmind {
     
     protected function onNodeFinishDrag(event:EventCenterEvent):void {
       closeNodeDragAndDrop();
+    }
+    
+    
+    protected function onLoadDrupalItem(event:EventCenterEvent):void {
+      var data:TempItemLoadData = event.data as TempItemLoadData;
+      ConnectionController.mainConnection.call(
+        data.type + '.get',
+        function(result:Object):void {      
+          var node:NodeViewController = new NodeViewController();
+          node.nodeData.drupalData = result;
+          node.nodeData.type = data.type;
+          node.nodeData.recalculateData();
+          data.parentNode.addChildNode(node);
+          node.select();
+          node.update(NodeViewController.UP_UI);
+        },
+        data.id
+      );
     }
     
 	}

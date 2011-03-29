@@ -87,6 +87,7 @@ package com.graphmind {
 //				);
         //trace('Target: <' + unescape(nodeXML.site.@URL) + '>');
         conn = new Connection(unescape(nodeXML.site.@URL));
+        ConnectionController.addConnection(conn);
 			}
 			
 			var node:NodeViewController = NodeFactory.createNode(
@@ -96,7 +97,7 @@ package com.graphmind {
 			  rawTitle.length > 0 ? rawTitle : htmlTitle
 			);
 			node.nodeData.created  = Number(nodeXML.@CREATED);
-			node.nodeData.modified = Number(nodeXML.@MODIFIED);
+			node.nodeData.updated = Number(nodeXML.@MODIFIED);
 			node.nodeData.id       = String(nodeXML.@ID);
 			node.nodeData.link     = unescape(String(nodeXML.@LINK));
 			

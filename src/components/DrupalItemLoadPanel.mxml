@@ -7,6 +7,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.ConnectionController;
 		  import com.graphmind.ApplicationController;
 		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeMapViewController;
@@ -20,7 +21,7 @@
 	<mx:Form left="10" top="10" right="10" height="240">
 		<mx:FormHeading label="Item parameters" width="316"/>
 		<mx:FormItem label="Source">
-			<mx:ComboBox dataProvider="{SiteConnection.connections}" 
+			<mx:ComboBox dataProvider="{ConnectionController.liveConnections}" 
 				labelField="shortName"
 				id="item_source"/>
 		</mx:FormItem>

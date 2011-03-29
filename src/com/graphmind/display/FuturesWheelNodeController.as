@@ -2,7 +2,7 @@ package com.graphmind.display {
   
   import com.graphmind.ApplicationController;
   import com.graphmind.TreeMapViewController;
-  import com.graphmind.data.NodeData;
+  import com.graphmind.data.NodeObjectData;
   import com.graphmind.util.Log;
   import com.graphmind.view.FuturesWheelNodeView;
   import com.graphmind.view.NodeView;
@@ -21,7 +21,7 @@ package com.graphmind.display {
     // @TODO make it safe
     private static var arrowLinkConnFirst:FuturesWheelNodeViewController;
     
-    public function FuturesWheelNodeViewController(nodeData:NodeData, newNodeView:NodeView = null):void {
+    public function FuturesWheelNodeViewController(nodeData:NodeObjectData, newNodeView:NodeView = null):void {
       //TODO: implement function
       super(nodeData, newNodeView);
       
