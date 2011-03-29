@@ -1,5 +1,7 @@
 package com.graphmind {
   
+  import com.graphmind.util.OSD;
+  import com.kitten.events.ConnectionEvent;
   import com.kitten.network.Connection;
   
   import mx.collections.ArrayCollection;
@@ -51,6 +53,22 @@ package com.graphmind {
       }
       
       _connections.addItem(conn);
+    }
+    
+    
+    public static function defaultErrorHandler(event:ConnectionEvent):void {
+      OSD.show(
+        "Network error\n" +
+        "Connection details:" + 
+        "\n  ULR: " + event.connection + 
+        "\n  Connected: " + event.connection.isConnected +
+        "\nError details:\n  " + 
+        event.origialResponse['code'] + "\n  " +
+        event.origialResponse['description'] + "\n  " +
+        event.origialResponse['details'] + "\n  " +
+        event.origialResponse['level'] + "\n  " +
+        event.origialResponse['line'], OSD.ERROR
+      );
     }
 
   }

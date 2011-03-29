@@ -74,7 +74,7 @@ package com.graphmind {
       ConnectionController.addConnection(ConnectionController.mainConnection);
       ConnectionController.mainConnection.isSessionAuthentication = true;
       ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
-      ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionManager.defaultErrorHandler);
+      ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionController.defaultErrorHandler);
       ConnectionController.mainConnection.connect();
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);

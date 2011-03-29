@@ -6,7 +6,7 @@ package com.graphmind.data {
   public class NodeType {
     
     public static const NODE:String    = 'node';
-    public static const USER:String    = 'users';
+    public static const USER:String    = 'user';
     public static const COMMENT:String = 'comments';
     public static const NORMAL:String  = 'normal';
     public static const FILE:String    = 'files';
