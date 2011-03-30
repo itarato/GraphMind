@@ -1,4 +1,6 @@
 package com.graphmind.data {
+  import mx.collections.ArrayCollection;
+  
   
   /**
    * Drupal object types.
@@ -22,6 +24,15 @@ package com.graphmind.data {
     * Node types are capable of self updating.
     */
     public static const updatableTypes:Array = [FILE, NODE, USER];
+    
+    /**
+    * Drupal items that are loadable.
+    */
+    public static const DrupalItemTypes:ArrayCollection = new ArrayCollection([
+      {label: "Node", data: NODE},
+      {label: "User", data: USER},
+      {label: "File", data: FILE}
+    ]);
     
     
     /**

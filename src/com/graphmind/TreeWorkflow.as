@@ -3,7 +3,7 @@ package com.graphmind
   import com.graphmind.display.NodeViewController;
   import com.graphmind.view.NodeView;
   import com.graphmind.view.TreeArrowLinkDrawer;
-  import com.graphmind.view.TreeDrawer;
+  import com.graphmind.display.TreeDrawer;
   
   import mx.core.UIComponent;
 

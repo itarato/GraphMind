@@ -1,4 +1,4 @@
-package com.graphmind.view {
+package com.graphmind.display {
   
 	import com.graphmind.display.NodeViewController;
 	

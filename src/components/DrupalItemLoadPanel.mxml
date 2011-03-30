@@ -7,11 +7,11 @@
 	
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.data.NodeType;
 		  import com.graphmind.ConnectionController;
 		  import com.graphmind.ApplicationController;
 		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeMapViewController;
-			import com.graphmind.net.SiteConnection;
 			import com.graphmind.net.UniqueItemLoader;
 			
 			public var controller:AppFormController;
@@ -26,7 +26,7 @@
 				id="item_source"/>
 		</mx:FormItem>
 		<mx:FormItem label="Item type">
-			<mx:ComboBox dataProvider="{UniqueItemLoader.itemTypes}" id="item_type"/>
+			<mx:ComboBox dataProvider="{NodeType.DrupalItemTypes}" id="item_type"/>
 		</mx:FormItem>
 		<mx:FormItem label="ID">
 			<mx:TextInput id="item_id"/>

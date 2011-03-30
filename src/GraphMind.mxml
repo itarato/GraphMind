@@ -21,10 +21,10 @@
 		  import com.graphmind.FuturesWheelWorkflow;
 		  import com.graphmind.IWorkflowComposite;
 		  import com.graphmind.display.NodeViewController;
-		  import com.graphmind.view.FuturesWheelDrawer;
+		  import com.graphmind.display.FuturesWheelDrawer;
 			import com.graphmind.TreeMapViewController;
 			import com.graphmind.view.NodeView;
-			import com.graphmind.view.TreeDrawer;
+			import com.graphmind.display.TreeDrawer;
 			import com.graphmind.util.OSD;
 			import com.graphmind.PluginManager;
 			import nl.demonsters.debugger.MonsterDebugger;
@@ -34,7 +34,6 @@
 			import mx.effects.easing.Linear;
 			
 			import com.graphmind.net.UniqueItemLoader;
-			import com.graphmind.net.SiteConnection;
 			import com.graphmind.util.Log;
 			import com.graphmind.data.DrupalViews;
 			import com.graphmind.ApplicationController;

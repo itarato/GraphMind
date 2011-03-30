@@ -5,9 +5,6 @@ package com.graphmind {
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
 	import com.kitten.events.ConnectionEvent;
-	import com.kitten.network.Connection;
-	
-	import flash.events.EventDispatcher;
 	
 	import mx.core.Application;
 	
@@ -18,7 +15,7 @@ package com.graphmind {
 	 * Emitted events.
 	 */
 	[Event(name="applicationDataComplete", type="com.graphmind.event.ApplicationEvent")]
-	public class ApplicationController extends EventDispatcher {
+	public class ApplicationController {
 	  
 	  /**
 	  * Shared instance.

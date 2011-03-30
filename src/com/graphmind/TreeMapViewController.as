@@ -9,7 +9,7 @@ package com.graphmind {
 	import com.graphmind.temp.TempViewLoadData;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
-	import com.graphmind.view.TreeDrawer;
+	import com.graphmind.display.TreeDrawer;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;

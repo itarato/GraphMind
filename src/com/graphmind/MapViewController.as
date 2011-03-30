@@ -4,7 +4,7 @@ package com.graphmind {
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.MapEvent;
   import com.graphmind.view.MapView;
-  import com.graphmind.view.TreeDrawer;
+  import com.graphmind.display.TreeDrawer;
   
   import flash.events.Event;
   import flash.events.EventDispatcher;

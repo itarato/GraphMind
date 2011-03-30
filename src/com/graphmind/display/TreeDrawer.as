@@ -1,10 +1,8 @@
-package com.graphmind.view {
+package com.graphmind.display {
 	
 	import com.graphmind.MapViewController;
-	import com.graphmind.display.ICloud;
-	import com.graphmind.display.NodeViewController;
-	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.util.Log;
+	import com.graphmind.view.NodeView;
 	
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
