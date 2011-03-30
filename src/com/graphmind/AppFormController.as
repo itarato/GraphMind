@@ -1,8 +1,8 @@
 package com.graphmind {
   
   import com.graphmind.data.NodeDataObject;
-  import com.graphmind.data.ViewsCollection;
-  import com.graphmind.data.ViewsServicesParamsVO;
+  import com.graphmind.data.DrupalViews;
+  import com.graphmind.data.DrupalViewsQuery;
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
@@ -95,34 +95,18 @@ package com.graphmind {
      * Event for clicking on the view load panel.
      */
     public function onClick_LoadViewsSubmitButton():void {
-      loadAndAttachViewsList(
-        TreeMapViewController.rootNode,
-        GraphMind.i.panelLoadView.view_arguments.text,
-        parseInt(GraphMind.i.panelLoadView.view_limit.text),
-        parseInt(GraphMind.i.panelLoadView.view_offset.text),
-        GraphMind.i.panelLoadView.view_name.text,
-        GraphMind.i.panelLoadView.view_views_datagrid.selectedItem as ViewsCollection,
-        onSuccess_DrupalViewsLoaded
-      );
-    }
-    
-    public function loadAndAttachViewsList(node:NodeViewController, args:String, limit:int, offset:int, viewName:String, viewsInfo:ViewsCollection, onSuccess:Function):void {
-      var viewsData:ViewsServicesParamsVO = new ViewsServicesParamsVO();
-      viewsData.args    = args;
-      // Fields are not supported in Services for D6
-      // viewsData.fields   = stage.view_fields.text;
-      viewsData.limit     = limit;
-      viewsData.offset    = offset;
-      viewsData.view_name = viewName;
-      viewsData.parent    = viewsInfo;
+      var views:DrupalViewsQuery = new DrupalViewsQuery();
+      views.args      = GraphMind.i.panelLoadView.view_arguments.text;
+      views.limit     = parseInt(GraphMind.i.panelLoadView.view_limit.text);
+      views.offset    = parseInt(GraphMind.i.panelLoadView.view_offset.text);
+      views.name = GraphMind.i.panelLoadView.view_name.text;
+      views.views    = GraphMind.i.panelLoadView.view_views_datagrid.selectedItem as DrupalViews;
       
-      var loaderData:TempViewLoadData = new TempViewLoadData();
-      loaderData.viewsData = viewsData;
-      loaderData.nodeItem = node;
-      loaderData.success  = onSuccess;
+      var temp:TempViewLoadData = new TempViewLoadData();
+      temp.parentNode = TreeMapViewController.activeNode;
+      temp.views = views;
       
-      // @TODO implement
-//      ConnectionManager.viewListLoad(loaderData);
+      EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_VIEWS, temp);
       
       GraphMind.i.currentState = '';
     }
@@ -140,17 +124,6 @@ package com.graphmind {
      * Event on submitting item loading panel.
      */
     public function onClick_LoadItemSubmit():void {
-//      var nodeItemData:NodeData = new NodeData(
-//        {},
-//        GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data,
-//        GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection
-//      );
-//      nodeItemData.drupalID = parseInt(GraphMind.i.panelLoadDrupalItem.item_id.text);
-//      
-//      loaderData.nodeItem = TreeMapViewController.rootNode;
-//      loaderData.nodeItemData = nodeItemData;
-//      loaderData.success = onSuccess_DrupalItemLoaded;
-      
       var temp:TempItemLoadData = new TempItemLoadData();
       temp.type = GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data;
       temp.conn = GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection;
@@ -168,27 +141,6 @@ package com.graphmind {
      */
     public function onClick_LoadItemCancel():void {
       GraphMind.i.currentState = '';
-    }
-    
-    
-    public function onSuccess_DrupalViewsLoaded(list:Array, requestData:TempViewLoadData):void {
-      if (list.length == 0) {
-        OSD.show('Result is empty.', OSD.WARNING);
-      }
-      for each (var nodeData:Object in list) {
-        // @TODO update or append checkbox for the panel?
-        var similarNode:NodeViewController = requestData.nodeItem.getEqualChild(nodeData, requestData.viewsData.parent.baseTable) as NodeViewController;
-        if (similarNode) {
-          similarNode.updateDrupalItem(nodeData);
-          continue;
-        }
-        var nodeItem:NodeViewController = new NodeViewController(new NodeDataObject(
-          nodeData,
-          requestData.viewsData.parent.baseTable,
-          requestData.viewsData.parent.source
-        ));
-        requestData.nodeItem.addChildNode(nodeItem);
-      }
     }
     
     
@@ -265,7 +217,7 @@ package com.graphmind {
      * Select a views from datagrid on the views load panel.
      */
     public function onItemClick_LoadViewDataGrid(event:ListEvent):void {
-      var selectedViewsCollection:ViewsCollection = event.itemRenderer.data as ViewsCollection;
+      var selectedViewsCollection:DrupalViews = event.itemRenderer.data as DrupalViews;
       
       GraphMind.i.panelLoadView.view_name.text = selectedViewsCollection.name;
     }

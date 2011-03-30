@@ -36,7 +36,7 @@
 			import com.graphmind.net.UniqueItemLoader;
 			import com.graphmind.net.SiteConnection;
 			import com.graphmind.util.Log;
-			import com.graphmind.data.ViewsCollection;
+			import com.graphmind.data.DrupalViews;
 			import com.graphmind.ApplicationController;
 			
 			// 'Singleton' instance.

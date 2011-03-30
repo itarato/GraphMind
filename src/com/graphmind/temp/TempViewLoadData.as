@@ -1,16 +1,15 @@
-package com.graphmind.temp
-{
-	import com.graphmind.data.ViewsServicesParamsVO;
+package com.graphmind.temp {
+  
+	import com.graphmind.data.DrupalViewsQuery;
 	import com.graphmind.display.NodeViewController;
+	import com.kitten.network.Connection;
 	
-	public class TempViewLoadData
-	{
-		// Parent node item (GraphMind node).
-		public var nodeItem:NodeViewController = null;
-		// Views argument object.
-		public var viewsData:ViewsServicesParamsVO = null;
-		// Callback on success
-		public var success:Function = null;
+	public class TempViewLoadData {
+
+		public var parentNode:NodeViewController;
+		
+		public var views:DrupalViewsQuery;
+		
 		
 		public function TempViewLoadData() {}
 

@@ -8,24 +8,23 @@
 	<mx:Script>
 		<![CDATA[
 		  import com.graphmind.AppFormController;
-		  import com.graphmind.TreeMapViewController;
-			import com.graphmind.data.ViewsCollection;
+			import com.graphmind.data.DrupalViews;
 			
 			public var controller:AppFormController;
 		]]>
 	</mx:Script>
 	
-	<mx:DataGrid x="10" y="10" width="260" height="340"
-		dataProvider="{ViewsCollection.collection}"
+	<mx:DataGrid x="10" y="10" width="383" height="340"
+		dataProvider="{DrupalViews.availableViews}"
 		itemClick="{controller.onItemClick_LoadViewDataGrid(event);}"
 		id="view_views_datagrid">
 		<mx:columns>
-			<mx:DataGridColumn headerText="ID"   dataField="siteConnectionID" width="30"/>
+			<mx:DataGridColumn headerText="Host" dataField="siteConnectionID" width="120"/>
 			<mx:DataGridColumn headerText="Name" dataField="name"/>
 			<mx:DataGridColumn headerText="type" dataField="baseTable" width="60"/>
 		</mx:columns>
 	</mx:DataGrid>
-	<mx:Form x="278" y="10" width="392" height="340">
+	<mx:Form x="401" y="10" width="269" height="340" horizontalScrollPolicy="off">
 		<mx:FormHeading label="View parameters" width="240"/>
 		<mx:FormItem label="Name">
 			<mx:TextInput id="view_name"/>

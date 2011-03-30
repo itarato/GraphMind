@@ -1,6 +1,6 @@
 package com.graphmind {
   
-	import com.graphmind.data.ViewsCollection;
+	import com.graphmind.data.DrupalViews;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
@@ -134,7 +134,7 @@ package com.graphmind {
 		  Log.info("Views lists are loaded: " + (result as Array).length);
 		  // Populate Views lists.
       for each (var data:Object in result) {
-        new ViewsCollection(data, ConnectionController.mainConnection);
+        new DrupalViews(data, ConnectionController.mainConnection);
       }
 		}
 

@@ -1,10 +1,12 @@
 package com.graphmind {
 
 	import com.graphmind.data.NodeDataObject;
+	import com.graphmind.data.NodeType;
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.temp.TempItemLoadData;
+	import com.graphmind.temp.TempViewLoadData;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.TreeDrawer;
@@ -103,6 +105,7 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.MAP_SAVED, onMapSaved);
       EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
       EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_ITEM, onLoadDrupalItem);
+      EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_VIEWS, onLoadDrupalViews);
       
       view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
       view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
@@ -352,6 +355,40 @@ package com.graphmind {
       );
     }
     
+    
+    protected function onLoadDrupalViews(event:EventCenterEvent):void {
+      var data:TempViewLoadData = event.data as TempViewLoadData;
+      data.views.views.connection.call(
+        'views.get',
+        function(res:Object):void{onSuccess_loadDrupalData(res, data)},
+        data.views.name,
+        data.views.fields,
+        [data.views.args],
+        data.views.offset,
+        data.views.limit
+      );
+    }
+    
+    
+    private function onSuccess_loadDrupalData(result:Object, requestData:TempViewLoadData):void {
+      if (result.length == 0) {
+        OSD.show('Result is empty.', OSD.WARNING);
+      }
+      for each (var nodeData:Object in result) {
+        // @TODO update or append checkbox for the panel?
+        var similarNode:NodeViewController = requestData.parentNode.getEqualChild(nodeData, requestData.views.views.baseTable) as NodeViewController;
+        if (similarNode) {
+          similarNode.updateDrupalItem(nodeData);
+          continue;
+        }
+        var nodeItem:NodeViewController = new NodeViewController(new NodeDataObject(
+          nodeData,
+          NodeType.nodeTypeOfViewsTable(requestData.views.views.baseTable),
+          requestData.views.views.connection
+        ));
+        requestData.parentNode.addChildNode(nodeItem);
+      }
+    }
 	}
 	
 }

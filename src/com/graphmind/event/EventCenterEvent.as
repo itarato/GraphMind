@@ -26,7 +26,8 @@ package com.graphmind.event {
     public static var REQUEST_FOR_FREEMIND_XML:String = 'appFormRequestForFreemindXml';
     public static var REQUEST_TO_SAVE:String = 'requestToSave';
     
-    public static var LOAD_DRUPAL_ITEM:String = 'loadDrupalItem'; 
+    public static var LOAD_DRUPAL_ITEM:String = 'loadDrupalItem';
+    public static var LOAD_DRUPAL_VIEWS:String = 'loadDrupalViews';
         
     /**
     * Data.
@@ -37,10 +38,8 @@ package com.graphmind.event {
     /**
     * Constructor.
     */
-    //public function EventCenterEvent(type:String, data:Object = null, bubbles:Boolean=false, cancelable:Boolean=false) {
     public function EventCenterEvent(type:String, data:Object = null) {
       this.data   = data;
-//      super(type, bubbles, cancelable);
       super(type);
     }
     
