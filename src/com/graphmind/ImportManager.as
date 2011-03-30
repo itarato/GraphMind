@@ -80,8 +80,7 @@ package com.graphmind {
 //					unescape(nodeXML.site.@USERNAME)
 //				);
         //trace('Target: <' + unescape(nodeXML.site.@URL) + '>');
-        conn = new Connection(unescape(nodeXML.site.@URL));
-        ConnectionController.addConnection(conn);
+        conn = ConnectionController.createConnection(unescape(nodeXML.site.@URL));
 			}
 			
 			var node:NodeViewController = new NodeViewController(new NodeDataObject(

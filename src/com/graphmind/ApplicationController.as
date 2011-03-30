@@ -71,8 +71,7 @@ package com.graphmind {
       GraphMind.i.map.addChild(this.treeMapViewController.view);
       
 		  // Establish connection to the Drupal site.
-      ConnectionController.mainConnection = new Connection(getBaseDrupalURL());
-      ConnectionController.addConnection(ConnectionController.mainConnection);
+      ConnectionController.mainConnection = ConnectionController.createConnection(getBaseDrupalURL());
       ConnectionController.mainConnection.isSessionAuthentication = true;
       ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
       ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionController.defaultErrorHandler);

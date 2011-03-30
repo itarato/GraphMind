@@ -77,7 +77,7 @@ package com.graphmind {
      * Event handler for
      */
     public function onClick_AddNewSiteConnectionButton(url:String, userName:String, userPassword:String):void {
-      var conn:Connection = new Connection(url);
+      var conn:Connection = ConnectionController.createConnection(url);
       conn.userName = userName;
       conn.userPassword = userPassword;
       conn.isSessionAuthentication = true;
@@ -88,7 +88,6 @@ package com.graphmind {
         OSD.show('Connection is added and ready for calls.');
       });
       conn.connect();
-      ConnectionController.addConnection(conn);
     }
     
     

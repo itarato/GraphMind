@@ -8,16 +8,10 @@ package com.graphmind {
   
   public class ConnectionController {
     
-    public static var mainConnection:Connection;
+    public  static var mainConnection:Connection;
     private static var _connections:ArrayCollection = new ArrayCollection();
 
 
-    /**
-    * Constructor.
-    */
-    public function ConnectionController() {}
-
-  
     /**
     * Get all network connections.
     */
@@ -71,6 +65,16 @@ package com.graphmind {
         event.origialResponse['level'] + "\n  " +
         event.origialResponse['line'], OSD.ERROR
       );
+    }
+    
+    
+    /**
+    * Connection factory.
+    */
+    public static function createConnection(target:String):Connection {
+      var conn:Connection = new Connection(target);
+      addConnection(conn);
+      return conn;
     }
 
   }
