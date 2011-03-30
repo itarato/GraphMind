@@ -19,6 +19,7 @@ package com.graphmind {
 	import mx.core.BitmapAsset;
 	import mx.events.FlexEvent;
 	
+	
 	/**
 	 * Stage manager
 	 *  - events that happen on the stage's UI elements (general buttons, ...)
@@ -59,7 +60,7 @@ package com.graphmind {
     /**
     * Drag and drop image.
     */
-    public var dragAndDropImage:Image = new Image();
+    protected var dragAndDropImage:Image = new Image();
     
     
 		/**
@@ -239,11 +240,6 @@ package com.graphmind {
         view.verticalScrollPosition   = _desktopDragInfo.oldScrollbarVPos - deltaV;
         view.horizontalScrollPosition = _desktopDragInfo.oldScrollbarHPos - deltaH;
       }
-    }
-
-    
-    public function getTreeDrawer():TreeDrawer {
-      return treeDrawer as TreeDrawer;
     }
 
     
