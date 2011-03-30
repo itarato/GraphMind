@@ -1,6 +1,5 @@
 package com.graphmind {
   
-  import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.DrupalViews;
   import com.graphmind.data.DrupalViewsQuery;
   import com.graphmind.display.NodeViewController;
@@ -10,6 +9,7 @@ package com.graphmind {
   import com.graphmind.temp.TempViewLoadData;
   import com.graphmind.util.Log;
   import com.graphmind.util.OSD;
+  import com.kitten.events.ConnectionEvent;
   import com.kitten.network.Connection;
   
   import flash.display.StageDisplayState;
@@ -20,6 +20,7 @@ package com.graphmind {
   import mx.core.Application;
   import mx.events.ListEvent;
   
+  
   public class AppFormController {
                 
     /**
@@ -28,12 +29,6 @@ package com.graphmind {
      */ 
     [Bindable]
     public var selectedNodeData:ArrayCollection = new ArrayCollection();
-    
-    /**
-    * Connections.
-    */
-    [Bindable]
-    public var connections:ArrayCollection;
     
     
     /**
@@ -52,6 +47,7 @@ package com.graphmind {
       GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.icon_outer_container.controller = this;
       
+      // Event handlers.
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeSelected);
     }
 
@@ -76,20 +72,25 @@ package com.graphmind {
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
     }
     
-    
         
     /**
      * Event handler for
      */
-    public function onClick_AddNewSiteConnectionButton():void {
-//      var sc:SiteConnection = SiteConnection.createSiteConnection(
-//        GraphMind.i.mindmapToolsPanel.node_connections_panel.connectFormURL.text,
-//        GraphMind.i.mindmapToolsPanel.node_connections_panel.connectFormUsername.text,
-//        GraphMind.i.mindmapToolsPanel.node_connections_panel.connectFormPassword.text
-//      );
-//      ConnectionManager.connectToSite(sc);
-      // @TODO replace with the new connection system
+    public function onClick_AddNewSiteConnectionButton(url:String, userName:String, userPassword:String):void {
+      var conn:Connection = new Connection(url);
+      conn.userName = userName;
+      conn.userPassword = userPassword;
+      conn.isSessionAuthentication = true;
+      conn.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, function(e:ConnectionEvent):void{
+        OSD.show('Connection is added but has problems. Check the credentials.');
+      });
+      conn.addEventListener(ConnectionEvent.CONNECTION_IS_READY, function(e:ConnectionEvent):void{
+        OSD.show('Connection is added and ready for calls.');
+      });
+      conn.connect();
+      ConnectionController.addConnection(conn);
     }
+    
     
     /**
      * Event for clicking on the view load panel.
@@ -184,30 +185,6 @@ package com.graphmind {
     }
 
     
-    // @todo maybe put this into the event handler: onClick_NodeAttributeAddOrUpdateButton
-    public function updateNodeAttribute(node:NodeViewController, attribute:String, value:String):void {
-      if (!node || !attribute) return;
-      
-      node.addData(attribute, value);
-      node.select();
-      
-      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
-    }
-    
-    
-    /**
-     * Remove a node's attribute.
-     */
-    public function removeNodeAttribute(node:NodeViewController, attribute:String):void {
-      if (!node || attribute.length == 0) return;
-      
-      node.deleteData(attribute);
-      node.select();
-      
-      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
-    }
-    
-       
     public function onClick_Icon(event:MouseEvent):void {
       EventCenter.notify(EventCenterEvent.ACTIVE_NODE_ADD_ICON, (event.currentTarget as Image).source.toString());
     }

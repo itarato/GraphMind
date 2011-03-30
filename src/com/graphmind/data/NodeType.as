@@ -18,9 +18,15 @@ package com.graphmind.data {
     public static const TERM_VIEWS:String     = 'term_data';
     public static const NODE_REVISIONS_VIEWS:String = 'node_revisions';
     
+    /**
+    * Node types are capable of self updating.
+    */
     public static const updatableTypes:Array = [FILE, NODE, USER];
     
     
+    /**
+    * Get the base views table from a node type string.
+    */
     public static function viewsTableOfNodeType(type:String):String {
       switch (type) {
         case NODE:    return NODE_VIEWS;
@@ -32,6 +38,9 @@ package com.graphmind.data {
     };
     
     
+    /**
+    * Get the node type from a views base table string.
+    */
     public static function nodeTypeOfViewsTable(viewsTable:String):String {
       switch (viewsTable) {
         case NODE_VIEWS:    return NODE;

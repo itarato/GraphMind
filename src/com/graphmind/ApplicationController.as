@@ -13,6 +13,7 @@ package com.graphmind {
 	
 	import plugins.*;
 	
+	
 	/**
 	 * Emitted events.
 	 */
@@ -178,7 +179,7 @@ package com.graphmind {
 		 * Checks is the map is connected to a site.
 		 */
 		public function isBaseConnectionLive():Boolean {
-		  return true;
+		  return ConnectionController.mainConnection.isConnected;
 		}
 		
 		

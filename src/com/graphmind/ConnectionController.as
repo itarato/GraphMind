@@ -56,16 +56,18 @@ package com.graphmind {
     }
     
     
+    /**
+    * Default error handler for a network transaction fail.
+    */
     public static function defaultErrorHandler(event:ConnectionEvent):void {
       OSD.show(
-        "Network error\n" +
-        "Connection details:" + 
+        "Network error: " + event.origialResponse['details'] +
+        "\n\nConnection details:" + 
         "\n  ULR: " + event.connection + 
         "\n  Connected: " + event.connection.isConnected +
-        "\nError details:\n  " + 
+        "\n\nError details:\n  " + 
         event.origialResponse['code'] + "\n  " +
         event.origialResponse['description'] + "\n  " +
-        event.origialResponse['details'] + "\n  " +
         event.origialResponse['level'] + "\n  " +
         event.origialResponse['line'], OSD.ERROR
       );
