@@ -1,6 +1,5 @@
 package com.graphmind {
   
-  import com.graphmind.data.IMapViewData;
   import com.graphmind.data.IMapViewEvent;
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.MapEvent;
@@ -13,7 +12,7 @@ package com.graphmind {
   import mx.events.FlexEvent;
   
   [Event(name="mindmapUpdated", type="com.graphmind.event.MapEvent")]
-  public class MapViewController extends EventDispatcher implements IMapViewData, IMapViewEvent {
+  public class MapViewController extends EventDispatcher implements IMapViewEvent {
 
     /**
     * View object.
@@ -23,7 +22,7 @@ package com.graphmind {
     /**
      * Drawer of the application (can be TreeDrawer, GraphDrawer, etc.)
      */
-    public var treeDrawer:TreeDrawer;
+    protected var treeDrawer:TreeDrawer;
     
     /**
      * Desktop UI size.
@@ -43,45 +42,12 @@ package com.graphmind {
 
 
     /**********************************
-    * IMapViewData.
-    ***********************************/
-    
-    public function getRootNode():NodeViewController {
-      return null;
-    }
-    
-    
-    /**********************************
     * IMapViewEvent
     ***********************************/
-    
-    public function onSaveMap():void {
-    }
-    
-    
-    public function onStartDragMap():void {
-    }
-    
-    
-    public function onMoveMap():void {
-    }
-    
-    
-    public function onDragEndMap():void {
-    }
-    
-    
-    public function onRequestRefreshMap():void {
-    }
-    
     
     public function onMapDidLoaded(event:FlexEvent):void {
     }
     
-    
-    public function onCloseMap():void {
-    }
-
   }
   
 }

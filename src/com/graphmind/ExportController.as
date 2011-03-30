@@ -5,6 +5,7 @@ package com.graphmind {
   import com.graphmind.event.EventCenterEvent;
   import com.kitten.network.Connection;
   
+  
   public class ExportController {
     
     /**
@@ -17,9 +18,6 @@ package com.graphmind {
     public static var lastSaved:Number = new Date().time;
     
     
-    public function ExportController() {}
-    
-        
     /**
      * Export work to FreeMind XML format
      * @return string

@@ -34,7 +34,7 @@ package com.graphmind {
 		}
 		
 		
-		public static function importMapFromString(xmlRawString:String):NodeViewController {
+		private static function importMapFromString(xmlRawString:String):NodeViewController {
 			var xmlData:XML = new XML(xmlRawString);
 			
 			var postProcessObject:Object = new Object();
@@ -53,7 +53,7 @@ package com.graphmind {
 		}
 		
 		
-		public static function buildGrapMindNode(nodeXML:XML, postProcessObject:Object):NodeViewController {
+		private static function buildGrapMindNode(nodeXML:XML, postProcessObject:Object):NodeViewController {
 			// @TODO write node checking - if those are exist
 			var attributes:Object = {};
 			var information:Object = {};
