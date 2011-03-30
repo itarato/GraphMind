@@ -5,8 +5,8 @@ package com.graphmind {
 	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
-	import com.graphmind.temp.TempItemLoadData;
-	import com.graphmind.temp.TempViewLoadData;
+	import com.graphmind.temp.DrupalItemRequestParamObject;
+	import com.graphmind.temp.DrupalViewsRequestParamObject;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
 	import com.graphmind.display.TreeDrawer;
@@ -226,19 +226,19 @@ package com.graphmind {
       
       isDesktopDragged = true;
       
-      _desktopDragInfo.oldVPos = view.mouseY;
-      _desktopDragInfo.oldHPos = view.mouseX;
-      _desktopDragInfo.oldScrollbarVPos = view.verticalScrollPosition;
-      _desktopDragInfo.oldScrollbarHPos = view.horizontalScrollPosition;
+      _desktopDragInfo.mouseY = view.mouseY;
+      _desktopDragInfo.mouseX = view.mouseX;
+      _desktopDragInfo.verticalScrollbarPosition = view.verticalScrollPosition;
+      _desktopDragInfo.horizontalScrollbarPosition = view.horizontalScrollPosition;
     }
     
     
     protected function doMapDragAndDrop():void {
       if (isDesktopDragged) {
-        var deltaV:Number = view.mouseY - _desktopDragInfo.oldVPos;
-        var deltaH:Number = view.mouseX - _desktopDragInfo.oldHPos;
-        view.verticalScrollPosition   = _desktopDragInfo.oldScrollbarVPos - deltaV;
-        view.horizontalScrollPosition = _desktopDragInfo.oldScrollbarHPos - deltaH;
+        var deltaV:Number = view.mouseY - _desktopDragInfo.mouseY;
+        var deltaH:Number = view.mouseX - _desktopDragInfo.mouseX;
+        view.verticalScrollPosition   = _desktopDragInfo.verticalScrollbarPosition - deltaV;
+        view.horizontalScrollPosition = _desktopDragInfo.horizontalScrollbarPosition - deltaH;
       }
     }
 
@@ -338,7 +338,7 @@ package com.graphmind {
     
     
     protected function onLoadDrupalItem(event:EventCenterEvent):void {
-      var data:TempItemLoadData = event.data as TempItemLoadData;
+      var data:DrupalItemRequestParamObject = event.data as DrupalItemRequestParamObject;
       ConnectionController.mainConnection.call(
         data.type + '.get',
         function(result:Object):void {      
@@ -353,7 +353,7 @@ package com.graphmind {
     
     
     protected function onLoadDrupalViews(event:EventCenterEvent):void {
-      var data:TempViewLoadData = event.data as TempViewLoadData;
+      var data:DrupalViewsRequestParamObject = event.data as DrupalViewsRequestParamObject;
       data.views.views.connection.call(
         'views.get',
         function(res:Object):void{onSuccess_loadDrupalData(res, data)},
@@ -366,7 +366,7 @@ package com.graphmind {
     }
     
     
-    private function onSuccess_loadDrupalData(result:Object, requestData:TempViewLoadData):void {
+    private function onSuccess_loadDrupalData(result:Object, requestData:DrupalViewsRequestParamObject):void {
       if (result.length == 0) {
         OSD.show('Result is empty.', OSD.WARNING);
       }

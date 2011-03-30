@@ -7,6 +7,7 @@ package com.graphmind.util {
 	import mx.controls.Text;
 	import mx.events.FlexEvent;
 	
+	
 	public class OSDMessage extends Canvas {
 	
 		public function OSDMessage(text:String, level:String) {
@@ -29,6 +30,7 @@ package com.graphmind.util {
 			addChild(tx);
 		}
 		
+		
 		public function onEnterFrame(event:Event):void {
 			alpha -= 0.05;
 			if (alpha <= 0.1) {
@@ -37,9 +39,11 @@ package com.graphmind.util {
 			}
 		}
 		
+		
 		public function countdown():void {
 			setTimeout(function():void{addEventListener(Event.ENTER_FRAME, onEnterFrame);}, 3000);
 		}
+		
 		
 		protected function kill():void {
 			parent.removeChild(this);

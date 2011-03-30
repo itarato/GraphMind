@@ -1,10 +1,12 @@
 package com.graphmind.util {
+  
 	import flash.events.MouseEvent;
 	
 	import mx.controls.Image;
 	
 	
 	public class OSDStaticMessage extends OSDMessage {
+		
 		
 		[Embed(source='assets/images/cross.gif')]
 		private var _crossIcon:Class;

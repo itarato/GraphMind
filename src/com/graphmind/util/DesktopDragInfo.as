@@ -2,10 +2,13 @@ package com.graphmind.util {
   
 	public class DesktopDragInfo {
 	  
-		public var oldVPos:Number;
-		public var oldHPos:Number;
-		public var oldScrollbarVPos:Number;
-		public var oldScrollbarHPos:Number;
+		public var mouseY:Number;
+		
+		public var mouseX:Number;
+
+		public var verticalScrollbarPosition:Number;
+
+		public var horizontalScrollbarPosition:Number;
 		
 	}
 	

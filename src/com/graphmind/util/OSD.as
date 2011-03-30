@@ -1,4 +1,5 @@
 package com.graphmind.util {
+  
 	import mx.containers.Canvas;
 	import mx.core.UIComponent;
 	
@@ -14,15 +15,18 @@ package com.graphmind.util {
 		public  static var width:int;
 		public  static var padding:int = 12;
 		
+		
 		public static function init(container:UIComponent, width:int = 300):void {
 			OSD.container = container;
 			OSD.width     = width;
 		}
 		
+		
 		public static function show(text:String, level:String = 'info'):void {
 			var msg:UIComponent = getMessagePanel(text, level);
 			OSD.container.addChild(msg);
 		} 
+		
 		
 		private static function getMessagePanel(text:String, level:String):Canvas {
 			var osd_msg:OSDMessage;
@@ -36,6 +40,7 @@ package com.graphmind.util {
 			return osd_msg;
 		}
 		
+		
 		public static function getColorFromLevel(level:String):uint {
 			switch (level) {
 				case INFO:    return 0x3D8F00;
@@ -44,6 +49,7 @@ package com.graphmind.util {
 				default:      return 0x2F2F2F;
 			}
 		}
+		
 	}
 	
 }

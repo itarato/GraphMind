@@ -11,12 +11,6 @@ package com.graphmind.display {
 		
 		function getChildNodeAt(index:int):ITreeNode;
 		
-//		function addChildNode(child:ITreeNode):void;
-		
-//		function removeChildNodeAll():void;
-		
-//		function removeChildNodeAt(index:int):void;
-		
 		function getParentNode():ITreeNode;
 		
 		function getChildNodeIndex(child:ITreeNode):int;

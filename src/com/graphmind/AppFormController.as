@@ -5,8 +5,8 @@ package com.graphmind {
   import com.graphmind.display.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
-  import com.graphmind.temp.TempItemLoadData;
-  import com.graphmind.temp.TempViewLoadData;
+  import com.graphmind.temp.DrupalItemRequestParamObject;
+  import com.graphmind.temp.DrupalViewsRequestParamObject;
   import com.graphmind.util.Log;
   import com.graphmind.util.OSD;
   import com.kitten.events.ConnectionEvent;
@@ -102,7 +102,7 @@ package com.graphmind {
       views.name = GraphMind.i.panelLoadView.view_name.text;
       views.views    = GraphMind.i.panelLoadView.view_views_datagrid.selectedItem as DrupalViews;
       
-      var temp:TempViewLoadData = new TempViewLoadData();
+      var temp:DrupalViewsRequestParamObject = new DrupalViewsRequestParamObject();
       temp.parentNode = TreeMapViewController.activeNode;
       temp.views = views;
       
@@ -124,7 +124,7 @@ package com.graphmind {
      * Event on submitting item loading panel.
      */
     public function onClick_LoadItemSubmit():void {
-      var temp:TempItemLoadData = new TempItemLoadData();
+      var temp:DrupalItemRequestParamObject = new DrupalItemRequestParamObject();
       temp.type = GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data;
       temp.conn = GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection;
       temp.id = GraphMind.i.panelLoadDrupalItem.item_id.text;

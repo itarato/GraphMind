@@ -12,7 +12,6 @@
 		  import com.graphmind.ApplicationController;
 		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeMapViewController;
-			import com.graphmind.net.UniqueItemLoader;
 			
 			public var controller:AppFormController;
 		]]>

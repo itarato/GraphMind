@@ -1,6 +1,5 @@
 package com.graphmind.view {
-	import com.graphmind.display.IDisplayItem;
-	import com.graphmind.display.IDrawable;
+  
 	import com.graphmind.event.NodeEvent;
 	import com.graphmind.util.Log;
 	
