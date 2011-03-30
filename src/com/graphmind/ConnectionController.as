@@ -38,7 +38,7 @@ package com.graphmind {
     * Add connection.
     * Checks if the connection is already added.
     */
-    public static function addConnection(conn:Connection):void {
+    private static function addConnection(conn:Connection):void {
       // Check if the connection is already added.
       for (var idx:* in _connections) {
         if ((_connections[idx] as Connection).target == conn.target) {
