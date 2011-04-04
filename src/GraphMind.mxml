@@ -20,7 +20,7 @@
 		  import com.graphmind.TreeWorkflow;
 		  import com.graphmind.FuturesWheelWorkflow;
 		  import com.graphmind.IWorkflowComposite;
-		  import com.graphmind.display.NodeViewController;
+		  import com.graphmind.NodeViewController;
 		  import com.graphmind.display.FuturesWheelDrawer;
 			import com.graphmind.TreeMapViewController;
 			import com.graphmind.view.NodeView;
@@ -39,11 +39,6 @@
 			
 			// 'Singleton' instance.
 			[Bindable] public static var i:GraphMind;
-			
-			/**
-			 * Hook: fired when the application is being initialized.
-			 */
-			public static var HOOK_PRE_INIT:String = 'pre_init';
 			
 			/**
 			 * Application manager.
@@ -76,7 +71,7 @@
         // Plugins should be the first
         PluginManager.init();
 				// @HOOK
-				PluginManager.callHook(HOOK_PRE_INIT);
+				PluginManager.callHook(PluginManager.HOOK_PRE_INIT);
         
 				this.applicationController = new ApplicationController();
 				

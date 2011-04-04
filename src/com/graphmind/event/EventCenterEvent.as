@@ -11,6 +11,7 @@ package com.graphmind.event {
     public static var NODE_PREPARE_DRAG:String   = 'nodePrepareDrag';
     public static var NODE_FINISH_DRAG:String    = 'nodeFinishDrag';
     public static var NODE_CREATED:String        = 'nodeCreated';
+    public static var NODE_DID_ADDED_TO_PARENT:String = 'nodeDidAddedToParent';
     
     public static var ACTIVE_NODE_TITLE_IS_CHANGED:String = 'activeNodeTitleIsChanged';
     public static var ACTIVE_NODE_LINK_IS_CHANGED:String  = 'activeNodeLinkIsChanged';

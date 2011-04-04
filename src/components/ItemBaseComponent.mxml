@@ -9,8 +9,6 @@
 	<mx:Script>
 		<![CDATA[
 			import com.graphmind.view.NodeView;
-			import com.graphmind.display.NodeViewController;
-			import com.graphmind.display.NodeViewController;
 			[Embed(source='assets/images/add.png')]
 			[Bindable]
 			public var image_add:Class;
@@ -54,7 +52,7 @@
 	<mx:Image source="{image_insertLeft}" x="{NodeView.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
 	<mx:Text x="2" y="1" text="Label" width="{NodeView.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"
-	  selectable="false"/>
+	  selectable="false" condenseWhite="false"/>
 	
 	<mx:Image x="{NodeView.ICON_ADD_DEFAULT_X}" y="2" 
 		source="{image_add}" 

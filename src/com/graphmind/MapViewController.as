@@ -1,7 +1,7 @@
 package com.graphmind {
   
   import com.graphmind.data.IMapViewEvent;
-  import com.graphmind.display.NodeViewController;
+  import com.graphmind.NodeViewController;
   import com.graphmind.event.MapEvent;
   import com.graphmind.view.MapView;
   import com.graphmind.display.TreeDrawer;

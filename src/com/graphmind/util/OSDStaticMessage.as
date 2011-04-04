@@ -11,6 +11,7 @@ package com.graphmind.util {
 		[Embed(source='assets/images/cross.gif')]
 		private var _crossIcon:Class;
 		
+		
 		public function OSDStaticMessage(text:String, level:String) {
 			super(text, level);
 			
@@ -22,7 +23,10 @@ package com.graphmind.util {
 			addChild(icon);
 		}
 		
-		public override function countdown():void {}
+		
+		public override function countdown():void {
+		  // Do nothing insted of counting back. Do not delete.
+		}
 		
 	}
 	

@@ -12,10 +12,20 @@ package com.graphmind {
 	 * It's necessary to manually add all the plugin classes.
 	 */	
 //	[Frame(extraClass="plugins.TaxonomyManager")]
+  [Frame(extraClass="plugins.Relationship")]
 	
 	public class PluginManager {
+	  
+    /**
+     * Hook: fired when the application is being initialized.
+     */
+    public static var HOOK_PRE_INIT:String = 'pre_init';
 		
+		/**
+		 * List of available plugins.
+		 */
 		private static var _plugins:Array;
+		
 		
 		/**
 		 * Instantiate plugin array.
@@ -25,6 +35,10 @@ package com.graphmind {
 		public static function init():void {
 			var plugin_array:Array = Application.application.parameters.plugins ? String(Application.application.parameters.plugins).split(',') : []
 			PluginManager._plugins = plugin_array ? plugin_array : [];
+			
+			for (var idx:* in _plugins) {
+			  var vClass:Class = getDefinitionByName('plugins.' + _plugins[idx].toString()) as Class;
+			}
 		}
 		
 		public static function callHook(hook:String, data:Object = null):void {

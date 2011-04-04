@@ -1,8 +1,7 @@
 package com.graphmind.display {
   
-	import com.graphmind.display.NodeViewController;
+	import com.graphmind.NodeViewController;
 	
-	import flash.display.JointStyle;
 	import flash.geom.Point;
 	
 	import mx.core.UIComponent;

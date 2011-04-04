@@ -1,5 +1,7 @@
 package com.graphmind.display {
 	
+	import com.graphmind.NodeViewController;
+	
 	import mx.collections.ArrayCollection;
 	import mx.containers.Canvas;
 	

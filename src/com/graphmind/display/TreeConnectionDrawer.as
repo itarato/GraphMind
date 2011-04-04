@@ -1,5 +1,6 @@
 package com.graphmind.display {
   
+	import com.graphmind.NodeViewController;
 	import com.graphmind.view.NodeView;
 	
 	import flash.geom.Point;

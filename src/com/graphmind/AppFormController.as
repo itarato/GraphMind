@@ -2,7 +2,7 @@ package com.graphmind {
   
   import com.graphmind.data.DrupalViews;
   import com.graphmind.data.DrupalViewsQuery;
-  import com.graphmind.display.NodeViewController;
+  import com.graphmind.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.graphmind.temp.DrupalItemRequestParamObject;

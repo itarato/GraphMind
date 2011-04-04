@@ -1,8 +1,5 @@
 package com.graphmind.data {
   
-	import com.graphmind.net.SiteConnection;
-
-	
 	public class DrupalViewsQuery {
 	  
 		public var views:DrupalViews;

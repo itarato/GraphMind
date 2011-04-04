@@ -1,6 +1,6 @@
 package com.graphmind.event {
 	
-	import com.graphmind.display.NodeViewController;
+	import com.graphmind.NodeViewController;
 	
 	import flash.events.Event;
 	

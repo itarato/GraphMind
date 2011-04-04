@@ -1,6 +1,7 @@
 package com.graphmind.display {
 	
 	import com.graphmind.MapViewController;
+	import com.graphmind.NodeViewController;
 	import com.graphmind.util.Log;
 	import com.graphmind.view.NodeView;
 	

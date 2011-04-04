@@ -1,9 +1,11 @@
-package com.graphmind.display {
+package com.graphmind {
 	
-	import com.graphmind.ApplicationController;
-	import com.graphmind.PluginManager;
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
+	import com.graphmind.display.ICloud;
+	import com.graphmind.display.ITreeItem;
+	import com.graphmind.display.ITreeNode;
+	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.event.NodeEvent;
@@ -937,6 +939,8 @@ package com.graphmind.display {
       
       // Not necessary to fire NODE_ATTCHED event. MOVED and CREATED covers this.
       update(UP_UI);
+      
+      EventCenter.notify(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, node);
     }
     
     public function collapse():void {

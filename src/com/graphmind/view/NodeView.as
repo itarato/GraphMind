@@ -100,10 +100,11 @@ package com.graphmind.view {
 			this.nodeComponentView.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
 			this.nodeComponentView.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
 			
-			width = WIDTH_DEFAULT + _getIconsExtraWidth() + _getTitleExtraWidth();
+			width = WIDTH_DEFAULT + leftOffset;
 			
 			isGraphicsUpdated = false;
 		}
+		
 		
 		/**
 		 * Event callback when a node drag and drop process ends.
@@ -122,13 +123,16 @@ package com.graphmind.view {
 					nodeComponentView.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
 		}
 		
+		
 		protected function _getIconsExtraWidth():int {
 			return icons.length * ICON_WIDTH;
 		}
 		
+		
 		public function getUIComponent():UIComponent {
 		  return this;
 		}
+		
 		
 		/**
 		 * Add icon.
@@ -138,6 +142,7 @@ package com.graphmind.view {
 		  nodeComponentView.addChild(icon);
 		  isGraphicsUpdated = true;
 		}
+		
 		
 		/**
 		 * Remove icon.

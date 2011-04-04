@@ -1,6 +1,5 @@
 package com.graphmind {
   
-  import com.graphmind.display.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.kitten.network.Connection;

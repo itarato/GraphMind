@@ -1,6 +1,6 @@
 package com.graphmind.temp {
   
-	import com.graphmind.display.NodeViewController;
+	import com.graphmind.NodeViewController;
 	import com.kitten.network.Connection;
 	
 	public class DrupalItemRequestParamObject {
