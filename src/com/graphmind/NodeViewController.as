@@ -574,6 +574,7 @@ package com.graphmind {
         nodeData.connection.call(
           nodeData.type + '.get',
           function(result:Object):void{updateDrupalItem(result);},
+          null,
           nodeData.drupalID
         ); 
       } else {

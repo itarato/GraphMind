@@ -2,14 +2,13 @@ package com.graphmind {
 
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.NodeViewController;
+	import com.graphmind.display.TreeDrawer;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.temp.DrupalItemRequestParamObject;
 	import com.graphmind.temp.DrupalViewsRequestParamObject;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
-	import com.graphmind.display.TreeDrawer;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
@@ -347,6 +346,7 @@ package com.graphmind {
           node.select();
           node.update(NodeViewController.UP_UI);
         },
+        ConnectionController.defaultRequestErrorHandler,
         data.id
       );
     }
@@ -357,6 +357,7 @@ package com.graphmind {
       data.views.views.connection.call(
         'views.get',
         function(res:Object):void{onSuccess_loadDrupalData(res, data)},
+        null,
         data.views.name,
         data.views.fields,
         [data.views.args],

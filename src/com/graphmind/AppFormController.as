@@ -2,7 +2,6 @@ package com.graphmind {
   
   import com.graphmind.data.DrupalViews;
   import com.graphmind.data.DrupalViewsQuery;
-  import com.graphmind.NodeViewController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.graphmind.temp.DrupalItemRequestParamObject;
@@ -10,6 +9,7 @@ package com.graphmind {
   import com.graphmind.util.Log;
   import com.graphmind.util.OSD;
   import com.kitten.events.ConnectionEvent;
+  import com.kitten.events.ConnectionIOErrorEvent;
   import com.kitten.network.Connection;
   
   import flash.display.StageDisplayState;
@@ -81,7 +81,7 @@ package com.graphmind {
       conn.userName = userName;
       conn.userPassword = userPassword;
       conn.isSessionAuthentication = true;
-      conn.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, function(e:ConnectionEvent):void{
+      conn.addEventListener(ConnectionIOErrorEvent.IO_ERROR_EVENT, function(e:ConnectionIOErrorEvent):void{
         OSD.show('Connection is added but has problems. Check the credentials.');
       });
       conn.addEventListener(ConnectionEvent.CONNECTION_IS_READY, function(e:ConnectionEvent):void{

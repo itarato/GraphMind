@@ -42,6 +42,7 @@ package plugins {
         ConnectionController.mainConnection.call(
           'graphmindRelationship.addRelationship',
           onSuccess_nodeRelationshipAdded,
+          null,
           child.parent.nodeData.drupalID,
           child.nodeData.drupalID,
           DEFAULT_RELATIONSHIP

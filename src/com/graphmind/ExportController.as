@@ -30,7 +30,7 @@ package com.graphmind {
      * Save work into host node
      */
     public static function saveFreeMindXMLToDrupal(conn:Connection, xml:String, nid:uint):void {
-      conn.call('graphmind.saveGraphMind', onSaveFreemindXMLToDrupalSucceed, nid, xml, lastSaved * 0.001);
+      conn.call('graphmind.saveGraphMind', onSaveFreemindXMLToDrupalSucceed, null, nid, xml, lastSaved * 0.001);
     }
     
     

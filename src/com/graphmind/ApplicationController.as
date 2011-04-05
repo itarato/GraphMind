@@ -5,6 +5,8 @@ package com.graphmind {
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
 	import com.kitten.events.ConnectionEvent;
+	import com.kitten.events.ConnectionIOErrorEvent;
+	import com.kitten.events.ConnectionNetStatusEvent;
 	
 	import mx.core.Application;
 	
@@ -70,8 +72,10 @@ package com.graphmind {
 		  // Establish connection to the Drupal site.
       ConnectionController.mainConnection = ConnectionController.createConnection(getBaseDrupalURL());
       ConnectionController.mainConnection.isSessionAuthentication = true;
+      
       ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
-      ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_FAILED, ConnectionController.defaultErrorHandler);
+      ConnectionController.mainConnection.addEventListener(ConnectionIOErrorEvent.IO_ERROR_EVENT, ConnectionController.defaultIOErrorHandler);
+      ConnectionController.mainConnection.addEventListener(ConnectionNetStatusEvent.NET_STATUS_EVENT, ConnectionController.defaultNetStatusHandler);
       ConnectionController.mainConnection.connect();
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
@@ -108,9 +112,9 @@ package com.graphmind {
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
 			// Get all the available features
-			ConnectionController.mainConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, getHostNodeID());
-			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded);
-			ConnectionController.mainConnection.call('node.get', onSuccess_rootNodeIsLoaded, getHostNodeID());
+			ConnectionController.mainConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, null, getHostNodeID());
+			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, null);
+			ConnectionController.mainConnection.call('node.get', onSuccess_rootNodeIsLoaded, null, getHostNodeID());
 		}
 		
 		

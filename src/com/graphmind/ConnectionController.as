@@ -1,7 +1,8 @@
 package com.graphmind {
   
   import com.graphmind.util.OSD;
-  import com.kitten.events.ConnectionEvent;
+  import com.kitten.events.ConnectionIOErrorEvent;
+  import com.kitten.events.ConnectionNetStatusEvent;
   import com.kitten.network.Connection;
   
   import mx.collections.ArrayCollection;
@@ -51,20 +52,41 @@ package com.graphmind {
     
     
     /**
-    * Default error handler for a network transaction fail.
+    * Default error handler for bad response.
     */
-    public static function defaultErrorHandler(event:ConnectionEvent):void {
+    public static function defaultRequestErrorHandler(result:Object):void {
       OSD.show(
-        "Network error: " + event.origialResponse['details'] +
-        "\n\nConnection details:" + 
-        "\n  ULR: " + event.connection + 
-        "\n  Connected: " + event.connection.isConnected +
-        "\n\nError details:\n  " + 
-        event.origialResponse['code'] + "\n  " +
-        event.origialResponse['description'] + "\n  " +
-        event.origialResponse['level'] + "\n  " +
-        event.origialResponse['line'], OSD.ERROR
-      );
+        "Network request error:\n" +
+        "Error details:\n" + 
+        "  Details: " + result['details'] + "\n  " + 
+        "  Code: " + result['code'] + "\n  " +
+        "  Description: " + result['description'] + "\n  " +
+        "  Level: " + result['level'] + "\n  " +
+        "  Line: " + result['line'],
+      OSD.ERROR);
+    }
+    
+    
+    /**
+    * Default error handler for an io error.
+    */
+    public static function defaultIOErrorHandler(event:ConnectionIOErrorEvent):void {
+      OSD.show("Network io error: " + event.ioErrorEvent, OSD.ERROR);
+    }
+    
+    
+    /**
+    * Default error handler for a bad net status.
+    */
+    public static function defaultNetStatusHandler(event:ConnectionNetStatusEvent):void {
+      OSD.show(
+        "Network status error." +
+        "\n  Connection: " + event.connection.target +  
+        "\n  Code: " + event.netStatusEvent.info.code +
+        "\n  Description: " + event.netStatusEvent.info.description +
+        "\n  Details: " + event.netStatusEvent.info.details +
+        "\n  Level: " + event.netStatusEvent.info.level
+      , OSD.ERROR);
     }
     
     
