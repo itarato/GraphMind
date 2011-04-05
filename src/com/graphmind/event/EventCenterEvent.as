@@ -4,14 +4,15 @@ package com.graphmind.event {
 
   public class EventCenterEvent extends Event {
     
-    public static var NODE_IS_SELECTED:String   = 'nodeSelected';
-    public static var NODE_IS_UNSELECTED:String = 'nodeUnselected';
+    public static var NODE_IS_SELECTED:String    = 'nodeSelected';
+    public static var NODE_IS_UNSELECTED:String  = 'nodeUnselected';
     public static var NODE_MOVED:String          = 'nodeMoved';
     public static var NODE_START_DRAG:String     = 'nodeStartDrag';
     public static var NODE_PREPARE_DRAG:String   = 'nodePrepareDrag';
     public static var NODE_FINISH_DRAG:String    = 'nodeFinishDrag';
     public static var NODE_CREATED:String        = 'nodeCreated';
     public static var NODE_DID_ADDED_TO_PARENT:String = 'nodeDidAddedToParent';
+    public static var NODE_IS_KILLED:String      = 'nodeIsKilled';
     
     public static var ACTIVE_NODE_TITLE_IS_CHANGED:String = 'activeNodeTitleIsChanged';
     public static var ACTIVE_NODE_LINK_IS_CHANGED:String  = 'activeNodeLinkIsChanged';

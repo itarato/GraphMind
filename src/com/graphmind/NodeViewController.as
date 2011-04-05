@@ -343,6 +343,7 @@ package com.graphmind {
 			if (!parent) return;
 			
 			// @HOOK
+			EventCenter.notify(EventCenterEvent.NODE_IS_KILLED, this);
 			PluginManager.callHook(HOOK_NODE_DELETE, {node: this, directKill: killedDirectly});
 			
 			// Remove all children the same way.
