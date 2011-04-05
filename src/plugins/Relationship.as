@@ -23,6 +23,7 @@ package plugins {
       
       EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
+      EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
     }
     
     
@@ -32,7 +33,7 @@ package plugins {
     private static function onNodeDidAddedToParent(event:EventCenterEvent):void {
       var child:NodeViewController = event.data as NodeViewController;
       
-      Log.debug('Rel: ' + child.parent.nodeData.drupalID + ' -> ' + child.nodeData.drupalID);
+      Log.debug('Rel added: ' + child.parent.nodeData.drupalID + ' -> ' + child.nodeData.drupalID + ' ' + DEFAULT_RELATIONSHIP);
       
       if (isNode(child, child.parent)) {
         ConnectionController.mainConnection.call(
@@ -67,6 +68,11 @@ package plugins {
       }
     }
     
+    
+    public static function onNodeWillBeMoved(event:EventCenterEvent):void {
+      onNodeIsKilled(event);
+    }
+
     
     /**
     * Check if all the params are Drupal nodes.

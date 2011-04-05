@@ -406,16 +406,18 @@ package com.graphmind {
 			// Source is equal to target
 			if (this == target) return false;
 			
+			EventCenter.notify(EventCenterEvent.NODE_WILL_BE_MOVED, this);
+			
 			// Remove source from parents childs
 			this.removeFromParentsChilds();
 			// Add source to target
 			target.addChildNode(this);
 			// Refresh display
 			
+      EventCenter.notify(EventCenterEvent.NODE_DID_MOVED, this);
 			if (callEvent) {
 				// Call hook
 				PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
-				EventCenter.notify(EventCenterEvent.NODE_MOVED, this);
 			}
 			
 			this.update(UP_UI);
@@ -445,10 +447,6 @@ package com.graphmind {
 				
 				// Refresh after reordering
 				EventCenter.notify(EventCenterEvent.MAP_UPDATED);
-				
-				// Call hook
-				PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
-				EventCenter.notify(EventCenterEvent.NODE_MOVED, this);
 			}
 		}
 		
@@ -473,10 +471,6 @@ package com.graphmind {
         
         // Refresh after reordering
         EventCenter.notify(EventCenterEvent.MAP_UPDATED);
-        
-        // Call hook
-        PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
-        EventCenter.notify(EventCenterEvent.NODE_MOVED, this);
       }
     }
 		

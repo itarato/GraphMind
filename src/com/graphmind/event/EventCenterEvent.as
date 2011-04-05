@@ -6,7 +6,8 @@ package com.graphmind.event {
     
     public static var NODE_IS_SELECTED:String    = 'nodeSelected';
     public static var NODE_IS_UNSELECTED:String  = 'nodeUnselected';
-    public static var NODE_MOVED:String          = 'nodeMoved';
+    public static var NODE_WILL_BE_MOVED:String  = 'nodeWillBeMoved';
+    public static var NODE_DID_MOVED:String      = 'nodeDidMoved';
     public static var NODE_START_DRAG:String     = 'nodeStartDrag';
     public static var NODE_PREPARE_DRAG:String   = 'nodePrepareDrag';
     public static var NODE_FINISH_DRAG:String    = 'nodeFinishDrag';
