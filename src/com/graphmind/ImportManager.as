@@ -2,7 +2,6 @@ package com.graphmind {
   
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.NodeViewController;
 	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.util.Log;
 	import com.kitten.network.Connection;
@@ -27,7 +26,7 @@ package com.graphmind {
       } else {
         // New node
         response.body = null;
-        rootNode = new NodeViewController(new NodeDataObject(response)); 
+        rootNode = new NodeViewController(new NodeDataObject(response, NodeType.NODE, ConnectionController.mainConnection)); 
       }
       
       return rootNode;
