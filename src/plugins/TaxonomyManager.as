@@ -1,17 +1,13 @@
 package plugins {
 	
-	import com.graphmind.ApplicationController;
+	import com.graphmind.ConnectionController;
+	import com.graphmind.NodeViewController;
 	import com.graphmind.TreeMapViewController;
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.display.NodeViewController;
 	import com.graphmind.event.MapEvent;
-	import com.graphmind.factory.NodeFactory;
-	import com.graphmind.net.RPCServiceHelper;
-	import com.graphmind.net.SiteConnection;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
-	import com.kitten.network.Connection;
 	
 	import flash.events.ContextMenuEvent;
 	
@@ -25,9 +21,11 @@ package plugins {
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xEF95E7;
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
+		
 		public static function hook_pre_init(data:Object):void {
 			GraphMind.i.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
 		}
+		
 		
 		private static function onMindmapCreationComplete(event:MapEvent):void {
 			// Refreshing taxonomy
@@ -50,6 +48,7 @@ package plugins {
 			}
 		} 
 		
+		
 		/**
 		 * Implementation of hook_node_context_menu_alter().
 		 */
@@ -57,53 +56,39 @@ package plugins {
 			(params.data as Array).push({title: 'Load taxonomy', event: TaxonomyManager.loadFullTaxonomyTree, separator: true});
 		}
 		
+		
 		/**
 		 * Callback for loading and attaching taxonomy tree.
 		 */
 		public static function loadFullTaxonomyTree(event:ContextMenuEvent):void {
-			var node:NodeViewController = TreeMapViewController.i.activeNode;
-			var baseSiteConnection:Connection = ApplicationController.i.baseSiteConnection;
-			
-			// @todo implement it
-//			RPCServiceHelper.createRPC(
-//				'graphmindTaxonomyManager',
-//				'getAll',
-//				'amfphp',
-//				baseSiteConnection.target,
-//				function(_event:ResultEvent):void {
-//					onSuccess_TaxonomyRequestReady(_event, baseSiteConnection, node);
-//				},
-//				transactionError
-//			).send(baseSiteConnection.sessionID);
+			var node:NodeViewController = TreeMapViewController.activeNode;
+			ConnectionController.mainConnection.call(
+			  'graphmindTaxonomyManager.getAll',
+			  function(_event:ResultEvent):void {
+          onSuccess_TaxonomyRequestReady(_event, node);
+        },
+        transactionError
+      );
 		}
 		
-		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, conn:Connection, baseNode:NodeViewController):void {
+		
+		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, baseNode:NodeViewController):void {
 			for each (var vocabulary:Object in event.result) {
 				vocabulary.plugin = 'TaxonomyManager';
-				var vocabularyNodeItemData:NodeDataObject = new NodeDataObject(
-					vocabulary,
-					NodeType.NORMAL, // @TODO make it as a VOCABULARY
-					conn
-				);
-				vocabularyNodeItemData.title = vocabulary.name;
-				vocabularyNodeItemData.type = TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE;
-				vocabularyNodeItemData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
-				var vocabularyNode:NodeViewController = NodeFactory.createNodeWithNodeData(vocabularyNodeItemData);
-				baseNode.addChildNode(vocabularyNode);
+				var vocabularyNode:NodeViewController = new NodeViewController(new NodeDataObject(vocabulary, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE, ConnectionController.mainConnection));
+        vocabularyNode.setTitle(vocabulary.name);
+        vocabularyNode.nodeData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
+        baseNode.addChildNode(vocabularyNode);
 				
 				var term_hierarchy:Object = {};
 				var term_storage:Object = {0: vocabularyNode};
 				
 				for each (var term:Object in vocabulary.terms) {
 					term.plugin = 'TaxonomyManager';
-					var termNodeItemData:NodeDataObject = new NodeDataObject(
-						term,
-						NodeType.TERM,
-						conn
-					);
-					termNodeItemData.title = term.name;
-					termNodeItemData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
-					var termNodeItem:NodeViewController = NodeFactory.createNodeWithNodeData(termNodeItemData);
+					var termNodeItem:NodeViewController = new NodeViewController(new NodeDataObject(term, NodeType.TERM, ConnectionController.mainConnection));
+					termNodeItem.setTitle(term.name);
+					termNodeItem.nodeData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
+					
 					var parentID:String = term.parents[0] || 'none';
 					if (!term_hierarchy.hasOwnProperty(parentID)) {
 						term_hierarchy[parentID] = [];
@@ -121,6 +106,7 @@ package plugins {
 			OSD.show('Taxonomy tree is loaded.');
 		}
 		
+		
 		/**
 		 * Implementation of hook_node_moved.
 		 */
@@ -128,7 +114,6 @@ package plugins {
 		public static function hook_node_moved(data:Object):void {
 			// @TODO revert plan if action cannot be done
 			var node:NodeViewController = data.node as NodeViewController;
-			var baseConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			// Node is not a TERM.
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) {
@@ -158,24 +143,20 @@ package plugins {
 			var childNodes:Array = _changeChildsVocabulary(node, parentNode.nodeData.drupalData.vid || 0);
 			_changeSiblingsWeight(node);
 			
-			RPCServiceHelper.createRPC(
-				'graphmindTaxonomyManager',
-				'moveTerm',
-				'amfphp',
-				baseConnection.url,
-				function(_event:ResultEvent):void{
-					OSD.show('Term\'s new position is saved.');
-				},
-				transactionError
-			).send(
-				baseConnection.sessionID,
-				node.nodeData.drupalData.tid,
-				parentNode.nodeData.drupalData.vid || 0,
-				parentNode.nodeData.drupalData.tid || 0,
-				order.join('|'),
-				childNodes.join('|')
-			);
+			ConnectionController.mainConnection.call(
+			  'graphmindTaxonomyManager.moveTerm',
+			  function(_event:ResultEvent):void{
+          OSD.show('Term\'s new position is saved.');
+        },
+			  transactionError,
+        node.nodeData.drupalData.tid,
+        parentNode.nodeData.drupalData.vid || 0,
+        parentNode.nodeData.drupalData.tid || 0,
+        order.join('|'),
+        childNodes.join('|')
+      );
 		}
+
 
 		/**
 		 * Check if the node created by the TaxonomyManager plugin and has a certain type.
@@ -186,6 +167,7 @@ package plugins {
 			}
 			return type == null ? true : node.nodeData.type == type;
 		}
+		
 		
 		/**
 		 * Change the subtree's VID to a given value.
@@ -229,18 +211,15 @@ package plugins {
 			}
 			
 			var node:NodeViewController = data.node as NodeViewController;
-			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) return;
-			
-			RPCServiceHelper.createRPC(
-				'graphmindTaxonomyManager',
-				'deleteTerm',
-				'amfphp',
-				baseSiteConnection.url,
-				onSuccess_TermDeleted,
-				transactionError
-			).send(baseSiteConnection.sessionID, node.nodeData.drupalData.tid || 0);
+
+      ConnectionController.mainConnection.call(
+        'graphmindTaxonomyManager.deleteTerm',
+        onSuccess_TermDeleted,
+        transactionError,
+        node.nodeData.drupalData.tid || 0
+      );
 		}
 		
 		/**
@@ -258,7 +237,7 @@ package plugins {
 			node.nodeData.drupalData.plugin = undefined;
 			node.nodeData.type = NodeType.NORMAL;
 			node.nodeData.color = undefined;
-			node.getUI().refreshGraphics();
+			node.view.refreshGraphics();
 			
 			for each (var child:NodeViewController in node.getChildNodeAll()) {
 				_removePluginInfoFromNode(child);
@@ -271,8 +250,6 @@ package plugins {
 		 * @param Object data
 		 */
 		public static function hook_node_created(data:Object):void {
-			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
-			
 			var node:NodeViewController = data.node as NodeViewController;
 			if (_isTaxonomyPluginNode(node)) {
 				// Recolor taxonomy
@@ -290,16 +267,16 @@ package plugins {
 			var subtree:Object = _getSubtreeInfo(node, subtree_node_reference);
 			Log.debug('Node reference: ' + subtree_node_reference);
 			
-			RPCServiceHelper.createRPC(
-				'graphmindTaxonomyManager',
-				'addSubtree',
-				'amfphp',
-				baseSiteConnection.url,
-				function (_event:ResultEvent):void {
-					onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
-				},
-				transactionError
-			).send(baseSiteConnection.sessionID, parent.nodeData.drupalData.tid || 0, parent.nodeData.drupalData.vid || 0, subtree);
+			ConnectionController.mainConnection.call(
+			  'graphmindTaxonomyManager.addSubtree',
+        function (_event:ResultEvent):void {
+          onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
+        },
+        transactionError,
+			  parent.nodeData.drupalData.tid || 0, 
+			  parent.nodeData.drupalData.vid || 0, 
+			  subtree
+			);
 		}
 		
 		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:NodeViewController):void {
@@ -310,7 +287,7 @@ package plugins {
 		
 		private static function _getSubtreeInfo(node:NodeViewController, node_reference:Array):Object {
 			var info:Object = new Object();
-			info.name  = node.nodeData._title;
+			info.name  = node.nodeData.title;
 			info.terms = new Array();
 			info.nrid  = node_reference.length;
 			node_reference.push(node);
@@ -341,20 +318,18 @@ package plugins {
 		}
 		
 		public static function hook_node_title_changed(data:Object):void {
-			var baseSiteConnection:SiteConnection = SiteConnection.getBaseSiteConnection();
 			var node:NodeViewController = data.node as NodeViewController;
 			
 			// Only for terms.
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) return;
 			
-			RPCServiceHelper.createRPC(
-				'graphmindTaxonomyManager',
-				'renameTerm',
-				'amfphp',
-				baseSiteConnection.url,
+			ConnectionController.mainConnection.call(
+				'graphmindTaxonomyManager.renameTerm',
 				onSuccess_TermRenamed,
-				transactionError
-			).send(baseSiteConnection.sessionID, node.nodeData.drupalData.tid, node.nodeData._title);
+				transactionError,
+			  node.nodeData.drupalData.tid, 
+			  node.nodeData.title
+			);
 		}
 		
 		private static function onSuccess_TermRenamed(event:ResultEvent):void {

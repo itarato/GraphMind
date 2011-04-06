@@ -11,7 +11,7 @@ package com.graphmind {
 	/**
 	 * It's necessary to manually add all the plugin classes.
 	 */	
-//	[Frame(extraClass="plugins.TaxonomyManager")]
+	[Frame(extraClass="plugins.TaxonomyManager")]
   [Frame(extraClass="plugins.Relationship")]
 	
 	public class PluginManager {
