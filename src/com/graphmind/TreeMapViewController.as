@@ -356,7 +356,7 @@ package com.graphmind {
       var data:DrupalViewsRequestParamObject = event.data as DrupalViewsRequestParamObject;
       data.views.views.connection.call(
         'views.get',
-        function(res:Object):void{onSuccess_loadDrupalData(res, data)},
+        function(res:Object):void{onSuccess_loadDrupalViews(res, data)},
         null,
         data.views.name,
         data.views.fields,
@@ -367,12 +367,13 @@ package com.graphmind {
     }
     
     
-    private function onSuccess_loadDrupalData(result:Object, requestData:DrupalViewsRequestParamObject):void {
+    private function onSuccess_loadDrupalViews(result:Object, requestData:DrupalViewsRequestParamObject):void {
       if (result.length == 0) {
         OSD.show('Result is empty.', OSD.WARNING);
+        return;
       }
+      
       for each (var nodeData:Object in result) {
-        // @TODO update or append checkbox for the panel?
         var similarNode:NodeViewController = requestData.parentNode.getEqualChild(nodeData, requestData.views.views.baseTable) as NodeViewController;
         if (similarNode) {
           similarNode.updateDrupalItem(nodeData);

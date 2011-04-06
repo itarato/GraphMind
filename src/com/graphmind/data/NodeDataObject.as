@@ -31,7 +31,6 @@ package com.graphmind.data {
 		
 		/**
 		 * 'Unique' string ID for nodes: ID_#.
-		 * @TODO making it really unique.
 		 */
 		private var _id:String = 'ID_' + String(NodeDataObject.uniqueID++);
 		

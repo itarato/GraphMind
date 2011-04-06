@@ -617,12 +617,14 @@ package com.graphmind {
 			arrowLink.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick_arrowLink);
 		}
 		
+		
 		/**
 		 * Check if the subtree has a cloud.
 		 */
 		public function hasCloud():Boolean {
 			return nodeData.hasCloud;
 		}
+		
 		
 		/**
 		 * Get a child node that has equal data.
@@ -731,6 +733,7 @@ package com.graphmind {
       view.nodeComponentView.insertUp.visible = false;
     }
     
+    
     public function onDoubleClick(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
@@ -739,13 +742,12 @@ package com.graphmind {
       view.nodeComponentView.title_new.setFocus();
     }
     
+    
     public function onKeyUp_TitleTextField(event:KeyboardEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if (event.keyCode == Keyboard.ENTER) {
-        view.nodeComponentView.currentState = '';
-        setTitle(view.nodeComponentView.title_new.text, true);
-        GraphMind.i.setFocus();
+        closeLabelEditMode();
         select();
       } else if (event.keyCode == Keyboard.ESCAPE) {
         view.nodeComponentView.currentState = '';
@@ -753,14 +755,19 @@ package com.graphmind {
       }
     }
     
+    
     public function onFocusOut_TitleTextField(event:FocusEvent):void {
       if (!ApplicationController.i.isEditable()) return;
-      
-      // @TODO this is a duplication of the onNewTitleKeyUp() (above)
+      closeLabelEditMode();
+    }
+    
+    
+    private function closeLabelEditMode():void {
       view.nodeComponentView.currentState = '';
       setTitle(view.nodeComponentView.title_new.text, true);
       GraphMind.i.setFocus();
     }
+    
     
     public function onItemLoaderSelectorClick(event:MouseEvent):void {
       event.stopPropagation();

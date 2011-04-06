@@ -53,7 +53,6 @@ package com.graphmind {
 		
 		
 		private static function buildGrapMindNode(nodeXML:XML, postProcessObject:Object):NodeViewController {
-			// @TODO write node checking - if those are exist
 			var attributes:Object = {};
 			var information:Object = {};
 			for each (var attribute:XML in nodeXML.child('attribute')) {
@@ -74,11 +73,6 @@ package com.graphmind {
 			// Site connection
 			var conn:Connection = null;
 			if (nodeXML.site) {
-//				conn = SiteConnection.createSiteConnection(
-//					unescape(nodeXML.site.@URL),
-//					unescape(nodeXML.site.@USERNAME)
-//				);
-        //trace('Target: <' + unescape(nodeXML.site.@URL) + '>');
         conn = ConnectionController.createConnection(unescape(nodeXML.site.@URL));
 			}
 			
