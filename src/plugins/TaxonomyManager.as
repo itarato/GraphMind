@@ -11,9 +11,7 @@ package plugins {
 	
 	import flash.events.ContextMenuEvent;
 	
-	import mx.rpc.events.FaultEvent;
-	import mx.rpc.events.ResultEvent;
-	
+
 	public class TaxonomyManager {
 		
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE:String = 'vocabulary';
@@ -64,7 +62,7 @@ package plugins {
 			var node:NodeViewController = TreeMapViewController.activeNode;
 			ConnectionController.mainConnection.call(
 			  'graphmindTaxonomyManager.getAll',
-			  function(_event:ResultEvent):void {
+			  function(_event:Object):void {
           onSuccess_TaxonomyRequestReady(_event, node);
         },
         transactionError
@@ -72,8 +70,8 @@ package plugins {
 		}
 		
 		
-		private static function onSuccess_TaxonomyRequestReady(event:ResultEvent, baseNode:NodeViewController):void {
-			for each (var vocabulary:Object in event.result) {
+		private static function onSuccess_TaxonomyRequestReady(event:Object, baseNode:NodeViewController):void {
+			for each (var vocabulary:Object in event) {
 				vocabulary.plugin = 'TaxonomyManager';
 				var vocabularyNode:NodeViewController = new NodeViewController(new NodeDataObject(vocabulary, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE, ConnectionController.mainConnection));
         vocabularyNode.setTitle(vocabulary.name);
@@ -145,7 +143,7 @@ package plugins {
 			
 			ConnectionController.mainConnection.call(
 			  'graphmindTaxonomyManager.moveTerm',
-			  function(_event:ResultEvent):void{
+			  function(_event:Object):void{
           OSD.show('Term\'s new position is saved.');
         },
 			  transactionError,
@@ -225,7 +223,7 @@ package plugins {
 		/**
 		 * Callback for delete node service call.
 		 */
-		private static function onSuccess_TermDeleted(event:ResultEvent):void {
+		private static function onSuccess_TermDeleted(event:Object):void {
 			// Term is deleted with all subterms
 			OSD.show('Term is removed.');
 		}
@@ -269,7 +267,7 @@ package plugins {
 			
 			ConnectionController.mainConnection.call(
 			  'graphmindTaxonomyManager.addSubtree',
-        function (_event:ResultEvent):void {
+        function (_event:Object):void {
           onSuccess_SubtreeAdded(_event, subtree_node_reference, node);
         },
         transactionError,
@@ -279,8 +277,8 @@ package plugins {
 			);
 		}
 		
-		private static function onSuccess_SubtreeAdded(event:ResultEvent, nodeReference:Array, baseNode:NodeViewController):void {
-			_convertSubtreeToTaxonomy(event.result, nodeReference);
+		private static function onSuccess_SubtreeAdded(event:Object, nodeReference:Array, baseNode:NodeViewController):void {
+			_convertSubtreeToTaxonomy(event, nodeReference);
 			hook_node_moved({node: baseNode});
 			OSD.show('Subtree is added.');
 		}
@@ -332,12 +330,12 @@ package plugins {
 			);
 		}
 		
-		private static function onSuccess_TermRenamed(event:ResultEvent):void {
+		private static function onSuccess_TermRenamed(event:Object):void {
 			// Term is renamed.
 			OSD.show('Term name is set.');
 		}
 		
-		private static function transactionError(event:FaultEvent):void {
+		private static function transactionError(event:Object):void {
 			OSD.show(
 				"Error occured during the transaction.\n" + 
 				"It's very suggested to reload the whole taxonomy tree structure.",
