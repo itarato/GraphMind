@@ -15,12 +15,22 @@ package plugins {
 
 	public class TaxonomyManager {
 		
+		/**
+		 * Node type for vocabularies.
+		 */
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE:String = 'vocabulary';
-		// @TODO add color
+		
+		/**
+		 * Colors for node types.
+		 */
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xEF95E7;
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
+		/**
+		 * Flag that prevents node deletion on vocabulary refresh.
+		 */
 		public static var preventDeletionFlag:Boolean = false;
+		
 		
 		public static function hook_pre_init(data:Object):void {
 			EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
