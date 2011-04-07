@@ -16,9 +16,9 @@ package plugins {
     
     
     /**
-    * Implemrentation of hook_pre_init().
+    * Implemrentation of init().
     */
-    public static function hook_pre_init(data:Object):void {
+    public static function init():void {
       Log.info('Relationship plugin is live.');
       
       EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);

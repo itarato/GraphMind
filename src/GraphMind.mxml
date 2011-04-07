@@ -16,6 +16,8 @@
 		
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.event.EventCenter;
+		  import com.graphmind.event.EventCenterEvent;
 		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeWorkflow;
 		  import com.graphmind.FuturesWheelWorkflow;
@@ -67,8 +69,6 @@
 				
         // Plugins should be the first
         PluginManager.init();
-				// @HOOK
-				PluginManager.callHook(PluginManager.HOOK_PRE_INIT);
         
 				this.applicationController = new ApplicationController();
 				

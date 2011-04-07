@@ -38,6 +38,9 @@ package com.graphmind {
 			
 			for (var idx:* in _plugins) {
 			  var vClass:Class = getDefinitionByName('plugins.' + _plugins[idx].toString()) as Class;
+			  try {
+			    (vClass as Object)['init']();
+			  } catch (error:Error) {}
 			}
 		}
 		

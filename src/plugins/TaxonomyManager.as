@@ -32,7 +32,10 @@ package plugins {
 		public static var preventDeletionFlag:Boolean = false;
 		
 		
-		public static function hook_pre_init(data:Object):void {
+		/**
+		 * Implementation of init().
+		 */
+		public static function init():void {
 			EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
 			EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
 			EventCenter.subscribe(EventCenterEvent.NODE_DID_MOVED, onNodeDidMoved);
