@@ -25,6 +25,7 @@ package com.graphmind.event {
     public static var MAP_UPDATED:String = 'mapUpdated';
     public static var MAP_SAVED:String   = 'mapSaved';
     public static var MAP_SCALE_CHANGED:String = 'mapScaleChanged';
+    public static var MAP_TREE_IS_COMPLETE:String = 'mapTreeIsComplete';
 
     public static var REQUEST_FOR_FREEMIND_XML:String = 'appFormRequestForFreemindXml';
     public static var REQUEST_TO_SAVE:String = 'requestToSave';

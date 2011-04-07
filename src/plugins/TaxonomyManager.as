@@ -5,7 +5,8 @@ package plugins {
 	import com.graphmind.TreeMapViewController;
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.event.MapEvent;
+	import com.graphmind.event.EventCenter;
+	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	
@@ -19,14 +20,19 @@ package plugins {
 		public static const TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR:uint = 0xEF95E7;
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
+		public static var preventDeletionFlag:Boolean = false;
 		
 		public static function hook_pre_init(data:Object):void {
-			GraphMind.i.addEventListener(MapEvent.MINDMAP_CREATION_COMPLETE, onMindmapCreationComplete);
+			EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
+			EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
+			EventCenter.subscribe(EventCenterEvent.NODE_DID_MOVED, onNodeDidMoved);
 		}
 		
 		
-		private static function onMindmapCreationComplete(event:MapEvent):void {
+		private static function onMapTreeIsComplete(event:EventCenterEvent):void {
 			// Refreshing taxonomy
+			preventDeletionFlag = true;
+			
 			var cursor:int = 0;
 			var parent:NodeViewController = null;
 			while (NodeViewController.nodes.length > cursor) {
@@ -39,6 +45,8 @@ package plugins {
 					cursor++;
 				}
 			}
+			
+			preventDeletionFlag = false;
 			
 			if (parent !== null) {
 				parent.select();
@@ -75,7 +83,7 @@ package plugins {
 				vocabulary.plugin = 'TaxonomyManager';
 				var vocabularyNode:NodeViewController = new NodeViewController(new NodeDataObject(vocabulary, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE, ConnectionController.mainConnection));
         vocabularyNode.setTitle(vocabulary.name);
-        vocabularyNode.nodeData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
+        vocabularyNode.setColor(TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR);
         baseNode.addChildNode(vocabularyNode);
 				
 				var term_hierarchy:Object = {};
@@ -85,7 +93,7 @@ package plugins {
 					term.plugin = 'TaxonomyManager';
 					var termNodeItem:NodeViewController = new NodeViewController(new NodeDataObject(term, NodeType.TERM, ConnectionController.mainConnection));
 					termNodeItem.setTitle(term.name);
-					termNodeItem.nodeData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
+					termNodeItem.setColor(TAXONOMY_MANAGER_NODE_TERM_COLOR);
 					
 					var parentID:String = term.parents[0] || 'none';
 					if (!term_hierarchy.hasOwnProperty(parentID)) {
@@ -109,16 +117,12 @@ package plugins {
 		 * Implementation of hook_node_moved.
 		 */
 		// @FIXME - on move the old footprint stays.
-		public static function hook_node_moved(data:Object):void {
+		public static function onNodeDidMoved(event:EventCenterEvent):void {
 			// @TODO revert plan if action cannot be done
-			var node:NodeViewController = data.node as NodeViewController;
+			var node:NodeViewController = event.data as NodeViewController;
 			
 			// Node is not a TERM.
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) {
-				if (!_isTaxonomyPluginNode(node)) {
-					// If it's neither term nor vocabulary
-					hook_node_created({node: node});
-				}
 				return;
 			}
 			
@@ -198,15 +202,14 @@ package plugins {
 			}
 		}
 		
+		
 		/**
 		 * Implementation of hook_node_delete().
 		 * 
 		 * @param Object data
 		 */
 		public static function hook_node_delete(data:Object):void {
-			if (!data.directKill) {
-				return;
-			}
+		  if (preventDeletionFlag) return;
 			
 			var node:NodeViewController = data.node as NodeViewController;
 			
@@ -220,6 +223,7 @@ package plugins {
       );
 		}
 		
+		
 		/**
 		 * Callback for delete node service call.
 		 */
@@ -228,13 +232,14 @@ package plugins {
 			OSD.show('Term is removed.');
 		}
 		
+		
 		/**
 		 * De-pluginize a subtree.
 		 */
 		private static function _removePluginInfoFromNode(node:NodeViewController):void {
 			node.nodeData.drupalData.plugin = undefined;
 			node.nodeData.type = NodeType.NORMAL;
-			node.nodeData.color = undefined;
+			node.setColor(NodeType.getNodeTypeColor(NodeType.NORMAL));
 			node.view.refreshGraphics();
 			
 			for each (var child:NodeViewController in node.getChildNodeAll()) {
@@ -242,22 +247,24 @@ package plugins {
 			}
 		}
 		
+		
 		/**
 		 * Implementation of hook_node_created().
 		 * 
 		 * @param Object data
 		 */
-		public static function hook_node_created(data:Object):void {
-			var node:NodeViewController = data.node as NodeViewController;
+		public static function onNodeDidAddedToParent(event:EventCenterEvent):void {
+			var node:NodeViewController = event.data as NodeViewController;
 			if (_isTaxonomyPluginNode(node)) {
 				// Recolor taxonomy
 				if (_isTaxonomyPluginNode(node, TAXONOMY_MANAGER_NODE_VOCABULARY_TYPE)) {
-					node.nodeData.color = TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR;
+					node.setColor(TAXONOMY_MANAGER_NODE_VOCABULARY_COLOR);
 				} else {
-					node.nodeData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
+					node.setColor(TAXONOMY_MANAGER_NODE_TERM_COLOR);
 				}
 				return;
 			}
+			
 			var parent:NodeViewController = node.getParentNode() as NodeViewController;
 			if (!_isTaxonomyPluginNode(parent)) return;
 			
@@ -279,7 +286,7 @@ package plugins {
 		
 		private static function onSuccess_SubtreeAdded(event:Object, nodeReference:Array, baseNode:NodeViewController):void {
 			_convertSubtreeToTaxonomy(event, nodeReference);
-			hook_node_moved({node: baseNode});
+			onNodeDidMoved(new EventCenterEvent(EventCenterEvent.NODE_DID_MOVED, baseNode));
 			OSD.show('Subtree is added.');
 		}
 		
@@ -304,8 +311,8 @@ package plugins {
 				node.addData('vid', subtreeInfo.vid);
 				node.addData('plugin', 'TaxonomyManager');
 				node.nodeData.type = NodeType.TERM;
-				node.nodeData.color = TAXONOMY_MANAGER_NODE_TERM_COLOR;
-				node.view.refreshGraphics();
+				node.setColor(TAXONOMY_MANAGER_NODE_TERM_COLOR);
+				node.refreshWithNewData();
 				
 				if (subtreeInfo.hasOwnProperty('terms')) {
 					for each (var child:Object in subtreeInfo.terms) {

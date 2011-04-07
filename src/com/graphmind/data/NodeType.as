@@ -61,7 +61,28 @@ package com.graphmind.data {
         case NODE_REVISIONS_VIEWS: return NODE;
         default:            return null;
       }      
-    };
+    }
+    
+    
+    /**
+    * Get the color a special type of node.
+    */
+    public static function getNodeTypeColor(type:String):uint {
+      switch (type) {
+        case NodeType.NODE:
+          return 0xC2D7EF;
+        case NodeType.COMMENT:
+          return 0xC2EFD9;
+        case NodeType.USER:
+          return 0xEFD2C2;
+        case NodeType.FILE:
+          return 0xE9C2EF;
+        case NodeType.TERM:
+          return 0xD9EFC2;
+        default:
+          return 0xDFD9D1;
+      }
+    }
 
   }
   

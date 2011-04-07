@@ -5,7 +5,7 @@
 	applicationComplete="{onApplicationComplete();}"
 	backgroundColor="#FFFFFF"
 	color="#333333" 
-	xmlns:components="components.*">
+	xmlns:components="components.*" xmlns:debugger="com.demonsters.debugger.*">
 	
 	<!-- Main style for the stage -->
 	<mx:Style source="style/stage.css" />
@@ -27,7 +27,6 @@
 			import com.graphmind.display.TreeDrawer;
 			import com.graphmind.util.OSD;
 			import com.graphmind.PluginManager;
-			import nl.demonsters.debugger.MonsterDebugger;
 			
 			import mx.managers.SystemManager;
 			import mx.states.State;
@@ -61,8 +60,6 @@
 			 * Triggered event when the application is ready.
 			 */
 			private function onApplicationComplete():void {
-//				var md:MonsterDebugger = new MonsterDebugger(this);
-				
 				Log.info('Grapmind started.');
 				
 				// Init managers
@@ -76,6 +73,8 @@
 				this.applicationController = new ApplicationController();
 				
 				OSD.show('Graphmind started.');
+				
+//				monsterDebugger.trace(this, 'Hello World', 'user1', 'label1');
 			}
 			
 		]]>
@@ -137,5 +136,7 @@
 	</mx:HDividedBox>
 	
 	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>
+	
+	<!--<debugger:MonsterDebuggerFlex id="monsterDebugger" />-->
 		
 </mx:Application>

@@ -13,10 +13,6 @@ package com.graphmind {
 	import plugins.*;
 	
 	
-	/**
-	 * Emitted events.
-	 */
-	[Event(name="applicationDataComplete", type="com.graphmind.event.ApplicationEvent")]
 	public class ApplicationController {
 	  
 	  /**
@@ -149,6 +145,7 @@ package com.graphmind {
       TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
       
       // Call map to draw its contents.
+      EventCenter.notify(EventCenterEvent.MAP_TREE_IS_COMPLETE);
       EventCenter.notify(EventCenterEvent.MAP_UPDATED);
     }
 

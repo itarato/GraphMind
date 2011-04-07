@@ -329,25 +329,25 @@ package com.graphmind {
 		/**
 		 * Remove each child of the node.
 		 */
-		protected function _removeNodeChilds(killedDirectly:Boolean = false):void {
+		protected function _removeNodeChilds():void {
 			while (_children.length > 0) {
-				(_children.getItemAt(0) as NodeViewController).kill(killedDirectly);
+				(_children.getItemAt(0) as NodeViewController).kill();
 			}
 		}
 		
 		/**
 		 * Kill a node and each childs.
 		 */
-		public function kill(killedDirectly:Boolean = true):void {
+		public function kill():void {
 		  // Root can't be deleted.
 			if (!parent) return;
 			
 			// @HOOK
 			EventCenter.notify(EventCenterEvent.NODE_IS_KILLED, this);
-			PluginManager.callHook(HOOK_NODE_DELETE, {node: this, directKill: killedDirectly});
+			PluginManager.callHook(HOOK_NODE_DELETE, {node: this});
 			
 			// Remove all children the same way.
-			_removeNodeChilds(false);
+			_removeNodeChilds();
 			
 			if (parent) {
 				// Remove parent's child (this child).
@@ -398,31 +398,32 @@ package com.graphmind {
 		 * Move a node.
 		 * :: target -> this
 		 */
-		public function move(target:NodeViewController, callEvent:Boolean = true):Boolean {
-			// No parent can detach child.
-			if (!this || !this.parent || !target) return false;
-			// Target is an ascendant of the source.
-			if (this.isChild(target)) return false;
-			// Source is equal to target
-			if (this == target) return false;
-			
-			EventCenter.notify(EventCenterEvent.NODE_WILL_BE_MOVED, this);
-			
-			// Remove source from parents childs
-			this.removeFromParentsChilds();
-			// Add source to target
-			target.addChildNode(this);
-			// Refresh display
-			
+		public function move(target:NodeViewController):void {
+		  _moveToParent(target);
+		  
       EventCenter.notify(EventCenterEvent.NODE_DID_MOVED, this);
-			if (callEvent) {
-				// Call hook
-				PluginManager.callHook(HOOK_NODE_MOVED, {node: this});
-			}
-			
-			this.update(UP_UI);
+		}
+		
+		
+		private function _moveToParent(target:NodeViewController):Boolean{
+      // No parent can detach child.
+      if (!this || !this.parent || !target) return false;
+      // Target is an ascendant of the source.
+      if (this.isChild(target)) return false;
+      // Source is equal to target
+      if (this == target) return false;
+      
+      EventCenter.notify(EventCenterEvent.NODE_WILL_BE_MOVED, this);
+      
+      // Remove source from parents childs
+      this.removeFromParentsChilds();
+      // Add source to target
+      target.addChildNode(this);
+      // Refresh display
+      
+      this.update(UP_UI);
 
-			return true;
+      return true;
 		}
 		
 		
@@ -430,10 +431,9 @@ package com.graphmind {
 		 * Move a node to a next sibling.
 		 */
 		public function moveToPrevSibling(target:NodeViewController):void {
-		  trace('This: ' + this + ' target: ' + target);
 		  if (this == target) return;
 		  
-			if (move(target.parent, false)) {
+			if (_moveToParent(target.parent)) {
 				var siblingIDX:int = target.parent._children.getItemIndex(target);
 				if (siblingIDX == -1) {
 					return;
@@ -445,7 +445,7 @@ package com.graphmind {
 				
 				target.parent._children.setItemAt(this, siblingIDX);
 				
-				// Refresh after reordering
+        EventCenter.notify(EventCenterEvent.NODE_DID_MOVED, this);
 				EventCenter.notify(EventCenterEvent.MAP_UPDATED);
 			}
 		}
@@ -457,7 +457,7 @@ package com.graphmind {
     public function moveToNextSibling(target:NodeViewController):void {
       if (this == target) return;
       
-      if (move(target.parent, false)) {
+      if (_moveToParent(target.parent)) {
         var siblingIDX:int = target.parent._children.getItemIndex(target) + 1;
         if (siblingIDX == -1) {
           return;
@@ -469,7 +469,7 @@ package com.graphmind {
         
         target.parent._children.setItemAt(this, siblingIDX);
         
-        // Refresh after reordering
+        EventCenter.notify(EventCenterEvent.NODE_DID_MOVED, this);
         EventCenter.notify(EventCenterEvent.MAP_UPDATED);
       }
     }
@@ -689,7 +689,20 @@ package com.graphmind {
     public function refreshWithNewData():void {
       nodeData.recalculateData();
       setTitle(nodeData.title);
+      setColor(nodeData.color);
       update(UP_UI);
+    }
+    
+    
+    /**
+    * Set color.
+    */
+    public function setColor(color:uint):void {
+      if (!color) return;
+       
+      nodeData.color = color;
+      view.backgroundColor = color;
+      view.isGraphicsUpdated = true;
     }
 
     
@@ -863,7 +876,7 @@ package com.graphmind {
   
     
     public function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
-      _removeNodeChilds(true);
+      _removeNodeChilds();
     }
   
     

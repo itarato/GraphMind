@@ -208,28 +208,15 @@ package com.graphmind.data {
     }
     
     
-    protected function getTypeColor():uint {
+    protected function getColor():uint {
       if (color) {
         return color;
       }
       
-      switch (type) {
-        case NodeType.NODE:
-          return 0xC2D7EF;
-        case NodeType.COMMENT:
-          return 0xC2EFD9;
-        case NodeType.USER:
-          return 0xEFD2C2;
-        case NodeType.FILE:
-          return 0xE9C2EF;
-        case NodeType.TERM:
-          return 0xD9EFC2;
-        default:
-          return 0xDFD9D1;
-      }
+      return NodeType.getNodeTypeColor(type);
     }
-
-
+    
+    
     /**
      * Recalculate title;
      */
@@ -270,7 +257,7 @@ package com.graphmind.data {
     
     
     private function _recalculateColor():void {
-      color = getTypeColor();
+      color = getColor();
     }
     
     
