@@ -1,7 +1,6 @@
 package com.graphmind.view {
   
 	import com.graphmind.event.NodeEvent;
-	import com.graphmind.util.Log;
 	
 	import components.ItemBaseComponent;
 	
@@ -19,12 +18,10 @@ package com.graphmind.view {
 		public static const ICON_WIDTH:int = 18;
 		
 		[Bindable]
-		public static var TITLE_DEFAULT_WIDTH:int = 120;
+		public static var TITLE_DEFAULT_WIDTH:int = 122;
 		public static var TITLE_MAX_WIDTH:int = 220;
 		[Bindable]
-		public static var ICON_ADD_DEFAULT_X:int = 140;
-		[Bindable]
-		public static var ICON_ANCHOR_DEFAULT_X:int = 122;
+		public static var ACTION_ICONS_DEFAULT_X:int = 120;
 		[Bindable]
 		public static var ICON_BULLET_DEFAULT_X:int = WIDTH_DEFAULT - 4;
 		[Bindable]
@@ -54,6 +51,8 @@ package com.graphmind.view {
 		 * Background color.
 		 */
 		public var backgroundColor:uint = 0xDFD9D1;
+		
+		public var actionIcons:Array = [];
 		
 		
 		/**
@@ -87,6 +86,7 @@ package com.graphmind.view {
  			}
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
+ 			var actionIconOffset:uint = actionIcons.length * 18;
 
 			if (backgroundView.width != WIDTH_DEFAULT + leftOffset) {
 				backgroundView.width = WIDTH_DEFAULT + leftOffset;
@@ -97,8 +97,10 @@ package com.graphmind.view {
 			this.nodeComponentView.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
 			this.nodeComponentView.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
 			this.nodeComponentView.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
-			this.nodeComponentView.icon_add.x = ICON_ADD_DEFAULT_X + titleExtraWidth;
-			this.nodeComponentView.icon_anchor.x = ICON_ANCHOR_DEFAULT_X  + titleExtraWidth;
+			
+			for (var i:* in actionIcons) {
+			  (actionIcons[i] as Image).x = ACTION_ICONS_DEFAULT_X + i * 18;
+			}
 			
 			width = WIDTH_DEFAULT + leftOffset;
 			
@@ -129,11 +131,6 @@ package com.graphmind.view {
 		}
 		
 		
-		public function getUIComponent():UIComponent {
-		  return this;
-		}
-		
-		
 		/**
 		 * Add icon.
 		 */
@@ -156,6 +153,14 @@ package com.graphmind.view {
 		      break;
 		    }
 		  }
+		}
+		
+		
+		public function addActionIcon(actionIcon:NodeActionIcon):void {
+		  actionIcons.push(actionIcon);
+		  actionIcon.y = 2;
+		  nodeComponentView.addChild(actionIcon);
+		  refreshGraphics();
 		}
 
 	}

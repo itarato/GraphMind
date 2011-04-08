@@ -8,13 +8,8 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import com.graphmind.view.NodeView;
-			[Embed(source='assets/images/add.png')]
-			[Bindable]
-			public var image_add:Class;
-			[Embed(source='assets/images/anchor.png')]
-			[Bindable]
-			public var image_anchor:Class;
+      import com.graphmind.view.NodeView;
+      
 			[Embed(source='assets/images/node_uncollapse.gif')]
 			[Bindable]
 			public var image_node_uncollapse:Class;
@@ -53,17 +48,6 @@
 	
 	<mx:Text x="2" y="1" text="Label" width="{NodeView.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"
 	  selectable="false" condenseWhite="false"/>
-	
-	<mx:Image x="{NodeView.ICON_ADD_DEFAULT_X}" y="2" 
-		source="{image_add}" 
-		width="16" height="16" 
-		id="icon_add"
-		visible="false"/>
-		
-	<mx:Image x="{NodeView.ICON_ANCHOR_DEFAULT_X}" y="2" source="{image_anchor}" 
-		width="16" height="16" 
-		id="icon_anchor"
-		visible="false"/>
 		
 	<mx:Image x="{NodeView.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 

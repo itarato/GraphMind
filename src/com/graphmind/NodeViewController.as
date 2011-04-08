@@ -12,6 +12,7 @@ package com.graphmind {
 	import com.graphmind.util.OSD;
 	import com.graphmind.util.ObjectUtil;
 	import com.graphmind.util.StringUtility;
+	import com.graphmind.view.NodeActionIcon;
 	import com.graphmind.view.NodeView;
 	
 	import flash.events.ContextMenuEvent;
@@ -30,6 +31,7 @@ package com.graphmind {
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
+	import mx.core.BitmapAsset;
 	import mx.events.FlexEvent;
 
   [Event(name="updateData",           type="com.graphmind.event.NodeEvent")]
@@ -134,6 +136,16 @@ package com.graphmind {
     public var canHasNormalChild:Boolean = true;
     public static var canHasNormalChild:Boolean = true;
     
+    [Embed(source='assets/images/add.png')]
+    public var image_add:Class;
+    
+    protected var addNodeIcon:NodeActionIcon;
+    
+    [Embed(source='assets/images/anchor.png')]
+    public var image_anchor:Class;
+    
+    protected var drupalLinkIcon:NodeActionIcon;
+    
     /**
      * Constructor.
      */ 
@@ -154,13 +166,21 @@ package com.graphmind {
 			
 			// Setting view.
 		  view = new NodeView();
+		  
+		  drupalLinkIcon = new NodeActionIcon((new image_anchor()) as BitmapAsset);
+		  view.addActionIcon(drupalLinkIcon);
+		  
+		  if (canHasNormalChild) {
+		    addNodeIcon = new NodeActionIcon((new image_add()) as BitmapAsset);
+		    view.addActionIcon(addNodeIcon);
+		  }
 			
       // Event listeners
       view.nodeComponentView.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
       view.nodeComponentView.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
       view.nodeComponentView.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
       if (canHasNormalChild) {
-        view.nodeComponentView.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
+        addNodeIcon.addEventListener(MouseEvent.CLICK, onClick_AddSimpleNodeButton);
       }
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
@@ -168,7 +188,7 @@ package com.graphmind {
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_OVER,                 onMouseOver);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_OUT,                  onMouseOut);
       view.nodeComponentView.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
-      view.nodeComponentView.icon_anchor.addEventListener(MouseEvent.CLICK,          onClick_NodeLinkButton);
+      drupalLinkIcon.addEventListener(MouseEvent.CLICK, onClick_NodeLinkButton);
       view.nodeComponentView.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
   
       view.nodeComponentView.contextMenu = getContextMenu();
@@ -510,7 +530,7 @@ package com.graphmind {
  		 */
 		public function setLink(link:String):void {
 			nodeData.link = link;
-			view.nodeComponentView.icon_anchor.visible = (link.length > 0);
+			drupalLinkIcon.visible = (link.length > 0);
 			update(UP_UI);
 		}
 		
@@ -729,16 +749,18 @@ package com.graphmind {
     public function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(select, 400);
       if (canHasNormalChild) {
-        view.nodeComponentView.icon_add.visible = ApplicationController.i.isEditable();
+        addNodeIcon.visible = ApplicationController.i.isEditable();
       }
-      view.nodeComponentView.icon_anchor.visible = nodeData.link.length > 0;
+      drupalLinkIcon.visible = nodeData.link.length > 0;
     }
     
     
     public function onMouseOut(event:MouseEvent):void {
       clearTimeout(_mouseSelectionTimeout);
-      view.nodeComponentView.icon_add.visible = false;
-      view.nodeComponentView.icon_anchor.visible = false;
+      if (canHasNormalChild) {
+        addNodeIcon.visible = false;
+      }
+      drupalLinkIcon.visible = false;
       
       if (NodeViewController.isPrepairedNodeDragAndDrop) {
         EventCenter.notify(EventCenterEvent.NODE_START_DRAG, this);
