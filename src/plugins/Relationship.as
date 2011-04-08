@@ -5,6 +5,9 @@ package plugins {
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.graphmind.util.Log;
+  import com.graphmind.view.NodeActionIcon;
+  
+  import mx.core.BitmapAsset;
   
   
   public class Relationship {
@@ -13,6 +16,11 @@ package plugins {
     * Default relationship type.
     */
     private static var DEFAULT_RELATIONSHIP:String = 'default';
+    
+    [Embed(source="assets/images/chart_organisation.png")]
+    private static var relationshipImage:Class; 
+    
+    private static var relationshipActionIcon:NodeActionIcon;
     
     
     /**
@@ -26,6 +34,7 @@ package plugins {
       EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
       EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
+      EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
     }
     
     
@@ -122,6 +131,11 @@ package plugins {
     }
     
     
+    private static function onNodeCreated(event:EventCenterEvent):void {
+      var node:NodeViewController = event.data as NodeViewController;
+      relationshipActionIcon = new NodeActionIcon((new relationshipImage()) as BitmapAsset);
+      node.view.addActionIcon(relationshipActionIcon);
+    }
   }
 
 }
