@@ -10,6 +10,7 @@ package com.graphmind {
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.event.NodeEvent;
 	import com.graphmind.util.OSD;
+	import com.graphmind.util.ObjectUtil;
 	import com.graphmind.util.StringUtility;
 	import com.graphmind.view.NodeView;
 	
@@ -125,13 +126,24 @@ package com.graphmind {
     * Selection flag - true if the node is selected.
     */
     public var isSelected:Boolean = false;
+
+    /**
+    * Feature - if the node can has normal child nodes.
+    */
+    public static var CAN_HAS_NORMAL_CHILD:String = 'canHasNormalChild';    
+    public var canHasNormalChild:Boolean = true;
+    public static var canHasNormalChild:Boolean = true;
     
     /**
      * Constructor.
      */ 
-		public function NodeViewController(_nodeData:NodeDataObject = null) {
+		public function NodeViewController(_nodeData:NodeDataObject = null, features:Object = null) {
 			super();
 
+      if (ObjectUtil.isObjectAttributeFalse(features, CAN_HAS_NORMAL_CHILD) || !NodeViewController.canHasNormalChild) {
+        canHasNormalChild = false;        
+      }
+  
       // Setting node data.			
 			if (_nodeData == null) {
 			  nodeData = new NodeDataObject();
@@ -147,7 +159,9 @@ package com.graphmind {
       view.nodeComponentView.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
       view.nodeComponentView.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
       view.nodeComponentView.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
-      view.nodeComponentView.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
+      if (canHasNormalChild) {
+        view.nodeComponentView.icon_add.addEventListener(MouseEvent.CLICK,             onClick_AddSimpleNodeButton);
+      }
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_MOVE,                 onMouseMove);
@@ -714,7 +728,9 @@ package com.graphmind {
 
     public function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(select, 400);
-      view.nodeComponentView.icon_add.visible = ApplicationController.i.isEditable();
+      if (canHasNormalChild) {
+        view.nodeComponentView.icon_add.visible = ApplicationController.i.isEditable();
+      }
       view.nodeComponentView.icon_anchor.visible = nodeData.link.length > 0;
     }
     

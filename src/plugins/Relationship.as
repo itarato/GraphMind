@@ -21,6 +21,8 @@ package plugins {
     public static function init():void {
       Log.info('Relationship plugin is live.');
       
+      NodeViewController.canHasNormalChild = false;
+      
       EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
       EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
@@ -69,6 +71,9 @@ package plugins {
     }
     
     
+    /**
+    * Event when a node will be moved to another parent.
+    */
     public static function onNodeWillBeMoved(event:EventCenterEvent):void {
       onNodeIsKilled(event);
     }
@@ -100,6 +105,20 @@ package plugins {
     */
     private static function onSuccess_nodeRelationshipDeleted(result:Object):void {
       Log.info('Relationship deleted.');
+    }
+    
+    
+    /**
+    * Altering a node's context menu.
+    */
+    public static function alter_context_menu(cm:Array):void {
+      // Deleteing the first item: creating normal node.
+      for (var idx:* in cm) {
+        if (cm[idx]['title'] == 'Add node') {
+          delete cm[idx];
+          return;
+        }
+      }
     }
     
     
