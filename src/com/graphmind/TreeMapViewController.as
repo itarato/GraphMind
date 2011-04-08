@@ -255,7 +255,7 @@ package com.graphmind {
     
     protected function onActiveNodeTitleIsChanged(event:EventCenterEvent):void {
       if (!activeNode) return;
-      activeNode.setTitle(event.data.toString(), true);
+      activeNode.setTitle(event.data.toString());
     }
 
     

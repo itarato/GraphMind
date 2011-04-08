@@ -44,13 +44,13 @@ package com.graphmind {
 			}
 		}
 		
-		public static function callHook(hook:String, data:Object = null):void {
-			Log.debug('Hook called: ' + hook);
+		public static function alter(hook:String, data:Object = null):void {
+			Log.debug('Alter hook called: ' + hook);
 			for each (var plugin:* in PluginManager._plugins) {
 				if (ApplicationDomain.currentDomain.hasDefinition('plugins.' + plugin)) {
 					var PluginClass:Class = getDefinitionByName('plugins.' + plugin) as Class;
 					try {
-						(PluginClass as Object)['hook_' + hook](data);
+						(PluginClass as Object)['alter_' + hook](data);
 					} catch (error:Error) {}
 				}
 			}

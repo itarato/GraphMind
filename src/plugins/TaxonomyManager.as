@@ -27,9 +27,9 @@ package plugins {
 		public static const TAXONOMY_MANAGER_NODE_TERM_COLOR:uint       = 0xDFC3DC;
 		
 		/**
-		 * Flag that prevents node deletion on vocabulary refresh.
+		 * Flag that prevents node deletion/rename on vocabulary refresh.
 		 */
-		public static var preventDeletionFlag:Boolean = false;
+		public static var lockUpdateFlag:Boolean = true;
 		
 		
 		/**
@@ -39,12 +39,17 @@ package plugins {
 			EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
 			EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
 			EventCenter.subscribe(EventCenterEvent.NODE_DID_MOVED, onNodeDidMoved);
+			EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
+			EventCenter.subscribe(EventCenterEvent.NODE_TITLE_CHANGED, onNodeTitleChanged);
 		}
 		
 		
+		/**
+		 * Handler when the initial map is on the ui and ready to examine.
+		 */
 		private static function onMapTreeIsComplete(event:EventCenterEvent):void {
 			// Refreshing taxonomy
-			preventDeletionFlag = true;
+			lockUpdateFlag = true;
 			
 			var cursor:int = 0;
 			var parent:NodeViewController = null;
@@ -59,8 +64,6 @@ package plugins {
 				}
 			}
 			
-			preventDeletionFlag = false;
-			
 			if (parent !== null) {
 				parent.select();
 				loadFullTaxonomyTree(null);
@@ -71,8 +74,8 @@ package plugins {
 		/**
 		 * Implementation of hook_node_context_menu_alter().
 		 */
-		public static function hook_node_context_menu(params:Object = null):void {
-			(params.data as Array).push({title: 'Load taxonomy', event: TaxonomyManager.loadFullTaxonomyTree, separator: true});
+		public static function alter_context_menu(cm:Array):void {
+			cm.push({title: 'Load taxonomy', event: TaxonomyManager.loadFullTaxonomyTree, separator: true});
 		}
 		
 		
@@ -80,6 +83,8 @@ package plugins {
 		 * Callback for loading and attaching taxonomy tree.
 		 */
 		public static function loadFullTaxonomyTree(event:ContextMenuEvent):void {
+		  lockUpdateFlag = true;
+		  
 			var node:NodeViewController = TreeMapViewController.activeNode;
 			ConnectionController.mainConnection.call(
 			  'graphmindTaxonomyManager.getAll',
@@ -91,6 +96,9 @@ package plugins {
 		}
 		
 		
+		/**
+		 * Success event callback for the taxonomy loading.
+		 */
 		private static function onSuccess_TaxonomyRequestReady(event:Object, baseNode:NodeViewController):void {
 			for each (var vocabulary:Object in event) {
 				vocabulary.plugin = 'TaxonomyManager';
@@ -123,15 +131,15 @@ package plugins {
 				}
 			}
 			OSD.show('Taxonomy tree is loaded.');
+			
+      lockUpdateFlag = false;
 		}
 		
 		
 		/**
 		 * Implementation of hook_node_moved.
 		 */
-		// @FIXME - on move the old footprint stays.
 		public static function onNodeDidMoved(event:EventCenterEvent):void {
-			// @TODO revert plan if action cannot be done
 			var node:NodeViewController = event.data as NodeViewController;
 			
 			// Node is not a TERM.
@@ -143,7 +151,7 @@ package plugins {
 			
 			// Deleting term
 			if (!_isTaxonomyPluginNode(parentNode)) {
-				hook_node_delete({node: node});
+				onNodeIsKilled(event);
 				_removePluginInfoFromNode(node);
 				return;
 			}
@@ -202,6 +210,7 @@ package plugins {
 			return nodes;
 		}
 		
+		
 		/**
 		 * Recount weight values of a term's siblings
 		 * 
@@ -221,10 +230,10 @@ package plugins {
 		 * 
 		 * @param Object data
 		 */
-		public static function hook_node_delete(data:Object):void {
-		  if (preventDeletionFlag) return;
+		public static function onNodeIsKilled(event:EventCenterEvent):void {
+		  if (lockUpdateFlag) return;
 			
-			var node:NodeViewController = data.node as NodeViewController;
+			var node:NodeViewController = event.data as NodeViewController;
 			
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) return;
 
@@ -297,12 +306,20 @@ package plugins {
 			);
 		}
 		
+		
+		/**
+		 * Success event when a subtree is added.
+		 */
 		private static function onSuccess_SubtreeAdded(event:Object, nodeReference:Array, baseNode:NodeViewController):void {
 			_convertSubtreeToTaxonomy(event, nodeReference);
 			onNodeDidMoved(new EventCenterEvent(EventCenterEvent.NODE_DID_MOVED, baseNode));
 			OSD.show('Subtree is added.');
 		}
 		
+		
+		/**
+		 * Gather info about a subtree.
+		 */
 		private static function _getSubtreeInfo(node:NodeViewController, node_reference:Array):Object {
 			var info:Object = new Object();
 			info.name  = node.nodeData.title;
@@ -317,6 +334,10 @@ package plugins {
 			return info;
 		}
 		
+		
+		/**
+		 * Change a subtree to term tree. (Colors, types.)
+		 */
 		private static function _convertSubtreeToTaxonomy(subtreeInfo:Object, nodeReference:Array):void {
 			if (subtreeInfo.hasOwnProperty('nrid')) {
 				var node:NodeViewController = nodeReference[subtreeInfo['nrid']] as NodeViewController; 
@@ -335,8 +356,14 @@ package plugins {
 			}
 		}
 		
-		public static function hook_node_title_changed(data:Object):void {
-			var node:NodeViewController = data.node as NodeViewController;
+		
+		/**
+		 * Event callback when a node's title is changed.
+		 */
+		public static function onNodeTitleChanged(event:EventCenterEvent):void {
+		  if (lockUpdateFlag) return;
+		  
+			var node:NodeViewController = event.data as NodeViewController;
 			
 			// Only for terms.
 			if (!_isTaxonomyPluginNode(node, NodeType.TERM)) return;
@@ -345,16 +372,24 @@ package plugins {
 				'graphmindTaxonomyManager.renameTerm',
 				onSuccess_TermRenamed,
 				transactionError,
-			  node.nodeData.drupalData.tid, 
+			  node.nodeData.drupalData.tid,
 			  node.nodeData.title
 			);
 		}
 		
+		
+		/**
+		 * Success event when a term is renamed.
+		 */
 		private static function onSuccess_TermRenamed(event:Object):void {
 			// Term is renamed.
 			OSD.show('Term name is set.');
 		}
 		
+		
+		/**
+		 * Error handler for network or request problems.
+		 */
 		private static function transactionError(event:Object):void {
 			OSD.show(
 				"Error occured during the transaction.\n" + 

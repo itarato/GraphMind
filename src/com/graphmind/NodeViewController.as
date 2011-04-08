@@ -9,7 +9,6 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.event.NodeEvent;
-	import com.graphmind.util.Log;
 	import com.graphmind.util.OSD;
 	import com.graphmind.util.StringUtility;
 	import com.graphmind.view.NodeView;
@@ -62,12 +61,6 @@ package com.graphmind {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
-		
-		public static const HOOK_NODE_CONTEXT_MENU:String  = 'node_context_menu';
-		public static const HOOK_NODE_MOVED:String         = 'node_moved';
-		public static const HOOK_NODE_DELETE:String		     = 'node_delete';
-		public static const HOOK_NODE_CREATED:String	     = 'node_created';
-		public static const HOOK_NODE_TITLE_CHANGED:String = 'node_title_changed';
 		
 		// Updated node ui
 		public static const UP_UI:uint         = 1;
@@ -170,9 +163,6 @@ package com.graphmind {
 			
 			nodes.addItem(this);
 			     
-      // HOOK
-      PluginManager.callHook(NodeViewController.HOOK_NODE_CREATED, {node: this});
-      
       EventCenter.notify(EventCenterEvent.NODE_CREATED, this);
 		}
 		
@@ -212,8 +202,7 @@ package com.graphmind {
 			}
 			
 			// Extend context menu items by Plugin provided menu items
-			PluginManager.callHook(HOOK_NODE_CONTEXT_MENU, {data: cms});
-			Log.debug('contextmenu: ' + cms.length);
+			PluginManager.alter('context_menu', cms);
 			
 			for each (var cmData:Object in cms) {
 				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
@@ -344,7 +333,6 @@ package com.graphmind {
 			
 			// @HOOK
 			EventCenter.notify(EventCenterEvent.NODE_IS_KILLED, this);
-			PluginManager.callHook(HOOK_NODE_DELETE, {node: this});
 			
 			// Remove all children the same way.
 			_removeNodeChilds();
@@ -642,12 +630,10 @@ package com.graphmind {
      * 
      * @param boolean userChange - indicates if the change was done by user interaction.
      */
-		public function setTitle(title:String, userChange:Boolean = false):void {
+		public function setTitle(title:String):void {
 			nodeData.title = view.nodeComponentView.title_label.htmlText = title;
 			
-			if (userChange) {
-			  PluginManager.callHook(HOOK_NODE_TITLE_CHANGED, {node: this});
-			}
+		  EventCenter.notify(EventCenterEvent.NODE_TITLE_CHANGED, this);
 			
 			update(UP_UI);
 		}
@@ -777,7 +763,7 @@ package com.graphmind {
     
     private function closeLabelEditMode():void {
       view.nodeComponentView.currentState = '';
-      setTitle(view.nodeComponentView.title_new.text, true);
+      setTitle(view.nodeComponentView.title_new.text);
       GraphMind.i.setFocus();
     }
     
