@@ -13,7 +13,7 @@ package com.graphmind.view {
 	public class NodeView extends UIComponent {
 		
 		public static const WIDTH_MC_DEFAULT:int = 168;
-		public static const WIDTH_DEFAULT:int = 162;
+		public static const WIDTH_DEFAULT:int = 126;
 		public static const HEIGHT:int = 20;
 		public static const ICON_WIDTH:int = 18;
 		
@@ -87,22 +87,21 @@ package com.graphmind.view {
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
  			var actionIconOffset:uint = actionIcons.length * 18;
+      width = WIDTH_DEFAULT + leftOffset + actionIconOffset;
 
-			if (backgroundView.width != WIDTH_DEFAULT + leftOffset) {
-				backgroundView.width = WIDTH_DEFAULT + leftOffset;
+			if (backgroundView.width != width) {
+				backgroundView.width = width;
 			}
 			backgroundView.setStyle('backgroundColor', backgroundColor);
 			
-			this.nodeComponentView.width = WIDTH_MC_DEFAULT + leftOffset;
-			this.nodeComponentView.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset;
-			this.nodeComponentView.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset;
+			this.nodeComponentView.width = WIDTH_MC_DEFAULT + leftOffset + actionIconOffset;
+			this.nodeComponentView.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset + actionIconOffset;
+			this.nodeComponentView.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset + actionIconOffset;
 			this.nodeComponentView.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
 			
 			for (var i:* in actionIcons) {
 			  (actionIcons[i] as Image).x = ACTION_ICONS_DEFAULT_X + i * 18;
 			}
-			
-			width = WIDTH_DEFAULT + leftOffset;
 			
 			isGraphicsUpdated = false;
 		}
