@@ -273,6 +273,35 @@ package plugins {
         }
       }
     }
+    
+    
+    /**
+    * Send a request to check if relationships are changed at the backend.
+    */
+    public static function checkForChanges():void {
+      var tree:Object = {};
+      tree[TreeMapViewController.rootNode.nodeData.drupalID] = collectSubtreeIDs(TreeMapViewController.rootNode, []);
+    }
+    
+    
+    /**
+    * Creates a structured ID array object from the tree as a parameter.
+    */
+    private static function collectSubtreeIDs(node:NodeViewController, cycleCheckArray:Array):Array {
+      var ids:Array = [];
+      var childs:ArrayCollection = node.getChildNodeAll();
+      for (var idx:* in childs) {
+        var child:NodeViewController = childs[idx] as NodeViewController;
+        if (child.nodeData.type == NodeType.NODE && child.nodeData.drupalID && cycleCheckArray.indexOf(child.nodeData.drupalID) == -1) {
+          var subtree:Object = {};
+          cycleCheckArray.push(child.nodeData.drupalID);
+          subtree[child.nodeData.drupalID] = collectSubtreeIDs(child, cycleCheckArray);
+          ids.push(subtree);
+        }
+      }
+      return ids;
+    }
+    
   }
 
 }
