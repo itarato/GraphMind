@@ -98,7 +98,7 @@ package plugins {
     /**
     * Event when a node will be moved to another parent.
     */
-    public static function onNodeWillBeMoved(event:EventCenterEvent):void {
+    private static function onNodeWillBeMoved(event:EventCenterEvent):void {
       onNodeIsKilled(event);
     }
 
