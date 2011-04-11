@@ -1,12 +1,18 @@
 package plugins {
+  
   import com.graphmind.ConnectionController;
   import com.graphmind.NodeViewController;
+  import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.NodeType;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.graphmind.util.Log;
   import com.graphmind.view.NodeActionIcon;
   
+  import flash.events.MouseEvent;
+  
+  import mx.collections.ArrayCollection;
+  import mx.core.Application;
   import mx.core.BitmapAsset;
   
   
@@ -22,12 +28,19 @@ package plugins {
     
     private static var relationshipActionIcon:NodeActionIcon;
     
+    private static var depth:uint = 3;
+    
     
     /**
     * Implemrentation of init().
     */
     public static function init():void {
       Log.info('Relationship plugin is live.');
+      
+      if (Application.application.parameters.hasOwnProperty('graphmindRelationshipDepth')) {
+        depth = Application.application.parameters.graphmindRelationshipDepth;
+        Log.info('Relationship depth: ' + depth);
+      }
       
       NodeViewController.canHasNormalChild = false;
       
@@ -131,11 +144,75 @@ package plugins {
     }
     
     
+    /**
+    * Event callback when a new node is created.
+    */
     private static function onNodeCreated(event:EventCenterEvent):void {
       var node:NodeViewController = event.data as NodeViewController;
       relationshipActionIcon = new NodeActionIcon((new relationshipImage()) as BitmapAsset);
       node.view.addActionIcon(relationshipActionIcon);
+      
+      relationshipActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
+        onMouseClick_relationshipActionIcon(event, node);
+      });
     }
+    
+    
+    /**
+    * Event callback when the relationship action icon is clicked.
+    */
+    private static function onMouseClick_relationshipActionIcon(event:MouseEvent, node:NodeViewController):void {
+      ConnectionController.mainConnection.call(
+        'graphmindRelationship.getSubtree',
+        function (result:Object):void {
+          onSuccess_loadRelationshipSubtree(node, result);
+        },
+        ConnectionController.defaultRequestErrorHandler,
+        node.nodeData.drupalID,
+        depth
+      );
+    }
+    
+    
+    /**
+    * Event callback when a node's relationships are arrived.
+    */
+    private static function onSuccess_loadRelationshipSubtree(node:NodeViewController, result:Object):void {
+      trace('success of rel subtree');
+      addSubtree(node, result as Array);
+    }
+    
+    
+    /**
+    * Adds a list of items to a node recursively.
+    */
+    private static function addSubtree(parent:NodeViewController, childs:Array):void {
+      for (var idx:* in childs) {
+        var child:NodeViewController = getExistingNodeOfParent(parent, childs[idx]['node']['nid']);
+        if (!child) {
+          child = new NodeViewController(new NodeDataObject(childs[idx]['node'], NodeType.NODE, ConnectionController.mainConnection));
+          parent.addChildNode(child);
+        }
+        addSubtree(child, childs[idx]['relationships']);
+      }
+    }
+    
+    
+    /**
+    * Get an already existing node of the same ID.
+    */
+    private static function getExistingNodeOfParent(parent:NodeViewController, nid:int):NodeViewController {
+      var childs:ArrayCollection = parent.getChildNodeAll();
+      for (var idx:* in childs) {
+        var child:NodeViewController = childs[idx];
+        if (child.nodeData.type == NodeType.NODE && child.nodeData.drupalID == nid) {
+          return child;
+        }
+      }
+      
+      return null;
+    }
+    
   }
 
 }
