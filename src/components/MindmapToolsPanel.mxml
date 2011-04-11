@@ -8,7 +8,8 @@
 	
 		<mx:Accordion width="100%" top="0" bottom="0" left="0" creationPolicy="all" 
 			styleName="toolPanelAccordion"
-			headerStyleName="toolPanelAccordionHeader">
+			headerStyleName="toolPanelAccordionHeader"
+			id="mindmapToolsAccordion">
 			<components:NodeInfo        id="node_info_panel"        />
 			<components:NodeAttributes  id="node_attributes_panel"  />
 			<components:NodeIcons       id="icon_outer_container"   />

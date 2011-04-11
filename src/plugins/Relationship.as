@@ -17,6 +17,8 @@ package plugins {
   import mx.core.Application;
   import mx.core.BitmapAsset;
   
+  import plugins.relationship.RelationshipSettingsPanel;
+  
   
   public class Relationship {
     
@@ -30,7 +32,10 @@ package plugins {
     
     private static var relationshipActionIcon:NodeActionIcon;
     
-    private static var depth:uint = 3;
+    [Bindable]
+    public static var depth:uint = 3;
+    
+    private static var settingsPanel:RelationshipSettingsPanel;
     
     
     /**
@@ -50,6 +55,9 @@ package plugins {
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
       EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
+      
+      settingsPanel = new RelationshipSettingsPanel;
+      GraphMind.i.mindmapToolsPanel.mindmapToolsAccordion.addChild(settingsPanel);
     }
     
     
@@ -234,7 +242,7 @@ package plugins {
     /**
     * Refresh a subtree.
     */ 
-    private static function refreshSubtree(node:NodeViewController):void {
+    public static function refreshSubtree(node:NodeViewController):void {
       ConnectionController.mainConnection.call(
         'graphmindRelationship.getSubtree',
         function (result:Object):void {
