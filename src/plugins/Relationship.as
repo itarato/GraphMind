@@ -2,6 +2,7 @@ package plugins {
   
   import com.graphmind.ConnectionController;
   import com.graphmind.NodeViewController;
+  import com.graphmind.TreeMapViewController;
   import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.NodeType;
   import com.graphmind.event.EventCenter;
@@ -9,6 +10,7 @@ package plugins {
   import com.graphmind.util.Log;
   import com.graphmind.view.NodeActionIcon;
   
+  import flash.events.ContextMenuEvent;
   import flash.events.MouseEvent;
   
   import mx.collections.ArrayCollection;
@@ -138,9 +140,11 @@ package plugins {
       for (var idx:* in cm) {
         if (cm[idx]['title'] == 'Add node') {
           delete cm[idx];
-          return;
+          break;
         }
       }
+      
+      cm.push({title: 'Refresh relationships', event: onMenuItemSelect_RefreshSubtree, separator: true});
     }
     
     
@@ -185,9 +189,12 @@ package plugins {
     
     /**
     * Adds a list of items to a node recursively.
+    * Returns all the node IDs that are connected.
     */
-    private static function addSubtree(parent:NodeViewController, childs:Array):void {
+    private static function addSubtree(parent:NodeViewController, childs:Array):Array {
+      var connectedIDs:Array = [];
       for (var idx:* in childs) {
+        connectedIDs.push(childs[idx]['node']['nid']);
         var child:NodeViewController = getExistingNodeOfParent(parent, childs[idx]['node']['nid']);
         if (!child) {
           child = new NodeViewController(new NodeDataObject(childs[idx]['node'], NodeType.NODE, ConnectionController.mainConnection));
@@ -195,6 +202,8 @@ package plugins {
         }
         addSubtree(child, childs[idx]['relationships']);
       }
+      
+      return connectedIDs;
     }
     
     
@@ -213,6 +222,49 @@ package plugins {
       return null;
     }
     
+    
+    /**
+    * Event callback - clicking on the refresh subtree context menu item.
+    */
+    private static function onMenuItemSelect_RefreshSubtree(event:ContextMenuEvent):void {
+      refreshSubtree(TreeMapViewController.activeNode);
+    }
+    
+    
+    /**
+    * Refresh a subtree.
+    */ 
+    private static function refreshSubtree(node:NodeViewController):void {
+      ConnectionController.mainConnection.call(
+        'graphmindRelationship.getSubtree',
+        function (result:Object):void {
+          onSuccess_refreshSubtreeRequest(node, result);
+        },
+        ConnectionController.defaultRequestErrorHandler,
+        node.nodeData.drupalID,
+        1
+      );
+    }
+    
+    
+    /**
+    * Event callback when a subtree refresh info is arrived.
+    */
+    private static function onSuccess_refreshSubtreeRequest(parent:NodeViewController, result:Object):void {
+      var connectedIDs:Array = addSubtree(parent, result as Array);
+      var childs:ArrayCollection = parent.getChildNodeAll();
+      for (var idx:* in childs) {
+        var child:NodeViewController = childs[idx] as NodeViewController;
+        if (child.nodeData.type != NodeType.NODE || connectedIDs.indexOf(child.nodeData.drupalID.toString()) == -1) {
+          // It's a non existing relationship.
+          child.kill();
+        } else {
+          if (child.hasChild()) {
+            refreshSubtree(child);
+          }
+        }
+      }
+    }
   }
 
 }
