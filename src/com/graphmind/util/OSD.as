@@ -22,15 +22,15 @@ package com.graphmind.util {
 		}
 		
 		
-		public static function show(text:String, level:String = 'info'):void {
-			var msg:UIComponent = getMessagePanel(text, level);
+		public static function show(text:String, level:String = 'info', sticky:Boolean = false):void {
+			var msg:UIComponent = getMessagePanel(text, level, sticky);
 			OSD.container.addChild(msg);
 		} 
 		
 		
-		private static function getMessagePanel(text:String, level:String):Canvas {
+		private static function getMessagePanel(text:String, level:String, sticky:Boolean = false):Canvas {
 			var osd_msg:OSDMessage;
-			if (level == OSD.ERROR) {
+			if (level == OSD.ERROR || sticky) {
 				osd_msg = new OSDStaticMessage(text, level);
 			} else {
 				osd_msg = new OSDMessage(text, level);

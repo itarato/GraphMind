@@ -43,6 +43,11 @@ package plugins {
     */
     private static var refreshFlag:Boolean = false;
     
+    /**
+    * True if update need is filed but no request sent so far.
+    */
+    private static var refreshRequestPending:Boolean = false;
+    
     
     /**
     * Implemrentation of init().
@@ -253,6 +258,7 @@ package plugins {
     * Refresh a subtree.
     */ 
     public static function refreshSubtree(node:NodeViewController):void {
+      refreshRequestPending = false;
       ConnectionController.mainConnection.call(
         'graphmindRelationship.getSubtree',
         function (result:Object):void {
@@ -293,6 +299,7 @@ package plugins {
     * Send a request to check if relationships are changed at the backend.
     */
     public static function checkForChanges():void {
+      if (refreshRequestPending) return;
       var tree:Object = {};
       tree[TreeMapViewController.rootNode.nodeData.drupalID] = collectSubtreeIDs(TreeMapViewController.rootNode, []);
       ConnectionController.mainConnection.call(
@@ -310,7 +317,8 @@ package plugins {
     private static function onSuccess_refreshInfoArrived(result:Object):void {
       if (!result) {
         // Structure is changed at the backend.
-        OSD.show('Structure is changed. Please refresh your map in the \'Relationships\' panel.', OSD.WARNING); 
+        OSD.show('Structure is changed. Please refresh your map in the \'Relationships\' panel.', OSD.WARNING, true);
+        refreshRequestPending = true; 
       }
     }
     
