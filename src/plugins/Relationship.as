@@ -8,6 +8,7 @@ package plugins {
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.graphmind.util.Log;
+  import com.graphmind.util.OSD;
   import com.graphmind.view.NodeActionIcon;
   
   import flash.events.ContextMenuEvent;
@@ -37,6 +38,11 @@ package plugins {
     
     private static var settingsPanel:RelationshipSettingsPanel;
     
+    /**
+    * True if refreshing happens.
+    */
+    private static var refreshFlag:Boolean = false;
+    
     
     /**
     * Implemrentation of init().
@@ -65,6 +71,8 @@ package plugins {
     * Event handler - node is added to a parent.
     */
     private static function onNodeDidAddedToParent(event:EventCenterEvent):void {
+      if (refreshFlag) return;
+      
       var child:NodeViewController = event.data as NodeViewController;
       
       Log.debug('Rel added: ' + child.parent.nodeData.drupalID + ' -> ' + child.nodeData.drupalID + ' ' + DEFAULT_RELATIONSHIP);
@@ -86,6 +94,8 @@ package plugins {
     * Event handler - when a node is getting killed.
     */
     private static function onNodeIsKilled(event:EventCenterEvent):void {
+      if (refreshFlag) return;
+      
       var child:NodeViewController = event.data as NodeViewController;
       
       Log.debug('Rel delete: ' + child.parent.nodeData.drupalID + ' -> ' + child.nodeData.drupalID + ' ' + DEFAULT_RELATIONSHIP);
@@ -259,6 +269,8 @@ package plugins {
     * Event callback when a subtree refresh info is arrived.
     */
     private static function onSuccess_refreshSubtreeRequest(parent:NodeViewController, result:Object):void {
+      refreshFlag = true;
+      
       var connectedIDs:Array = addSubtree(parent, result as Array);
       var childs:ArrayCollection = parent.getChildNodeAll();
       for (var idx:* in childs) {
@@ -272,6 +284,8 @@ package plugins {
           }
         }
       }
+      
+      refreshFlag = false;
     }
     
     
@@ -281,6 +295,23 @@ package plugins {
     public static function checkForChanges():void {
       var tree:Object = {};
       tree[TreeMapViewController.rootNode.nodeData.drupalID] = collectSubtreeIDs(TreeMapViewController.rootNode, []);
+      ConnectionController.mainConnection.call(
+        'graphmindRelationship.checkUpdate',
+        onSuccess_refreshInfoArrived,
+        ConnectionController.defaultRequestErrorHandler,
+        tree
+      );
+    }
+    
+    
+    /**
+    * Event callback - request for getting the update info arrived.
+    */
+    private static function onSuccess_refreshInfoArrived(result:Object):void {
+      if (!result) {
+        // Structure is changed at the backend.
+        OSD.show('Structure is changed. Please refresh your map in the \'Relationships\' panel.', OSD.WARNING); 
+      }
     }
     
     
@@ -292,10 +323,14 @@ package plugins {
       var childs:ArrayCollection = node.getChildNodeAll();
       for (var idx:* in childs) {
         var child:NodeViewController = childs[idx] as NodeViewController;
-        if (child.nodeData.type == NodeType.NODE && child.nodeData.drupalID && cycleCheckArray.indexOf(child.nodeData.drupalID) == -1) {
+        if (child.nodeData.type == NodeType.NODE && child.nodeData.drupalID) {
           var subtree:Object = {};
-          cycleCheckArray.push(child.nodeData.drupalID);
-          subtree[child.nodeData.drupalID] = collectSubtreeIDs(child, cycleCheckArray);
+          if (cycleCheckArray.indexOf(child.nodeData.drupalID) == -1) {
+            cycleCheckArray.push(child.nodeData.drupalID);
+            subtree[child.nodeData.drupalID] = collectSubtreeIDs(child, cycleCheckArray);
+          } else {
+            subtree[child.nodeData.drupalID] = [];
+          }
           ids.push(subtree);
         }
       }
