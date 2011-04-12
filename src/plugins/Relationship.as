@@ -13,6 +13,7 @@ package plugins {
   
   import flash.events.ContextMenuEvent;
   import flash.events.MouseEvent;
+  import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
   import mx.core.Application;
@@ -28,14 +29,26 @@ package plugins {
     */
     private static var DEFAULT_RELATIONSHIP:String = 'default';
     
+    /**
+    * Image asset for the relationship action icon.
+    */
     [Embed(source="assets/images/chart_organisation.png")]
     private static var relationshipImage:Class; 
     
+    /**
+    * Relatioship action icon for the node ui.
+    */
     private static var relationshipActionIcon:NodeActionIcon;
     
+    /**
+    * Default maximum depth for loading relationships.
+    */
     [Bindable]
     public static var depth:uint = 3;
     
+    /**
+    * Settings panel component.
+    */
     private static var settingsPanel:RelationshipSettingsPanel;
     
     /**
@@ -47,6 +60,14 @@ package plugins {
     * True if update need is filed but no request sent so far.
     */
     private static var refreshRequestPending:Boolean = false;
+    
+    /**
+    * Frequency related vars for the update period.
+    */
+    [Bindable]
+    public static var frequencies:Array = ['5 seconds', '15 seconds', '1 minute', '5 minutes'];
+    private static var frequenciesSeconds:Array = [5, 15, 60, 300];
+    private static var frequency:uint = frequenciesSeconds[0];
     
     
     /**
@@ -69,6 +90,8 @@ package plugins {
       
       settingsPanel = new RelationshipSettingsPanel;
       GraphMind.i.mindmapToolsPanel.mindmapToolsAccordion.addChild(settingsPanel);
+      
+      checkForChangesWithLoop();
     }
     
     
@@ -299,12 +322,38 @@ package plugins {
     * Send a request to check if relationships are changed at the backend.
     */
     public static function checkForChanges():void {
+      checkForChangesWithCallback(onSuccess_refreshInfoArrived);
+    }
+    
+    
+    /**
+    * Update check request - called periodically.
+    */
+    private static function checkForChangesWithLoop():void {
+      trace('LOOP CHECK');
+      setTimeout(function():void{
+        if (refreshRequestPending) {
+          checkForChangesWithLoop();
+        } else {
+          checkForChangesWithCallback(function(result:Object):void{
+            onSuccess_refreshInfoArrived(result);
+            checkForChangesWithLoop();
+          });
+        }
+      }, frequency * 1000);
+    }
+    
+    
+    /**
+    * Same as checkForChanges - sends a request to know if backend is changed - it accepts a callback.
+    */
+    private static function checkForChangesWithCallback(callback:Function):void {
       if (refreshRequestPending) return;
       var tree:Object = {};
       tree[TreeMapViewController.rootNode.nodeData.drupalID] = collectSubtreeIDs(TreeMapViewController.rootNode, []);
       ConnectionController.mainConnection.call(
         'graphmindRelationship.checkUpdate',
-        onSuccess_refreshInfoArrived,
+        callback,
         ConnectionController.defaultRequestErrorHandler,
         tree
       );
@@ -343,6 +392,14 @@ package plugins {
         }
       }
       return ids;
+    }
+    
+    
+    /**
+    * Set the update check frequency.
+    */
+    public static function setUpdateCheckFrequency(idx:uint):void {
+      frequency = frequenciesSeconds[idx];
     }
     
   }
