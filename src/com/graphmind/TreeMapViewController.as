@@ -106,6 +106,8 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
       EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_ITEM, onLoadDrupalItem);
       EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_VIEWS, onLoadDrupalViews);
+      EventCenter.subscribe(EventCenterEvent.MAP_LOCK, onMapLock);
+      EventCenter.subscribe(EventCenterEvent.MAP_UNLOCK, onMapUnlock);
       
       view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
       view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
@@ -386,6 +388,16 @@ package com.graphmind {
         ));
         requestData.parentNode.addChildNode(nodeItem);
       }
+    }
+    
+    
+    public function onMapLock(event:EventCenterEvent):void {
+      lock();
+    }
+    
+    
+    public function onMapUnlock(event:EventCenterEvent):void {
+      unlock();
     }
 	}
 	

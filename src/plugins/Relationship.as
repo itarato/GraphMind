@@ -7,6 +7,7 @@ package plugins {
   import com.graphmind.data.NodeType;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
+  import com.graphmind.util.GlobalLock;
   import com.graphmind.util.Log;
   import com.graphmind.util.OSD;
   import com.graphmind.view.NodeActionIcon;
@@ -60,6 +61,11 @@ package plugins {
     * True if update need is filed but no request sent so far.
     */
     private static var refreshRequestPending:Boolean = false;
+    
+    /**
+    * Lock site for refreshing.
+    */
+    private static var REFRESH_LOCK:String = 'refresh lock';
     
     /**
     * Frequency related vars for the update period.
@@ -282,12 +288,19 @@ package plugins {
     */ 
     public static function refreshSubtree(node:NodeViewController):void {
       refreshRequestPending = false;
+      
+      EventCenter.notify(EventCenterEvent.MAP_LOCK);
+      GlobalLock.lock(REFRESH_LOCK);
+      
       ConnectionController.mainConnection.call(
         'graphmindRelationship.getSubtree',
         function (result:Object):void {
           onSuccess_refreshSubtreeRequest(node, result);
         },
-        ConnectionController.defaultRequestErrorHandler,
+        function(error:Object):void {
+          GlobalLock.unlock(REFRESH_LOCK);
+          ConnectionController.defaultRequestErrorHandler(error);
+        },
         node.nodeData.drupalID,
         1
       );
@@ -315,6 +328,11 @@ package plugins {
       }
       
       refreshFlag = false;
+      
+      GlobalLock.unlock(REFRESH_LOCK);
+      if (!GlobalLock.isLocked(REFRESH_LOCK)) {
+        EventCenter.notify(EventCenterEvent.MAP_UNLOCK);
+      }
     }
     
     

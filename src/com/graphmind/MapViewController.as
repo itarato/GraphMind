@@ -1,13 +1,12 @@
 package com.graphmind {
   
   import com.graphmind.data.IMapViewEvent;
-  import com.graphmind.NodeViewController;
+  import com.graphmind.display.TreeDrawer;
   import com.graphmind.event.MapEvent;
   import com.graphmind.view.MapView;
-  import com.graphmind.display.TreeDrawer;
   
-  import flash.events.Event;
   import flash.events.EventDispatcher;
+  import flash.filters.BlurFilter;
   
   import mx.events.FlexEvent;
   
@@ -38,6 +37,25 @@ package com.graphmind {
       view = new MapView();
       view.setContainerSize(MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT);
       view.addEventListener(FlexEvent.CREATION_COMPLETE, onMapDidLoaded);
+      unlock();
+    }
+
+
+    /**
+    * Lock a map from user actions.
+    */
+    public function lock():void {
+      view.lockLayer.visible = true;
+      view.filters = [new BlurFilter(6.0, 6.0)];
+    }
+    
+    
+    /**
+    * Lock a map from user actions.
+    */
+    public function unlock():void {
+      view.lockLayer.visible = false;
+      view.filters = [];
     }
 
 
@@ -45,8 +63,7 @@ package com.graphmind {
     * IMapViewEvent
     ***********************************/
     
-    public function onMapDidLoaded(event:FlexEvent):void {
-    }
+    public function onMapDidLoaded(event:FlexEvent):void {}
     
   }
   

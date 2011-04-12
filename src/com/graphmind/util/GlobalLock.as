@@ -2,7 +2,7 @@ package com.graphmind.util {
   
   public class GlobalLock {
     
-    private static var locks:Object;
+    private static var locks:Object = {};
 
     
     /**
@@ -45,6 +45,19 @@ package com.graphmind.util {
     */
     public static function isLocked(site:String):Boolean {
       return locks.hasOwnProperty(site) && locks[site] > 0;
+    }
+    
+    
+    /**
+    * Mass lock checking.
+    */
+    public static function areLocked(sites:Array):Boolean {
+      for (var idx:* in sites) {
+        if (!isLocked(sites[idx])) {
+          return false;
+        }
+      }
+      return true;
     }
 
   }
