@@ -13,6 +13,8 @@ package com.graphmind {
 	 */	
 	[Frame(extraClass="plugins.TaxonomyManager")]
   [Frame(extraClass="plugins.Relationship")]
+  [Frame(extraClass="plugins.Tooltip")]
+  
 	
 	public class PluginManager {
 	  

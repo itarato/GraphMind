@@ -94,6 +94,12 @@ package com.graphmind {
     * Connection factory.
     */
     public static function createConnection(target:String):Connection {
+      for (var idx:* in _connections) {
+        if ((_connections[idx] as Connection).target == target) {
+          return _connections[idx];
+        }
+      }
+      
       var conn:Connection = new Connection(target);
       addConnection(conn);
       return conn;
