@@ -93,11 +93,10 @@ package plugins {
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
       EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
+      EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
       
       settingsPanel = new RelationshipSettingsPanel;
       GraphMind.i.mindmapToolsPanel.mindmapToolsAccordion.addChild(settingsPanel);
-      
-      checkForChangesWithLoop();
     }
     
     
@@ -418,6 +417,11 @@ package plugins {
     */
     public static function setUpdateCheckFrequency(idx:uint):void {
       frequency = frequenciesSeconds[idx];
+    }
+    
+    
+    private static function onMapTreeIsComplete(event:EventCenterEvent):void {
+      checkForChangesWithLoop();
     }
     
   }

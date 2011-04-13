@@ -62,6 +62,10 @@ package com.graphmind {
       // Editing privileges have to be arrived from the backend with the user object.
       setEditMode(false);
       
+      if (Application.application.parameters.hasOwnProperty('features')) {
+        FeatureController.features = Application.application.parameters['features'].toString().split(',');
+      }
+      
       treeMapViewController = new TreeMapViewController();
       GraphMind.i.map.addChild(this.treeMapViewController.view);
       

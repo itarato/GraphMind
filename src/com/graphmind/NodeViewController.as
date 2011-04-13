@@ -152,7 +152,11 @@ package com.graphmind {
 		public function NodeViewController(_nodeData:NodeDataObject = null, features:Object = null) {
 			super();
 
-      if (ObjectUtil.isObjectAttributeFalse(features, CAN_HAS_NORMAL_CHILD) || !NodeViewController.canHasNormalChild) {
+      if (
+        ObjectUtil.isObjectAttributeFalse(features, CAN_HAS_NORMAL_CHILD) || 
+        !NodeViewController.canHasNormalChild ||
+        !FeatureController.isFeatureEnabled(FeatureController.CREATE_MINDMAP_NODE)
+      ) {
         canHasNormalChild = false;        
       }
   
@@ -221,15 +225,18 @@ package com.graphmind {
 			contextMenu.customItems = [];
 			contextMenu.hideBuiltInItems();
 			
-			var cms:Array = [
-				{title: 'Add node',        event: onContextMenuSelected_AddSimpleNode,    separator: false},
-				{title: 'Add Drupal item', event: onContextMenuSelected_AddDrupalItem, 	  separator: false},
-				{title: 'Add Views list',  event: onContextMenuSelected_AddDrupalViews,   separator: false},
-				{title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true},
-				{title: 'Remove childs',   event: onContextMenuSelected_RemoveNodeChilds, separator: false},
-				{title: 'Open subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true},
-				{title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false}
-			];
+			var cms:Array = [];
+			cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
+			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
+			  cms.push({title: 'Add Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
+			}
+			if (FeatureController.areFeaturesEnabled([FeatureController.LOAD_DRUPAL_NODE, FeatureController.LOAD_DRUPAL_VIEWS_LIST])) {
+			  cms.push({title: 'Add Views list', event: onContextMenuSelected_AddDrupalViews, separator: false});
+			}
+			cms.push({title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true});
+			cms.push({title: 'Remove childs',   event: onContextMenuSelected_RemoveNodeChilds, separator: false});
+			cms.push({title: 'Open subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true});
+			cms.push({title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false});
 			
 			if (NodeType.updatableTypes.indexOf(nodeData.type) >= 0) {
 				cms.push({title: 'Update node', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
