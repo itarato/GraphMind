@@ -16,6 +16,8 @@ package plugins {
   import flash.events.ContextMenuEvent;
   import flash.events.MouseEvent;
   import flash.external.ExternalInterface;
+  import flash.net.URLRequest;
+  import flash.net.navigateToURL;
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
@@ -50,6 +52,22 @@ package plugins {
     private static var addImage:Class;
     
     private static var addDrupalNodeActionIcon:NodeActionIcon;
+    
+    /**
+    * View node image.
+    */
+    [Embed(source="assets/images/application_view_gallery.png")]
+    private static var viewNodeImage:Class;
+    
+    private static var viewNodeActionIcon:NodeActionIcon;
+    
+    /**
+    * Edit node image.
+    */
+    [Embed(source="assets/images/application_form_edit.png")]
+    private static var editNodeImage:Class;
+    
+    private static var editNodeActionIcon:NodeActionIcon; 
     
     /**
     * Default maximum depth for loading relationships.
@@ -221,6 +239,19 @@ package plugins {
     */
     private static function onNodeCreated(event:EventCenterEvent):void {
       var node:NodeViewController = event.data as NodeViewController;
+      
+      editNodeActionIcon = new NodeActionIcon((new editNodeImage()) as BitmapAsset);
+      node.view.addActionIcon(editNodeActionIcon);
+      editNodeActionIcon.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
+        onMouseClick_editNodeActionIcon(node);
+      });
+      
+      viewNodeActionIcon = new NodeActionIcon((new viewNodeImage()) as BitmapAsset);
+      node.view.addActionIcon(viewNodeActionIcon);
+      viewNodeActionIcon.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
+        onMouseClick_viewNodeActionIcon(node);
+      });
+      
       relationshipActionIcon = new NodeActionIcon((new relationshipImage()) as BitmapAsset);
       node.view.addActionIcon(relationshipActionIcon);
       
@@ -525,6 +556,28 @@ package plugins {
           node.setColor(uint(result));
         }
       }
+    }
+    
+    
+    /**
+    * Event callback - click on the view-node-page action icon.
+    */
+    private static function onMouseClick_editNodeActionIcon(node:NodeViewController):void {
+      if (!ExternalInterface.available) {
+        OSD.show('Popup window is not available.');
+      }
+      ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link + '/edit');
+    }
+    
+    
+    /**
+    * Event callback - click on the view-node-edit-page action icon.
+    */
+    private static function onMouseClick_viewNodeActionIcon(node:NodeViewController):void {
+      if (!ExternalInterface.available) {
+        OSD.show('Popup window is not available.');
+      }
+      ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link);
     }
     
   }
