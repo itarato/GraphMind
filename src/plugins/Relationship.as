@@ -19,7 +19,6 @@ package plugins {
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
-  import mx.controls.Alert;
   import mx.core.Application;
   import mx.core.BitmapAsset;
   
@@ -358,7 +357,12 @@ package plugins {
     * Send a request to check if relationships are changed at the backend.
     */
     public static function checkForChanges():void {
-      checkForChangesWithCallback(onSuccess_refreshInfoArrived);
+      checkForChangesWithCallback(function(result:Object):void{
+        onSuccess_refreshInfoArrived(result);
+        if (result) {
+          OSD.show('Map is up to date.');
+        }
+      });
     }
     
     

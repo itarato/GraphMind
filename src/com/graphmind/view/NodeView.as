@@ -100,7 +100,7 @@ package com.graphmind.view {
 			this.nodeComponentView.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
 			
 			for (var i:* in actionIcons) {
-			  (actionIcons[i] as Image).x = ACTION_ICONS_DEFAULT_X + i * 18;
+			  (actionIcons[i] as Image).x = ACTION_ICONS_DEFAULT_X + leftOffset + i * 18;
 			}
 			
 			isGraphicsUpdated = false;
