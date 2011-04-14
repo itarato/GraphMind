@@ -730,6 +730,8 @@ package com.graphmind {
       nodeData.color = color;
       view.backgroundColor = color;
       view.isGraphicsUpdated = true;
+      
+      update(UP_UI);
     }
 
     

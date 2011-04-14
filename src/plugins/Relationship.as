@@ -85,6 +85,11 @@ package plugins {
     private static var frequenciesSeconds:Array = [5, 15, 60, 300];
     private static var frequency:uint = frequenciesSeconds[0];
     
+    /**
+    * User color storage.
+    */
+    private static var userColors:Object = {};
+    
     
     /**
     * Implemrentation of init().
@@ -228,6 +233,24 @@ package plugins {
       addDrupalNodeActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
         onMouseClick_addDrupalNodeIcon(node);
       });
+      
+      // Get user colors -> background colors.
+      if (node.nodeData.drupalData.hasOwnProperty('userid') && node.nodeData.connection.isConnected) {
+        var uid:uint = node.nodeData.drupalData.userid;
+        if (!userColors.hasOwnProperty(uid)) {
+          userColors[uid] = null;
+          node.nodeData.connection.call(
+            'graphmindRelationship.getUserColor',
+            function(result:Object):void{
+              onSuccess_userColorRequest(result, uid);
+            },
+            ConnectionController.defaultRequestErrorHandler,
+            uid
+          );
+        } else if (userColors[uid]) {
+          node.setColor(userColors[uid]);
+        }
+      }
     }
     
     
@@ -486,6 +509,22 @@ package plugins {
       }
       
       OSD.show('Error occured during node attachement. Please refresh your map or try again.', OSD.WARNING);
+    }
+    
+    
+    /**
+    * Event callback - user color reqest is done.
+    */
+    private static function onSuccess_userColorRequest(result:Object, userid:uint):void {
+      userColors[userid] = uint(result);
+      var node:NodeViewController;
+      for (var idx:* in NodeViewController.nodes) {
+        node = NodeViewController.nodes[idx];
+        
+        if (node.nodeData.drupalData.hasOwnProperty('userid') && node.nodeData.drupalData.userid == userid) {
+          node.setColor(uint(result));
+        }
+      }
     }
     
   }
