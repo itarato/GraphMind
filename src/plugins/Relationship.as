@@ -7,6 +7,7 @@ package plugins {
   import com.graphmind.data.NodeType;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
+  import com.graphmind.temp.DrupalItemRequestParamObject;
   import com.graphmind.util.GlobalLock;
   import com.graphmind.util.Log;
   import com.graphmind.util.OSD;
@@ -14,9 +15,11 @@ package plugins {
   
   import flash.events.ContextMenuEvent;
   import flash.events.MouseEvent;
+  import flash.external.ExternalInterface;
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
+  import mx.controls.Alert;
   import mx.core.Application;
   import mx.core.BitmapAsset;
   
@@ -34,12 +37,20 @@ package plugins {
     * Image asset for the relationship action icon.
     */
     [Embed(source="assets/images/chart_organisation.png")]
-    private static var relationshipImage:Class; 
+    private static var relationshipImage:Class;
     
     /**
     * Relatioship action icon for the node ui.
     */
     private static var relationshipActionIcon:NodeActionIcon;
+
+    /**
+    * Add icon.
+    */
+    [Embed(source="assets/images/add.png")]
+    private static var addImage:Class;
+    
+    private static var addDrupalNodeActionIcon:NodeActionIcon;
     
     /**
     * Default maximum depth for loading relationships.
@@ -97,6 +108,8 @@ package plugins {
       
       settingsPanel = new RelationshipSettingsPanel;
       GraphMind.i.mindmapToolsPanel.mindmapToolsAccordion.addChild(settingsPanel);
+      
+      ExternalInterface.addCallback('sendCreationRequestBackToFlex', onReturnCreationRequest);
     }
     
     
@@ -209,6 +222,12 @@ package plugins {
       
       relationshipActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
         onMouseClick_relationshipActionIcon(event, node);
+      });
+      
+      addDrupalNodeActionIcon = new NodeActionIcon((new addImage()) as BitmapAsset);
+      node.view.addActionIcon(addDrupalNodeActionIcon);
+      addDrupalNodeActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
+        onMouseClick_addDrupalNodeIcon(node);
       });
     }
     
@@ -420,8 +439,49 @@ package plugins {
     }
     
     
+    /**
+    * Event callback - map is ready with the node tree.
+    */
     private static function onMapTreeIsComplete(event:EventCenterEvent):void {
+      // Start checking the updates.
       checkForChangesWithLoop();
+    }
+    
+    
+    /**
+    * Event handler - click on the create and attach Drupal node icon.
+    */ 
+    private static function onMouseClick_addDrupalNodeIcon(node:NodeViewController):void {
+      if (!ExternalInterface.available) {
+        OSD.show('Can\'t create a node from here. Use Drupal and refresh your map.');
+        return;
+      }
+      
+      ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID);
+    }
+    
+    
+    /**
+    * Event handler - call from JavaScript with the creation parameters.
+    */
+    private static function onReturnCreationRequest(parentNid:uint, childNid:uint):void {
+      for (var idx:* in NodeViewController.nodes) {
+        var node:NodeViewController = NodeViewController.nodes[idx] as NodeViewController;
+        if (
+          node.nodeData.type == NodeType.NODE &&
+          node.nodeData.drupalID == parentNid
+        ) {
+          var data:DrupalItemRequestParamObject = new DrupalItemRequestParamObject();
+          data.conn = ConnectionController.mainConnection;
+          data.id = childNid.toString();
+          data.parentNode = node;
+          data.type = NodeType.NODE;
+          EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_ITEM, data);
+          return;
+        }
+      }
+      
+      OSD.show('Error occured during node attachement. Please refresh your map or try again.', OSD.WARNING);
     }
     
   }
