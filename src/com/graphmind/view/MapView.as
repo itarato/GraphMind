@@ -50,6 +50,7 @@ package com.graphmind.view {
       setStyle('bottom', '0');
       setStyle('left', '0');
       setStyle('right', '0');
+      setStyle('backgroundColor', '0xFFFFFF');
       horizontalScrollPolicy = ScrollPolicy.ON;
       verticalScrollPolicy   = ScrollPolicy.ON;
       

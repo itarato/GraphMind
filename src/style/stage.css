@@ -14,17 +14,18 @@ RichTextEditor {
 
 /* Header style name for accordion menu */
 .toolPanelAccordionHeader {
-	fill-colors: #0174BB, #00598F;
+	/*fill-colors: #0174BB, #00598F;*/
+	fill-colors: #EEEEEE, #E1E1E1;
 	fill-alphas: 1, 1;
-	color: #FFFFFF;
-	selected-fill-colors: #555555, #333333;
+	color: #444444;
+	selected-fill-colors: #F2F2F2, #EEEEEE;
 	selection-color: #FFFFFF;
-	highlightAlphas: 0, 0;
-	textRollOverColor: #FFDBA1;
-	padding-top: 4;
-	padding-bottom: 4;
-	padding-left: 4;
-	border-color: #333333;
+	highlightAlphas: 0.2, 0.2;
+	textRollOverColor: #2260A7;
+	padding-top: 6;
+	padding-bottom: 6;
+	padding-left: 6;
+	border-color: #BBBBBB;
 }
 
 /* Button global style */
@@ -37,4 +38,13 @@ Canvas.previewWindow {
 	border-color: #555555;
 	border-thickness: 1;
 	border-style: solid;
+}
+
+/* Main divider */
+HDividedBox {
+  divider-alpha: 0.5;
+  divider-affordance: 30;
+  divider-color: #333333;
+  divider-thickness: 12;
+  background-color: #DDDDDD;
 }

@@ -110,9 +110,12 @@
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
 		<mx:Canvas width="100%" height="100%">
     	<mx:Canvas height="30" left="0" right="0" top="0"
-        backgroundAlpha="0.5"
-        backgroundColor="0x000000"
-        color="0xFFFFFF">
+        backgroundColor="0xDDDDDD"
+        color="0x444444"
+        borderStyle="solid"
+        borderColor="0xAAAAAA"
+        borderSides="bottom">
+        
         <mx:HBox paddingTop="4" paddingLeft="4">
           <mx:LinkButton top="4" label="Fullscreen" click="{controller.onClick_FullscreenButton();}"
             id="fullScreenLinkButton"/>
@@ -125,11 +128,11 @@
           <mx:Label paddingTop="2" text="{desktopScaleHSlider.value + '%'}"
             id="desktopScaleLabel"/>
             
-          <mx:LinkButton top="4" label="Save" click="{controller.onClick_SaveGraphmindButton();}" color="#FFDBA1"
+          <mx:LinkButton top="4" label="Save" click="{controller.onClick_SaveGraphmindButton();}" color="#E94A00"
             id="saveLinkButton"/>
         </mx:HBox>
       </mx:Canvas>
-      <mx:Canvas id="map" 
+      <mx:Canvas id="map"
         top="30" left="0" right="0" bottom="0" 
         horizontalScrollPolicy="off" verticalScrollPolicy="off" />
 		</mx:Canvas>
