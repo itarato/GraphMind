@@ -245,15 +245,18 @@ package plugins {
       editNodeActionIcon.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
         onMouseClick_editNodeActionIcon(node);
       });
+      editNodeActionIcon.toolTip = 'Edit node';
       
       viewNodeActionIcon = new NodeActionIcon((new viewNodeImage()) as BitmapAsset);
       node.view.addActionIcon(viewNodeActionIcon);
       viewNodeActionIcon.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
         onMouseClick_viewNodeActionIcon(node);
       });
+      viewNodeActionIcon.toolTip = 'View node page';
       
       relationshipActionIcon = new NodeActionIcon((new relationshipImage()) as BitmapAsset);
       node.view.addActionIcon(relationshipActionIcon);
+      relationshipActionIcon.toolTip = 'Open relationships';
       
       relationshipActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
         onMouseClick_relationshipActionIcon(event, node);
@@ -264,6 +267,7 @@ package plugins {
       addDrupalNodeActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
         onMouseClick_addDrupalNodeIcon(node);
       });
+      addDrupalNodeActionIcon.toolTip = 'Create and add node';
       
       // Get user colors -> background colors.
       if (node.nodeData.drupalData.hasOwnProperty('userid') && node.nodeData.connection.isConnected) {

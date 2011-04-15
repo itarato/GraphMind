@@ -173,6 +173,7 @@ package com.graphmind {
 		  
 		  drupalLinkIcon = new NodeActionIcon((new image_anchor()) as BitmapAsset);
 		  view.addActionIcon(drupalLinkIcon);
+		  drupalLinkIcon.toolTip = 'Go to Drupal page';
 		  
 		  if (canHasNormalChild) {
 		    addNodeIcon = new NodeActionIcon((new image_add()) as BitmapAsset);

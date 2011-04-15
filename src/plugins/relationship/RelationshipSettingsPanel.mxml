@@ -2,7 +2,9 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
   label="Relationships"
   icon="@Embed(source='../../assets/images/chart_organisation.png')"
-  width="100%">
+  width="100%" height="100%"
+  horizontalScrollPolicy="off"
+  verticalScrollPolicy="off">
   <mx:Script>
     <![CDATA[
       import com.graphmind.TreeMapViewController;
@@ -19,10 +21,12 @@
       
     <mx:HRule height="32" width="100%"/>
     
+    <mx:Text text="Regenerate relationships" />
     <mx:Button label="Refresh tree" click="{Relationship.refreshSubtree(TreeMapViewController.rootNode);}"/>
       
     <mx:HRule height="32" width="100%"/>
     
+    <mx:Text text="Checks updates on the backend" />
     <mx:Button label="Check update" click="{Relationship.checkForChanges();}" />
       
     <mx:HRule height="32" width="100%"/>

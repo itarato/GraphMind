@@ -51,7 +51,8 @@
 		
 	<mx:Image x="{NodeView.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 
-		visible="false"/>
+		visible="false"
+		toolTip="Toggle subtree"/>
 	
 		
 </mx:Canvas>
