@@ -30,6 +30,11 @@ package com.graphmind {
     [Bindable]
     public var selectedNodeData:ArrayCollection = new ArrayCollection();
     
+    [Bindable]
+    public static var NODE_SIZES:Array = ['Small', 'Large'];
+    public static const NODE_SIZE_SMALL_INDEX:uint = 0;
+    public static const NODE_SIZE_LARGE_INDEX:uint = 1;
+    
     
     /**
     * Consructor.
@@ -225,6 +230,11 @@ package com.graphmind {
     
     public function onChange_ScaleSlider(value:Number):void {
       EventCenter.notify(EventCenterEvent.MAP_SCALE_CHANGED, value);
+    }
+    
+    
+    public function onChange_NodeSize(value:uint):void {
+      EventCenter.notify(EventCenterEvent.REQUEST_TO_CHANGE_NODE_SIZE, value);
     }
     
   }

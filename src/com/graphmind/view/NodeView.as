@@ -14,8 +14,24 @@ package com.graphmind.view {
 		
 		public static const WIDTH_MC_DEFAULT:int = 168;
 		public static const WIDTH_DEFAULT:int = 126;
-		public static const HEIGHT:int = 20;
 		public static const ICON_WIDTH:int = 18;
+		
+		public static var LARGE_HEIGHT:uint = 26;
+		public static var LARGE_LABEL_FONT_SIZE:uint = 16;
+		public static var LARGE_LABEL_EDIT_FONT_SIZE:uint = 12;
+    
+    public static var SMALL_HEIGHT:uint = 20;
+    public static var SMALL_LABEL_FONT_SIZE:uint = 11;
+    public static var SMALL_LABEL_EDIT_FONT_SIZE:uint = 12;
+		
+		[Bindable]
+		public static var LABEL_FONT_SIZE:uint = LARGE_LABEL_FONT_SIZE;
+		
+		[Bindable]
+		public static var LABEL_EDIT_FONT_SIZE:uint = LARGE_LABEL_EDIT_FONT_SIZE;  
+		
+		[Bindable]
+    public static var HEIGHT:int = LARGE_HEIGHT;
 		
 		[Bindable]
 		public static var TITLE_DEFAULT_WIDTH:int = 122;
@@ -66,7 +82,7 @@ package com.graphmind.view {
 			
       // Background component - what a surprise, huh?
       backgroundView.height = HEIGHT;
-      backgroundView.setStyle('cornerRadius', '5');
+      backgroundView.setStyle('cornerRadius', HEIGHT / 4);
       backgroundView.setStyle('borderStyle', 'solid');
       
       nodeComponentView.title_label.doubleClickEnabled = true;
@@ -96,11 +112,13 @@ package com.graphmind.view {
 			
 			this.nodeComponentView.width = WIDTH_MC_DEFAULT + leftOffset + actionIconOffset;
 			this.nodeComponentView.icon_has_child.x = ICON_BULLET_DEFAULT_X + leftOffset + actionIconOffset;
+			this.nodeComponentView.icon_has_child.y = (HEIGHT - 9) * 0.5; 
 			this.nodeComponentView.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset + actionIconOffset;
 			this.nodeComponentView.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
 			
 			for (var i:* in actionIcons) {
 			  (actionIcons[i] as Image).x = ACTION_ICONS_DEFAULT_X + leftOffset + i * 18;
+			  (actionIcons[i] as Image).y = (HEIGHT - 16) * .5;
 			}
 			
 			isGraphicsUpdated = false;
@@ -157,7 +175,6 @@ package com.graphmind.view {
 		
 		public function addActionIcon(actionIcon:NodeActionIcon):void {
 		  actionIcons.push(actionIcon);
-		  actionIcon.y = 2;
 		  nodeComponentView.addChild(actionIcon);
 		  refreshGraphics();
 		}

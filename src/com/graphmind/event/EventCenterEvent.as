@@ -32,6 +32,7 @@ package com.graphmind.event {
 
     public static var REQUEST_FOR_FREEMIND_XML:String = 'appFormRequestForFreemindXml';
     public static var REQUEST_TO_SAVE:String = 'requestToSave';
+    public static var REQUEST_TO_CHANGE_NODE_SIZE:String = 'requestToChangeNodeSize';
     
     public static var LOAD_DRUPAL_ITEM:String = 'loadDrupalItem';
     public static var LOAD_DRUPAL_VIEWS:String = 'loadDrupalViews';

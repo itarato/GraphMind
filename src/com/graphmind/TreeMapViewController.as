@@ -9,6 +9,7 @@ package com.graphmind {
 	import com.graphmind.temp.DrupalViewsRequestParamObject;
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
+	import com.graphmind.view.NodeView;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
@@ -103,11 +104,12 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.NODE_FINISH_DRAG, onNodeFinishDrag);
       EventCenter.subscribe(EventCenterEvent.MAP_SCALE_CHANGED, onMapScaleChanged);
       EventCenter.subscribe(EventCenterEvent.MAP_SAVED, onMapSaved);
-      EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
-      EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_ITEM, onLoadDrupalItem);
-      EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_VIEWS, onLoadDrupalViews);
       EventCenter.subscribe(EventCenterEvent.MAP_LOCK, onMapLock);
       EventCenter.subscribe(EventCenterEvent.MAP_UNLOCK, onMapUnlock);
+      EventCenter.subscribe(EventCenterEvent.REQUEST_TO_SAVE, onRequestToSave);
+      EventCenter.subscribe(EventCenterEvent.REQUEST_TO_CHANGE_NODE_SIZE, onRequestToChangeNodeSize);
+      EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_ITEM, onLoadDrupalItem);
+      EventCenter.subscribe(EventCenterEvent.LOAD_DRUPAL_VIEWS, onLoadDrupalViews);
       
       view.container.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown_Map);
       view.container.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove_Map);
@@ -398,6 +400,31 @@ package com.graphmind {
     
     public function onMapUnlock(event:EventCenterEvent):void {
       unlock();
+    }
+    
+    
+    private function onRequestToChangeNodeSize(event:EventCenterEvent):void {
+      switch (event.data as uint) {
+        case AppFormController.NODE_SIZE_SMALL_INDEX:
+          NodeView.HEIGHT = NodeView.SMALL_HEIGHT;
+          NodeView.LABEL_FONT_SIZE = NodeView.SMALL_LABEL_FONT_SIZE;
+          NodeView.LABEL_EDIT_FONT_SIZE = NodeView.SMALL_LABEL_EDIT_FONT_SIZE;
+          break;
+        default:
+          NodeView.HEIGHT = NodeView.LARGE_HEIGHT;
+          NodeView.LABEL_FONT_SIZE = NodeView.LARGE_LABEL_FONT_SIZE;
+          NodeView.LABEL_EDIT_FONT_SIZE = NodeView.LARGE_LABEL_EDIT_FONT_SIZE;
+          break;
+      }
+      
+      for (var idx:* in NodeViewController.nodes) {
+        var node:NodeViewController = NodeViewController.nodes[idx];
+        node.view.backgroundView.setStyle('cornerRadius', NodeView.HEIGHT / 4);
+        node.view.backgroundView.height = NodeView.HEIGHT;
+        node.view.height = NodeView.HEIGHT;
+      }
+      
+      EventCenter.notify(EventCenterEvent.MAP_UPDATED);
     }
 	}
 	

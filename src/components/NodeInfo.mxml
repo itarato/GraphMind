@@ -26,9 +26,19 @@
 	  label="Save external link" 
 	  click="{controller.onClick_SaveNodeLink(link.text);}" 
 	  icon="@Embed(source='assets/images/anchor.png')"/>
+	  
 	<mx:HRule left="10" y="348" right="10"/>
+	
 	<mx:Button x="10" y="358" label="Toggle cloud" icon="@Embed(source='assets/images/weather_clouds.png')">
 		<mx:click>{controller.onClick_ToggleCloudButton();}</mx:click>
 	</mx:Button>
+  
+  <mx:HRule left="10" y="388" right="10"/>
+  
+  <mx:ComboBox dataProvider="{AppFormController.NODE_SIZES}" left="77" y="398" 
+    change="{controller.onChange_NodeSize(nodeSizeSelect.selectedIndex)}"
+    id="nodeSizeSelect"
+    selectedIndex="1"/>
+  <mx:Label x="10" y="400" text="Node size"/>
 
 </mx:Canvas>

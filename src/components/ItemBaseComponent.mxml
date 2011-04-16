@@ -32,22 +32,28 @@
 		<mx:State name="edit_title">
 			<mx:RemoveChild target="{title_label}"/>
 			<mx:AddChild creationPolicy="all" position="lastChild">
-				<mx:TextInput width="138" height="20" id="title_new" 
+				<mx:TextInput width="138" id="title_new" 
 					focusAlpha="0"
 					paddingTop="0"
 					paddingBottom="0"
 					paddingLeft="0"
 					paddingRight="0"
-					fontSize="10"/>
+					fontSize="{NodeView.LABEL_EDIT_FONT_SIZE}"/>
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
 
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
-	<mx:Image source="{image_insertLeft}" x="{NodeView.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
+	<mx:Image source="{image_insertLeft}" height="{NodeView.HEIGHT}" x="{NodeView.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
-	<mx:Text x="2" y="1" text="Label" width="{NodeView.TITLE_DEFAULT_WIDTH}" id="title_label" fontSize="11"
-	  selectable="false" condenseWhite="false"/>
+	<mx:Text 
+	  x="2" y="1" 
+	  text="Label" 
+	  width="{NodeView.TITLE_DEFAULT_WIDTH}" 
+	  id="title_label" 
+	  fontSize="{NodeView.LABEL_FONT_SIZE}"
+	  selectable="false" 
+	  condenseWhite="false"/>
 		
 	<mx:Image x="{NodeView.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 
