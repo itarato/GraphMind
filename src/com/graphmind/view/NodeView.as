@@ -25,13 +25,13 @@ package com.graphmind.view {
     public static var SMALL_LABEL_EDIT_FONT_SIZE:uint = 12;
 		
 		[Bindable]
-		public static var LABEL_FONT_SIZE:uint = LARGE_LABEL_FONT_SIZE;
+		public static var LABEL_FONT_SIZE:uint = SMALL_LABEL_FONT_SIZE;
 		
 		[Bindable]
-		public static var LABEL_EDIT_FONT_SIZE:uint = LARGE_LABEL_EDIT_FONT_SIZE;  
+		public static var LABEL_EDIT_FONT_SIZE:uint = SMALL_LABEL_EDIT_FONT_SIZE;  
 		
 		[Bindable]
-    public static var HEIGHT:int = LARGE_HEIGHT;
+    public static var HEIGHT:int = SMALL_HEIGHT;
 		
 		[Bindable]
 		public static var TITLE_DEFAULT_WIDTH:int = 122;

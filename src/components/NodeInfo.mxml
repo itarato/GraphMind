@@ -38,7 +38,7 @@
   <mx:ComboBox dataProvider="{AppFormController.NODE_SIZES}" left="77" y="398" 
     change="{controller.onChange_NodeSize(nodeSizeSelect.selectedIndex)}"
     id="nodeSizeSelect"
-    selectedIndex="1"/>
-  <mx:Label x="10" y="400" text="Node size"/>
+    selectedIndex="{AppFormController.NODE_SIZE_SMALL_INDEX}"/>
+  <mx:Label x="10" y="400" text="Node size:"/>
 
 </mx:Canvas>
