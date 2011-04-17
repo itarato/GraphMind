@@ -981,8 +981,17 @@ package com.graphmind {
       this._children.addItem(node);
       node.parent = this;
       
-      // Open subtree.
-      uncollapseChilds();
+      // Open subtree recursively.
+      // When a node is added to a folded subtree, we have to open all.
+      var parent:NodeViewController = this;
+      while (true) {
+        parent.uncollapseChilds();
+        if (parent.parent) {
+          parent = parent.parent;
+        } else {
+          break;
+        }
+      }
       
       // Showing toggle-subtree button.
       view.nodeComponentView.icon_has_child.visible = true;
