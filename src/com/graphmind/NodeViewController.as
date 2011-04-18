@@ -150,6 +150,7 @@ package com.graphmind {
     public var image_anchor:Class;
     protected var drupalLinkIcon:NodeActionIcon;
     
+    
     /**
      * Constructor.
      */ 
