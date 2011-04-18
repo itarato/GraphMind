@@ -9,11 +9,7 @@ package com.graphmind.display {
 		
 		function getChildNodeAll():ArrayCollection;
 		
-		function getChildNodeAt(index:int):ITreeNode;
-		
 		function getParentNode():ITreeNode;
-		
-		function getChildNodeIndex(child:ITreeNode):int;
 		
 		function isCollapsed():Boolean;
 		

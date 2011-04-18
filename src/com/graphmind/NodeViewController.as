@@ -3,7 +3,6 @@ package com.graphmind {
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.ICloud;
-	import com.graphmind.display.ITreeItem;
 	import com.graphmind.display.ITreeNode;
 	import com.graphmind.display.TreeArrowLink;
 	import com.graphmind.event.EventCenter;
@@ -60,13 +59,13 @@ package com.graphmind {
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuAddDrupalViews")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveNode")]
   [Event(type="com.graphmind.event.NodeEvent", name="contextMenuRemoveChilds")]
-	public class NodeViewController extends EventDispatcher implements ITreeItem, ICloud {
+	public class NodeViewController extends EventDispatcher implements ITreeNode, ICloud {
 		
 		// Node access caches
 		public static var nodes:ArrayCollection = new ArrayCollection();
 		
 		// Updated node ui
-		public static const UP_UI:uint         = 1;
+		public static const UP_UI:uint = 1;
 		
 		// Time delay until selecting a node on mouseover
 		protected var _mouseSelectionTimeout:uint;
@@ -79,8 +78,9 @@ package com.graphmind {
     /**
      * Various background effects.
      */
-    public static var _nodeGlowFilter:GlowFilter = new GlowFilter(0x0072B9, .8, 6, 6);
-    public static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, .8, 20, 20, 2, 1, true);
+    public static var _nodeGlowFilter:GlowFilter = new GlowFilter(0x0089FF, 1, 4, 4, 8);
+    public static var _nodeInnerGlowFilter:GlowFilter = new GlowFilter(0xFFFFFF, 1, 3, 3, 3, 2, true);
+    public static var _nodeInnerGlowFilter2:GlowFilter = new GlowFilter(0xFFFFFF, .5, 20, 20, 3, 2, true);
     
     /**
      * Related names of background effects.
@@ -136,14 +136,18 @@ package com.graphmind {
     public var canHasNormalChild:Boolean = true;
     public static var canHasNormalChild:Boolean = true;
     
+    /**
+    * Add action icon and the image source.
+    */
     [Embed(source='assets/images/add.png')]
     public var image_add:Class;
-    
     protected var addNodeIcon:NodeActionIcon;
-    
+
+    /**
+    * Anchor icon and the image source.
+    */    
     [Embed(source='assets/images/anchor.png')]
     public var image_anchor:Class;
-    
     protected var drupalLinkIcon:NodeActionIcon;
     
     /**
@@ -340,6 +344,7 @@ package com.graphmind {
 			return output + '</node>' + "\n";
 		}
 		
+		
 		/**
 		 * Show the dialog for loading a Drupal item.
 		 */
@@ -347,6 +352,7 @@ package com.graphmind {
 			select();
 			GraphMind.i.currentState = 'load_item_state';
 		}
+		
 		
 		/**
 		 * Show the dialog for loading a Drupal Views list.
@@ -357,6 +363,7 @@ package com.graphmind {
 			GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
 		}
 		
+		
 		/**
 		 * Remove each child of the node.
 		 */
@@ -365,6 +372,7 @@ package com.graphmind {
 				(_children.getItemAt(0) as NodeViewController).kill();
 			}
 		}
+		
 		
 		/**
 		 * Kill a node and each childs.
@@ -409,6 +417,7 @@ package com.graphmind {
 			delete this; // :.(
 		}
 		
+		
 		/**
 		 * Check if the giveth node is a child of the self node.
 		 */
@@ -435,6 +444,9 @@ package com.graphmind {
 		}
 		
 		
+		/**
+		 * Move node to a new parent.
+		 */
 		private function _moveToParent(target:NodeViewController):Boolean{
       // No parent can detach child.
       if (!this || !this.parent || !target) return false;
@@ -519,9 +531,13 @@ package com.graphmind {
 		}
  		
  		
+ 		/**
+ 		 * Event callback - double click on an icon (normal decorator icon).
+ 		 */
  		protected function onDoubleClick_icon(event:MouseEvent):void {
  		  removeIcon(event.currentTarget as Image);
  		}
+
  		
  		/**
  		 * Remove an icon.
@@ -533,6 +549,7 @@ package com.graphmind {
       update(UP_UI);
  		}
  		
+ 		
  		/**
  		 * Set a link.
  		 */
@@ -542,12 +559,14 @@ package com.graphmind {
 			update(UP_UI);
 		}
 		
+		
 		/**
 		 * Toggle cloud.
 		 */
 		public function toggleCloud():void {
 			nodeData.hasCloud ? disableCloud() : enableCloud();
 		}
+		
 		
 		/**
 		 * Enable cloud.
@@ -557,6 +576,7 @@ package com.graphmind {
 		  update(UP_UI);
 		}
 		
+		
 		/**
 		 * Disable cloud.
 		 */
@@ -565,31 +585,14 @@ package com.graphmind {
 		  update(UP_UI);
 		}
 		
-		/**
-		 * Refresh only the subtree and redraw the stage.
-		 */
-//		public function redrawParentsClouds():void {
-//			_redrawParentsClouds();
-//		}
-		
-		/**
-		 * Force to redraw parents' clouds recursively
-		 */
-//		protected function _redrawParentsClouds():void {
-//			if (nodeData.hasCloud) {
-//				toggleCloud();
-//				toggleCloud();
-//			}
-//			
-//			if (parent) parent._redrawParentsClouds();
-//		}
-		
+
 		/**
 		 * Check if the subtree is collapsed.
 		 */
 		public function isCollapsed():Boolean {
 			return _isCollapsed;
 		}
+
 		
 		/**
 		 * Make a request for updating the node from Drupal.
@@ -606,6 +609,7 @@ package com.graphmind {
         OSD.show('This node cannot be upadted.', OSD.WARNING);
       }
 		}
+
 		
 		/**
 		 * Update from Drupal request is arrived.
@@ -621,6 +625,7 @@ package com.graphmind {
 			select();
 			update(UP_UI);
 		}
+
 		
 		/**
 		 * Get parent node.
@@ -628,6 +633,7 @@ package com.graphmind {
 		public function getParentNode():ITreeNode {
 			return parent;
 		}
+
 		
 		/**
 		 * Get the secondary connections - represented by arrow links.
@@ -635,6 +641,7 @@ package com.graphmind {
 		public function getArrowLinks():ArrayCollection {
 			return _arrowLinks;
 		}
+
 		
 		/**
 		 * Add new secondary connection as an arrow link.
@@ -681,11 +688,17 @@ package com.graphmind {
 		}
 		
 		
+		/**
+		 * Return true if the node has children.
+		 */
 		public function hasChild():Boolean {
 			return _children.length > 0;
 		}
     
     
+    /**
+    * Override toString.
+    */
     public override function toString():String {
       return '[NodeViewController: ' + this.nodeData.id + ']';
     }
@@ -714,6 +727,10 @@ package com.graphmind {
     }
     
     
+    /**
+    * Refresh node view by it's data.
+    * Refrech color, data and title.
+    */
     public function refreshWithNewData():void {
       nodeData.recalculateData();
       setTitle(nodeData.title);
@@ -756,7 +773,10 @@ package com.graphmind {
     }
     
 
-    public function onMouseOver(event:MouseEvent):void {
+    /**
+    * Event callback - mouse over.
+    */
+    protected function onMouseOver(event:MouseEvent):void {
       _mouseSelectionTimeout = setTimeout(select, 400);
       if (canHasNormalChild) {
         addNodeIcon.visible = ApplicationController.i.isEditable();
@@ -765,7 +785,10 @@ package com.graphmind {
     }
     
     
-    public function onMouseOut(event:MouseEvent):void {
+    /**
+    * Event callback - mouse out.
+    */
+    protected function onMouseOut(event:MouseEvent):void {
       clearTimeout(_mouseSelectionTimeout);
       if (canHasNormalChild) {
         addNodeIcon.visible = false;
@@ -781,7 +804,10 @@ package com.graphmind {
     }
     
     
-    public function onDoubleClick(event:MouseEvent):void {
+    /**
+    * Event callback - double click.
+    */
+    protected function onDoubleClick(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       view.nodeComponentView.currentState = 'edit_title';
@@ -790,7 +816,10 @@ package com.graphmind {
     }
     
     
-    public function onKeyUp_TitleTextField(event:KeyboardEvent):void {
+    /**
+    * Event callback - key up event on the label edit field.
+    */
+    protected function onKeyUp_TitleTextField(event:KeyboardEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if (event.keyCode == Keyboard.ENTER) {
@@ -803,12 +832,18 @@ package com.graphmind {
     }
     
     
-    public function onFocusOut_TitleTextField(event:FocusEvent):void {
+    /**
+    * Event callback - focus loss on the label edit field.
+    */
+    protected function onFocusOut_TitleTextField(event:FocusEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       closeLabelEditMode();
     }
     
     
+    /**
+    * Finish label editing mode.
+    */
     private function closeLabelEditMode():void {
       view.nodeComponentView.currentState = '';
       setTitle(view.nodeComponentView.title_new.text);
@@ -816,14 +851,20 @@ package com.graphmind {
     }
     
     
-    public function onItemLoaderSelectorClick(event:MouseEvent):void {
+    /**
+    * Event callback - click on the load item context menu item.
+    */
+    protected function onClick_itemLoaderSelector(event:MouseEvent):void {
       event.stopPropagation();
       select();
       GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
     }
     
     
-    public function onClick_AddSimpleNodeButton(event:MouseEvent):void {
+    /**
+    * Event callback - click on the add node icon.
+    */
+    protected function onClick_AddSimpleNodeButton(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       event.stopPropagation();
@@ -833,26 +874,37 @@ package com.graphmind {
     }
     
     
-    public function onLoadItemClick(event:MouseEvent):void {
+    /**
+    * Event callback - click on the load item context menu item.
+    */
+    protected function onClick_loadItem(event:MouseEvent):void {
       event.stopPropagation();
       loadItem();
     }
     
     
-    public function onLoadViewClick(event:MouseEvent):void {
+    /**
+    * Event callback - click on the load view context menu item.
+    */
+    protected function onClick_loadView(event:MouseEvent):void {
       event.stopPropagation();
       loadViews();
     }
     
     
-    public function onClick_NodeLinkButton(event:MouseEvent):void {
+    /**
+    * Event callback - click on the anchor icon.
+    */
+    protected function onClick_NodeLinkButton(event:MouseEvent):void {
       var ur:URLRequest = new URLRequest(nodeData.link);
       navigateToURL(ur, '_blank');
     }
     
     
-    public function onMouseDown(event:MouseEvent):void {
-      trace('Down: ' + this + ' wh: ' + view.nodeComponentView.width + ':' + view.nodeComponentView.height);
+    /**
+    * Event callback - click on the node.
+    */
+    protected function onMouseDown(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       EventCenter.notify(EventCenterEvent.NODE_PREPARE_DRAG, this);
@@ -860,7 +912,10 @@ package com.graphmind {
     }
     
     
-    public function onMouseUp(event:MouseEvent):void {
+    /**
+    * Event callback - mouse up on node.
+    */
+    protected function onMouseUp(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if (NodeViewController.isNodeDragAndDrop) {
@@ -878,7 +933,10 @@ package com.graphmind {
     }
     
     
-    public function onMouseMove(event:MouseEvent):void {
+    /**
+    * Event callback - mouse move on node.
+    */
+    protected function onMouseMove(event:MouseEvent):void {
       if (!ApplicationController.i.isEditable()) return;
       
       if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
@@ -892,86 +950,109 @@ package com.graphmind {
       }
     }
     
-    public function onContextMenuSelected_AddSimpleNode(event:ContextMenuEvent):void {
+    
+    /**
+    * Event callback - click on the add node context menu.
+    */
+    protected function onContextMenuSelected_AddSimpleNode(event:ContextMenuEvent):void {
       createSimpleNodeChild();
     }
     
-    public function onContextMenuSelected_AddDrupalItem(event:ContextMenuEvent):void {
+    
+    /**
+    * Event callback - click on the add drupal item context menu.
+    */
+    protected function onContextMenuSelected_AddDrupalItem(event:ContextMenuEvent):void {
       loadItem();
     }
     
-    public function onContextMenuSelected_AddDrupalViews(event:ContextMenuEvent):void {
+    
+    /**
+    * Event callback - on click on the add views context menu.
+    */
+    protected function onContextMenuSelected_AddDrupalViews(event:ContextMenuEvent):void {
       loadViews();
     }
     
-    public function onContextMenuSelected_RemoveNode(event:ContextMenuEvent):void {
+    
+    /**
+    * Event callback - on click on the remove node context menu.
+    */
+    protected function onContextMenuSelected_RemoveNode(event:ContextMenuEvent):void {
       kill();
     }
   
     
-    public function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
+    /**
+    * Event callback - on click on the remove children context menu.
+    */
+    protected function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
       _removeNodeChilds();
     }
   
     
-    public function onClick_ToggleSubtreeButton(event:MouseEvent):void {
+    /**
+    * Event callback - on click on the toggle subtree icon. 
+    */
+    protected function onClick_ToggleSubtreeButton(event:MouseEvent):void {
       if (!this._isCollapsed) {
         collapse();
       } else {
         uncollapse();
       }
+      
       EventCenter.notify(EventCenterEvent.MAP_UPDATED);
       event.stopPropagation();
     }
     
-    public function onContextMenuSelected_OpenSubtree(event:ContextMenuEvent):void {
+    
+    /**
+    * Event callback - on click on the open full subtree context menu. 
+    */
+    protected function onContextMenuSelected_OpenSubtree(event:ContextMenuEvent):void {
       uncollapseChilds(true);
     }
   
     
-    public function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
+    /**
+    * Event callback - on click on the toggle cloud context menu. 
+    */
+    protected function onContextMenuSelected_ToggleCloud(event:ContextMenuEvent):void {
       toggleCloud();
-      update();
     }
   
   
-    public function onContextMenuSelected_UpdateDrupalItem(event:ContextMenuEvent):void {
+    /**
+    * Event callback - on click on the update drupal item context menu.
+    */
+    protected function onContextMenuSelected_UpdateDrupalItem(event:ContextMenuEvent):void {
       requestForUpdate();
     }
     
     
-    public function onUpdateComplete_TitleLabel(event:FlexEvent):void {
+    /**
+    * Event callback - node title label ui is updated.
+    */
+    protected function onUpdateComplete_TitleLabel(event:FlexEvent):void {
       update(UP_UI);
     }
     
     
-    public function onDoubleClick_arrowLink(event:MouseEvent):void {
+    /**
+    * Event callback - doble click on an arrow link.
+    */
+    protected function onDoubleClick_arrowLink(event:MouseEvent):void {
       removeArrowLink(event.target as TreeArrowLink);
     }
         
-        
+    
+    /**
+    * Get children.
+    */
     public function getChildNodeAll():ArrayCollection {
       return _children;
     }
     
-    
-    public function getChildNodeAt(index:int):ITreeNode {
-      return _children.getItemAt(index) as ITreeNode;
-    }
-    
-    
-    public function getChildNodeIndex(child:ITreeNode):int {
-      return _children.getItemIndex(child);
-    }
-    
-    
-    public function removeChildNodeAll():void {
-      _children.removeAll();
-    }
-    
-    public function removeChildNodeAt(index:int):void {
-      _children.removeItemAt(index);
-    }
     
     /**
      * Add a new child node.
@@ -1002,12 +1083,20 @@ package com.graphmind {
       EventCenter.notify(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, node);
     }
     
+    
+    /**
+    * Collapse subtree of the node.
+    */
     public function collapse():void {
       _isForcedCollapsed = true;
       collapseChilds();
     }
     
-    public function collapseChilds():void {
+    
+    /**
+    * Collapse subtrees recursively.
+    */
+    protected function collapseChilds():void {
       _isCollapsed = true;
       view.nodeComponentView.icon_has_child.source = view.nodeComponentView.image_node_uncollapse;
       for each (var nodeItem:NodeViewController in _children) {
@@ -1018,13 +1107,19 @@ package com.graphmind {
     }
 
     
+    /**
+    * Open subtree of the node.
+    */
     public function uncollapse():void {
       _isForcedCollapsed = false;
       uncollapseChilds();
     }
 
     
-    public function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
+    /**
+    * Open subtrees recursively.
+    */
+    protected function uncollapseChilds(forceOpenSubtree:Boolean = false):void {
       _isCollapsed = false;
       view.nodeComponentView.icon_has_child.source = view.nodeComponentView.image_node_collapse;
       for each (var nodeItem:NodeViewController in _children) {
@@ -1037,8 +1132,11 @@ package com.graphmind {
     }
 
     
+    /**
+    * Set background effect of the view.
+    */
     private function _setBackgroundEffect(effect:int = EFFECT_NORMAL):void {
-      view.backgroundView.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeGlowFilter];
+      view.backgroundView.filters = (effect == EFFECT_NORMAL) ? [] : [_nodeInnerGlowFilter, _nodeInnerGlowFilter2, _nodeGlowFilter];
     }
 
 
@@ -1071,6 +1169,9 @@ package com.graphmind {
     }
     
     
+    /**
+    * Remove extra connection.
+    */
     public function removeArrowLink(arrowLink:TreeArrowLink):void {
       TreeArrowLink.arrowLinks.removeItemAt(TreeArrowLink.arrowLinks.getItemIndex(arrowLink));
       _arrowLinks.removeItemAt(_arrowLinks.getItemIndex(arrowLink));
