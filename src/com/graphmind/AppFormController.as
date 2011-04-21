@@ -159,11 +159,6 @@ package com.graphmind {
     }
     
     
-    public function onClick_ToggleCloudButton():void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_TOGGLE_CLOUD);
-    }
-    
-        
     public function onClick_SaveGraphmindButton():void {
       EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
     }
