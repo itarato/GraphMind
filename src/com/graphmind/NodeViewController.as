@@ -249,18 +249,18 @@ package com.graphmind {
 			var cms:Array = [];
 			cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
 			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
-			  cms.push({title: 'Add Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
+			  cms.push({title: 'Load Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
 			}
 			if (FeatureController.areFeaturesEnabled([FeatureController.LOAD_DRUPAL_NODE, FeatureController.LOAD_DRUPAL_VIEWS_LIST])) {
-			  cms.push({title: 'Add Views list', event: onContextMenuSelected_AddDrupalViews, separator: false});
+			  cms.push({title: 'Load Views list', event: onContextMenuSelected_AddDrupalViews, separator: false});
 			}
 			cms.push({title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true});
 			cms.push({title: 'Remove childs',   event: onContextMenuSelected_RemoveNodeChilds, separator: false});
-			cms.push({title: 'Open subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true});
+			cms.push({title: 'Expand subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true});
 			cms.push({title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false});
 			
 			if (NodeType.updatableTypes.indexOf(nodeData.type) >= 0) {
-				cms.push({title: 'Update node', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
+				cms.push({title: 'Fetch Drupal data', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
 			}
 			
 			// Extend context menu items by Plugin provided menu items
