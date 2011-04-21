@@ -229,7 +229,11 @@ package plugins {
         }
       }
       
-      cm.push({title: 'Refresh relationships', event: onMenuItemSelect_RefreshSubtree, separator: true});
+      cm.push({title: 'Synchronize relationships', event: onMenuItemSelect_RefreshSubtree, separator: true});
+      cm.push({title: 'Edit Details', event: onMouseClick_editNodeActionIcon, separator: false});
+      cm.push({title: 'View Details', event: onMouseClick_viewNodeActionIcon, separator: false});
+      cm.push({title: 'Load subtree', event: onMouseClick_relationshipActionIcon, separator: false});
+      cm.push({title: 'Create node', event: onMouseClick_addDrupalNodeIcon, separator: false});
     }
     
     
@@ -238,35 +242,6 @@ package plugins {
     */
     private static function onNodeCreated(event:EventCenterEvent):void {
       var node:NodeViewController = event.data as NodeViewController;
-      
-      editNodeActionIcon = new NodeActionIcon((new editNodeImage()) as BitmapAsset);
-      node.view.addActionIcon(editNodeActionIcon);
-      editNodeActionIcon.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
-        onMouseClick_editNodeActionIcon(node);
-      });
-      editNodeActionIcon.toolTip = 'Edit node';
-      
-      viewNodeActionIcon = new NodeActionIcon((new viewNodeImage()) as BitmapAsset);
-      node.view.addActionIcon(viewNodeActionIcon);
-      viewNodeActionIcon.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
-        onMouseClick_viewNodeActionIcon(node);
-      });
-      viewNodeActionIcon.toolTip = 'View node page';
-      
-      relationshipActionIcon = new NodeActionIcon((new relationshipImage()) as BitmapAsset);
-      node.view.addActionIcon(relationshipActionIcon);
-      relationshipActionIcon.toolTip = 'Open relationships';
-      
-      relationshipActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
-        onMouseClick_relationshipActionIcon(event, node);
-      });
-      
-      addDrupalNodeActionIcon = new NodeActionIcon((new addImage()) as BitmapAsset);
-      node.view.addActionIcon(addDrupalNodeActionIcon);
-      addDrupalNodeActionIcon.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void {
-        onMouseClick_addDrupalNodeIcon(node);
-      });
-      addDrupalNodeActionIcon.toolTip = 'Create and add node';
       
       // Get user colors -> background colors.
       if (node.nodeData.drupalData.hasOwnProperty('userid') && node.nodeData.connection.isConnected) {
@@ -291,7 +266,8 @@ package plugins {
     /**
     * Event callback when the relationship action icon is clicked.
     */
-    private static function onMouseClick_relationshipActionIcon(event:MouseEvent, node:NodeViewController):void {
+    private static function onMouseClick_relationshipActionIcon(e:ContextMenuEvent):void {
+      var node:NodeViewController = TreeMapViewController.activeNode;
       ConnectionController.mainConnection.call(
         'graphmindRelationship.getSubtree',
         function (result:Object):void {
@@ -512,12 +488,13 @@ package plugins {
     /**
     * Event handler - click on the create and attach Drupal node icon.
     */ 
-    private static function onMouseClick_addDrupalNodeIcon(node:NodeViewController):void {
+    private static function onMouseClick_addDrupalNodeIcon(e:ContextMenuEvent):void {
       if (!ExternalInterface.available) {
         OSD.show('Can\'t create a node from here. Use Drupal and refresh your map.');
         return;
       }
       
+      var node:NodeViewController = TreeMapViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID);
     }
     
@@ -565,10 +542,11 @@ package plugins {
     /**
     * Event callback - click on the view-node-page action icon.
     */
-    private static function onMouseClick_editNodeActionIcon(node:NodeViewController):void {
+    private static function onMouseClick_editNodeActionIcon(e:ContextMenuEvent):void {
       if (!ExternalInterface.available) {
         OSD.show('Popup window is not available.');
       }
+      var node:NodeViewController = TreeMapViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link + '/edit');
     }
     
@@ -576,10 +554,11 @@ package plugins {
     /**
     * Event callback - click on the view-node-edit-page action icon.
     */
-    private static function onMouseClick_viewNodeActionIcon(node:NodeViewController):void {
+    private static function onMouseClick_viewNodeActionIcon(e:ContextMenuEvent):void {
       if (!ExternalInterface.available) {
         OSD.show('Popup window is not available.');
       }
+      var node:NodeViewController = TreeMapViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link);
     }
     
