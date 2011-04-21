@@ -16,8 +16,6 @@ package plugins {
   import flash.events.ContextMenuEvent;
   import flash.events.MouseEvent;
   import flash.external.ExternalInterface;
-  import flash.net.URLRequest;
-  import flash.net.navigateToURL;
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
@@ -121,6 +119,7 @@ package plugins {
       }
       
       NodeViewController.canHasNormalChild = false;
+      NodeViewController.canHasAnchor = false;
       
       EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);

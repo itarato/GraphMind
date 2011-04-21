@@ -137,6 +137,13 @@ package com.graphmind {
     public static var canHasNormalChild:Boolean = true;
     
     /**
+    * Feature - anchor.
+    */
+    public static var CAN_HAS_ANCHOR:String = 'canHasAnchor';
+    public var canHasAnchor:Boolean = true;
+    public static var canHasAnchor:Boolean = true;
+    
+    /**
     * Add action icon and the image source.
     */
     [Embed(source='assets/images/add.png')]
@@ -157,12 +164,21 @@ package com.graphmind {
 		public function NodeViewController(_nodeData:NodeDataObject = null, features:Object = null) {
 			super();
 
+      // Simple node child feature
       if (
         ObjectUtil.isObjectAttributeFalse(features, CAN_HAS_NORMAL_CHILD) || 
         !NodeViewController.canHasNormalChild ||
         !FeatureController.isFeatureEnabled(FeatureController.CREATE_MINDMAP_NODE)
       ) {
         canHasNormalChild = false;        
+      }
+      
+      // Anchor feature
+      if (
+        ObjectUtil.isObjectAttributeFalse(features, CAN_HAS_ANCHOR) ||
+        !NodeViewController.canHasAnchor
+      ) {
+        canHasAnchor = false;
       }
   
       // Setting node data.			
@@ -176,31 +192,30 @@ package com.graphmind {
 			// Setting view.
 		  view = new NodeView();
 		  
-		  drupalLinkIcon = new NodeActionIcon((new image_anchor()) as BitmapAsset);
-		  view.addActionIcon(drupalLinkIcon);
-		  drupalLinkIcon.toolTip = 'Go to Drupal page';
+		  if (canHasAnchor) {
+		    drupalLinkIcon = new NodeActionIcon((new image_anchor()) as BitmapAsset);
+		    view.addActionIcon(drupalLinkIcon);
+		    drupalLinkIcon.toolTip = 'Follow link';
+		    drupalLinkIcon.addEventListener(MouseEvent.CLICK, onClick_NodeLinkButton);
+		  }
 		  
 		  if (canHasNormalChild) {
 		    addNodeIcon = new NodeActionIcon((new image_add()) as BitmapAsset);
 		    view.addActionIcon(addNodeIcon);
+		    addNodeIcon.addEventListener(MouseEvent.CLICK, onClick_AddSimpleNodeButton);
 		  }
 			
       // Event listeners
       view.nodeComponentView.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
       view.nodeComponentView.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
       view.nodeComponentView.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
-      if (canHasNormalChild) {
-        addNodeIcon.addEventListener(MouseEvent.CLICK, onClick_AddSimpleNodeButton);
-      }
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_UP,                   onMouseUp);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_MOVE,                 onMouseMove);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_OVER,                 onMouseOver);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_OUT,                  onMouseOut);
       view.nodeComponentView.title_label.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete_TitleLabel);
-      drupalLinkIcon.addEventListener(MouseEvent.CLICK, onClick_NodeLinkButton);
       view.nodeComponentView.icon_has_child.addEventListener(MouseEvent.CLICK,       onClick_ToggleSubtreeButton);
-  
       view.nodeComponentView.contextMenu = getContextMenu();
 			view.nodeComponentView.title_label.text = nodeData.title;
 			view.backgroundColor = nodeData.color;
@@ -556,7 +571,9 @@ package com.graphmind {
  		 */
 		public function setLink(link:String):void {
 			nodeData.link = link;
-			drupalLinkIcon.visible = (link.length > 0);
+			if (canHasAnchor) {
+			  drupalLinkIcon.visible = (link.length > 0);
+			}
 			update(UP_UI);
 		}
 		
@@ -782,7 +799,9 @@ package com.graphmind {
       if (canHasNormalChild) {
         addNodeIcon.visible = ApplicationController.i.isEditable();
       }
-      drupalLinkIcon.visible = nodeData.link.length > 0;
+      if (canHasAnchor) {
+        drupalLinkIcon.visible = nodeData.link.length > 0;
+      }
     }
     
     
@@ -794,7 +813,9 @@ package com.graphmind {
       if (canHasNormalChild) {
         addNodeIcon.visible = false;
       }
-      drupalLinkIcon.visible = false;
+      if (canHasAnchor) {
+        drupalLinkIcon.visible = false;
+      }
       
       if (NodeViewController.isPrepairedNodeDragAndDrop) {
         EventCenter.notify(EventCenterEvent.NODE_START_DRAG, this);
