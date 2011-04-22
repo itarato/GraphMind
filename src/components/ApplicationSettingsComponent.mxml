@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+
+  <mx:HBox>
+  
+    <mx:HSlider minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
+      value="100"
+      id="desktopScaleHSlider"/>
+  
+    <mx:Label text="{desktopScaleHSlider.value + '%'}" />
+
+  </mx:HBox>
+
+</mx:VBox>

@@ -8,7 +8,13 @@ package com.graphmind {
 	import com.kitten.events.ConnectionIOErrorEvent;
 	import com.kitten.events.ConnectionNetStatusEvent;
 	
+	import components.ApplicationSettingsComponent;
+	
+	import flash.display.StageDisplayState;
+	import flash.events.MouseEvent;
+	
 	import mx.core.Application;
+	import mx.events.SliderEvent;
 	
 	import plugins.*;
 	
@@ -47,7 +53,27 @@ package com.graphmind {
 		 * Feature array.
 		 */
 		public var features:Array;
+		
+		/**
+		 * Disk image source for the save button.
+		 */
+	  [Embed(source="assets/images/disk.png")]
+	  private var diskImage:Class;
 
+    /**
+    * Gear image source for the settings icon.
+    */
+    [Embed(source="assets/images/cog.png")]
+    private var gearImage:Class;
+    
+    /**
+    * Full screen image source.
+    */
+    [Embed(source="assets/images/arrow_out.png")]
+    private var fullScreenImage:Class;
+    
+    private var applicationSettingsMenu:DropDownMenuPanelConroller;
+    private var applicationSettingsComponent:ApplicationSettingsComponent;
     
 		/**
 		 * Constructor.
@@ -57,6 +83,9 @@ package com.graphmind {
 		  
 		  // Add general ui form controller
 		  appFormController = new AppFormController();
+		  
+		  // Set MainMenu
+		  MainMenuController.view = GraphMind.i.mainMenuBar;
 		  
       // Edit mode has to be false by default.
       // Editing privileges have to be arrived from the backend with the user object.
@@ -79,6 +108,15 @@ package com.graphmind {
       ConnectionController.mainConnection.connect();
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
+      
+      MainMenuController.createIconMenuItem(new diskImage(), 'Save', onClick_saveMenuItem);
+      MainMenuController.createIconMenuItem(new fullScreenImage(), 'Toggle full screen', onClick_fullScreenIcon);
+      
+      applicationSettingsComponent = new ApplicationSettingsComponent();
+      applicationSettingsMenu = new DropDownMenuPanelConroller(new gearImage(), 'Settings');
+      applicationSettingsMenu.addFormItem(applicationSettingsComponent);
+      MainMenuController.addDropDownMenu(applicationSettingsMenu);
+      applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
 		}
 			
 			
@@ -188,6 +226,32 @@ package com.graphmind {
 		  var xml:String = ExportController.getFreeMindXML(TreeMapViewController.rootNode);
 		  (event.data as Function)(xml);
 		}
+
+
+    protected function onClick_saveMenuItem(event:MouseEvent):void {
+      EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
+    }
+    
+    
+    protected function onChange_mapScaleSlider(e:SliderEvent):void {
+      EventCenter.notify(EventCenterEvent.MAP_SCALE_CHANGED, e.value);
+    }
+    
+    
+    protected function onClick_fullScreenIcon(event:MouseEvent):void {
+      try {
+        switch (Application.application.stage.displayState) {
+          case StageDisplayState.FULL_SCREEN:
+            Application.application.stage.displayState = StageDisplayState.NORMAL;
+            break;
+          case StageDisplayState.NORMAL:
+            Application.application.stage.displayState = StageDisplayState.FULL_SCREEN;
+            break;
+        }
+      } catch (e:Error) {
+        Log.error('Toggling full screen mode is not working.');
+      }
+    }
 
 	}
 

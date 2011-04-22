@@ -46,7 +46,7 @@ package com.graphmind {
       GraphMind.i.panelLoadDrupalItem.controller = this;
       GraphMind.i.panelLoadView.controller = this;
       
-      GraphMind.i.mindmapToolsPanel.node_save_panel.controller = this;
+//      GraphMind.i.mindmapToolsPanel.node_save_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.node_info_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.node_attributes_panel.controller = this;
       GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
@@ -164,14 +164,14 @@ package com.graphmind {
     }
     
     
-    public function onClick_DumpFreemindXMLButton():void {
-      EventCenter.notify(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onFreemindXmlReveived);
-    }
+//    public function onClick_DumpFreemindXMLButton():void {
+//      EventCenter.notify(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onFreemindXmlReveived);
+//    }
     
     
-    protected function onFreemindXmlReveived(xml:String):void {
-      GraphMind.i.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = xml;
-    }
+//    protected function onFreemindXmlReveived(xml:String):void {
+//      GraphMind.i.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = xml;
+//    }
     
     
     public function onClick_NodeAttributeAddOrUpdateButton(param:String, value:String):void {
@@ -198,30 +198,6 @@ package com.graphmind {
       GraphMind.i.panelLoadView.view_name.text = selectedViewsCollection.name;
     }
 
-    
-    public function onClick_FullscreenButton():void {
-      toggleFullscreenMode();
-    }
-    
-    
-    /**
-     * Toggle fullscreen mode.
-     */
-    protected function toggleFullscreenMode():void {
-      try {
-        switch (Application.application.stage.displayState) {
-          case StageDisplayState.FULL_SCREEN:
-            Application.application.stage.displayState = StageDisplayState.NORMAL;
-            break;
-          case StageDisplayState.NORMAL:
-            Application.application.stage.displayState = StageDisplayState.FULL_SCREEN;
-            break;
-        }
-      } catch (e:Error) {
-        Log.error('Toggling full screen mode is not working.');
-      }
-    }
-    
     
     public function onChange_ScaleSlider(value:Number):void {
       EventCenter.notify(EventCenterEvent.MAP_SCALE_CHANGED, value);

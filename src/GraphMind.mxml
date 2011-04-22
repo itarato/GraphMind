@@ -99,16 +99,13 @@
 		<!-- Read-only mode state -->
 		<mx:State name="only_view_mode">
 			<mx:RemoveChild target="{mindmapToolsPanel}" />
-			<mx:RemoveChild target="{saveLinkButton}" />
-			<mx:SetProperty name="visible" target="{saveLinkButton}" value="false"/>
-			<mx:SetProperty name="visible" target="{mindmapToolsPanel.icon_outer_container}" value="false"/>
 		</mx:State>
 	</mx:states>
 
 	<!-- Main mindmap area -->
 	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
-		<mx:Canvas width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="mindmapMapPanel">
     	<mx:Canvas height="30" left="0" right="0" top="0"
         backgroundColor="0xDDDDDD"
         color="0x444444"
@@ -116,21 +113,7 @@
         borderColor="0xAAAAAA"
         borderSides="bottom">
         
-        <mx:HBox paddingTop="4" paddingLeft="4">
-          <mx:LinkButton top="4" label="Fullscreen" click="{controller.onClick_FullscreenButton();}"
-            id="fullScreenLinkButton"/>
-          
-          <mx:HSlider top="4" minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
-            value="100"
-            id="desktopScaleHSlider"
-            change="{controller.onChange_ScaleSlider(desktopScaleHSlider.value);}"/>
-          
-          <mx:Label paddingTop="2" text="{desktopScaleHSlider.value + '%'}"
-            id="desktopScaleLabel"/>
-            
-          <mx:LinkButton top="4" label="Save" click="{controller.onClick_SaveGraphmindButton();}" color="#E94A00"
-            id="saveLinkButton"/>
-        </mx:HBox>
+        <mx:HBox paddingTop="4" paddingLeft="4" id="mainMenuBar"/>
       </mx:Canvas>
       <mx:Canvas id="map"
         top="30" left="0" right="0" bottom="0" 

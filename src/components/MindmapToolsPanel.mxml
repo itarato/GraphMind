@@ -14,7 +14,7 @@
 			<components:NodeAttributes  id="node_attributes_panel"  />
 			<components:NodeIcons       id="icon_outer_container"   />
 			<components:NodeConnections id="node_connections_panel" />
-			<components:NodeSave        id="node_save_panel"        />
+			<!--<components:NodeSave        id="node_save_panel"        />-->
 		</mx:Accordion>
 		
 	</mx:Canvas>
