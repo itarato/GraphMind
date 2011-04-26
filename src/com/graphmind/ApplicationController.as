@@ -9,11 +9,13 @@ package com.graphmind {
 	import com.kitten.events.ConnectionNetStatusEvent;
 	
 	import components.ApplicationSettingsComponent;
+	import components.ConnectionSettingsComponent;
 	
 	import flash.display.StageDisplayState;
 	import flash.events.MouseEvent;
 	
 	import mx.core.Application;
+	import mx.events.FlexEvent;
 	import mx.events.SliderEvent;
 	
 	import plugins.*;
@@ -66,14 +68,24 @@ package com.graphmind {
     [Embed(source="assets/images/cog.png")]
     private var gearImage:Class;
     
+    private var applicationSettingsMenu:DropDownMenuPanelConroller;
+    private var applicationSettingsComponent:ApplicationSettingsComponent;
+    
     /**
     * Full screen image source.
     */
     [Embed(source="assets/images/arrow_out.png")]
     private var fullScreenImage:Class;
     
-    private var applicationSettingsMenu:DropDownMenuPanelConroller;
-    private var applicationSettingsComponent:ApplicationSettingsComponent;
+    /**
+    * Connections image source.
+    */
+    [Embed(source="assets/images/connect.png")]
+    private var connectionImage:Class;
+    
+    private var connectionSettingsComponent:ConnectionSettingsComponent;
+    private var connectionSettingsMenu:DropDownMenuPanelConroller;
+    
     
 		/**
 		 * Constructor.
@@ -117,6 +129,13 @@ package com.graphmind {
       applicationSettingsMenu.addFormItem(applicationSettingsComponent);
       MainMenuController.addDropDownMenu(applicationSettingsMenu);
       applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
+      
+      applicationSettingsComponent.nodeSizeSelect.addEventListener(FlexEvent.DATA_CHANGE, onDataChange_nodeSizeSelect);
+      
+      connectionSettingsComponent = new ConnectionSettingsComponent();
+      connectionSettingsMenu = new DropDownMenuPanelConroller(new connectionImage(), 'Remote connections');
+      connectionSettingsMenu.addFormItem(connectionSettingsComponent);
+      MainMenuController.addDropDownMenu(connectionSettingsMenu);
 		}
 			
 			
@@ -251,6 +270,11 @@ package com.graphmind {
       } catch (e:Error) {
         Log.error('Toggling full screen mode is not working.');
       }
+    }
+
+  
+    protected function onDataChange_nodeSizeSelect(e:FlexEvent):void {
+      EventCenter.notify(EventCenterEvent.REQUEST_TO_CHANGE_NODE_SIZE, applicationSettingsComponent.nodeSizeSelect.selectedIndex);
     }
 
 	}

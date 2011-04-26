@@ -75,7 +75,7 @@ package com.graphmind {
 		  EventCenter.subscribe(EventCenterEvent.MAP_UPDATED, onMindmapUpdated);
 		  
       // Node title RTE editor's default color
-      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
+//      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
       
       // Remove base context menu items (not perfect, though)
       var cm:ContextMenu = new ContextMenu();

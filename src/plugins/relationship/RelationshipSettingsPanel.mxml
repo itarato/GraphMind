@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-  label="Relationships"
-  icon="@Embed(source='../../assets/images/chart_organisation.png')"
-  width="100%" height="100%"
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
   horizontalScrollPolicy="off"
   verticalScrollPolicy="off">
+  
   <mx:Script>
     <![CDATA[
       import com.graphmind.TreeMapViewController;
       import plugins.Relationship;
-      
     ]]>
   </mx:Script>
-  
-  <mx:VBox top="10" bottom="10" left="10" right="10">
     
-    <!-- Depth settings -->
+  <!-- Depth settings -->
+  <mx:HBox>
     <mx:Label text="Depth of relationships" />
-    <mx:TextInput text="{Relationship.depth}" keyUp="{Relationship.depth = parseInt(relationship_depth_textfield.text);}" id="relationship_depth_textfield"/> 
-      
-    <mx:HRule height="32" width="100%"/>
+    <mx:TextInput text="{Relationship.depth}" keyUp="{Relationship.depth = parseInt(relationship_depth_textfield.text);}" id="relationship_depth_textfield" width="58"/>
+  </mx:HBox> 
     
+  <mx:HRule height="32" width="300"/>
+  
+  <mx:HBox>
     <mx:Text text="Regenerate relationships" />
     <mx:Button label="Refresh tree" click="{Relationship.refreshSubtree(TreeMapViewController.rootNode);}"/>
-      
-    <mx:HRule height="32" width="100%"/>
+  </mx:HBox>
     
+  <mx:HRule height="32" width="300"/>
+  
+  <mx:HBox>
     <mx:Text text="Checks updates on the backend" />
     <mx:Button label="Check update" click="{Relationship.checkForChanges();}" />
-      
-    <mx:HRule height="32" width="100%"/>
+  </mx:HBox>
     
+  <mx:HRule height="32" width="300"/>
+  
+  <mx:HBox>
     <mx:Label text="Update check frequency (seconds)" />
     <mx:ComboBox dataProvider="{Relationship.frequencies}" change="{Relationship.setUpdateCheckFrequency(frequency.selectedIndex);}" id="frequency"/>
-    
-  </mx:VBox>
+  </mx:HBox>
   
-  
-</mx:Canvas>
+</mx:VBox>

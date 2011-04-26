@@ -47,10 +47,10 @@ package com.graphmind {
       GraphMind.i.panelLoadView.controller = this;
       
 //      GraphMind.i.mindmapToolsPanel.node_save_panel.controller = this;
-      GraphMind.i.mindmapToolsPanel.node_info_panel.controller = this;
-      GraphMind.i.mindmapToolsPanel.node_attributes_panel.controller = this;
-      GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
-      GraphMind.i.mindmapToolsPanel.icon_outer_container.controller = this;
+//      GraphMind.i.mindmapToolsPanel.node_info_panel.controller = this;
+//      GraphMind.i.mindmapToolsPanel.node_attributes_panel.controller = this;
+//      GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
+//      GraphMind.i.mindmapToolsPanel.icon_outer_container.controller = this;
       
       // Event handlers.
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeSelected);
@@ -71,10 +71,10 @@ package com.graphmind {
         });
       }     
       
-      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = node.view.nodeComponentView.title_label.htmlText || node.view.nodeComponentView.title_label.text;
-      GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = node.nodeData.link;
-      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
-      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
+//      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = node.view.nodeComponentView.title_label.htmlText || node.view.nodeComponentView.title_label.text;
+//      GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = node.nodeData.link;
+//      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
+//      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
     }
     
         

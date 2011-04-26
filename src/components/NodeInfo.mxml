@@ -27,12 +27,4 @@
 	  click="{controller.onClick_SaveNodeLink(link.text);}" 
 	  icon="@Embed(source='assets/images/anchor.png')"/>
 	  
-	<mx:HRule left="10" y="348" right="10"/>
-  
-  <mx:ComboBox dataProvider="{AppFormController.NODE_SIZES}" left="77" y="358" 
-    change="{controller.onChange_NodeSize(nodeSizeSelect.selectedIndex)}"
-    id="nodeSizeSelect"
-    selectedIndex="{AppFormController.NODE_SIZE_SMALL_INDEX}"/>
-  <mx:Label x="10" y="360" text="Node size:"/>
-
 </mx:Canvas>

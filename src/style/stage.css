@@ -32,12 +32,3 @@ RichTextEditor {
 Button {
 	fillColors: #CCCCCC, #CCCCCC, #CCCCCC, #CCCCCC;
 }
-
-/* Main divider */
-HDividedBox {
-  divider-alpha: 0.5;
-  divider-affordance: 30;
-  divider-color: #333333;
-  divider-thickness: 12;
-  background-color: #DDDDDD;
-}

@@ -84,29 +84,26 @@
 	<mx:states>
 		<!-- Load views state --> 
 		<mx:State name="load_view_state">
-			<mx:SetProperty name="visible" target="{mainHBox}" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<components:ViewLoadPanel id="panelLoadView"/>
 			</mx:AddChild>
 		</mx:State>
 		<!-- Load single Drupal item state -->
 		<mx:State name="load_item_state">
-			<mx:SetProperty name="visible" target="{mainHBox}" value="false"/>
 			<mx:AddChild position="lastChild" creationPolicy="all">
 				<components:DrupalItemLoadPanel id="panelLoadDrupalItem"/>
 			</mx:AddChild>
 		</mx:State>
 		<!-- Read-only mode state -->
 		<mx:State name="only_view_mode">
-			<mx:RemoveChild target="{mindmapToolsPanel}" />
 		</mx:State>
 	</mx:states>
 
 	<!-- Main mindmap area -->
-	<mx:HDividedBox width="100%" height="100%" id="mainHBox">
-		<components:MindmapToolsPanel id="mindmapToolsPanel"/>
+	<!--<mx:HDividedBox width="100%" height="100%" id="mainHBox">
+		<components:MindmapToolsPanel id="mindmapToolsPanel"/>-->
 		<mx:Canvas width="100%" height="100%" id="mindmapMapPanel">
-    	<mx:Canvas height="30" left="0" right="0" top="0"
+    	<mx:Canvas height="25" left="0" right="0" top="0"
         backgroundColor="0xDDDDDD"
         color="0x444444"
         borderStyle="solid"
@@ -119,7 +116,7 @@
         top="30" left="0" right="0" bottom="0" 
         horizontalScrollPolicy="off" verticalScrollPolicy="off" />
 		</mx:Canvas>
-	</mx:HDividedBox>
+	<!--</mx:HDividedBox>-->
 	
 	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>
 	

@@ -1,6 +1,8 @@
 package plugins {
   
   import com.graphmind.ConnectionController;
+  import com.graphmind.DropDownMenuPanelConroller;
+  import com.graphmind.MainMenuController;
   import com.graphmind.NodeViewController;
   import com.graphmind.TreeMapViewController;
   import com.graphmind.data.NodeDataObject;
@@ -14,13 +16,11 @@ package plugins {
   import com.graphmind.view.NodeActionIcon;
   
   import flash.events.ContextMenuEvent;
-  import flash.events.MouseEvent;
   import flash.external.ExternalInterface;
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
   import mx.core.Application;
-  import mx.core.BitmapAsset;
   
   import plugins.relationship.RelationshipSettingsPanel;
   
@@ -77,6 +77,7 @@ package plugins {
     * Settings panel component.
     */
     private static var settingsPanel:RelationshipSettingsPanel;
+    private static var settingsMenu:DropDownMenuPanelConroller;
     
     /**
     * True if refreshing happens.
@@ -126,9 +127,6 @@ package plugins {
       EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
       EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
-      
-      settingsPanel = new RelationshipSettingsPanel;
-      GraphMind.i.mindmapToolsPanel.mindmapToolsAccordion.addChild(settingsPanel);
       
       ExternalInterface.addCallback('sendCreationRequestBackToFlex', onReturnCreationRequest);
     }
@@ -482,6 +480,11 @@ package plugins {
     private static function onMapTreeIsComplete(event:EventCenterEvent):void {
       // Start checking the updates.
       checkForChangesWithLoop();
+      
+      settingsPanel = new RelationshipSettingsPanel();
+      settingsMenu = new DropDownMenuPanelConroller(new relationshipImage(), 'Relationships');
+      settingsMenu.addFormItem(settingsPanel);
+      MainMenuController.addDropDownMenu(settingsMenu);
     }
     
     

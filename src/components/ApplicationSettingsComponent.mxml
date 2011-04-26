@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    <![CDATA[
+      import com.graphmind.AppFormController;
+    ]]>
+  </mx:Script>
 
   <mx:HBox>
   
@@ -9,6 +14,14 @@
   
     <mx:Label text="{desktopScaleHSlider.value + '%'}" />
 
+  </mx:HBox>
+  
+  <mx:HBox>
+    <mx:Label text="Node size:"/>
+    
+    <mx:ComboBox dataProvider="{AppFormController.NODE_SIZES}" 
+      id="nodeSizeSelect"
+      selectedIndex="{AppFormController.NODE_SIZE_SMALL_INDEX}"/>
   </mx:HBox>
 
 </mx:VBox>
