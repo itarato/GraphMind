@@ -2,6 +2,7 @@ package com.graphmind {
 	
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
+	import com.graphmind.display.ConfigPanelController;
 	import com.graphmind.display.ICloud;
 	import com.graphmind.display.ITreeNode;
 	import com.graphmind.display.TreeArrowLink;
@@ -13,6 +14,10 @@ package com.graphmind {
 	import com.graphmind.util.StringUtility;
 	import com.graphmind.view.NodeActionIcon;
 	import com.graphmind.view.NodeView;
+	
+	import components.NodeAttributes;
+	import components.NodeIcons;
+	import components.NodeInfo;
 	
 	import flash.events.ContextMenuEvent;
 	import flash.events.EventDispatcher;
@@ -157,6 +162,23 @@ package com.graphmind {
     public var image_anchor:Class;
     protected var drupalLinkIcon:NodeActionIcon;
     
+    /**
+    * Node configuration panel.
+    */
+    private static var nodeConfigPanel:ConfigPanelController;
+    private static var nodeConfigComponent:NodeInfo;
+    
+    /**
+    * Node attributes panel.
+    */
+    private static var nodeAttributesPanel:ConfigPanelController;
+    private static var nodeAttributesComponent:NodeAttributes;
+    
+    /**
+    * Node icons panel.
+    */
+    private static var nodeIconsPanel:ConfigPanelController;
+    private static var nodeIconsComponent:NodeIcons;
     
     /**
      * Constructor.
@@ -227,6 +249,24 @@ package com.graphmind {
 		
 		
 		/**
+		 * Init static functionalities.
+		 */
+		public static function init():void {
+		  nodeConfigPanel = new ConfigPanelController('Node Settings');
+		  nodeConfigComponent = new NodeInfo();
+		  nodeConfigPanel.addItem(nodeConfigComponent);
+		  
+		  nodeAttributesPanel = new ConfigPanelController('Attributes');
+		  nodeAttributesComponent = new NodeAttributes();
+		  nodeAttributesPanel.addItem(nodeAttributesComponent);
+		  
+		  nodeIconsPanel = new ConfigPanelController('Icons');
+		  nodeIconsComponent = new NodeIcons();
+		  nodeIconsPanel.addItem(nodeIconsComponent);
+		}
+		
+		
+		/**
 		 * Create a simple empty child node.
 		 * Don't use it for creating nodes. Use NodeFactory instead.
 		 */
@@ -247,6 +287,9 @@ package com.graphmind {
 			contextMenu.hideBuiltInItems();
 			
 			var cms:Array = [];
+			cms.push({title: 'Node info', event: onContextMenuSelected_NodeInfo, separator: false});
+			cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
+      cms.push({title: 'Icons', event: onContextMenuSelected_NodeIcons, separator: true});
 			cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
 			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
 			  cms.push({title: 'Load Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
@@ -1208,6 +1251,21 @@ package com.graphmind {
       view.nodeComponentView.title_new.addEventListener(FlexEvent.CREATION_COMPLETE, function(e:FlexEvent):void{
         view.nodeComponentView.title_new.setFocus();
       });
+    }
+    
+    
+    private function onContextMenuSelected_NodeInfo(e:ContextMenuEvent):void {
+      nodeConfigPanel.show();
+    }
+    
+    
+    private function onContextMenuSelected_NodeAttributes(e:ContextMenuEvent):void {
+      nodeAttributesPanel.show();
+    }
+    
+    
+    private function onContextMenuSelected_NodeIcons(e:ContextMenuEvent):void {
+      nodeIconsPanel.show();
     }
     
 	}

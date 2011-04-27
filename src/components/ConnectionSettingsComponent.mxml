@@ -12,7 +12,7 @@
   </mx:Script>
           
   <!-- Connect to new Drupal site form -->
-  <mx:DataGrid width="300" height="300"
+  <mx:DataGrid width="300" height="100"
     dataProvider="{ConnectionController.connections}">
     <mx:columns>
       <mx:DataGridColumn headerText="ID" dataField="id" width="30"/>

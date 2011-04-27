@@ -103,14 +103,14 @@
 	<!--<mx:HDividedBox width="100%" height="100%" id="mainHBox">
 		<components:MindmapToolsPanel id="mindmapToolsPanel"/>-->
 		<mx:Canvas width="100%" height="100%" id="mindmapMapPanel">
-    	<mx:Canvas height="25" left="0" right="0" top="0"
+    	<mx:Canvas height="27" left="0" right="0" top="0"
         backgroundColor="0xDDDDDD"
         color="0x444444"
         borderStyle="solid"
         borderColor="0xAAAAAA"
         borderSides="bottom">
         
-        <mx:HBox paddingTop="4" paddingLeft="4" id="mainMenuBar"/>
+        <mx:HBox paddingTop="2" paddingLeft="2" id="mainMenuBar"/>
       </mx:Canvas>
       <mx:Canvas id="map"
         top="30" left="0" right="0" bottom="0" 

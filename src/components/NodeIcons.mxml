@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" label="Icons" width="100%" height="100%"
-	icon="@Embed(source='assets/images/application_view_tile.png')">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
 
 	<mx:Script>
 		<![CDATA[
-		  import com.graphmind.AppFormController;
-		  import com.graphmind.TreeMapViewController;
-			import com.graphmind.ApplicationController;
-    
+		  import com.graphmind.ApplicationController;
       [Bindable]
       public static var icons:Array = [
         "Mail", "yes", "help", "stop", "prepare",  "go",
@@ -29,14 +25,13 @@
         "group", "messagebox_warning"
       ];
       
-      public var controller:AppFormController;
 		]]>
 	</mx:Script>
 
-	<mx:Tile left="10" top="10" right="10" height="100%">
+	<mx:Tile width="100%">
 		<mx:Repeater dataProvider="{icons}" id="icon_repeater">
-			<mx:Image source="{ApplicationController.getIconPath()}{icon_repeater.currentItem}.png" 
-				click="{controller.onClick_Icon(event);}"/>
+			<mx:Image source="{ApplicationController.getIconPath()}{icon_repeater.currentItem}.png" />
 		</mx:Repeater>
 	</mx:Tile>
-</mx:Canvas>
+	
+</mx:VBox>

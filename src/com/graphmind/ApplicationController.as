@@ -1,6 +1,7 @@
 package com.graphmind {
   
 	import com.graphmind.data.DrupalViews;
+	import com.graphmind.display.ConfigPanelController;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
@@ -68,7 +69,7 @@ package com.graphmind {
     [Embed(source="assets/images/cog.png")]
     private var gearImage:Class;
     
-    private var applicationSettingsMenu:DropDownMenuPanelConroller;
+    private var applicationSettingsPanel:ConfigPanelController;
     private var applicationSettingsComponent:ApplicationSettingsComponent;
     
     /**
@@ -84,7 +85,7 @@ package com.graphmind {
     private var connectionImage:Class;
     
     private var connectionSettingsComponent:ConnectionSettingsComponent;
-    private var connectionSettingsMenu:DropDownMenuPanelConroller;
+    private var connectionSettingsPanel:ConfigPanelController;
     
     
 		/**
@@ -97,7 +98,7 @@ package com.graphmind {
 		  appFormController = new AppFormController();
 		  
 		  // Set MainMenu
-		  MainMenuController.view = GraphMind.i.mainMenuBar;
+		  MainMenuController.init(GraphMind.i.mainMenuBar);
 		  
       // Edit mode has to be false by default.
       // Editing privileges have to be arrived from the backend with the user object.
@@ -121,21 +122,22 @@ package com.graphmind {
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
       
-      MainMenuController.createIconMenuItem(new diskImage(), 'Save', onClick_saveMenuItem);
-      MainMenuController.createIconMenuItem(new fullScreenImage(), 'Toggle full screen', onClick_fullScreenIcon);
+      MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
+      MainMenuController.createIconMenuItem(fullScreenImage, 'Toggle full screen', onClick_fullScreenIcon);
       
       applicationSettingsComponent = new ApplicationSettingsComponent();
-      applicationSettingsMenu = new DropDownMenuPanelConroller(new gearImage(), 'Settings');
-      applicationSettingsMenu.addFormItem(applicationSettingsComponent);
-      MainMenuController.addDropDownMenu(applicationSettingsMenu);
+      applicationSettingsPanel = new ConfigPanelController('Map settings');
+      applicationSettingsPanel.addItem(applicationSettingsComponent);
+      MainMenuController.createIconMenuItem(gearImage, 'Settings', onClick_ApplicationSettingsMenuItem);
       applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
-      
       applicationSettingsComponent.nodeSizeSelect.addEventListener(FlexEvent.DATA_CHANGE, onDataChange_nodeSizeSelect);
       
       connectionSettingsComponent = new ConnectionSettingsComponent();
-      connectionSettingsMenu = new DropDownMenuPanelConroller(new connectionImage(), 'Remote connections');
-      connectionSettingsMenu.addFormItem(connectionSettingsComponent);
-      MainMenuController.addDropDownMenu(connectionSettingsMenu);
+      connectionSettingsPanel = new ConfigPanelController('Remote connections');
+      connectionSettingsPanel.addItem(connectionSettingsComponent);
+      MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
+      
+      NodeViewController.init();
 		}
 			
 			
@@ -276,7 +278,16 @@ package com.graphmind {
     protected function onDataChange_nodeSizeSelect(e:FlexEvent):void {
       EventCenter.notify(EventCenterEvent.REQUEST_TO_CHANGE_NODE_SIZE, applicationSettingsComponent.nodeSizeSelect.selectedIndex);
     }
+    
+    
+    protected function onClick_ApplicationSettingsMenuItem(e:MouseEvent):void {
+      applicationSettingsPanel.show();
+    }
 
+  
+    protected function onClick_ConnectionsMenuItem(e:MouseEvent):void {
+      connectionSettingsPanel.show();
+    }
 	}
 
 }

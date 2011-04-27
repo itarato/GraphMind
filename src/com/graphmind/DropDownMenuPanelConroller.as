@@ -4,26 +4,25 @@ package com.graphmind {
   
   import mx.containers.Canvas;
   import mx.containers.VBox;
-  import mx.controls.Image;
-  import mx.core.BitmapAsset;
   import mx.core.ScrollPolicy;
   import mx.core.UIComponent;
   
   public class DropDownMenuPanelConroller extends Canvas {
     
-    public var menuIcon:Image;
+    public var menuIcon:Class;
+    
+    public var menuTooltip:String;
 
     public var panel:VBox = new VBox();
     
     public var closeTimeout:uint;
     
     
-    public function DropDownMenuPanelConroller(iconSource:BitmapAsset, tooltip:String) {
+    public function DropDownMenuPanelConroller(iconSource:Class, tooltip:String) {
       super();
 
-      menuIcon = new Image();
-      menuIcon.source = iconSource;
-      menuIcon.toolTip = tooltip;
+      this.menuIcon = iconSource;
+      this.menuTooltip = tooltip;
       
       addChild(panel);
       panel.setStyle('backgroundColor', '0xDDDDDD');

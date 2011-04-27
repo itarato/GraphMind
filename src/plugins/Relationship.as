@@ -1,12 +1,12 @@
 package plugins {
   
   import com.graphmind.ConnectionController;
-  import com.graphmind.DropDownMenuPanelConroller;
   import com.graphmind.MainMenuController;
   import com.graphmind.NodeViewController;
   import com.graphmind.TreeMapViewController;
   import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.NodeType;
+  import com.graphmind.display.ConfigPanelController;
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
   import com.graphmind.temp.DrupalItemRequestParamObject;
@@ -16,6 +16,7 @@ package plugins {
   import com.graphmind.view.NodeActionIcon;
   
   import flash.events.ContextMenuEvent;
+  import flash.events.MouseEvent;
   import flash.external.ExternalInterface;
   import flash.utils.setTimeout;
   
@@ -76,8 +77,8 @@ package plugins {
     /**
     * Settings panel component.
     */
-    private static var settingsPanel:RelationshipSettingsPanel;
-    private static var settingsMenu:DropDownMenuPanelConroller;
+    private static var settingsComponent:RelationshipSettingsPanel;
+    private static var settingsPanel:ConfigPanelController;
     
     /**
     * True if refreshing happens.
@@ -481,10 +482,10 @@ package plugins {
       // Start checking the updates.
       checkForChangesWithLoop();
       
-      settingsPanel = new RelationshipSettingsPanel();
-      settingsMenu = new DropDownMenuPanelConroller(new relationshipImage(), 'Relationships');
-      settingsMenu.addFormItem(settingsPanel);
-      MainMenuController.addDropDownMenu(settingsMenu);
+      settingsComponent = new RelationshipSettingsPanel();
+      settingsPanel = new ConfigPanelController('Relationships');
+      settingsPanel.addItem(settingsComponent);
+      MainMenuController.createIconMenuItem(relationshipImage, 'Relationships', onClick_RelationshipsMenuItem);
     }
     
     
@@ -563,6 +564,11 @@ package plugins {
       }
       var node:NodeViewController = TreeMapViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link);
+    }
+    
+    
+    private static function onClick_RelationshipsMenuItem(e:MouseEvent):void {
+      settingsPanel.show();
     }
     
   }

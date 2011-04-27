@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" label="Attributes" width="100%" height="100%" visible="false"
-	icon="@Embed(source='assets/images/table.png')">
-	
-	<mx:Script>
-		<![CDATA[
-		  import com.graphmind.AppFormController;
-		  
-		  [Bindable]
-		  public var controller:AppFormController;
-		]]>
-	</mx:Script>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
 			
-	<mx:DataGrid width="100%" 
-		dataProvider="{controller.selectedNodeData}" 
-		top="0" bottom="190" left="0"
+	<mx:DataGrid width="100%"
 		id="attributesDataGrid">
 		<mx:click>
 			<![CDATA[
@@ -28,17 +16,20 @@
 			<mx:DataGridColumn headerText="Value" dataField="value"/>
 		</mx:columns>
 	</mx:DataGrid>
-	<mx:Button label="Save" left="10" bottom="10" 
-		click="{controller.onClick_NodeAttributeAddOrUpdateButton(attributes_update_param.text, attributes_update_value.text);}"
+	
+	<mx:Button label="Save"  
 		tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
-	<mx:Label text="Value" left="10" bottom="108"/>
-	<mx:TextInput bottom="134" left="10" id="attributes_update_param" tabIndex="20" right="10"/>
-	<mx:Label text="Parameter" left="10" bottom="164"/>
-	<mx:TextArea left="10" bottom="40" id="attributes_update_value" tabIndex="21" right="10" height="60"/>
+		
+	<mx:Label text="Value" />
+	
+	<mx:TextInput id="attributes_update_param" tabIndex="20" width="100%" />
+
+	<mx:Label text="Parameter" />
+
+	<mx:TextArea id="attributes_update_value" tabIndex="21" height="60" width="100%"/>
+
 	<mx:Button label="Remove"
 		tabIndex="23"
-		click="{controller.onClick_NodeAttributeRemoveButton(attributes_update_param.text)};" 
-		left="90" bottom="10" 
 		icon="@Embed(source='assets/images/delete.png')"/>
 				
-</mx:Canvas>
+</mx:VBox>

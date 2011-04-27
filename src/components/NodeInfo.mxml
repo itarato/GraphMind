@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-	label="Node info" width="100%" height="100%" horizontalScrollPolicy="off"
-	icon="@Embed(source='assets/images/cog.png')">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
 	
-	<mx:Script>
-		<![CDATA[
-		  import com.graphmind.AppFormController;
-		  public var controller:AppFormController;
-		]]>
-	</mx:Script>
-
 	<mx:RichTextEditor 
 	  title="Node title" 
-	  width="100%" height="240" left="0" top="0" 
 	  id="nodeLabelRTE" />
+	  
 	<mx:Button 
-	  x="10" y="248" 
 	  label="Save node title" 
-	  click="{controller.onClick_RTESaveButton(nodeLabelRTE.htmlText);}" 
 	  icon="@Embed(source='assets/images/pencil.png')"/>
-	<mx:HRule left="10" y="278" right="10"/>
-	<mx:TextInput y="288" id="link" right="10" left="10"/>
+	  
+	<mx:TextInput id="link"/>
+	
 	<mx:Button 
 	  x="10" y="318" 
 	  label="Save external link" 
-	  click="{controller.onClick_SaveNodeLink(link.text);}" 
 	  icon="@Embed(source='assets/images/anchor.png')"/>
 	  
-</mx:Canvas>
+</mx:VBox>

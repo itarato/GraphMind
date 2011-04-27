@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" 
+  backgroundColor="0xFFFFFF"
+  backgroundAlpha="0.6">
+  
+  <mx:filters>
+    <mx:DropShadowFilter alpha="0.5" blurX="4" blurY="4" distance="0.0" />
+  </mx:filters>
+  
+  <mx:VBox id="items" x="10" width="380" top="41" bottom="10"/>
+  
+  <mx:Text text="{this.label}" width="380" x="10" y="10" fontWeight="bold" fontSize="14"/>
+  
+  <mx:Image source="@Embed(source='assets/images/cross.gif')" x="376" y="12" id="exit_icon"/>
+  
+</mx:Canvas>
