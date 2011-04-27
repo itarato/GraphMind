@@ -5,9 +5,11 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.util.Log;
+	import com.graphmind.util.OSD;
 	import com.kitten.events.ConnectionEvent;
 	import com.kitten.events.ConnectionIOErrorEvent;
 	import com.kitten.events.ConnectionNetStatusEvent;
+	import com.kitten.network.Connection;
 	
 	import components.ApplicationSettingsComponent;
 	import components.ConnectionSettingsComponent;
@@ -135,6 +137,7 @@ package com.graphmind {
       connectionSettingsPanel = new ConfigPanelController('Remote connections');
       connectionSettingsPanel.addItem(connectionSettingsComponent);
       MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
+      connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
       
       NodeViewController.init();
 		}
@@ -287,6 +290,28 @@ package com.graphmind {
   
     protected function onClick_ConnectionsMenuItem(e:MouseEvent):void {
       connectionSettingsPanel.show();
+    }
+    
+    
+    /**
+     * Event handler for
+     */
+    public function onClick_AddNewSiteConnectionButton(e:MouseEvent):void {
+      var url:String = connectionSettingsComponent.connectFormURL.text;
+      var userName:String = connectionSettingsComponent.connectFormUsername.text;
+      var userPassword:String = connectionSettingsComponent.connectFormPassword.text;
+      var conn:Connection = ConnectionController.createConnection(url);
+      
+      conn.userName = userName;
+      conn.userPassword = userPassword;
+      conn.isSessionAuthentication = true;
+      conn.addEventListener(ConnectionIOErrorEvent.IO_ERROR_EVENT, function(e:ConnectionIOErrorEvent):void{
+        OSD.show('Connection is added but has problems. Check the credentials.');
+      });
+      conn.addEventListener(ConnectionEvent.CONNECTION_IS_READY, function(e:ConnectionEvent):void{
+        OSD.show('Connection is added and ready for calls.');
+      });
+      conn.connect();
     }
 	}
 

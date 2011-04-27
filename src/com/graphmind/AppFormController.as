@@ -60,24 +60,6 @@ package com.graphmind {
 //      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
     }
     
-        
-    /**
-     * Event handler for
-     */
-    public function onClick_AddNewSiteConnectionButton(url:String, userName:String, userPassword:String):void {
-      var conn:Connection = ConnectionController.createConnection(url);
-      conn.userName = userName;
-      conn.userPassword = userPassword;
-      conn.isSessionAuthentication = true;
-      conn.addEventListener(ConnectionIOErrorEvent.IO_ERROR_EVENT, function(e:ConnectionIOErrorEvent):void{
-        OSD.show('Connection is added but has problems. Check the credentials.');
-      });
-      conn.addEventListener(ConnectionEvent.CONNECTION_IS_READY, function(e:ConnectionEvent):void{
-        OSD.show('Connection is added and ready for calls.');
-      });
-      conn.connect();
-    }
-    
     
     /**
      * Event for clicking on the view load panel.
@@ -145,16 +127,6 @@ package com.graphmind {
     public function onClick_SaveGraphmindButton():void {
       EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
     }
-    
-    
-//    public function onClick_DumpFreemindXMLButton():void {
-//      EventCenter.notify(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onFreemindXmlReveived);
-//    }
-    
-    
-//    protected function onFreemindXmlReveived(xml:String):void {
-//      GraphMind.i.mindmapToolsPanel.node_save_panel.freemindExportTextarea.text = xml;
-//    }
     
     
     public function onClick_NodeAttributeAddOrUpdateButton(param:String, value:String):void {
