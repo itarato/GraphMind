@@ -405,7 +405,7 @@ package com.graphmind {
     
     private function onRequestToChangeNodeSize(event:EventCenterEvent):void {
       switch (event.data as uint) {
-        case AppFormController.NODE_SIZE_SMALL_INDEX:
+        case ApplicationController.NODE_SIZE_SMALL_INDEX:
           NodeView.HEIGHT = NodeView.SMALL_HEIGHT;
           NodeView.LABEL_FONT_SIZE = NodeView.SMALL_LABEL_FONT_SIZE;
           NodeView.LABEL_EDIT_FONT_SIZE = NodeView.SMALL_LABEL_EDIT_FONT_SIZE;

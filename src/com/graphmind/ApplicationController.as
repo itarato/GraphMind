@@ -16,7 +16,7 @@ package com.graphmind {
 	import flash.events.MouseEvent;
 	
 	import mx.core.Application;
-	import mx.events.FlexEvent;
+	import mx.events.ListEvent;
 	import mx.events.SliderEvent;
 	
 	import plugins.*;
@@ -41,12 +41,6 @@ package com.graphmind {
     [Bindable]
     public var treeMapViewController:TreeMapViewController;
     
-    /**
-    * Application form elemets' controller.
-    */
-    [Bindable]
-    public var appFormController:AppFormController;
-		
 		/**
 		 * Indicates the access permissions.
 		 */
@@ -87,15 +81,20 @@ package com.graphmind {
     private var connectionSettingsComponent:ConnectionSettingsComponent;
     private var connectionSettingsPanel:ConfigPanelController;
     
+    /**
+    * Node size settings.
+    */
+    [Bindable]
+    public static var NODE_SIZES:Array = ['Small', 'Large'];
+    public static const NODE_SIZE_SMALL_INDEX:uint = 0;
+    public static const NODE_SIZE_LARGE_INDEX:uint = 1;
+    
     
 		/**
 		 * Constructor.
 		 */
 		public function ApplicationController() {
 		  ApplicationController.i = this;
-		  
-		  // Add general ui form controller
-		  appFormController = new AppFormController();
 		  
 		  // Set MainMenu
 		  MainMenuController.init(GraphMind.i.mainMenuBar);
@@ -130,7 +129,7 @@ package com.graphmind {
       applicationSettingsPanel.addItem(applicationSettingsComponent);
       MainMenuController.createIconMenuItem(gearImage, 'Settings', onClick_ApplicationSettingsMenuItem);
       applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
-      applicationSettingsComponent.nodeSizeSelect.addEventListener(FlexEvent.DATA_CHANGE, onDataChange_nodeSizeSelect);
+      applicationSettingsComponent.nodeSizeSelect.addEventListener(ListEvent.CHANGE, onDataChange_nodeSizeSelect);
       
       connectionSettingsComponent = new ConnectionSettingsComponent();
       connectionSettingsPanel = new ConfigPanelController('Remote connections');
@@ -228,7 +227,8 @@ package com.graphmind {
 		public function setEditMode(editable:Boolean):void {
 			_isEditable = editable;
 			if (!_isEditable) {
-				GraphMind.i.currentState = 'only_view_mode';
+			  // @todo make this setting work again
+//				GraphMind.i.currentState = 'only_view_mode';
 			} else {
 				GraphMind.i.currentState = '';
 			}
@@ -275,7 +275,7 @@ package com.graphmind {
     }
 
   
-    protected function onDataChange_nodeSizeSelect(e:FlexEvent):void {
+    protected function onDataChange_nodeSizeSelect(e:ListEvent):void {
       EventCenter.notify(EventCenterEvent.REQUEST_TO_CHANGE_NODE_SIZE, applicationSettingsComponent.nodeSizeSelect.selectedIndex);
     }
     

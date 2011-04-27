@@ -46,7 +46,6 @@
 			 */
 			[Bindable] public var applicationController:ApplicationController;
 			
-			public var controller:AppFormController;
 			
 			/**
 			 * Callback for initialize event.
@@ -79,44 +78,22 @@
 			
 		]]>
 	</mx:Script>
-	
-	<!-- View states -->
-	<mx:states>
-		<!-- Load views state --> 
-		<mx:State name="load_view_state">
-			<mx:AddChild position="lastChild" creationPolicy="all">
-				<components:ViewLoadPanel id="panelLoadView"/>
-			</mx:AddChild>
-		</mx:State>
-		<!-- Load single Drupal item state -->
-		<mx:State name="load_item_state">
-			<mx:AddChild position="lastChild" creationPolicy="all">
-				<components:DrupalItemLoadPanel id="panelLoadDrupalItem"/>
-			</mx:AddChild>
-		</mx:State>
-		<!-- Read-only mode state -->
-		<mx:State name="only_view_mode">
-		</mx:State>
-	</mx:states>
 
 	<!-- Main mindmap area -->
-	<!--<mx:HDividedBox width="100%" height="100%" id="mainHBox">
-		<components:MindmapToolsPanel id="mindmapToolsPanel"/>-->
-		<mx:Canvas width="100%" height="100%" id="mindmapMapPanel">
-    	<mx:Canvas height="27" left="0" right="0" top="0"
-        backgroundColor="0xDDDDDD"
-        color="0x444444"
-        borderStyle="solid"
-        borderColor="0xAAAAAA"
-        borderSides="bottom">
-        
-        <mx:HBox paddingTop="2" paddingLeft="2" id="mainMenuBar"/>
-      </mx:Canvas>
-      <mx:Canvas id="map"
-        top="30" left="0" right="0" bottom="0" 
-        horizontalScrollPolicy="off" verticalScrollPolicy="off" />
-		</mx:Canvas>
-	<!--</mx:HDividedBox>-->
+	<mx:Canvas width="100%" height="100%" id="mindmapMapPanel">
+	<mx:Canvas height="27" left="0" right="0" top="0"
+    backgroundColor="0xDDDDDD"
+    color="0x444444"
+    borderStyle="solid"
+    borderColor="0xAAAAAA"
+    borderSides="bottom">
+    
+    <mx:HBox paddingTop="2" paddingLeft="2" id="mainMenuBar"/>
+  </mx:Canvas>
+  <mx:Canvas id="map"
+    top="30" left="0" right="0" bottom="0" 
+    horizontalScrollPolicy="off" verticalScrollPolicy="off" />
+	</mx:Canvas>
 	
 	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>
 	

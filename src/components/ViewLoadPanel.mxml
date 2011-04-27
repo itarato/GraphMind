@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" 
-	width="700" height="400" 
-	styleName="toolPanel"
-	layout="absolute" horizontalCenter="0" verticalCenter="0" 
-	title="Attach view">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
 	
 	<mx:Script>
 		<![CDATA[
-		  import com.graphmind.AppFormController;
 			import com.graphmind.data.DrupalViews;
-			
-			public var controller:AppFormController;
 		]]>
 	</mx:Script>
 	
-	<mx:DataGrid x="10" y="10" width="383" height="340"
+	<mx:DataGrid width="100%"
 		dataProvider="{DrupalViews.availableViews}"
-		itemClick="{controller.onItemClick_LoadViewDataGrid(event);}"
 		id="view_views_datagrid">
 		<mx:columns>
 			<mx:DataGridColumn headerText="Host" dataField="siteConnectionID" width="120"/>
@@ -24,17 +16,15 @@
 			<mx:DataGridColumn headerText="type" dataField="baseTable" width="60"/>
 		</mx:columns>
 	</mx:DataGrid>
-	<mx:Form x="401" y="10" width="269" height="340" horizontalScrollPolicy="off">
-		<mx:FormHeading label="View parameters" width="240"/>
+	
+	<mx:Form width="100%">
+		<mx:FormHeading label="View parameters"/>
 		<mx:FormItem label="Name">
 			<mx:TextInput id="view_name"/>
 		</mx:FormItem>
 		<mx:FormItem label="Arguments">
 			<mx:TextInput id="view_arguments"/>
 		</mx:FormItem>
-		<!--<mx:FormItem label="Fields">
-			<mx:TextInput id="view_fields"/>
-		</mx:FormItem>-->
 		<mx:FormItem label="Offset">
 			<mx:TextInput id="view_offset" text="0"/>
 		</mx:FormItem>
@@ -42,10 +32,9 @@
 			<mx:TextInput id="view_limit" text="10"/>
 		</mx:FormItem>
 		<mx:ControlBar>
-			<mx:Button label="Submit" click="{controller.onClick_LoadViewsSubmitButton();}"
-				icon="@Embed(source='assets/images/accept.png')"/>
-			<mx:Button label="Cancel" click="{controller.onClick_LoadViewsCancelButton();}"
-				icon="@Embed(source='assets/images/cancel.png')"/>
+			<mx:Button label="Submit" icon="@Embed(source='assets/images/accept.png')"/>
+			<mx:Button label="Cancel" icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>
-</mx:Panel>
+  	
+</mx:VBox>

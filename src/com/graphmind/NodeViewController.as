@@ -15,9 +15,11 @@ package com.graphmind {
 	import com.graphmind.view.NodeActionIcon;
 	import com.graphmind.view.NodeView;
 	
+	import components.DrupalItemLoadPanel;
 	import components.NodeAttributes;
 	import components.NodeIcons;
 	import components.NodeInfo;
+	import components.ViewLoadPanel;
 	
 	import flash.events.ContextMenuEvent;
 	import flash.events.EventDispatcher;
@@ -181,6 +183,18 @@ package com.graphmind {
     private static var nodeIconsComponent:NodeIcons;
     
     /**
+    * Load Drupal item panel.
+    */
+    private static var loadDrupalItemPanel:ConfigPanelController;
+    private static var loadDrupalItemComponent:DrupalItemLoadPanel;
+ 
+    /**
+    * Load Drupal Views list panel.
+    */
+    private static var loadDrupalViewsPanel:ConfigPanelController;
+    private static var loadDrupalViewsComponent:ViewLoadPanel;
+       
+    /**
      * Constructor.
      */ 
 		public function NodeViewController(_nodeData:NodeDataObject = null, features:Object = null) {
@@ -263,6 +277,10 @@ package com.graphmind {
 		  nodeIconsPanel = new ConfigPanelController('Icons');
 		  nodeIconsComponent = new NodeIcons();
 		  nodeIconsPanel.addItem(nodeIconsComponent);
+		  
+		  loadDrupalItemPanel = new ConfigPanelController('Load Drupal item');
+		  loadDrupalItemComponent = new DrupalItemLoadPanel();
+		  loadDrupalItemPanel.addItem(loadDrupalItemComponent);
 		}
 		
 		
@@ -409,7 +427,7 @@ package com.graphmind {
 		 */
 		protected function loadItem():void {
 			select();
-			GraphMind.i.currentState = 'load_item_state';
+			loadDrupalItemPanel.show();
 		}
 		
 		
@@ -418,8 +436,8 @@ package com.graphmind {
 		 */
 		protected function loadViews():void {
 			select();
-			GraphMind.i.currentState = 'load_view_state';
-			GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
+			loadDrupalViewsPanel.show();
+			loadDrupalViewsComponent.view_arguments.text = nodeData.drupalID.toString();
 		}
 		
 		
@@ -922,7 +940,6 @@ package com.graphmind {
     protected function onClick_itemLoaderSelector(event:MouseEvent):void {
       event.stopPropagation();
       select();
-      GraphMind.i.panelLoadView.view_arguments.text = nodeData.drupalID.toString();
     }
     
     

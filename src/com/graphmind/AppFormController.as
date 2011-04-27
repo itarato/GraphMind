@@ -30,28 +30,11 @@ package com.graphmind {
     [Bindable]
     public var selectedNodeData:ArrayCollection = new ArrayCollection();
     
-    [Bindable]
-    public static var NODE_SIZES:Array = ['Small', 'Large'];
-    public static const NODE_SIZE_SMALL_INDEX:uint = 0;
-    public static const NODE_SIZE_LARGE_INDEX:uint = 1;
-    
     
     /**
     * Consructor.
     */
     public function AppFormController() {
-      // Set MXML file controllers.
-      GraphMind.i.controller = this;
-      
-      GraphMind.i.panelLoadDrupalItem.controller = this;
-      GraphMind.i.panelLoadView.controller = this;
-      
-//      GraphMind.i.mindmapToolsPanel.node_save_panel.controller = this;
-//      GraphMind.i.mindmapToolsPanel.node_info_panel.controller = this;
-//      GraphMind.i.mindmapToolsPanel.node_attributes_panel.controller = this;
-//      GraphMind.i.mindmapToolsPanel.node_connections_panel.controller = this;
-//      GraphMind.i.mindmapToolsPanel.icon_outer_container.controller = this;
-      
       // Event handlers.
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeSelected);
     }

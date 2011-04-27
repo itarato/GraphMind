@@ -2,7 +2,7 @@
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
   <mx:Script>
     <![CDATA[
-      import com.graphmind.AppFormController;
+      import com.graphmind.ApplicationController;
     ]]>
   </mx:Script>
 
@@ -19,9 +19,9 @@
   <mx:HBox>
     <mx:Label text="Node size:"/>
     
-    <mx:ComboBox dataProvider="{AppFormController.NODE_SIZES}" 
+    <mx:ComboBox dataProvider="{ApplicationController.NODE_SIZES}" 
       id="nodeSizeSelect"
-      selectedIndex="{AppFormController.NODE_SIZE_SMALL_INDEX}"/>
+      selectedIndex="{ApplicationController.NODE_SIZE_SMALL_INDEX}"/>
   </mx:HBox>
 
 </mx:VBox>

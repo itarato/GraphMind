@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" 
-	horizontalCenter="0" verticalCenter="0"
-	layout="absolute" 
-	width="600" height="300" 
-	title="Load unique item">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
 	
 	<mx:Script>
 		<![CDATA[
 		  import com.graphmind.data.NodeType;
 		  import com.graphmind.ConnectionController;
 		  import com.graphmind.ApplicationController;
-		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeMapViewController;
-			
-			public var controller:AppFormController;
 		]]>
 	</mx:Script>
 	
-	<mx:Form left="10" top="10" right="10" height="240">
-		<mx:FormHeading label="Item parameters" width="316"/>
+	<mx:Form>
+		<mx:FormHeading label="Item parameters"/>
 		<mx:FormItem label="Source">
 			<mx:ComboBox dataProvider="{ConnectionController.liveConnections}" 
 				labelField="shortName"
@@ -32,12 +25,10 @@
 		</mx:FormItem>
 		<mx:ControlBar>
 			<mx:Button label="Submit" 
-				click="{controller.onClick_LoadItemSubmit();}"
 				icon="@Embed(source='assets/images/accept.png')"/>
 			<mx:Button label="Cancel" 
-				click="{controller.onClick_LoadItemCancel();}"
 				icon="@Embed(source='assets/images/cancel.png')"/>
 		</mx:ControlBar>
 	</mx:Form>
 	
-</mx:Panel>
+</mx:VBox>
