@@ -9,6 +9,7 @@ package com.graphmind.display {
   
   import flash.events.MouseEvent;
   
+  import mx.controls.HRule;
   import mx.core.UIComponent;
   import mx.events.FlexEvent;
   

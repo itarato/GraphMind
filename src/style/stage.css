@@ -1,12 +1,11 @@
 /* CSS file */
 
-/* Ritch text editor 
+/* Ritch text editor */ 
 RichTextEditor {
 	borderAlpha: 0;
 	dropShadowEnabled: false;
 	borderStyle: none;
 }
-*/
 
 /* Main accordion panels */
 .toolPanelAccordion {
@@ -32,4 +31,11 @@ RichTextEditor {
 /* Button global style */
 Button {
 	fillColors: #CCCCCC, #CCCCCC, #CCCCCC, #CCCCCC;
+}
+
+.HRule {
+  strokeColor:#FFFFFF; 
+  strokeWidth:2;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }

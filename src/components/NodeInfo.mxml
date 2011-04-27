@@ -3,13 +3,15 @@
 	
 	<mx:RichTextEditor 
 	  title="Node title" 
-	  id="nodeLabelRTE" />
+	  id="nodeLabelRTE" width="100%"/>
 	  
 	<mx:Button 
 	  label="Save node title" 
 	  icon="@Embed(source='assets/images/pencil.png')"/>
+	
+	<mx:HRule styleName="HRule" width="100%"/>
 	  
-	<mx:TextInput id="link"/>
+	<mx:TextInput id="link" width="100%" />
 	
 	<mx:Button 
 	  x="10" y="318" 

@@ -16,6 +16,8 @@
 
   </mx:HBox>
   
+  <mx:HRule styleName="HRule" width="100%"/>
+  
   <mx:HBox>
     <mx:Label text="Node size:"/>
     

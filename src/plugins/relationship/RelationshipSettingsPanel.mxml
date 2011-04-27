@@ -16,21 +16,21 @@
     <mx:TextInput text="{Relationship.depth}" keyUp="{Relationship.depth = parseInt(relationship_depth_textfield.text);}" id="relationship_depth_textfield" width="58"/>
   </mx:HBox> 
     
-  <mx:HRule height="32" width="300"/>
+  <mx:HRule styleName="HRule" width="100%"/>
   
   <mx:HBox>
     <mx:Text text="Regenerate relationships" />
     <mx:Button label="Refresh tree" click="{Relationship.refreshSubtree(TreeMapViewController.rootNode);}"/>
   </mx:HBox>
     
-  <mx:HRule height="32" width="300"/>
+  <mx:HRule styleName="HRule" width="100%"/>
   
   <mx:HBox>
     <mx:Text text="Checks updates on the backend" />
     <mx:Button label="Check update" click="{Relationship.checkForChanges();}" />
   </mx:HBox>
     
-  <mx:HRule height="32" width="300"/>
+  <mx:HRule styleName="HRule" width="100%"/>
   
   <mx:HBox>
     <mx:Label text="Update check frequency (seconds)" />
