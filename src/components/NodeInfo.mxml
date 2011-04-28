@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
   verticalGap="12"
-  width="100%">
+  width="100%"
+  creationComplete="{onCreationComplete();}">
+	
+	<mx:Script>
+	  <![CDATA[
+	   private function onCreationComplete():void {
+	     nodeLabelRTE.colorPicker.selectedColor = 0x555555;
+	   }
+	  ]]>
+	</mx:Script>
 	
 	<mx:RichTextEditor 
 	  title="Node title" 
 	  id="nodeLabelRTE" width="100%"
 	  height="200"/>
 	  
-	<mx:Button styleName="button" label="Save node title" />
+	<mx:Button styleName="button" label="Save node title" id="saveTitleButton" />
 	
 	<mx:HRule styleName="HRule" width="100%"/>
 	
 	<mx:HBox verticalAlign="middle" width="100%">
 	  <mx:Label text="URL:" />
-    <mx:TextInput id="link" width="100%" />
-  	<mx:Button styleName="button" label="Save"/>
+    <mx:TextInput id="urlField" width="100%" />
+  	<mx:Button styleName="button" label="Save" id="saveURLButton"/>
   </mx:HBox>
 	  
 </mx:VBox>

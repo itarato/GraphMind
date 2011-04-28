@@ -22,14 +22,6 @@ package com.graphmind {
   
   
   public class AppFormController {
-                
-    /**
-     * Active node's attributes -> to display it as attributes.
-     * Sensitive information not included (ie: passwords).
-     */ 
-    [Bindable]
-    public var selectedNodeData:ArrayCollection = new ArrayCollection();
-    
     
     /**
     * Consructor.
@@ -39,27 +31,6 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeSelected);
     }
 
-    
-    /**
-    * Act when a node was got selected.
-    */
-    public function onNodeSelected(event:EventCenterEvent):void {
-      var node:NodeViewController = event.data as NodeViewController;
-      
-      selectedNodeData.removeAll();
-      for (var key:* in node.nodeData.drupalData) {
-        selectedNodeData.addItem({
-          key: key,
-          value: node.nodeData.drupalData[key]
-        });
-      }     
-      
-//      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.htmlText = node.view.nodeComponentView.title_label.htmlText || node.view.nodeComponentView.title_label.text;
-//      GraphMind.i.mindmapToolsPanel.node_info_panel.link.text = node.nodeData.link;
-//      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_param.text = '';
-//      GraphMind.i.mindmapToolsPanel.node_attributes_panel.attributes_update_value.text = '';
-    }
-    
     
     /**
      * Event for clicking on the view load panel.
@@ -114,30 +85,10 @@ package com.graphmind {
     }
     
     
-    public function onClick_RTESaveButton(text:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_TITLE_IS_CHANGED, text); 
-    }
-    
-    
-    public function onClick_SaveNodeLink(text:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_LINK_IS_CHANGED, text);
-    }
-    
-    
     public function onClick_SaveGraphmindButton():void {
       EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
     }
     
-    
-    public function onClick_NodeAttributeAddOrUpdateButton(param:String, value:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_SAVE_ATTRIBUTE, {param: param, value: value});
-    }
-    
-        
-    public function onClick_NodeAttributeRemoveButton(param:String):void {
-      EventCenter.notify(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, param);
-    }
-
     
     public function onClick_Icon(event:MouseEvent):void {
       EventCenter.notify(EventCenterEvent.ACTIVE_NODE_ADD_ICON, (event.currentTarget as Image).source.toString());

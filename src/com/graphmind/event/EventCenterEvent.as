@@ -36,6 +36,8 @@ package com.graphmind.event {
     
     public static var LOAD_DRUPAL_ITEM:String = 'loadDrupalItem';
     public static var LOAD_DRUPAL_VIEWS:String = 'loadDrupalViews';
+    
+    public static var ICON_SELECTED:String = 'iconSelected';
         
     /**
     * Data.

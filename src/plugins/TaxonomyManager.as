@@ -2,7 +2,6 @@ package plugins {
 	
 	import com.graphmind.ConnectionController;
 	import com.graphmind.NodeViewController;
-	import com.graphmind.TreeMapViewController;
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.event.EventCenter;
@@ -85,7 +84,7 @@ package plugins {
 		public static function loadFullTaxonomyTree(event:ContextMenuEvent):void {
 		  lockUpdateFlag = true;
 		  
-			var node:NodeViewController = TreeMapViewController.activeNode;
+			var node:NodeViewController = NodeViewController.activeNode;
 			ConnectionController.mainConnection.call(
 			  'graphmindTaxonomyManager.getAll',
 			  function(_event:Object):void {

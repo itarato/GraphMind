@@ -266,7 +266,7 @@ package plugins {
     * Event callback when the relationship action icon is clicked.
     */
     private static function onMouseClick_relationshipActionIcon(e:ContextMenuEvent):void {
-      var node:NodeViewController = TreeMapViewController.activeNode;
+      var node:NodeViewController = NodeViewController.activeNode;
       ConnectionController.mainConnection.call(
         'graphmindRelationship.getSubtree',
         function (result:Object):void {
@@ -328,7 +328,7 @@ package plugins {
     * Event callback - clicking on the refresh subtree context menu item.
     */
     private static function onMenuItemSelect_RefreshSubtree(event:ContextMenuEvent):void {
-      refreshSubtree(TreeMapViewController.activeNode);
+      refreshSubtree(NodeViewController.activeNode);
     }
     
     
@@ -498,7 +498,7 @@ package plugins {
         return;
       }
       
-      var node:NodeViewController = TreeMapViewController.activeNode;
+      var node:NodeViewController = NodeViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID);
     }
     
@@ -550,7 +550,7 @@ package plugins {
       if (!ExternalInterface.available) {
         OSD.show('Popup window is not available.');
       }
-      var node:NodeViewController = TreeMapViewController.activeNode;
+      var node:NodeViewController = NodeViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link + '/edit');
     }
     
@@ -562,7 +562,7 @@ package plugins {
       if (!ExternalInterface.available) {
         OSD.show('Popup window is not available.');
       }
-      var node:NodeViewController = TreeMapViewController.activeNode;
+      var node:NodeViewController = NodeViewController.activeNode;
       ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link);
     }
     

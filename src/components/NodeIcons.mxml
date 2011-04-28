@@ -3,6 +3,8 @@
 
 	<mx:Script>
 		<![CDATA[
+		  import com.graphmind.event.EventCenterEvent;
+		  import com.graphmind.event.EventCenter;
 		  import com.graphmind.ApplicationController;
       [Bindable]
       public static var icons:Array = [
@@ -24,13 +26,14 @@
         "decrypted", "gohome", "xmag", "desktop_new", "folder", 
         "group", "messagebox_warning"
       ];
-      
+
 		]]>
 	</mx:Script>
 
 	<mx:Tile width="100%">
 		<mx:Repeater dataProvider="{icons}" id="icon_repeater">
-			<mx:Image source="{ApplicationController.getIconPath()}{icon_repeater.currentItem}.png" />
+			<mx:Image source="{ApplicationController.getIconPath()}{icon_repeater.currentItem}.png" 
+			  click="{EventCenter.notify(EventCenterEvent.ICON_SELECTED, event)}" />
 		</mx:Repeater>
 	</mx:Tile>
 	

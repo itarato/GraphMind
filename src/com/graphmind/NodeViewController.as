@@ -193,7 +193,19 @@ package com.graphmind {
     */
     private static var loadDrupalViewsPanel:ConfigPanelController;
     private static var loadDrupalViewsComponent:ViewLoadPanel;
-       
+                       
+    /**
+     * Active node's attributes -> to display it as attributes.
+     * Sensitive information not included (ie: passwords).
+     */ 
+    public static var selectedNodeData:ArrayCollection = new ArrayCollection();
+        
+    /**
+     * Active node.
+     */
+    public static var activeNode:NodeViewController;
+    
+
     /**
      * Constructor.
      */ 
@@ -266,17 +278,24 @@ package com.graphmind {
 		 * Init static functionalities.
 		 */
 		public static function init():void {
+		  // Node info panel
 		  nodeConfigPanel = new ConfigPanelController('Node Settings');
 		  nodeConfigComponent = new NodeInfo();
 		  nodeConfigPanel.addItem(nodeConfigComponent);
+		  nodeConfigComponent.saveTitleButton.addEventListener(MouseEvent.CLICK, onClick_saveTitleButton);
+		  nodeConfigComponent.saveURLButton.addEventListener(MouseEvent.CLICK, onClick_saveURLButton);
 		  
 		  nodeAttributesPanel = new ConfigPanelController('Attributes');
 		  nodeAttributesComponent = new NodeAttributes();
 		  nodeAttributesPanel.addItem(nodeAttributesComponent);
+		  nodeAttributesComponent.attributesDataGrid.dataProvider = NodeViewController.selectedNodeData;
+		  nodeAttributesComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_saveAttributeButton);
+		  nodeAttributesComponent.removeButton.addEventListener(MouseEvent.CLICK, onClick_removeAttributeButton);
 		  
 		  nodeIconsPanel = new ConfigPanelController('Icons');
 		  nodeIconsComponent = new NodeIcons();
 		  nodeIconsPanel.addItem(nodeIconsComponent);
+		  EventCenter.subscribe(EventCenterEvent.ICON_SELECTED, onIconSelected);
 		  
 		  loadDrupalItemPanel = new ConfigPanelController('Load Drupal item');
 		  loadDrupalItemComponent = new DrupalItemLoadPanel();
@@ -351,12 +370,30 @@ package com.graphmind {
 		 */
 		public function select():void {
 		  EventCenter.notify(EventCenterEvent.NODE_IS_SELECTED, this);
+		  
+      if (activeNode) {
+        activeNode.unselect();
+      }
+      activeNode = this;
+      
 			var isTheSameSelected:Boolean = isSelected;
-			
 			// Not to lose focus from textfield
 			if (!isTheSameSelected) view.setFocus();
 			
 			isSelected = true;
+			
+			selectedNodeData.removeAll();
+      for (var key:* in nodeData.drupalData) {
+        selectedNodeData.addItem({
+          key: key,
+          value: nodeData.drupalData[key]
+        });
+      }     
+      
+      nodeConfigComponent.nodeLabelRTE.htmlText = view.nodeComponentView.title_label.htmlText || view.nodeComponentView.title_label.text;
+      nodeConfigComponent.urlField.text = nodeData.link;
+      nodeAttributesComponent.attrKey.text = '';
+      nodeAttributesComponent.attrValue.text = '';
 
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}
@@ -1289,6 +1326,33 @@ package com.graphmind {
       nodeIconsPanel.show();
     }
     
+    
+    private static function onClick_saveTitleButton(e:MouseEvent):void {
+      activeNode.setTitle(nodeConfigComponent.nodeLabelRTE.htmlText);
+    }
+    
+    
+    private static function onClick_saveURLButton(e:MouseEvent):void {
+      activeNode.setLink(nodeConfigComponent.urlField.text);
+    }
+    
+    
+    private static function onClick_saveAttributeButton(e:MouseEvent):void {
+      if (!activeNode) return;
+      activeNode.addData(nodeAttributesComponent.attrKey.text, nodeAttributesComponent.attrValue.text);
+    }
+    
+    
+    private static function onClick_removeAttributeButton(e:MouseEvent):void {
+      if (!activeNode) return;
+      activeNode.deleteData(nodeAttributesComponent.attrKey.text);
+    }
+    
+    
+    private static function onIconSelected(e:EventCenterEvent):void {
+      if (!activeNode) return;
+      activeNode.addIcon(((e.data as MouseEvent).currentTarget as Image).source.toString());
+    }
 	}
 	
 }

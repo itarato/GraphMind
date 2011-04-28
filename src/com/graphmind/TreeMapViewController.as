@@ -2,6 +2,7 @@ package com.graphmind {
 
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
+	import com.graphmind.display.ConfigPanelController;
 	import com.graphmind.display.TreeDrawer;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
@@ -11,10 +12,17 @@ package com.graphmind {
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.NodeView;
 	
+	import components.DrupalItemLoadPanel;
+	import components.NodeAttributes;
+	import components.NodeIcons;
+	import components.NodeInfo;
+	import components.ViewLoadPanel;
+	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.ui.ContextMenu;
 	
+	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
 	import mx.core.BitmapAsset;
 	import mx.events.FlexEvent;
@@ -32,12 +40,7 @@ package com.graphmind {
      * Root node. At the creation of the map it's the host Drupal node.
      */
     public static var rootNode:NodeViewController  = null;
-        
-    /**
-     * Active node.
-     */
-    public static var activeNode:NodeViewController;
-    
+
 		/** 
 		 * Indicates if the stage has a newer state or new elements.
 		 */
@@ -62,6 +65,42 @@ package com.graphmind {
     */
     protected var dragAndDropImage:Image = new Image();
     
+    /**
+    * Node configuration panel.
+    */
+    private static var nodeConfigPanel:ConfigPanelController;
+    private static var nodeConfigComponent:NodeInfo;
+    
+    /**
+    * Node attributes panel.
+    */
+    private static var nodeAttributesPanel:ConfigPanelController;
+    private static var nodeAttributesComponent:NodeAttributes;
+    
+    /**
+    * Node icons panel.
+    */
+    private static var nodeIconsPanel:ConfigPanelController;
+    private static var nodeIconsComponent:NodeIcons;
+    
+    /**
+    * Load Drupal item panel.
+    */
+    private static var loadDrupalItemPanel:ConfigPanelController;
+    private static var loadDrupalItemComponent:DrupalItemLoadPanel;
+ 
+    /**
+    * Load Drupal Views list panel.
+    */
+    private static var loadDrupalViewsPanel:ConfigPanelController;
+    private static var loadDrupalViewsComponent:ViewLoadPanel;
+                       
+    /**
+     * Active node's attributes -> to display it as attributes.
+     * Sensitive information not included (ie: passwords).
+     */ 
+    public static var selectedNodeData:ArrayCollection = new ArrayCollection();
+
     
 		/**
 		 * Constructor.
@@ -74,9 +113,6 @@ package com.graphmind {
 		  
 		  EventCenter.subscribe(EventCenterEvent.MAP_UPDATED, onMindmapUpdated);
 		  
-      // Node title RTE editor's default color
-//      GraphMind.i.mindmapToolsPanel.node_info_panel.nodeLabelRTE.colorPicker.selectedColor = 0x555555;
-      
       // Remove base context menu items (not perfect, though)
       var cm:ContextMenu = new ContextMenu();
       cm.hideBuiltInItems();
@@ -92,13 +128,8 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
       
       // Active node events
-      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_TITLE_IS_CHANGED, onActiveNodeTitleIsChanged);
-      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_LINK_IS_CHANGED, onActiveNodeLinkIsChanged);
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_TOGGLE_CLOUD, onActiveNodeToggleCloud);
-      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_SAVE_ATTRIBUTE, onActiveNodeSaveAttribute);
-      EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_REMOVE_ATTRIBUTE, onActiveNodeRemoveAttribute);
       EventCenter.subscribe(EventCenterEvent.ACTIVE_NODE_ADD_ICON, onActiveNodeAddIcon);
-      EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
       EventCenter.subscribe(EventCenterEvent.NODE_PREPARE_DRAG, onNodePrepareDrag);
       EventCenter.subscribe(EventCenterEvent.NODE_START_DRAG, onNodeStartDrag);
       EventCenter.subscribe(EventCenterEvent.NODE_FINISH_DRAG, onNodeFinishDrag);
@@ -258,46 +289,26 @@ package com.graphmind {
     
     
     protected function onActiveNodeTitleIsChanged(event:EventCenterEvent):void {
-      if (!activeNode) return;
-      activeNode.setTitle(event.data.toString());
+      if (!NodeViewController.activeNode) return;
+      NodeViewController.activeNode.setTitle(event.data.toString());
     }
 
     
     protected function onActiveNodeLinkIsChanged(event:EventCenterEvent):void {
-      if (!activeNode) return;
-      activeNode.setLink(event.data as String);
+      if (!NodeViewController.activeNode) return;
+      NodeViewController.activeNode.setLink(event.data as String);
     }
     
     
     protected function onActiveNodeToggleCloud(event:EventCenterEvent):void {
-      if (!activeNode) return;
-      activeNode.toggleCloud();
+      if (!NodeViewController.activeNode) return;
+      NodeViewController.activeNode.toggleCloud();
     }
     
-    
-    protected function onActiveNodeSaveAttribute(event:EventCenterEvent):void {
-      if (!activeNode) return;
-      activeNode.addData(event.data.param.toString(), event.data.value.toString());
-    }
-    
-    
-    protected function onActiveNodeRemoveAttribute(event:EventCenterEvent):void {
-      if (!activeNode) return;
-      activeNode.deleteData(event.data.toString());
-    }
-    
-    
+
     protected function onActiveNodeAddIcon(event:EventCenterEvent):void {
-      if (!activeNode) return;
-      activeNode.addIcon(event.data.toString());
-    }
-    
-    
-    protected function onNodeIsSelected(event:EventCenterEvent):void {
-      if (activeNode) {
-        activeNode.unselect();
-      }
-      activeNode = event.data as NodeViewController;
+      if (!NodeViewController.activeNode) return;
+      NodeViewController.activeNode.addIcon(event.data.toString());
     }
     
     
