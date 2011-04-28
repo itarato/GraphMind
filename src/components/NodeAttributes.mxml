@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" verticalGap="12">
 			
 	<mx:DataGrid width="100%"
 		id="attributesDataGrid">
@@ -17,19 +17,18 @@
 		</mx:columns>
 	</mx:DataGrid>
 	
-	<mx:Button label="Save"  
-		tabIndex="22" icon="@Embed(source='assets/images/pencil.png')"/>
 		
-	<mx:Label text="Value" />
+	<mx:Label text="Key:" />
 	
 	<mx:TextInput id="attributes_update_param" tabIndex="20" width="100%" />
 
-	<mx:Label text="Parameter" />
+	<mx:Label text="Value:" />
 
 	<mx:TextArea id="attributes_update_value" tabIndex="21" height="60" width="100%"/>
 
-	<mx:Button label="Remove"
-		tabIndex="23"
-		icon="@Embed(source='assets/images/delete.png')"/>
+	<mx:HBox>
+    <mx:Button styleName="button" label="Save" tabIndex="22" />
+    <mx:Button styleName="button" label="Remove" tabIndex="23" />
+  </mx:HBox>
 				
 </mx:VBox>

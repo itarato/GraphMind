@@ -568,7 +568,7 @@ package plugins {
     
     
     private static function onClick_RelationshipsMenuItem(e:MouseEvent):void {
-      settingsPanel.show();
+      settingsPanel.toggle();
     }
     
   }

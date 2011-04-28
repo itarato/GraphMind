@@ -89,7 +89,7 @@
       borderSides="bottom"
       backgroundImage="@Embed(source='assets/images/menu_bgr.png')" backgroundSize="100%">
       
-      <mx:HBox paddingTop="2" paddingLeft="2" id="mainMenuBar" />
+      <mx:HBox paddingTop="2" paddingLeft="2" id="mainMenuBar" horizontalGap="0"/>
     </mx:Canvas>
     <mx:Canvas id="map"
       top="30" left="0" right="0" bottom="0" 

@@ -54,6 +54,14 @@ package com.graphmind.display {
     
     
     /**
+    * Toggle panel.
+    */
+    public function toggle():void {
+      view.visible ? hide() : show();
+    }
+    
+    
+    /**
     * Show panel.
     */
     public function show():void {

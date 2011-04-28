@@ -284,12 +284,12 @@ package com.graphmind {
     
     
     protected function onClick_ApplicationSettingsMenuItem(e:MouseEvent):void {
-      applicationSettingsPanel.show();
+      applicationSettingsPanel.toggle();
     }
 
   
     protected function onClick_ConnectionsMenuItem(e:MouseEvent):void {
-      connectionSettingsPanel.show();
+      connectionSettingsPanel.toggle();
     }
     
     

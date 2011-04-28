@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+  verticalGap="12">
   <mx:Script>
     <![CDATA[
       import com.graphmind.ApplicationController;
     ]]>
   </mx:Script>
 
-  <mx:HBox>
+  <mx:HBox verticalAlign="middle">
+  
+    <mx:Label text="Map scale:"/>
   
     <mx:HSlider minimum="25" maximum="200" snapInterval="25" enabled="true" allowTrackClick="true"
       value="100"
@@ -18,7 +21,7 @@
   
   <mx:HRule styleName="HRule" width="100%"/>
   
-  <mx:HBox>
+  <mx:HBox verticalAlign="middle">
     <mx:Label text="Node size:"/>
     
     <mx:ComboBox dataProvider="{ApplicationController.NODE_SIZES}" 

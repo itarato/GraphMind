@@ -24,10 +24,7 @@
 			<mx:TextInput id="item_id"/>
 		</mx:FormItem>
 		<mx:ControlBar>
-			<mx:Button label="Submit" 
-				icon="@Embed(source='assets/images/accept.png')"/>
-			<mx:Button label="Cancel" 
-				icon="@Embed(source='assets/images/cancel.png')"/>
+			<mx:Button styleName="button" label="Submit" />
 		</mx:ControlBar>
 	</mx:Form>
 	

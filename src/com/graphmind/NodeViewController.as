@@ -281,6 +281,10 @@ package com.graphmind {
 		  loadDrupalItemPanel = new ConfigPanelController('Load Drupal item');
 		  loadDrupalItemComponent = new DrupalItemLoadPanel();
 		  loadDrupalItemPanel.addItem(loadDrupalItemComponent);
+		  
+		  loadDrupalViewsComponent = new ViewLoadPanel();
+		  loadDrupalViewsPanel = new ConfigPanelController('Load Drupal Views lists');
+		  loadDrupalViewsPanel.addItem(loadDrupalViewsComponent);
 		}
 		
 		

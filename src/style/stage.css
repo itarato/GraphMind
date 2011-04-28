@@ -29,13 +29,37 @@ RichTextEditor {
 }
 
 /* Button global style */
-Button {
-	fillColors: #CCCCCC, #CCCCCC, #CCCCCC, #CCCCCC;
+.button {
+   cornerRadius: 14;
+   textIndent: 0;
+   paddingLeft: 12;
+   paddingRight: 12;
+   paddingTop: 4;
+   paddingBottom: 4;
+   letterSpacing: 0;
+   highlightAlphas: 0.36, 0.62;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #ffffff, #cccccc, #ffffff, #ffffff;
+   color: #333333;
+   textRollOverColor: #ff5d00;
+   textSelectedColor: #ff5d00;
+   borderColor: #cccccc;
+   themeColor: #cccccc;
+   fontFamily: Trebuchet MS;
+   fontSize: 12;
+   fontWeight: bold;
 }
 
 .HRule {
   strokeColor:#FFFFFF; 
   strokeWidth:2;
-  padding-top: 12px;
-  padding-bottom: 12px;
 }
+
+LinkButton {
+  roll-over-color: #FFFFFF;
+  corner-radius: 3;
+  fontSize: 11;
+  font-family: Trebuchet MS;
+  shadow-color: #FFFFFF;
+}
+

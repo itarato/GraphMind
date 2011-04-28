@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+  verticalGap="12">
   
   <mx:Script>
     <![CDATA[
@@ -7,7 +8,6 @@
     ]]>
   </mx:Script>
           
-  <!-- Connect to new Drupal site form -->
   <mx:DataGrid width="100%" height="100"
     dataProvider="{ConnectionController.connections}">
     <mx:columns>
@@ -16,19 +16,23 @@
     </mx:columns>
   </mx:DataGrid>
   
-  <mx:Label text="URL.:" id="label1"/>
-  <mx:TextInput id="connectFormURL" text="http://" tabIndex="10" width="100%"/>
+  <mx:HBox verticalAlign="middle" width="100%">
+    <mx:Label text="URL.:" width="70"/>
+    <mx:TextInput id="connectFormURL" text="http://" tabIndex="10" width="100%"/>
+  </mx:HBox>
   
-  <mx:Label text="Username:" id="label2"/>
-  <mx:TextInput id="connectFormUsername" tabIndex="11" width="100%"/>
+  <mx:HBox verticalAlign="middle" width="100%">
+    <mx:Label text="Username:" width="70"/>
+    <mx:TextInput id="connectFormUsername" tabIndex="11" width="100%"/>
+  </mx:HBox>
   
-  <mx:Label text="Password:" id="label3"/>
-  <mx:TextInput id="connectFormPassword" displayAsPassword="true" tabIndex="12" width="100%"/>
+  <mx:HBox verticalAlign="middle" width="100%">
+    <mx:Label text="Password:" width="70"/>
+    <mx:TextInput id="connectFormPassword" displayAsPassword="true" tabIndex="12" width="100%"/>
+  </mx:HBox>
   
-  <mx:Button label="Add new site" 
+  <mx:Button styleName="button" label="Add new site" 
     id="saveButton"
     tabIndex="3" />
-  
-  <!-- END form -->
   
 </mx:VBox>
