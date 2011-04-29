@@ -297,12 +297,15 @@ package plugins {
       var connectedIDs:Array = [];
       for (var idx:* in childs) {
         connectedIDs.push(childs[idx]['node']['nid']);
-        var child:NodeViewController = getExistingNodeOfParent(parent, childs[idx]['node']['nid']);
-        if (!child) {
-          child = new NodeViewController(new NodeDataObject(childs[idx]['node'], NodeType.NODE, ConnectionController.mainConnection));
-          parent.addChildNode(child);
+        // Prevents recursion.
+        if (!loopCheck(parent, childs[idx]['node']['nid'])) {
+          var child:NodeViewController = getExistingNodeOfParent(parent, childs[idx]['node']['nid']);
+          if (!child) {
+            child = new NodeViewController(new NodeDataObject(childs[idx]['node'], NodeType.NODE, ConnectionController.mainConnection));
+            parent.addChildNode(child);
+          }
+          addSubtree(child, childs[idx]['relationships']);
         }
-        addSubtree(child, childs[idx]['relationships']);
       }
       
       return connectedIDs;
@@ -570,6 +573,21 @@ package plugins {
     
     private static function onAlterSettingsPanel(e:EventCenterEvent):void {
       (e.data as Array).push(new RelationshipSettingsPanel());
+    }
+    
+    
+    /**
+    * Checks if the same node already exists among the ancestors.
+    * Returns true if it's a loop.
+    */ 
+    private static function loopCheck(parent:NodeViewController, nid:uint):Boolean {
+      if (isNode(parent) && parent.nodeData.drupalID == nid) {
+        return true;
+      } else if (parent.parent) {
+        return loopCheck(parent.parent, nid);
+      }
+      
+      return false;
     }
   }
 
