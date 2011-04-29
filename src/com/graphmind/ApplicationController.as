@@ -124,7 +124,7 @@ package com.graphmind {
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
       
       MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
-      MainMenuController.createIconMenuItem(fullScreenImage, 'Toggle full screen', onClick_fullScreenIcon);
+      MainMenuController.createIconMenuItem(fullScreenImage, 'Full screen', onClick_fullScreenIcon);
       
       applicationSettingsComponent = new ApplicationSettingsComponent();
       applicationSettingsPanel = new ConfigPanelController('Map settings');
@@ -133,11 +133,13 @@ package com.graphmind {
       applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
       applicationSettingsComponent.nodeSizeSelect.addEventListener(ListEvent.CHANGE, onDataChange_nodeSizeSelect);
       
-      connectionSettingsComponent = new ConnectionSettingsComponent();
-      connectionSettingsPanel = new ConfigPanelController('Remote connections');
-      connectionSettingsPanel.addItem(connectionSettingsComponent);
-      MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
-      connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
+      if (FeatureController.isFeatureEnabled(FeatureController.CONNECTIONS)) {
+        connectionSettingsComponent = new ConnectionSettingsComponent();
+        connectionSettingsPanel = new ConfigPanelController('Remote connections');
+        connectionSettingsPanel.addItem(connectionSettingsComponent);
+        MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
+        connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
+      }
       
       NodeViewController.init();
 		}
