@@ -349,7 +349,7 @@ package com.graphmind {
 			if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
 			 cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
 			}
-      cms.push({title: 'Icons', event: onContextMenuSelected_NodeIcons, separator: true});
+      cms.push({title: 'Icons', event: onContextMenuSelected_NodeIcons, separator: false});
 			cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
 			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
 			  cms.push({title: 'Load Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
@@ -358,7 +358,6 @@ package com.graphmind {
 			  cms.push({title: 'Load Views list', event: onContextMenuSelected_AddDrupalViews, separator: false});
 			}
 			cms.push({title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true});
-			cms.push({title: 'Remove childs',   event: onContextMenuSelected_RemoveNodeChilds, separator: false});
 			cms.push({title: 'Expand subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true});
 			cms.push({title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false});
 			
@@ -1125,14 +1124,6 @@ package com.graphmind {
     */
     protected function onContextMenuSelected_RemoveNode(event:ContextMenuEvent):void {
       kill();
-    }
-  
-    
-    /**
-    * Event callback - on click on the remove children context menu.
-    */
-    protected function onContextMenuSelected_RemoveNodeChilds(event:ContextMenuEvent):void {
-      _removeNodeChilds();
     }
   
     
