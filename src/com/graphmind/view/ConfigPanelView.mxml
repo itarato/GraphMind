@@ -8,7 +8,8 @@
   </mx:filters>
   
   <mx:VBox id="items" x="10" width="380" top="41" bottom="10" styleName="ConfigPanelItems" 
-    horizontalScrollPolicy="off"/>
+    horizontalScrollPolicy="off"
+    verticalGap="12"/>
   
   <mx:Text text="{this.label}" width="380" x="10" y="10" fontWeight="bold" fontSize="14" />
   

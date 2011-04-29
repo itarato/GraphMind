@@ -18,6 +18,7 @@ package com.graphmind {
 	import flash.events.MouseEvent;
 	
 	import mx.core.Application;
+	import mx.core.UIComponent;
 	import mx.events.ListEvent;
 	import mx.events.SliderEvent;
 	
@@ -132,6 +133,10 @@ package com.graphmind {
       MainMenuController.createIconMenuItem(gearImage, 'Settings', onClick_ApplicationSettingsMenuItem);
       applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
       applicationSettingsComponent.nodeSizeSelect.addEventListener(ListEvent.CHANGE, onDataChange_nodeSizeSelect);
+      var e:EventCenterEvent = EventCenter.notify(EventCenterEvent.ALTER_SETTINGS_PANEL, []);
+      for each (var item:UIComponent in e.data) {
+        applicationSettingsPanel.addItem(item);
+      }
       
       if (FeatureController.isFeatureEnabled(FeatureController.CONNECTIONS)) {
         connectionSettingsComponent = new ConnectionSettingsComponent();

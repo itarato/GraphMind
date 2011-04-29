@@ -23,8 +23,10 @@ package com.graphmind.event {
     /**
     * Bradcast event.
     */
-    public static function notify(type:String, data:Object = null):void {
-      i.dispatchEvent(new EventCenterEvent(type, data));
+    public static function notify(type:String, data:Object = null):EventCenterEvent {
+      var e:EventCenterEvent = new EventCenterEvent(type, data);
+      i.dispatchEvent(e);
+      return e;
     }
 
 

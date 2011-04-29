@@ -1,7 +1,6 @@
 package plugins {
   
   import com.graphmind.ConnectionController;
-  import com.graphmind.MainMenuController;
   import com.graphmind.NodeViewController;
   import com.graphmind.TreeMapViewController;
   import com.graphmind.data.NodeDataObject;
@@ -129,6 +128,7 @@ package plugins {
       EventCenter.subscribe(EventCenterEvent.NODE_WILL_BE_MOVED, onNodeWillBeMoved);
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
       EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
+      EventCenter.subscribe(EventCenterEvent.ALTER_SETTINGS_PANEL, onAlterSettingsPanel);
       
       ExternalInterface.addCallback('sendCreationRequestBackToFlex', onReturnCreationRequest);
     }
@@ -482,11 +482,6 @@ package plugins {
     private static function onMapTreeIsComplete(event:EventCenterEvent):void {
       // Start checking the updates.
       checkForChangesWithLoop();
-      
-      settingsComponent = new RelationshipSettingsPanel();
-      settingsPanel = new ConfigPanelController('Relationships');
-      settingsPanel.addItem(settingsComponent);
-      MainMenuController.createIconMenuItem(relationshipImage, 'Relationships', onClick_RelationshipsMenuItem);
     }
     
     
@@ -572,6 +567,10 @@ package plugins {
       settingsPanel.toggle();
     }
     
+    
+    private static function onAlterSettingsPanel(e:EventCenterEvent):void {
+      (e.data as Array).push(new RelationshipSettingsPanel());
+    }
   }
 
 }
