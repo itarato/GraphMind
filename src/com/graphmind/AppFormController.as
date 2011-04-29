@@ -32,59 +32,6 @@ package com.graphmind {
     }
 
     
-    /**
-     * Event for clicking on the view load panel.
-     */
-    public function onClick_LoadViewsSubmitButton():void {
-      var views:DrupalViewsQuery = new DrupalViewsQuery();
-      views.args      = GraphMind.i.panelLoadView.view_arguments.text;
-      views.limit     = parseInt(GraphMind.i.panelLoadView.view_limit.text);
-      views.offset    = parseInt(GraphMind.i.panelLoadView.view_offset.text);
-      views.name = GraphMind.i.panelLoadView.view_name.text;
-      views.views    = GraphMind.i.panelLoadView.view_views_datagrid.selectedItem as DrupalViews;
-      
-      var temp:DrupalViewsRequestParamObject = new DrupalViewsRequestParamObject();
-      temp.parentNode = TreeMapViewController.activeNode;
-      temp.views = views;
-      
-      EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_VIEWS, temp);
-      
-      GraphMind.i.currentState = '';
-    }
-    
-    
-    /**
-     * Event on cancelling views load panel.
-     */
-    public function onClick_LoadViewsCancelButton():void {
-      GraphMind.i.currentState = '';
-    }
-    
-    
-    /**
-     * Event on submitting item loading panel.
-     */
-    public function onClick_LoadItemSubmit():void {
-      var temp:DrupalItemRequestParamObject = new DrupalItemRequestParamObject();
-      temp.type = GraphMind.i.panelLoadDrupalItem.item_type.selectedItem.data;
-      temp.conn = GraphMind.i.panelLoadDrupalItem.item_source.selectedItem as Connection;
-      temp.id = GraphMind.i.panelLoadDrupalItem.item_id.text;
-      temp.parentNode = TreeMapViewController.activeNode;
-
-      EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_ITEM, temp);
-      
-      GraphMind.i.currentState = '';
-    }
-    
-    
-    /**
-     * Event for on item loader cancel.
-     */
-    public function onClick_LoadItemCancel():void {
-      GraphMind.i.currentState = '';
-    }
-    
-    
     public function onClick_SaveGraphmindButton():void {
       EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
     }

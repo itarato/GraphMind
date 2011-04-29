@@ -1,5 +1,7 @@
 package com.graphmind {
 	
+	import com.graphmind.data.DrupalViews;
+	import com.graphmind.data.DrupalViewsQuery;
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
 	import com.graphmind.display.ConfigPanelController;
@@ -9,11 +11,14 @@ package com.graphmind {
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
 	import com.graphmind.event.NodeEvent;
+	import com.graphmind.temp.DrupalItemRequestParamObject;
+	import com.graphmind.temp.DrupalViewsRequestParamObject;
 	import com.graphmind.util.OSD;
 	import com.graphmind.util.ObjectUtil;
 	import com.graphmind.util.StringUtility;
 	import com.graphmind.view.NodeActionIcon;
 	import com.graphmind.view.NodeView;
+	import com.kitten.network.Connection;
 	
 	import components.DrupalItemLoadPanel;
 	import components.NodeAttributes;
@@ -300,10 +305,14 @@ package com.graphmind {
 		  loadDrupalItemPanel = new ConfigPanelController('Load Drupal item');
 		  loadDrupalItemComponent = new DrupalItemLoadPanel();
 		  loadDrupalItemPanel.addItem(loadDrupalItemComponent);
+		  loadDrupalItemComponent.submitButton.addEventListener(MouseEvent.CLICK, onClick_loadDrupalItemSubmitButton);
+		  loadDrupalItemPanel.addExitItem(loadDrupalItemComponent.submitButton);
 		  
 		  loadDrupalViewsComponent = new ViewLoadPanel();
 		  loadDrupalViewsPanel = new ConfigPanelController('Load Drupal Views lists');
 		  loadDrupalViewsPanel.addItem(loadDrupalViewsComponent);
+		  loadDrupalViewsComponent.submitButton.addEventListener(MouseEvent.CLICK, onClick_loadDrupalViewsSubmitButton);
+		  loadDrupalViewsPanel.addExitItem(loadDrupalViewsComponent.submitButton);
 		}
 		
 		
@@ -1353,6 +1362,34 @@ package com.graphmind {
       if (!activeNode) return;
       activeNode.addIcon(((e.data as MouseEvent).currentTarget as Image).source.toString());
     }
+    
+    
+    private static function onClick_loadDrupalItemSubmitButton(e:MouseEvent):void {
+      var temp:DrupalItemRequestParamObject = new DrupalItemRequestParamObject();
+      temp.type = loadDrupalItemComponent.drupalTypeField.selectedItem.data;
+      temp.conn = loadDrupalItemComponent.sourceConnectionField.selectedItem as Connection;
+      temp.id = loadDrupalItemComponent.drupalIDField.text;
+      temp.parentNode = activeNode;
+
+      EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_ITEM, temp);
+    }
+    
+    
+    private static function onClick_loadDrupalViewsSubmitButton(e:MouseEvent):void {
+      var views:DrupalViewsQuery = new DrupalViewsQuery();
+      views.args   = loadDrupalViewsComponent.view_arguments.text;
+      views.limit  = parseInt(loadDrupalViewsComponent.view_limit.text);
+      views.offset = parseInt(loadDrupalViewsComponent.view_offset.text);
+      views.name   = loadDrupalViewsComponent.view_name.text;
+      views.views  = loadDrupalViewsComponent.view_views_datagrid.selectedItem as DrupalViews;
+      
+      var temp:DrupalViewsRequestParamObject = new DrupalViewsRequestParamObject();
+      temp.parentNode = activeNode;
+      temp.views = views;
+      
+      EventCenter.notify(EventCenterEvent.LOAD_DRUPAL_VIEWS, temp);
+    }
+    
 	}
 	
 }

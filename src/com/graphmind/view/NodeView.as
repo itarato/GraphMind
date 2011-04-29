@@ -98,7 +98,7 @@ package com.graphmind.view {
 		  
 			var titleExtraWidth:int = _getTitleExtraWidth();
  			for (var idx:* in icons) {
- 				Image(icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + WIDTH_DEFAULT;
+ 				Image(icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + WIDTH_DEFAULT - 4;
  			}
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;

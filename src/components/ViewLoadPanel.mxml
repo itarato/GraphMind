@@ -15,6 +15,11 @@
 			<mx:DataGridColumn headerText="Name" dataField="name"/>
 			<mx:DataGridColumn headerText="type" dataField="baseTable" width="60"/>
 		</mx:columns>
+		<mx:itemClick>
+		  <![CDATA[
+		    view_name.text = view_views_datagrid.selectedItem.name;
+		  ]]>
+		</mx:itemClick>
 	</mx:DataGrid>
 	
 	<mx:Form width="100%">
@@ -32,7 +37,7 @@
 			<mx:TextInput id="view_limit" text="10"/>
 		</mx:FormItem>
 		<mx:ControlBar>
-			<mx:Button styleName="button" label="Submit" />
+			<mx:Button styleName="button" label="Submit" id="submitButton" />
 		</mx:ControlBar>
 	</mx:Form>
   	

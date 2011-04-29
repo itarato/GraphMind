@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" horizontalScrollPolicy="off">
 	
 	<mx:Script>
 		<![CDATA[
@@ -10,21 +10,21 @@
 		]]>
 	</mx:Script>
 	
-	<mx:Form>
+	<mx:Form width="100%" horizontalScrollPolicy="off">
 		<mx:FormHeading label="Item parameters"/>
 		<mx:FormItem label="Source">
-			<mx:ComboBox dataProvider="{ConnectionController.liveConnections}" 
-				labelField="shortName"
-				id="item_source"/>
+			<mx:ComboBox dataProvider="{ConnectionController.connections}" 
+				id="sourceConnectionField"
+				width="290"/>
 		</mx:FormItem>
 		<mx:FormItem label="Item type">
-			<mx:ComboBox dataProvider="{NodeType.DrupalItemTypes}" id="item_type"/>
+			<mx:ComboBox dataProvider="{NodeType.DrupalItemTypes}" id="drupalTypeField"/>
 		</mx:FormItem>
 		<mx:FormItem label="ID">
-			<mx:TextInput id="item_id"/>
+			<mx:TextInput id="drupalIDField"/>
 		</mx:FormItem>
 		<mx:ControlBar>
-			<mx:Button styleName="button" label="Submit" />
+			<mx:Button styleName="button" label="Submit" id="submitButton" />
 		</mx:ControlBar>
 	</mx:Form>
 	
