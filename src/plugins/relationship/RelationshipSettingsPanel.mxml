@@ -17,12 +17,14 @@
     
   <mx:HRule styleName="HRule" width="100%"/>
   
+  <!--
   <mx:HBox verticalAlign="middle">
     <mx:Text text="Regenerate relationships"  width="200"/>
     <mx:Button styleName="button" label="Refresh tree" click="{Relationship.refreshSubtree(TreeMapViewController.rootNode);}"/>
   </mx:HBox>
     
   <mx:HRule styleName="HRule" width="100%"/>
+  -->
   
   <mx:HBox verticalAlign="middle">
     <mx:Text text="Checks updates on the backend"  width="200"/>
