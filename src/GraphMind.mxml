@@ -18,7 +18,6 @@
 		<![CDATA[
 		  import com.graphmind.event.EventCenter;
 		  import com.graphmind.event.EventCenterEvent;
-		  import com.graphmind.AppFormController;
 		  import com.graphmind.TreeWorkflow;
 		  import com.graphmind.FuturesWheelWorkflow;
 		  import com.graphmind.IWorkflowComposite;

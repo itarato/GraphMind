@@ -96,9 +96,13 @@ package com.graphmind.view {
 		public function refreshGraphics():void {
 		  if (!isGraphicsUpdated) return;
 		  
+		  height = HEIGHT;
+		  nodeComponentView.height = HEIGHT;
+		  
 			var titleExtraWidth:int = _getTitleExtraWidth();
  			for (var idx:* in icons) {
  				Image(icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + WIDTH_DEFAULT - 4;
+ 				Image(icons[idx]).y = (HEIGHT - 16) * 0.5;
  			}
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
