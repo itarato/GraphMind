@@ -280,6 +280,22 @@ package com.graphmind {
 			view.backgroundColor = nodeData.color;
 			
 			nodes.addItem(this);
+			
+			if (
+			  FeatureController.isFeatureEnabled(FeatureController.TOOLTIPS) &&
+			  nodeData.type == NodeType.NODE && 
+			  nodeData.drupalID && 
+			  nodeData.connection.isConnected
+			) {
+        nodeData.connection.call(
+          'graphmind.getNodeView',
+          function(result:Object):void {
+            view.toolTip = result.toString();
+          },
+          ConnectionController.defaultRequestErrorHandler,
+          nodeData.drupalID
+        );
+      }
 			     
       EventCenter.notify(EventCenterEvent.NODE_CREATED, this);
 		}

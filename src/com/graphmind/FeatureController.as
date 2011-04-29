@@ -13,6 +13,7 @@ package com.graphmind {
     public static var CREATE_MINDMAP_NODE:String    = 'createMindmapNode';
     public static var ATTRIBUTES:String             = 'attributes';
     public static var CONNECTIONS:String            = 'connections';
+    public static var TOOLTIPS:String               = 'tooltips';
   
     /**
     * Inner feature storage.
