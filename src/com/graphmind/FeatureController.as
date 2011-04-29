@@ -11,6 +11,7 @@ package com.graphmind {
     public static var LOAD_DRUPAL_VIEWS_LIST:String = 'loadDrupalViewsList';
     public static var UPDATE_DRUPAL_VIEWS:String    = 'updateDrupalViews';
     public static var CREATE_MINDMAP_NODE:String    = 'createMindmapNode';
+    public static var ATTRIBUTES:String             = 'attributes';
   
     /**
     * Inner feature storage.

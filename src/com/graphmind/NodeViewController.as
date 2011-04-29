@@ -156,6 +156,12 @@ package com.graphmind {
     public static var canHasAnchor:Boolean = true;
     
     /**
+    * Attributes.
+    */
+    public static var CAN_HAS_ATTRIBUTES:String = 'canHasAttributes';
+    public static var canHasAttributes:Boolean = true;
+    
+    /**
     * Add action icon and the image source.
     */
     [Embed(source='assets/images/add.png')]
@@ -290,12 +296,14 @@ package com.graphmind {
 		  nodeConfigComponent.saveTitleButton.addEventListener(MouseEvent.CLICK, onClick_saveTitleButton);
 		  nodeConfigComponent.saveURLButton.addEventListener(MouseEvent.CLICK, onClick_saveURLButton);
 		  
-		  nodeAttributesPanel = new ConfigPanelController('Attributes');
-		  nodeAttributesComponent = new NodeAttributes();
-		  nodeAttributesPanel.addItem(nodeAttributesComponent);
-		  nodeAttributesComponent.attributesDataGrid.dataProvider = NodeViewController.selectedNodeData;
-		  nodeAttributesComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_saveAttributeButton);
-		  nodeAttributesComponent.removeButton.addEventListener(MouseEvent.CLICK, onClick_removeAttributeButton);
+		  if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
+  		  nodeAttributesPanel = new ConfigPanelController('Attributes');
+  		  nodeAttributesComponent = new NodeAttributes();
+  		  nodeAttributesPanel.addItem(nodeAttributesComponent);
+  		  nodeAttributesComponent.attributesDataGrid.dataProvider = NodeViewController.selectedNodeData;
+  		  nodeAttributesComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_saveAttributeButton);
+  		  nodeAttributesComponent.removeButton.addEventListener(MouseEvent.CLICK, onClick_removeAttributeButton);
+  		}
 		  
 		  nodeIconsPanel = new ConfigPanelController('Icons');
 		  nodeIconsComponent = new NodeIcons();
@@ -338,7 +346,9 @@ package com.graphmind {
 			
 			var cms:Array = [];
 			cms.push({title: 'Node info', event: onContextMenuSelected_NodeInfo, separator: false});
-			cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
+			if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
+			 cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
+			}
       cms.push({title: 'Icons', event: onContextMenuSelected_NodeIcons, separator: true});
 			cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
 			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
@@ -401,8 +411,11 @@ package com.graphmind {
       
       nodeConfigComponent.nodeLabelRTE.htmlText = view.nodeComponentView.title_label.htmlText || view.nodeComponentView.title_label.text;
       nodeConfigComponent.urlField.text = nodeData.link;
-      nodeAttributesComponent.attrKey.text = '';
-      nodeAttributesComponent.attrValue.text = '';
+      
+      if (nodeAttributesComponent) {
+        nodeAttributesComponent.attrKey.text = '';
+        nodeAttributesComponent.attrValue.text = '';
+      }
 
 			_setBackgroundEffect(EFFECT_HIGHLIGHT);
 		}

@@ -122,6 +122,7 @@ package plugins {
       
       NodeViewController.canHasNormalChild = false;
       NodeViewController.canHasAnchor = false;
+      NodeViewController.canHasAttributes = false;
       
       EventCenter.subscribe(EventCenterEvent.NODE_DID_ADDED_TO_PARENT, onNodeDidAddedToParent);
       EventCenter.subscribe(EventCenterEvent.NODE_IS_KILLED, onNodeIsKilled);
