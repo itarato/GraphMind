@@ -837,8 +837,10 @@ package com.graphmind {
      * @param boolean userChange - indicates if the change was done by user interaction.
      */
 		public function setTitle(title:String):void {
-			nodeData.title = view.nodeComponentView.title_label.htmlText = title;
-			
+      nodeData.title = view.nodeComponentView.title_label.htmlText = title;
+      view.nodeComponentView.title_label.explicitWidth = NaN;
+      view.nodeComponentView.title_label.invalidateSize();
+      
 		  EventCenter.notify(EventCenterEvent.NODE_TITLE_CHANGED, this);
 			
 			update(UP_UI);

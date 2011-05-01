@@ -46,14 +46,13 @@
 	<mx:Image source="{image_insertUp}" y="0" id="insertUp" visible="false"/>
 	<mx:Image source="{image_insertLeft}" height="{NodeView.HEIGHT}" x="{NodeView.ICON_INSERT_LEFT_DEFAULT_X}" id="insertLeft" visible="false"/>
 	
-	<mx:Text 
+	<mx:Label 
 	  x="2" y="1" 
 	  text="Label" 
 	  width="{NodeView.TITLE_DEFAULT_WIDTH}" 
 	  id="title_label" 
 	  fontSize="{NodeView.LABEL_FONT_SIZE}"
-	  selectable="false" 
-	  condenseWhite="false"/>
+	  selectable="false"/>
 		
 	<mx:Image x="{NodeView.ICON_BULLET_DEFAULT_X}" y="6" source="{image_node_collapse}" 
 		id="icon_has_child" 

@@ -35,7 +35,7 @@ package com.graphmind.view {
 		
 		[Bindable]
 		public static var TITLE_DEFAULT_WIDTH:int = 122;
-		public static var TITLE_MAX_WIDTH:int = 220;
+		public static var TITLE_MAX_WIDTH:int = 300;
 		[Bindable]
 		public static var ACTION_ICONS_DEFAULT_X:int = 120;
 		[Bindable]
@@ -139,11 +139,9 @@ package com.graphmind.view {
 		
 		
 		protected function _getTitleExtraWidth():int {
-			return nodeComponentView.title_label.measuredWidth <= TITLE_DEFAULT_WIDTH ? 
-				0 :
-				(nodeComponentView.title_label.measuredWidth >= TITLE_MAX_WIDTH ? 
-					TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH :
-					nodeComponentView.title_label.measuredWidth - TITLE_DEFAULT_WIDTH);
+		  var w:uint = nodeComponentView.title_label.measuredWidth;
+			return w <= TITLE_DEFAULT_WIDTH ? 0 : 
+			 ((w > TITLE_MAX_WIDTH) ? (TITLE_MAX_WIDTH - TITLE_DEFAULT_WIDTH) : w - TITLE_DEFAULT_WIDTH);
 		}
 		
 		
