@@ -129,6 +129,7 @@ package plugins {
       EventCenter.subscribe(EventCenterEvent.NODE_CREATED, onNodeCreated);
       EventCenter.subscribe(EventCenterEvent.MAP_TREE_IS_COMPLETE, onMapTreeIsComplete);
       EventCenter.subscribe(EventCenterEvent.ALTER_SETTINGS_PANEL, onAlterSettingsPanel);
+      EventCenter.subscribe(EventCenterEvent.NODE_IS_SELECTED, onNodeIsSelected);
       
       ExternalInterface.addCallback('sendCreationRequestBackToFlex', onReturnCreationRequest);
     }
@@ -591,6 +592,20 @@ package plugins {
       
       return false;
     }
+    
+    
+    /**
+    * Event callback - when a node is selected.
+    */
+    private static function onNodeIsSelected(e:EventCenterEvent):void {
+      if (ExternalInterface.available) {
+        var node:NodeViewController = e.data as NodeViewController;
+        if (isNode(node)) {
+          ExternalInterface.call('GraphmindRelationship.loadNodeInBlock', node.nodeData.drupalID);
+        }
+      }
+    }
+    
   }
 
 }
