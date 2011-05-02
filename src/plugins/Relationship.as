@@ -498,7 +498,9 @@ package plugins {
       }
       
       var node:NodeViewController = NodeViewController.activeNode;
-      ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID);
+      var type:String = Application.application.parameters.hasOwnProperty('graphmindRelationshipDefaultCreatedNodeType') ?
+        Application.application.parameters.graphmindRelationshipDefaultCreatedNodeType : '';
+      ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID, type);
     }
     
     
