@@ -354,7 +354,7 @@ package com.graphmind {
     protected function onLoadDrupalItem(event:EventCenterEvent):void {
       var data:DrupalItemRequestParamObject = event.data as DrupalItemRequestParamObject;
       ConnectionController.mainConnection.call(
-        data.type + '.get',
+        data.type + '.retrieve',
         function(result:Object):void {      
           var node:NodeViewController = new NodeViewController(new NodeDataObject(result, data.type, data.conn));
           data.parentNode.addChildNode(node);
@@ -370,9 +370,9 @@ package com.graphmind {
     protected function onLoadDrupalViews(event:EventCenterEvent):void {
       var data:DrupalViewsRequestParamObject = event.data as DrupalViewsRequestParamObject;
       data.views.views.connection.call(
-        'views.get',
+        'views.retrieve',
         function(res:Object):void{onSuccess_loadDrupalViews(res, data)},
-        null,
+        ConnectionController.defaultRequestErrorHandler,
         data.views.name,
         data.views.fields,
         [data.views.args],
