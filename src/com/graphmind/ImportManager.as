@@ -12,7 +12,7 @@ package com.graphmind {
 		public static function importNodesFromDrupalResponse(response:Object):NodeViewController {
 		  var rootNode:NodeViewController;
 		  var is_valid_mm_xml:Boolean = false;
-      var body:String = response.body[response.language][0]['value'].toString();
+      var body:String = response['body'].hasOwnProperty(response.language) ? response.body[response.language][0]['value'].toString() : '';
       if (body.length > 0) {
         var xmlData:XML = new XML(body);
         var nodes:XML = xmlData.child('node')[0];
