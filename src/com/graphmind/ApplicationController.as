@@ -50,11 +50,6 @@ package com.graphmind {
 		protected var _isEditable:Boolean = false;
 		
 		/**
-		 * Feature array.
-		 */
-		public var features:Array;
-		
-		/**
 		 * Disk image source for the save button.
 		 */
 	  [Embed(source="assets/images/disk.png")]
@@ -115,7 +110,7 @@ package com.graphmind {
       
 		  // Establish connection to the Drupal site.
       ConnectionController.mainConnection = ConnectionController.createConnection(getBaseDrupalURL());
-      ConnectionController.mainConnection.isSessionAuthentication = true;
+//      ConnectionController.mainConnection.isSessionAuthentication = true;
       
       ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
       ConnectionController.mainConnection.addEventListener(ConnectionIOErrorEvent.IO_ERROR_EVENT, ConnectionController.defaultIOErrorHandler);
@@ -180,19 +175,8 @@ package com.graphmind {
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
 			// Get all the available features
-			ConnectionController.mainConnection.call('graphmind.getFeatures', onSuccess_featuresAreLoaded, null, getHostNodeID());
-			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, null);
-			ConnectionController.mainConnection.call('node.get', onSuccess_rootNodeIsLoaded, null, getHostNodeID());
-		}
-		
-		
-		/**
-		 * Features are loaded.
-		 * Features are disabled by default.
-		 */
-		protected function onSuccess_featuresAreLoaded(result:Object):void {
-		  Log.info("Features are loaded: " + result.toString());
-		  this.features = result as Array;
+			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, ConnectionController.defaultRequestErrorHandler);
+			ConnectionController.mainConnection.call('node.retrieve', onSuccess_rootNodeIsLoaded, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
 		}
 		
 		
