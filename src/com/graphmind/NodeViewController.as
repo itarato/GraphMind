@@ -363,11 +363,14 @@ package com.graphmind {
 			var cms:Array = [];
 			cms.push({title: 'Node info', event: onContextMenuSelected_NodeInfo, separator: false});
 			if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
-			 cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
+			  cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
+			  if (NodeType.updatableTypes.indexOf(nodeData.type) >= 0) {
+          cms.push({title: 'Fetch Drupal data', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
+        }
 			}
       cms.push({title: 'Icons', event: onContextMenuSelected_NodeIcons, separator: false});
       if (canHasNormalChild) {
-			 cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
+			  cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
       }
 			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
 			  cms.push({title: 'Load Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
@@ -378,9 +381,6 @@ package com.graphmind {
 			cms.push({title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true});
 			cms.push({title: 'Expand subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true});
 			cms.push({title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false});
-			if (NodeType.updatableTypes.indexOf(nodeData.type) >= 0) {
-				cms.push({title: 'Fetch Drupal data', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
-			}
 			
 			// Extend context menu items by Plugin provided menu items
 			PluginManager.alter('context_menu', cms);
