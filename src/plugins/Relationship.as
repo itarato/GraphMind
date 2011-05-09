@@ -113,6 +113,8 @@ package plugins {
     */
     public static function init():void {
       Log.info('Relationship plugin is live.');
+
+      refreshFlag = true;
       
       if (Application.application.parameters.hasOwnProperty('graphmindRelationshipDepth')) {
         depth = Application.application.parameters.graphmindRelationshipDepth;
@@ -486,6 +488,7 @@ package plugins {
     private static function onMapTreeIsComplete(event:EventCenterEvent):void {
       // Start checking the updates.
       checkForChangesWithLoop();
+      refreshFlag = false;
     }
     
     
