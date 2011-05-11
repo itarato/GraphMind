@@ -40,6 +40,8 @@ package com.graphmind.event {
     public static var ICON_SELECTED:String = 'iconSelected';
     
     public static var ALTER_SETTINGS_PANEL:String = 'alterSettingsPanel';
+    
+    public static var FEATURES_CHANGED:String = 'featuresChanged';
         
     /**
     * Data.

@@ -1,6 +1,7 @@
 package com.graphmind {
   
-  import mx.graphics.Stroke;
+  import com.graphmind.event.EventCenter;
+  import com.graphmind.event.EventCenterEvent;
   
   public class FeatureController {
 
@@ -26,6 +27,7 @@ package com.graphmind {
     */
     public static function set features(aFeatures:Array):void {
       _features = aFeatures;
+      EventCenter.notify(EventCenterEvent.FEATURES_CHANGED);
     }
     
     
@@ -35,6 +37,7 @@ package com.graphmind {
     public static function addFeature(feature:String):void {
       if (_features.indexOf(feature) == -1) {
         _features.push(feature);
+        EventCenter.notify(EventCenterEvent.FEATURES_CHANGED);
       }
     }
     
@@ -45,6 +48,7 @@ package com.graphmind {
     public static function removeFeature(feature:String):void {
       if (_features.indexOf(feature) !== -1) {
         delete _features[_features.indexOf(feature)];
+        EventCenter.notify(EventCenterEvent.FEATURES_CHANGED);
       }
     }
     
