@@ -10,7 +10,7 @@ package plugins {
     * Implementation of the plugin init function.
     */
     public static function init():void {
-      EventCenter.subscribe(EventCenterEvent.FEATURES_CHANGED, onFeaturesChanged);
+//      EventCenter.subscribe(EventCenterEvent.FEATURES_CHANGED, onFeaturesChanged);
     }
     
     
@@ -22,7 +22,7 @@ package plugins {
     
     
     public static function alter_context_menu(cm:Array):void {
-      cm.push({title: 'Load Drupal Item'});
+//      cm.push({title: 'Load Drupal Item'});
     }
     
     
