@@ -13,6 +13,7 @@ package plugins {
   
   import flash.events.ContextMenuEvent;
   import flash.events.MouseEvent;
+  import flash.external.ExternalInterface;
   
   import plugins.organicgroupsplugin.LoadDrupalNodeComponent;
   
@@ -36,6 +37,10 @@ package plugins {
       nodeLoadComponent = new LoadDrupalNodeComponent();
       nodeLoadPanel.addItem(nodeLoadComponent);
       nodeLoadComponent.submitButton.addEventListener(MouseEvent.CLICK, onClick_drupalItemLoadSubmit);
+      
+      if (ExternalInterface.available) {
+        ExternalInterface.addCallback('sendOGNodeLoadRequestToFlex', onSendOGNodeLoadRequestToFlex);
+      }
     }
     
     
@@ -101,6 +106,21 @@ package plugins {
     private static function onNodeGetFail(result:Object):void {
       OSD.show("Sorry, you don\'t have permission to load the node. Maybe it\'s not in the same organic group. \nCheck the node ID again.", OSD.WARNING);
     }
+    
+    
+    /**
+    * Callback from JS - request for a node can be sent.
+    */
+    private static function onSendOGNodeLoadRequestToFlex(nid:uint):void {
+      ConnectionController.mainConnection.call(
+        'graphmindOG.getNode',
+        onNodeGetSuccess,
+        onNodeGetFail,
+        nid,
+        ApplicationController.getHostNodeID()
+      );
+    }
+    
   }
 
 }
