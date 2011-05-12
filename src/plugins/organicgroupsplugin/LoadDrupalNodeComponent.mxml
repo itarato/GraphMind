@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalAlign="middle">
+  
+  <mx:Label text="Node ID:" />
+  
+  <mx:TextInput id="nodeIDField" />
+  
+  <mx:Button label="Load" id="submitButton" />
+  
+</mx:HBox>
