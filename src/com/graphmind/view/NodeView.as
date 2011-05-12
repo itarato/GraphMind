@@ -100,10 +100,6 @@ package com.graphmind.view {
 		  nodeComponentView.height = HEIGHT;
 		  
 			var titleExtraWidth:int = _getTitleExtraWidth();
- 			for (var idx:* in icons) {
- 				Image(icons[idx]).x = titleExtraWidth + ICON_WIDTH * idx + WIDTH_DEFAULT - 4;
- 				Image(icons[idx]).y = (HEIGHT - 16) * 0.5;
- 			}
  			
  			var leftOffset:int = _getIconsExtraWidth() + titleExtraWidth;
  			var actionIconOffset:uint = actionIcons.length * 18;
@@ -120,8 +116,13 @@ package com.graphmind.view {
 			this.nodeComponentView.insertLeft.x = ICON_INSERT_LEFT_DEFAULT_X + leftOffset + actionIconOffset;
 			this.nodeComponentView.title_label.width = TITLE_DEFAULT_WIDTH + titleExtraWidth;
 			
+      for (var idx:* in icons) {
+        Image(icons[idx]).x = titleExtraWidth + WIDTH_DEFAULT + _getActionIconsExtraWidth() - 4 + ICON_WIDTH * idx;
+        Image(icons[idx]).y = (HEIGHT - 16) * 0.5;
+      }
+      
 			for (var i:* in actionIcons) {
-			  (actionIcons[i] as Image).x = ACTION_ICONS_DEFAULT_X + leftOffset + i * 18;
+			  (actionIcons[i] as Image).x = titleExtraWidth + WIDTH_DEFAULT - 4 + i * ICON_WIDTH;
 			  (actionIcons[i] as Image).y = (HEIGHT - 16) * .5;
 			}
 			
@@ -147,6 +148,11 @@ package com.graphmind.view {
 		
 		protected function _getIconsExtraWidth():int {
 			return icons.length * ICON_WIDTH;
+		}
+		
+		
+		protected function _getActionIconsExtraWidth():int {
+		  return actionIcons.length * ICON_WIDTH;
 		}
 		
 		
@@ -179,6 +185,7 @@ package com.graphmind.view {
 		  actionIcons.push(actionIcon);
 		  nodeComponentView.addChild(actionIcon);
 		  refreshGraphics();
+      actionIcon.visible = false;
 		}
 
 	}

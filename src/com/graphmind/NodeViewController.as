@@ -711,9 +711,6 @@ package com.graphmind {
  		 */
 		public function setLink(link:String):void {
 			nodeData.link = link;
-			if (canHasAnchor) {
-			  drupalLinkIcon.visible = (link.length > 0);
-			}
 			update(UP_UI);
 		}
 		
