@@ -476,8 +476,11 @@ package com.graphmind {
 				output = output + '<attribute NAME="' + escape(key) + '" VALUE="' + escape(nodeData.drupalData[key]) + '"/>' + "\n";
 			}
 			
-			if (nodeData.connection && nodeData.connection.target) {
-        output = output + '<site URL="' + escape(nodeData.connection.target) + '" />' + "\n";
+			if (nodeData.connection && nodeData.connection.basePath) {
+        output = output + '<site ' + 
+          'URL="' + nodeData.connection.basePath + nodeData.connection.endPoint + '" ' + 
+          'BASEPATH="' + nodeData.connection.basePath + '" ' + 
+          'ENDPOINT="' + nodeData.connection.endPoint + '" />' + "\n";
 			}
 			
 			for each (var iconName:* in nodeData.icons) {

@@ -42,7 +42,7 @@ package com.graphmind {
     private static function addConnection(conn:Connection):void {
       // Check if the connection is already added.
       for (var idx:* in _connections) {
-        if ((_connections[idx] as Connection).target == conn.target) {
+        if ((_connections[idx] as Connection).basePath == conn.basePath && (_connections[idx] as Connection).endPoint == conn.endPoint) {
           return;
         }
       }
@@ -81,7 +81,7 @@ package com.graphmind {
     public static function defaultNetStatusHandler(event:ConnectionNetStatusEvent):void {
       OSD.show(
         "Network status error." +
-        "\n  Connection: " + event.connection.target +  
+        "\n  Connection: " + event.connection.basePath + ' [' + event.connection.endPoint + ']' +  
         "\n  Code: " + event.netStatusEvent.info.code +
         "\n  Description: " + event.netStatusEvent.info.description +
         "\n  Details: " + event.netStatusEvent.info.details +
@@ -93,14 +93,14 @@ package com.graphmind {
     /**
     * Connection factory.
     */
-    public static function createConnection(target:String):Connection {
+    public static function createConnection(basePath:String, endPoint:String):Connection {
       for (var idx:* in _connections) {
-        if ((_connections[idx] as Connection).target == target) {
+        if ((_connections[idx] as Connection).basePath == basePath && (_connections[idx] as Connection).endPoint == endPoint) {
           return _connections[idx];
         }
       }
       
-      var conn:Connection = new Connection(target);
+      var conn:Connection = new Connection(basePath, endPoint);
       addConnection(conn);
       return conn;
     }

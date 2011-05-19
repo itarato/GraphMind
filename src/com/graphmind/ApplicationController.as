@@ -114,7 +114,7 @@ package com.graphmind {
       GraphMind.i.map.addChild(this.treeMapViewController.view);
       
 		  // Establish connection to the Drupal site.
-      ConnectionController.mainConnection = ConnectionController.createConnection(getBaseDrupalURL());
+      ConnectionController.mainConnection = ConnectionController.createConnection(getBaseDrupalURL(), getEndPointPath());
       ConnectionController.mainConnection.isSessionAuthentication = true;
       
       ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
@@ -155,6 +155,14 @@ package com.graphmind {
 		 */
 		public static function getBaseDrupalURL():String {
 			return Application.application.parameters.basePath;
+		}
+		
+		
+		/**
+		 * Get endpoint.
+		 */
+		public static function getEndPointPath():String {
+		  return Application.application.parameters.endPoint;
 		}
 		
 		
@@ -304,10 +312,11 @@ package com.graphmind {
      * Event handler for
      */
     public function onClick_AddNewSiteConnectionButton(e:MouseEvent):void {
-      var url:String = connectionSettingsComponent.connectFormURL.text;
+      var basePath:String = connectionSettingsComponent.connectFormBasePath.text;
+      var endPoint:String = connectionSettingsComponent.connectFormEndPoint.text;
       var userName:String = connectionSettingsComponent.connectFormUsername.text;
       var userPassword:String = connectionSettingsComponent.connectFormPassword.text;
-      var conn:Connection = ConnectionController.createConnection(url);
+      var conn:Connection = ConnectionController.createConnection(basePath, endPoint);
       
       conn.userName = userName;
       conn.userPassword = userPassword;
