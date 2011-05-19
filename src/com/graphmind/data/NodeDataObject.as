@@ -122,21 +122,21 @@ package com.graphmind.data {
 			
 			var newLink:String = '';
 			
-			if (connection && connection.target && drupalID) {
-				var url:String = connection.target.toString().replace(/services\/amfphp/gi, '');
+			if (connection && connection.basePath && drupalID) {
+				var url:String = connection.basePath;
 				switch (type) {
 					case NodeType.NODE: 
-					  newLink = url + '/node/' + drupalID;
+					  newLink = url + 'node/' + drupalID;
 					  break;
 					case NodeType.USER: 
-					  newLink = url + '/user/' + drupalID;
+					  newLink = url + 'user/' + drupalID;
 					case NodeType.COMMENT:
 						if (drupalData.cid && drupalData.comments_nid) {
-							newLink = url + '/node/' + drupalData.comments_nid + '#comment-' + drupalData.cid;
+							newLink = url + 'node/' + drupalData.comments_nid + '#comment-' + drupalData.cid;
 						}
 						break;
 					case NodeType.TERM: 
-            newLink = url + '/taxonomy/term/' + drupalID;
+            newLink = url + 'taxonomy/term/' + drupalID;
 				}
 			}
 			

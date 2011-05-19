@@ -17,22 +17,27 @@
   </mx:DataGrid>
   
   <mx:HBox verticalAlign="middle" width="100%">
-    <mx:Label text="URL.:" width="70"/>
-    <mx:TextInput id="connectFormURL" text="http://" tabIndex="10" width="100%"/>
+    <mx:Label text="Base path:" width="70"/>
+    <mx:TextInput id="connectFormBasePath" text="http://" tabIndex="10" width="100%"/>
+  </mx:HBox>
+  
+  <mx:HBox verticalAlign="middle" width="100%">
+    <mx:Label text="Endpoint:" width="70"/>
+    <mx:TextInput id="connectFormEndPoint" text="" tabIndex="11" width="100%"/>
   </mx:HBox>
   
   <mx:HBox verticalAlign="middle" width="100%">
     <mx:Label text="Username:" width="70"/>
-    <mx:TextInput id="connectFormUsername" tabIndex="11" width="100%"/>
+    <mx:TextInput id="connectFormUsername" tabIndex="12" width="100%"/>
   </mx:HBox>
   
   <mx:HBox verticalAlign="middle" width="100%">
     <mx:Label text="Password:" width="70"/>
-    <mx:TextInput id="connectFormPassword" displayAsPassword="true" tabIndex="12" width="100%"/>
+    <mx:TextInput id="connectFormPassword" displayAsPassword="true" tabIndex="13" width="100%"/>
   </mx:HBox>
   
   <mx:Button styleName="button" label="Add new site" 
     id="saveButton"
-    tabIndex="3" />
+    tabIndex="14" />
   
 </mx:VBox>

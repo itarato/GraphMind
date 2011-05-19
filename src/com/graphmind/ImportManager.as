@@ -73,7 +73,7 @@ package com.graphmind {
 			// Site connection
 			var conn:Connection = null;
 			if (nodeXML.site) {
-        conn = ConnectionController.createConnection(unescape(nodeXML.site.@URL));
+        conn = ConnectionController.createConnection(unescape(nodeXML.site.@BASEPATH), unescape(nodeXML.site.@ENDPOINT));
 			}
 			
 			var node:NodeViewController = new NodeViewController(new NodeDataObject(
