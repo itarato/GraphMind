@@ -232,10 +232,7 @@ package plugins {
         }
       }
       
-      cm.push({title: 'Synchronize relationships', event: onMenuItemSelect_RefreshSubtree, separator: true});
-      cm.push({title: 'Edit Details', event: onMouseClick_editNodeActionIcon, separator: false});
       cm.push({title: 'View Details', event: onMouseClick_viewNodeActionIcon, separator: false});
-      cm.push({title: 'Load subtree', event: onMouseClick_relationshipActionIcon, separator: false});
       cm.push({title: 'Create node', event: onMouseClick_addDrupalNodeIcon, separator: false});
     }
     
@@ -263,32 +260,6 @@ package plugins {
           node.setColor(userColors[uid]);
         }
       }
-    }
-    
-    
-    /**
-    * Event callback when the relationship action icon is clicked.
-    */
-    private static function onMouseClick_relationshipActionIcon(e:ContextMenuEvent):void {
-      var node:NodeViewController = NodeViewController.activeNode;
-      ConnectionController.mainConnection.call(
-        'graphmindRelationship.getSubtree',
-        function (result:Object):void {
-          onSuccess_loadRelationshipSubtree(node, result);
-        },
-        ConnectionController.defaultRequestErrorHandler,
-        node.nodeData.drupalID,
-        depth
-      );
-    }
-    
-    
-    /**
-    * Event callback when a node's relationships are arrived.
-    */
-    private static function onSuccess_loadRelationshipSubtree(node:NodeViewController, result:Object):void {
-      trace('success of rel subtree');
-      addSubtree(node, result as Array);
     }
     
     
@@ -328,14 +299,6 @@ package plugins {
       }
       
       return null;
-    }
-    
-    
-    /**
-    * Event callback - clicking on the refresh subtree context menu item.
-    */
-    private static function onMenuItemSelect_RefreshSubtree(event:ContextMenuEvent):void {
-      refreshSubtree(NodeViewController.activeNode);
     }
     
     
@@ -545,18 +508,6 @@ package plugins {
           node.setColor(uint(result));
         }
       }
-    }
-    
-    
-    /**
-    * Event callback - click on the view-node-page action icon.
-    */
-    private static function onMouseClick_editNodeActionIcon(e:ContextMenuEvent):void {
-      if (!ExternalInterface.available) {
-        OSD.show('Popup window is not available.');
-      }
-      var node:NodeViewController = NodeViewController.activeNode;
-      ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link + '/edit');
     }
     
     
