@@ -39,7 +39,7 @@ package com.graphmind.data {
 		
 
 		public function get sourceURL():String {
-      return _conn.target;
+      return _conn.basePath + _conn.endPoint;
 		}
 		
 		

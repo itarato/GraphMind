@@ -536,9 +536,9 @@ package com.graphmind {
 		/**
 		 * Kill a node and each childs.
 		 */
-		public function kill():void {
+		public function kill(forceKillRoot:Boolean = false):void {
 		  // Root can't be deleted.
-			if (!parent) return;
+			if (!forceKillRoot && !parent) return;
 			
 			// @HOOK
 			EventCenter.notify(EventCenterEvent.NODE_IS_KILLED, this);

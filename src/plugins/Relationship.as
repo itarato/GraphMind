@@ -1,6 +1,7 @@
 package plugins {
   
   import com.graphmind.ConnectionController;
+  import com.graphmind.MainMenuController;
   import com.graphmind.NodeViewController;
   import com.graphmind.TreeMapViewController;
   import com.graphmind.data.NodeDataObject;
@@ -42,6 +43,12 @@ package plugins {
     * Relatioship action icon for the node ui.
     */
     private static var relationshipActionIcon:NodeActionIcon;
+
+    /**
+    * Refresh icon.
+    */
+    [Embed(source="assets/images/arrow_refresh.png")]
+    private static var refreshImage:Class;
 
     /**
     * Add icon.
@@ -267,22 +274,12 @@ package plugins {
     * Adds a list of items to a node recursively.
     * Returns all the node IDs that are connected.
     */
-    private static function addSubtree(parent:NodeViewController, childs:Array):Array {
-      var connectedIDs:Array = [];
-      for (var idx:* in childs) {
-        connectedIDs.push(childs[idx]['node']['nid']);
-        // Prevents recursion.
-        if (!loopCheck(parent, childs[idx]['node']['nid'])) {
-          var child:NodeViewController = getExistingNodeOfParent(parent, childs[idx]['node']['nid']);
-          if (!child) {
-            child = new NodeViewController(new NodeDataObject(childs[idx]['node'], NodeType.NODE, ConnectionController.mainConnection));
-            parent.addChildNode(child);
-          }
-          addSubtree(child, childs[idx]['relationships']);
-        }
+    private static function addSubtree(parent:NodeViewController, children:Array):void {
+      for (var idx:* in children) {
+        var node:NodeViewController = new NodeViewController(new NodeDataObject(children[idx].node, NodeType.NODE, ConnectionController.mainConnection));
+        parent.addChildNode(node);
+        addSubtree(node, children[idx].children);
       }
-      
-      return connectedIDs;
     }
     
     
@@ -303,48 +300,15 @@ package plugins {
     
     
     /**
-    * Refresh a subtree.
-    */ 
-    public static function refreshSubtree(node:NodeViewController):void {
-      refreshRequestPending = false;
-      
-      EventCenter.notify(EventCenterEvent.MAP_LOCK);
-      GlobalLock.lock(REFRESH_LOCK);
-      
-      ConnectionController.mainConnection.call(
-        'graphmindRelationship.getSubtree',
-        function (result:Object):void {
-          onSuccess_refreshSubtreeRequest(node, result);
-        },
-        function(error:Object):void {
-          GlobalLock.unlock(REFRESH_LOCK);
-          ConnectionController.defaultRequestErrorHandler(error);
-        },
-        node.nodeData.drupalID,
-        1
-      );
-    }
-    
-    
-    /**
     * Event callback when a subtree refresh info is arrived.
     */
-    private static function onSuccess_refreshSubtreeRequest(parent:NodeViewController, result:Object):void {
+    private static function onSuccess_refreshSubtreeRequest(result:Object):void {
       refreshFlag = true;
       
-      var connectedIDs:Array = addSubtree(parent, result as Array);
-      var childs:ArrayCollection = parent.getChildNodeAll();
-      for (var idx:* in childs) {
-        var child:NodeViewController = childs[idx] as NodeViewController;
-        if (child.nodeData.type != NodeType.NODE || connectedIDs.indexOf(child.nodeData.drupalID.toString()) == -1) {
-          // It's a non existing relationship.
-          child.kill();
-        } else {
-          if (child.hasChild()) {
-            refreshSubtree(child);
-          }
-        }
-      }
+      TreeMapViewController.rootNode.kill(true);
+      var node:NodeViewController = new NodeViewController(new NodeDataObject(result.node, NodeType.NODE, ConnectionController.mainConnection));
+      TreeMapViewController.rootNode = node;
+      addSubtree(node, result.children);
       
       refreshFlag = false;
       
@@ -452,6 +416,8 @@ package plugins {
       // Start checking the updates.
       checkForChangesWithLoop();
       refreshFlag = false;
+      
+      MainMenuController.createIconMenuItem(refreshImage, 'Refresh map', onMenuClick_RefreshMap);
     }
     
     
@@ -558,6 +524,30 @@ package plugins {
           ExternalInterface.call('GraphmindRelationship.loadNodeInBlock', node.nodeData.drupalID);
         }
       }
+    }
+    
+    
+    private static function onMenuClick_RefreshMap(e:MouseEvent):void {
+      hardRefreshTree();
+    }
+    
+    
+    private static function hardRefreshTree():void {
+      EventCenter.notify(EventCenterEvent.MAP_LOCK);
+      ConnectionController.mainConnection.call(
+        'graphmindRelationship.getSubtree',
+        function(e:Object):void{
+          GlobalLock.lock(REFRESH_LOCK);
+          onSuccess_refreshSubtreeRequest(e);
+        },
+        function(e:Object):void{
+          GlobalLock.unlock(REFRESH_LOCK);
+          EventCenter.notify(EventCenterEvent.MAP_UNLOCK);
+          ConnectionController.defaultRequestErrorHandler(e);
+        },
+        TreeMapViewController.rootNode.nodeData.drupalID,
+        depth
+      );
     }
     
   }
