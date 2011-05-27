@@ -324,6 +324,7 @@ package com.graphmind {
 		  nodeIconsPanel = new ConfigPanelController('Icons');
 		  nodeIconsComponent = new NodeIcons();
 		  nodeIconsPanel.addItem(nodeIconsComponent);
+		  nodeIconsPanel.addExitItem(nodeIconsComponent.doneButton);
 		  EventCenter.subscribe(EventCenterEvent.ICON_SELECTED, onIconSelected);
 		  
 		  loadDrupalItemPanel = new ConfigPanelController('Load Drupal item');

@@ -37,4 +37,6 @@
 		</mx:Repeater>
 	</mx:Tile>
 	
+	<mx:Button styleName="button" label="Done" id="doneButton" />
+	
 </mx:VBox>

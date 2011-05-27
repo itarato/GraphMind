@@ -66,36 +66,6 @@ package com.graphmind {
     protected var dragAndDropImage:Image = new Image();
     
     /**
-    * Node configuration panel.
-    */
-    private static var nodeConfigPanel:ConfigPanelController;
-    private static var nodeConfigComponent:NodeInfo;
-    
-    /**
-    * Node attributes panel.
-    */
-    private static var nodeAttributesPanel:ConfigPanelController;
-    private static var nodeAttributesComponent:NodeAttributes;
-    
-    /**
-    * Node icons panel.
-    */
-    private static var nodeIconsPanel:ConfigPanelController;
-    private static var nodeIconsComponent:NodeIcons;
-    
-    /**
-    * Load Drupal item panel.
-    */
-    private static var loadDrupalItemPanel:ConfigPanelController;
-    private static var loadDrupalItemComponent:DrupalItemLoadPanel;
- 
-    /**
-    * Load Drupal Views list panel.
-    */
-    private static var loadDrupalViewsPanel:ConfigPanelController;
-    private static var loadDrupalViewsComponent:ViewLoadPanel;
-                       
-    /**
      * Active node's attributes -> to display it as attributes.
      * Sensitive information not included (ie: passwords).
      */ 
