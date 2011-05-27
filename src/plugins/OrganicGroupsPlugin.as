@@ -26,6 +26,11 @@ package plugins {
     private static var nodeLoadPanel:ConfigPanelController;
     private static var nodeLoadComponent:LoadDrupalNodeComponent;
     
+    /**
+    * Indicates if the feature was enabled but disabled by this plugin.
+    */ 
+    private static var nodeLoadFeatureWasEnabled:Boolean = false;
+    
     
     /**
     * Implementation of the plugin init function.
@@ -50,6 +55,7 @@ package plugins {
     private static function onFeaturesChanged(event:EventCenterEvent):void {
       if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
         FeatureController.removeFeature(FeatureController.LOAD_DRUPAL_NODE);
+        nodeLoadFeatureWasEnabled = true;
       }
     }
     
@@ -58,6 +64,8 @@ package plugins {
     * Alters a node's context menu.
     */
     public static function alter_context_menu(cm:Array):void {
+      if (!nodeLoadFeatureWasEnabled) return;
+      
       cm.push({title: 'Load Drupal Item', event: onContextMenuSelect_loadDruplaItem, separator: false});
     }
     
