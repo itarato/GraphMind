@@ -356,12 +356,15 @@ package plugins {
     private static function checkForChangesWithCallback(callback:Function):void {
       if (refreshRequestPending) return;
       var tree:Object = {};
-      tree[TreeMapViewController.rootNode.nodeData.drupalID] = collectSubtreeIDs(TreeMapViewController.rootNode, []);
+      tree['nid'] = TreeMapViewController.rootNode.nodeData.drupalID;
+      tree['node'] = {changed: TreeMapViewController.rootNode.nodeData.drupalData.changed};
+      tree['children'] = collectSubtreeIDs(TreeMapViewController.rootNode, depth);
       ConnectionController.mainConnection.call(
         'graphmindRelationship.checkUpdate',
         callback,
         ConnectionController.defaultRequestErrorHandler,
-        tree
+        tree,
+        depth
       );
     }
     
@@ -381,23 +384,19 @@ package plugins {
     /**
     * Creates a structured ID array object from the tree as a parameter.
     */
-    private static function collectSubtreeIDs(node:NodeViewController, cycleCheckArray:Array):Array {
-      var ids:Array = [];
-      var childs:ArrayCollection = node.getChildNodeAll();
-      for (var idx:* in childs) {
-        var child:NodeViewController = childs[idx] as NodeViewController;
-        if (child.nodeData.type == NodeType.NODE && child.nodeData.drupalID) {
-          var subtree:Object = {};
-          if (cycleCheckArray.indexOf(child.nodeData.drupalID) == -1) {
-            cycleCheckArray.push(child.nodeData.drupalID);
-            subtree[child.nodeData.drupalID] = collectSubtreeIDs(child, cycleCheckArray);
-          } else {
-            subtree[child.nodeData.drupalID] = [];
-          }
-          ids.push(subtree);
+    private static function collectSubtreeIDs(node:NodeViewController, depth:uint):Array {
+      var children:ArrayCollection = node.getChildNodeAll();
+      var data:Array = [];
+      if (depth > 0) {
+        for (var idx:* in children) {
+          var child:Object = {};
+          child['nid'] = (children[idx] as NodeViewController).nodeData.drupalID;
+          child['node'] = {changed: (children[idx] as NodeViewController).nodeData.drupalData.changed};
+          child['children'] = collectSubtreeIDs(children[idx], depth - 1);
+          data.push(child);
         }
       }
-      return ids;
+      return data;
     }
     
     
