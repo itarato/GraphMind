@@ -306,11 +306,13 @@ package com.graphmind {
 		 */
 		public static function init():void {
 		  // Node info panel
-		  nodeConfigPanel = new ConfigPanelController('Node Settings');
-		  nodeConfigComponent = new NodeInfo();
-		  nodeConfigPanel.addItem(nodeConfigComponent);
-		  nodeConfigComponent.saveTitleButton.addEventListener(MouseEvent.CLICK, onClick_saveTitleButton);
-		  nodeConfigComponent.saveURLButton.addEventListener(MouseEvent.CLICK, onClick_saveURLButton);
+		  if (FeatureController.isFeatureEnabled(FeatureController.NODE_INFO)) {
+  		  nodeConfigPanel = new ConfigPanelController('Node Settings');
+  		  nodeConfigComponent = new NodeInfo();
+  		  nodeConfigPanel.addItem(nodeConfigComponent);
+  		  nodeConfigComponent.saveTitleButton.addEventListener(MouseEvent.CLICK, onClick_saveTitleButton);
+  		  nodeConfigComponent.saveURLButton.addEventListener(MouseEvent.CLICK, onClick_saveURLButton);
+  		}
 		  
 		  if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
   		  nodeAttributesPanel = new ConfigPanelController('Attributes');
@@ -356,13 +358,15 @@ package com.graphmind {
 		/**
 		 * Get a complete context menu for the UI.
 		 */	
-		public function getContextMenu():ContextMenu {
+    public function getContextMenu():ContextMenu {
 			var contextMenu:ContextMenu = new ContextMenu();
 			contextMenu.customItems = [];
 			contextMenu.hideBuiltInItems();
 			
 			var cms:Array = [];
-			cms.push({title: 'Node info', event: onContextMenuSelected_NodeInfo, separator: false});
+			if (FeatureController.isFeatureEnabled(FeatureController.NODE_INFO)) {
+			  cms.push({title: 'Node info', event: onContextMenuSelected_NodeInfo, separator: false});
+			}
 			if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
 			  cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
 			  if (NodeType.updatableTypes.indexOf(nodeData.type) >= 0) {
@@ -426,8 +430,10 @@ package com.graphmind {
         });
       }     
       
-      nodeConfigComponent.nodeLabelRTE.htmlText = view.nodeComponentView.title_label.htmlText || view.nodeComponentView.title_label.text;
-      nodeConfigComponent.urlField.text = nodeData.link;
+      if (FeatureController.isFeatureEnabled(FeatureController.NODE_INFO)) {
+        nodeConfigComponent.nodeLabelRTE.htmlText = view.nodeComponentView.title_label.htmlText || view.nodeComponentView.title_label.text;
+        nodeConfigComponent.urlField.text = nodeData.link;
+      }
       
       if (nodeAttributesComponent) {
         nodeAttributesComponent.attrKey.text = '';

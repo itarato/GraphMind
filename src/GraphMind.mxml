@@ -95,7 +95,7 @@
       horizontalScrollPolicy="off" verticalScrollPolicy="off" />
   </mx:Canvas>
 	
-	<mx:VBox id="OSDContainer" width="300" height="100%" right="6" top="6"/>
+	<mx:VBox id="OSDContainer" width="300" height="100%" right="22" top="33"/>
 	
 	<!--<debugger:MonsterDebuggerFlex id="monsterDebugger" />-->
 		
