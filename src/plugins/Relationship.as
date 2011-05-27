@@ -312,6 +312,7 @@ package plugins {
       
       refreshFlag = false;
       
+      refreshRequestPending = false;
       GlobalLock.unlock(REFRESH_LOCK);
       if (!GlobalLock.isLocked(REFRESH_LOCK)) {
         EventCenter.notify(EventCenterEvent.MAP_UNLOCK);
