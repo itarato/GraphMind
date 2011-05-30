@@ -110,9 +110,9 @@ package plugins {
     * Frequency related vars for the update period.
     */
     [Bindable]
-    public static var frequencies:Array = ['5 seconds', '15 seconds', '1 minute', '5 minutes'];
-    private static var frequenciesSeconds:Array = [5, 15, 60, 300];
-    private static var frequency:uint = frequenciesSeconds[0];
+    public static var updateFrequencies:Array = ['5 seconds', '15 seconds', '1 minute', '5 minutes'];
+    private static var updateFrequenciesSeconds:Array = [5, 15, 60, 300];
+    private static var updateFrequency:uint = updateFrequenciesSeconds[0];
     
     /**
     * User color storage.
@@ -352,7 +352,7 @@ package plugins {
             checkForChangesWithLoop();
           });
         }
-      }, frequency * 1000);
+      }, updateFrequency * 1000);
     }
     
     
@@ -411,7 +411,7 @@ package plugins {
     * Set the update check frequency.
     */
     public static function setUpdateCheckFrequency(idx:uint):void {
-      frequency = frequenciesSeconds[idx];
+      updateFrequency = updateFrequenciesSeconds[idx];
     }
     
     
