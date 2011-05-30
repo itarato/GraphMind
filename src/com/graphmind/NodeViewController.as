@@ -162,6 +162,11 @@ package com.graphmind {
     public static var canHasAttributes:Boolean = true;
     
     /**
+    * Feature - node title editing.
+    */
+    public static var canHasTitleEditing:Boolean = true;
+    
+    /**
     * Add action icon and the image source.
     */
     [Embed(source='assets/images/add.png')]
@@ -265,7 +270,9 @@ package com.graphmind {
 		  }
 			
       // Event listeners
-      view.nodeComponentView.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
+      if (canHasTitleEditing) {
+        view.nodeComponentView.title_label.addEventListener(MouseEvent.DOUBLE_CLICK,   onDoubleClick);
+      }
       view.nodeComponentView.title_new.addEventListener(KeyboardEvent.KEY_UP,        onKeyUp_TitleTextField);
       view.nodeComponentView.title_new.addEventListener(FocusEvent.FOCUS_OUT,        onFocusOut_TitleTextField);
       view.nodeComponentView.addEventListener(MouseEvent.MOUSE_DOWN,                 onMouseDown);
