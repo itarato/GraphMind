@@ -34,6 +34,11 @@ package plugins {
     private static var DEFAULT_RELATIONSHIP:String = 'default';
     
     /**
+    * Unique string for the refresh update warning OSD message.
+    */
+    private static var UPDATE_WARNING_OSD:String = 'updateWarningOSD';
+    
+    /**
     * Image asset for the relationship action icon.
     */
     [Embed(source="assets/images/chart_organisation.png")]
@@ -376,7 +381,8 @@ package plugins {
     private static function onSuccess_refreshInfoArrived(result:Object):void {
       if (!result) {
         // Structure is changed at the backend.
-        OSD.show('Structure is changed. Please refresh your map in the \'Relationships\' panel.', OSD.WARNING, true);
+        OSD.removeNamedMessages(UPDATE_WARNING_OSD);
+        OSD.show('Structure is changed. Please refresh your map in the \'Relationships\' panel.', OSD.WARNING, true, UPDATE_WARNING_OSD);
         refreshRequestPending = true; 
       }
     }
