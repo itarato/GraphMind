@@ -119,6 +119,8 @@ package plugins {
     */
     private static var userColors:Object = {};
     
+    private static var focusNodeBackupInfo:Array = [];
+    
     
     /**
     * Implemrentation of init().
@@ -315,6 +317,28 @@ package plugins {
       var node:NodeViewController = new NodeViewController(new NodeDataObject(result.node, NodeType.NODE, ConnectionController.mainConnection));
       TreeMapViewController.rootNode = node;
       addSubtree(node, result.children);
+      
+      var currentNID:uint = focusNodeBackupInfo.pop();
+      var currentNode:NodeViewController = 
+        currentNID == TreeMapViewController.rootNode.nodeData.drupalID ?
+          TreeMapViewController.rootNode :
+          null;
+      while (focusNodeBackupInfo.length > 0 && currentNode) {
+        currentNID = focusNodeBackupInfo.pop();
+        var foundChild:Boolean = false; 
+        for each (var child:NodeViewController in currentNode.getChildNodeAll()) {
+          if (child.nodeData.drupalID == currentNID) {
+            currentNode = child;
+            foundChild = true;
+            break;
+          }
+        }
+        if (!foundChild) {
+          break;
+        } else {
+          currentNode.select();
+        }
+      }
       
       refreshFlag = false;
       
@@ -540,6 +564,13 @@ package plugins {
     
     
     private static function hardRefreshTree():void {
+      focusNodeBackupInfo = [];
+      var parent:NodeViewController = NodeViewController.activeNode;
+      while (parent) {
+        focusNodeBackupInfo.push(parent.nodeData.drupalID);
+        parent = parent.parent;
+      }
+      
       EventCenter.notify(EventCenterEvent.MAP_LOCK);
       ConnectionController.mainConnection.call(
         'graphmindRelationship.getSubtree',
