@@ -14,29 +14,25 @@ package com.graphmind.util {
 		private static var container:UIComponent;
 		public  static var width:int;
 		public  static var padding:int = 12;
-		
-		
+
+
 		public static function init(container:UIComponent, width:int = 300):void {
 			OSD.container = container;
 			OSD.width     = width;
 		}
 		
 		
-		public static function show(text:String, level:String = 'info', sticky:Boolean = false):void {
-			var msg:UIComponent = getMessagePanel(text, level, sticky);
+		public static function show(text:String, level:String = 'info', sticky:Boolean = false, name:String = null):void {
+			var msg:UIComponent = getMessagePanel(text, level, sticky, name);
 			OSD.container.addChild(msg);
+			
+			
 		} 
 		
 		
-		private static function getMessagePanel(text:String, level:String, sticky:Boolean = false):Canvas {
+		private static function getMessagePanel(text:String, level:String, sticky:Boolean = false, name:String = null):Canvas {
 			var osd_msg:OSDMessage;
-			if (level == OSD.ERROR || sticky) {
-				osd_msg = new OSDStaticMessage(text, level);
-			} else {
-				osd_msg = new OSDMessage(text, level);
-				osd_msg.countdown();
-			}
-			
+  		osd_msg = new OSDMessage(text, level, (level == OSD.ERROR || sticky), name);
 			return osd_msg;
 		}
 		
@@ -48,6 +44,10 @@ package com.graphmind.util {
 				case ERROR:   return 0xCF0000;
 				default:      return 0x2F2F2F;
 			}
+		}
+		
+		public static function removeNamedMessages(name:String):void {
+		  OSDMessage.removeNamedMessages(name);
 		}
 		
 	}
