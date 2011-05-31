@@ -358,6 +358,8 @@ package plugins {
       
       refreshFlag = false;
       
+      OSD.removeNamedMessages(UPDATE_WARNING_OSD);
+      
       refreshRequestPending = false;
       GlobalLock.unlock(REFRESH_LOCK);
       if (!GlobalLock.isLocked(REFRESH_LOCK)) {
