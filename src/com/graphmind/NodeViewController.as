@@ -986,8 +986,6 @@ package com.graphmind {
     * Event callback - double click.
     */
     protected function onDoubleClick(event:MouseEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
-      
       view.nodeComponentView.currentState = 'edit_title';
       view.nodeComponentView.title_new.text = view.nodeComponentView.title_label.text;
       view.nodeComponentView.title_new.setFocus();
@@ -998,8 +996,6 @@ package com.graphmind {
     * Event callback - key up event on the label edit field.
     */
     protected function onKeyUp_TitleTextField(event:KeyboardEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
-      
       if (event.keyCode == Keyboard.ENTER) {
         closeLabelEditMode();
         select();
@@ -1014,7 +1010,6 @@ package com.graphmind {
     * Event callback - focus loss on the label edit field.
     */
     protected function onFocusOut_TitleTextField(event:FocusEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
       closeLabelEditMode();
     }
     
@@ -1042,8 +1037,6 @@ package com.graphmind {
     * Event callback - click on the add node icon.
     */
     protected function onClick_AddSimpleNodeButton(event:MouseEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
-      
       event.stopPropagation();
       event.stopImmediatePropagation();
       event.preventDefault();
@@ -1082,8 +1075,6 @@ package com.graphmind {
     * Event callback - click on the node.
     */
     protected function onMouseDown(event:MouseEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
-      
       EventCenter.notify(EventCenterEvent.NODE_PREPARE_DRAG, this);
       event.stopImmediatePropagation();
     }
@@ -1093,8 +1084,6 @@ package com.graphmind {
     * Event callback - mouse up on node.
     */
     protected function onMouseUp(event:MouseEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
-      
       if (NodeViewController.isNodeDragAndDrop) {
         if (view.mouseX / view.width > (1 - view.mouseY / view.height)) {
           NodeViewController.dragAndDrop_sourceNode.move(this);
@@ -1114,8 +1103,6 @@ package com.graphmind {
     * Event callback - mouse move on node.
     */
     protected function onMouseMove(event:MouseEvent):void {
-      if (!ApplicationController.i.isEditable()) return;
-      
       if ((!NodeViewController.isPrepairedNodeDragAndDrop) && NodeViewController.isNodeDragAndDrop) {
         if (view.mouseX / view.width > (1 - view.mouseY / NodeView.HEIGHT)) {
           view.nodeComponentView.insertLeft.visible = true;
@@ -1329,10 +1316,8 @@ package com.graphmind {
       view.addIcon(icon);
       nodeData.addIcon(iconName);
       
-      if (ApplicationController.i.isEditable()) {
-        icon.doubleClickEnabled = true;
-        icon.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick_icon);
-      }
+      icon.doubleClickEnabled = true;
+      icon.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick_icon);
     
       update(UP_UI);
     }

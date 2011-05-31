@@ -281,6 +281,8 @@ package com.graphmind {
     
     
     protected function onRequestToSave(event:EventCenterEvent):void {
+      if (!ApplicationController.i.isEditable()) return;
+      
       var xml:String = ExportController.getFreeMindXML(rootNode);
       ExportController.saveFreeMindXMLToDrupal(ConnectionController.mainConnection, xml, ApplicationController.getHostNodeID());
     }

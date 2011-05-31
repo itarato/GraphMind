@@ -124,7 +124,9 @@ package com.graphmind {
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
       
-      MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
+      if (isEditable()) {
+        MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
+      }
       MainMenuController.createIconMenuItem(fullScreenImage, 'Full screen', onClick_fullScreenIcon);
       
       applicationSettingsComponent = new ApplicationSettingsComponent();
