@@ -121,7 +121,7 @@ package plugins {
     /**
     * Update frequency - 10 seconds.
     */
-    private static var saveFrequency:uint = 4000;
+    private static var saveFrequency:uint = 10000;
     private static var saveTimeout:uint;
     
     /**
