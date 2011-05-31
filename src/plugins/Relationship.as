@@ -405,7 +405,7 @@ package plugins {
       if (refreshRequestPending) return;
       var tree:Object = {};
       tree['nid'] = TreeMapViewController.rootNode.nodeData.drupalID;
-      tree['node'] = {changed: TreeMapViewController.rootNode.nodeData.drupalData.changed};
+      tree['node'] = {title: TreeMapViewController.rootNode.nodeData.drupalData.title};
       tree['children'] = collectSubtreeIDs(TreeMapViewController.rootNode, depth);
       ConnectionController.mainConnection.call(
         'graphmindRelationship.checkUpdate',
@@ -440,7 +440,7 @@ package plugins {
         for (var idx:* in children) {
           var child:Object = {};
           child['nid'] = (children[idx] as NodeViewController).nodeData.drupalID;
-          child['node'] = {changed: (children[idx] as NodeViewController).nodeData.drupalData.changed};
+          child['node'] = {title: (children[idx] as NodeViewController).nodeData.drupalData.title};
           child['children'] = collectSubtreeIDs(children[idx], depth - 1);
           data.push(child);
         }
