@@ -124,28 +124,14 @@ package com.graphmind {
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
       
-      if (isEditable()) {
-        MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
-      }
-      MainMenuController.createIconMenuItem(fullScreenImage, 'Full screen', onClick_fullScreenIcon);
-      
       applicationSettingsComponent = new ApplicationSettingsComponent();
       applicationSettingsPanel = new ConfigPanelController('Map settings');
       applicationSettingsPanel.addItem(applicationSettingsComponent);
-      MainMenuController.createIconMenuItem(gearImage, 'Settings', onClick_ApplicationSettingsMenuItem);
       applicationSettingsComponent.desktopScaleHSlider.addEventListener(SliderEvent.CHANGE, onChange_mapScaleSlider);
       applicationSettingsComponent.nodeSizeSelect.addEventListener(ListEvent.CHANGE, onDataChange_nodeSizeSelect);
       var e:EventCenterEvent = EventCenter.notify(EventCenterEvent.ALTER_SETTINGS_PANEL, []);
       for each (var item:UIComponent in e.data) {
         applicationSettingsPanel.addItem(item);
-      }
-      
-      if (FeatureController.isFeatureEnabled(FeatureController.CONNECTIONS)) {
-        connectionSettingsComponent = new ConnectionSettingsComponent();
-        connectionSettingsPanel = new ConfigPanelController('Remote connections');
-        connectionSettingsPanel.addItem(connectionSettingsComponent);
-        MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
-        connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
       }
       
       NodeViewController.init();
@@ -224,6 +210,23 @@ package com.graphmind {
     protected function onSuccess_rootNodeIsLoaded(result:Object):void {
       Log.info("Root node is loaded: " + result.nid);
       setEditMode(result.graphmindEditable == '1');
+      
+      if (isEditable()) {
+        MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
+      }
+      
+      MainMenuController.createIconMenuItem(fullScreenImage, 'Full screen', onClick_fullScreenIcon);
+      
+      MainMenuController.createIconMenuItem(gearImage, 'Settings', onClick_ApplicationSettingsMenuItem);
+      
+      if (FeatureController.isFeatureEnabled(FeatureController.CONNECTIONS)) {
+        connectionSettingsComponent = new ConnectionSettingsComponent();
+        connectionSettingsPanel = new ConfigPanelController('Remote connections');
+        connectionSettingsPanel.addItem(connectionSettingsComponent);
+        MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
+        connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
+      }
+      
       TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
       
       // Call map to draw its contents.
