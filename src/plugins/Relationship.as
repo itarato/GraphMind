@@ -17,8 +17,10 @@ package plugins {
   import com.graphmind.view.NodeActionIcon;
   
   import flash.events.ContextMenuEvent;
+  import flash.events.Event;
   import flash.events.MouseEvent;
   import flash.external.ExternalInterface;
+  import flash.utils.clearTimeout;
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
@@ -115,6 +117,12 @@ package plugins {
     public static var updateFrequencies:Array = ['5 seconds', '15 seconds', '1 minute', '5 minutes'];
     private static var updateFrequenciesSeconds:Array = [5, 15, 60, 300];
     private static var updateFrequency:uint = updateFrequenciesSeconds[0];
+    
+    /**
+    * Update frequency - 10 seconds.
+    */
+    private static var saveFrequency:uint = 4000;
+    private static var saveTimeout:uint;
     
     /**
     * User color storage.
@@ -454,6 +462,7 @@ package plugins {
     private static function onMapTreeIsComplete(event:EventCenterEvent):void {
       // Start checking the updates.
       checkForChangesWithLoop();
+      startAutoSave();
       refreshFlag = false;
       
       MainMenuController.createIconMenuItem(refreshImage, 'Refresh map', onMenuClick_RefreshMap);
@@ -596,6 +605,27 @@ package plugins {
       );
     }
     
+    
+    /**
+    * Begin autosaving.
+    */
+    private static function startAutoSave():void {
+      EventCenter.subscribe(EventCenterEvent.MAP_SAVED, function(e:Event):void{
+        autoSave();
+      });
+      autoSave();
+    }
+    
+    
+    /**
+    * Autosave.
+    */
+    private static function autoSave():void {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(function():void{
+        EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
+      }, saveFrequency);
+    }
   }
 
 }
