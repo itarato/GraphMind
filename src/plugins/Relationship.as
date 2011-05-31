@@ -1,5 +1,6 @@
 package plugins {
   
+  import com.graphmind.ApplicationController;
   import com.graphmind.ConnectionController;
   import com.graphmind.MainMenuController;
   import com.graphmind.NodeViewController;
@@ -22,6 +23,7 @@ package plugins {
   
   import mx.collections.ArrayCollection;
   import mx.core.Application;
+  import mx.events.FlexEvent;
   
   import plugins.relationship.RelationshipSettingsPanel;
   
@@ -335,9 +337,15 @@ package plugins {
         }
         if (!foundChild) {
           break;
-        } else {
-          currentNode.select();
         }
+      }
+      if (currentNode) {
+        currentNode.view.addEventListener(FlexEvent.CREATION_COMPLETE, function(e:Event):void{
+          setTimeout(function():void {
+            currentNode.select();
+            ApplicationController.i.treeMapViewController.centerMapTo(currentNode.view.x, currentNode.view.y);
+          }, 100);
+        });
       }
       
       refreshFlag = false;

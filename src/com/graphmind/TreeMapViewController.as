@@ -2,7 +2,6 @@ package com.graphmind {
 
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
-	import com.graphmind.display.ConfigPanelController;
 	import com.graphmind.display.TreeDrawer;
 	import com.graphmind.event.EventCenter;
 	import com.graphmind.event.EventCenterEvent;
@@ -11,12 +10,6 @@ package com.graphmind {
 	import com.graphmind.util.DesktopDragInfo;
 	import com.graphmind.util.OSD;
 	import com.graphmind.view.NodeView;
-	
-	import components.DrupalItemLoadPanel;
-	import components.NodeAttributes;
-	import components.NodeIcons;
-	import components.NodeInfo;
-	import components.ViewLoadPanel;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
@@ -407,6 +400,16 @@ package com.graphmind {
       
       EventCenter.notify(EventCenterEvent.MAP_UPDATED);
     }
+    
+    
+    /**
+    * Makes the point to the center of the map.
+    */
+    public function centerMapTo(x:Number, y:Number):void {
+      view.horizontalScrollPosition = x - (view.width >> 1);
+      view.verticalScrollPosition = y - (view.height >> 1);
+    }
+    
 	}
 	
 }
