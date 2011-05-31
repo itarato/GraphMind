@@ -149,7 +149,7 @@ package com.graphmind.display {
 
 			return height;
 		}
-
+		
 	}
 	
 }
