@@ -385,7 +385,6 @@ package plugins {
     * Update check request - called periodically.
     */
     private static function checkForChangesWithLoop():void {
-      trace('LOOP CHECK');
       setTimeout(function():void{
         if (refreshRequestPending) {
           checkForChangesWithLoop();
