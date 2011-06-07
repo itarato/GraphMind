@@ -171,7 +171,7 @@ package com.graphmind {
 		  Log.info("Connection to Drupal is established.");
 			// Get all the available features
 			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, ConnectionController.defaultRequestErrorHandler);
-			ConnectionController.mainConnection.call('node.retrieve', onSuccess_rootNodeIsLoaded, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
+			ConnectionController.mainConnection.call('graphmind.isNodeEditable', onSuccess_isNodeEditable, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
 		}
 		
 		
@@ -185,16 +185,15 @@ package com.graphmind {
         new DrupalViews(data, ConnectionController.mainConnection);
       }
 		}
-
-  
-    /**
-    * Root node is loaded.
-    */
-    protected function onSuccess_rootNodeIsLoaded(result:Object):void {
-      Log.info("Root node is loaded: " + result.nid);
-      setEditMode(result.graphmindEditable == '1');
-      
-      if (isEditable()) {
+		
+		
+		/**
+		 * Event callback - when edit check is back.
+		 */
+		protected function onSuccess_isNodeEditable(result:Object):void {
+		  setEditMode(result);
+		  
+		  if (isEditable()) {
         MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
       }
       
@@ -209,6 +208,16 @@ package com.graphmind {
         MainMenuController.createIconMenuItem(connectionImage, 'Connections', onClick_ConnectionsMenuItem);
         connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
       }
+		  
+		  ConnectionController.mainConnection.call('node.retrieve', onSuccess_rootNodeIsLoaded, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
+		}
+
+  
+    /**
+    * Root node is loaded.
+    */
+    protected function onSuccess_rootNodeIsLoaded(result:Object):void {
+      Log.info("Root node is loaded: " + result.nid);
       
       TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
       
