@@ -424,7 +424,7 @@ package plugins {
       if (!result) {
         // Structure is changed at the backend.
         OSD.removeNamedMessages(UPDATE_WARNING_OSD);
-        OSD.show('Structure is changed. Please refresh your map in the \'Relationships\' panel.', OSD.WARNING, true, UPDATE_WARNING_OSD);
+        OSD.show('The map has new data - click Refresh Map to refresh.', OSD.WARNING, true, UPDATE_WARNING_OSD);
         refreshRequestPending = true; 
       }
     }
