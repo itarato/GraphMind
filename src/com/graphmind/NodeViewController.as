@@ -764,6 +764,14 @@ package com.graphmind {
 		public function isCollapsed():Boolean {
 			return _isCollapsed;
 		}
+		
+		
+		/**
+		 * Checks if the node is collapsed directly.
+		 */
+		public function isForcedCollapsed():Boolean {
+		  return _isForcedCollapsed;
+		}
 
 		
 		/**

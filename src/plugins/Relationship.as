@@ -24,6 +24,7 @@ package plugins {
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
+  import mx.controls.Image;
   import mx.core.Application;
   import mx.events.FlexEvent;
   
@@ -130,6 +131,11 @@ package plugins {
     private static var userColors:Object = {};
     
     private static var focusNodeBackupInfo:Array = [];
+    
+    /**
+    * On hard refresh store the nodes have to be collapsed.
+    */
+    private static var collapseStateCache:Array = [];
     
     
     /**
@@ -292,11 +298,25 @@ package plugins {
     * Adds a list of items to a node recursively.
     * Returns all the node IDs that are connected.
     */
-    private static function addSubtree(parent:NodeViewController, children:Array):void {
+    private static function addSubtree(parent:NodeViewController, children:Array, mapDataCache:Object):void {
       for (var idx:* in children) {
         var node:NodeViewController = new NodeViewController(new NodeDataObject(children[idx].node, NodeType.NODE, ConnectionController.mainConnection));
         parent.addChildNode(node);
-        addSubtree(node, children[idx].children);
+        var nodeCachedData:Object;
+        if (mapDataCache && mapDataCache['children'].hasOwnProperty(node.nodeData.drupalID)) {
+          nodeCachedData = mapDataCache['children'][node.nodeData.drupalID] as Object;
+          if (nodeCachedData['cloud']) {
+            node.toggleCloud();
+          }
+          if (nodeCachedData['collapsed']) {
+            collapseStateCache.push(node);
+          }
+          for each (var icon:String in nodeCachedData['icons']) {
+            node.addIcon(ApplicationController.getIconPath() + icon + '.png');
+          }
+          
+        }
+        addSubtree(node, children[idx].children, nodeCachedData ? nodeCachedData : {});
       }
     }
     
@@ -323,10 +343,26 @@ package plugins {
     private static function onSuccess_refreshSubtreeRequest(result:Object):void {
       refreshFlag = true;
       
+      focusNodeBackupInfo = [];
+      var parent:NodeViewController = NodeViewController.activeNode;
+      while (parent) {
+        focusNodeBackupInfo.push(parent.nodeData.drupalID);
+        parent = parent.parent;
+      }
+      
+      var mapDataCache:Object = mapDataSnapshot(TreeMapViewController.rootNode);
+      collapseStateCache = [];
+      
+      // Remove old tree
       TreeMapViewController.rootNode.kill(true);
+      
       var node:NodeViewController = new NodeViewController(new NodeDataObject(result.node, NodeType.NODE, ConnectionController.mainConnection));
       TreeMapViewController.rootNode = node;
-      addSubtree(node, result.children);
+      addSubtree(node, result.children, mapDataCache);
+      
+      for each (var nodeToCollapse:NodeViewController in collapseStateCache) {
+        nodeToCollapse.collapse();
+      }
       
       var currentNID:uint = focusNodeBackupInfo.pop();
       var currentNode:NodeViewController = 
@@ -582,12 +618,6 @@ package plugins {
     
     
     private static function hardRefreshTree():void {
-      focusNodeBackupInfo = [];
-      var parent:NodeViewController = NodeViewController.activeNode;
-      while (parent) {
-        focusNodeBackupInfo.push(parent.nodeData.drupalID);
-        parent = parent.parent;
-      }
       
       EventCenter.notify(EventCenterEvent.MAP_LOCK);
       ConnectionController.mainConnection.call(
@@ -626,6 +656,22 @@ package plugins {
       saveTimeout = setTimeout(function():void{
         EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
       }, saveFrequency);
+    }
+    
+    
+    /**
+    * Cache a snapshot of the tree to preserve map info, such as cloud, collapse state, icons.
+    */
+    private static function mapDataSnapshot(node:NodeViewController):Object {
+      var data:Object = {};
+      data['cloud'] = node.hasCloud();
+      data['collapsed'] = node.isForcedCollapsed();
+      data['icons'] = node.nodeData.icons;
+      data['children'] = {};
+      for each (var child:NodeViewController in node.getChildNodeAll()) {
+        data['children'][child.nodeData.drupalID] = mapDataSnapshot(child);
+      }
+      return data;
     }
   }
 
