@@ -125,7 +125,10 @@ package plugins {
     /**
     * Update frequency - 10 seconds.
     */
-    private static var saveFrequency:uint = 10000;
+    [Bindable]
+    public static var saveFrequencies:Array = ['3 seconds', '5 seconds', '10 seconds', '30 seconds'];
+    public static var saveFrequenciesSeconds:Array = [3000, 5000, 10000, 30000];
+    public static var saveFrequency:uint = saveFrequenciesSeconds[1];
     private static var saveTimeout:uint;
     
     /**
@@ -645,7 +648,7 @@ package plugins {
     * Begin autosaving.
     */
     private static function startAutoSave():void {
-      EventCenter.subscribe(EventCenterEvent.MAP_SAVED, function(e:Event):void{
+      EventCenter.subscribe(EventCenterEvent.MAP_SAVED_SILENTLY, function(e:Event):void{
         autoSave();
       });
       autoSave();

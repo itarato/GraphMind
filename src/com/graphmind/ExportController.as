@@ -37,7 +37,10 @@ package com.graphmind {
     * Save map silently.
     */
     public static function saveFreeMindXMLToDrupalSilent(xml:String, nid:uint):void {
-      ConnectionController.mainConnection.call('graphmind.saveGraphMind', function(e:Object):void{lastSaved = new Date().time;}, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
+      ConnectionController.mainConnection.call('graphmind.saveGraphMind', function(e:Object):void{
+        lastSaved = new Date().time;
+        EventCenter.notify(EventCenterEvent.MAP_SAVED_SILENTLY, e);
+      }, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
     }
     
     

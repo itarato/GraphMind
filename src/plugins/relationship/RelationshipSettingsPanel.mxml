@@ -24,4 +24,9 @@
     <mx:ComboBox dataProvider="{Relationship.updateFrequencies}" change="{Relationship.setUpdateCheckFrequency(frequency.selectedIndex);}" id="frequency"/>
   </mx:HBox>
   
+  <mx:HBox verticalAlign="middle">
+    <mx:Label text="Autosave frequency (seconds)" width="200"/>
+    <mx:ComboBox dataProvider="{Relationship.saveFrequencies}" change="{Relationship.saveFrequency = Relationship.saveFrequenciesSeconds[saveFrequencySelect.selectedIndex]}" id="saveFrequencySelect" selectedIndex="1"/>
+  </mx:HBox>
+  
 </mx:VBox>
