@@ -1,6 +1,7 @@
 package plugins {
 	
 	import com.graphmind.ConnectionController;
+	import com.graphmind.NodeContextMenuController;
 	import com.graphmind.NodeViewController;
 	import com.graphmind.data.NodeDataObject;
 	import com.graphmind.data.NodeType;
@@ -73,8 +74,8 @@ package plugins {
 		/**
 		 * Implementation of hook_node_context_menu_alter().
 		 */
-		public static function alter_context_menu(cm:Array):void {
-			cm.push({title: 'Load taxonomy', event: TaxonomyManager.loadFullTaxonomyTree, separator: true});
+		public static function alter_context_menu(contextMenuController:NodeContextMenuController):void {
+			contextMenuController.addItem('Load taxonomy', loadFullTaxonomyTree);
 		}
 		
 		

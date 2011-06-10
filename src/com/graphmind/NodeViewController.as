@@ -369,42 +369,38 @@ package com.graphmind {
 			var contextMenu:ContextMenu = new ContextMenu();
 			contextMenu.customItems = [];
 			contextMenu.hideBuiltInItems();
+			var contextMenuController:NodeContextMenuController = new NodeContextMenuController();
 			
-			var cms:Array = [];
 			if (FeatureController.isFeatureEnabled(FeatureController.NODE_INFO)) {
-			  cms.push({title: 'Node info', event: onContextMenuSelected_NodeInfo, separator: false});
+			  contextMenuController.addItem('Node info', onContextMenuSelected_NodeInfo, 0, 'data');
 			}
 			if (canHasAttributes && FeatureController.isFeatureEnabled(FeatureController.ATTRIBUTES)) {
-			  cms.push({title: 'Attributes', event: onContextMenuSelected_NodeAttributes, separator: false});
+			  contextMenuController.addItem('Attributes', onContextMenuSelected_NodeAttributes, 0, 'data');
 			  if (NodeType.updatableTypes.indexOf(nodeData.type) >= 0) {
-          cms.push({title: 'Fetch Drupal data', event: onContextMenuSelected_UpdateDrupalItem, separator: false});
+          contextMenuController.addItem('Fetch Drupal data', onContextMenuSelected_UpdateDrupalItem, 0, 'data');
         }
 			}
-      cms.push({title: 'Icons', event: onContextMenuSelected_NodeIcons, separator: false});
+      contextMenuController.addItem('Icons', onContextMenuSelected_NodeIcons, 3, 'data');
       if (canHasNormalChild) {
-			  cms.push({title: 'Add node', event: onContextMenuSelected_AddSimpleNode, separator: false});
+			  contextMenuController.addItem('Add node', onContextMenuSelected_AddSimpleNode, 0, 'data');
       }
 			if (FeatureController.isFeatureEnabled(FeatureController.LOAD_DRUPAL_NODE)) {
-			  cms.push({title: 'Load Drupal item', event: onContextMenuSelected_AddDrupalItem, separator: false});
+			  contextMenuController.addItem('Load Drupal item', onContextMenuSelected_AddDrupalItem, 0, 'data');
 			}
 			if (FeatureController.areFeaturesEnabled([FeatureController.LOAD_DRUPAL_NODE, FeatureController.LOAD_DRUPAL_VIEWS_LIST])) {
-			  cms.push({title: 'Load Views list', event: onContextMenuSelected_AddDrupalViews, separator: false});
+			  contextMenuController.addItem('Load Drupal Views list', onContextMenuSelected_AddDrupalViews, 0, 'data');
 			}
-			cms.push({title: 'Remove node',     event: onContextMenuSelected_RemoveNode,       separator: true});
-			cms.push({title: 'Expand subtree',    event: onContextMenuSelected_OpenSubtree,      separator: true});
-			cms.push({title: 'Toggle cloud',    event: onContextMenuSelected_ToggleCloud,      separator: false});
+			contextMenuController.addItem('Remove node', onContextMenuSelected_RemoveNode, 3, 'visual');
+			contextMenuController.addItem('Expand subtree', onContextMenuSelected_OpenSubtree, 2, 'visual');
+			contextMenuController.addItem('Toggle cloud', onContextMenuSelected_ToggleCloud, 1, 'visual');
+			
+			contextMenuController.setSectionWeight('data',   1);
+			contextMenuController.setSectionWeight('visual', 2);
 			
 			// Extend context menu items by Plugin provided menu items
-			PluginManager.alter('context_menu', cms);
+			PluginManager.alter('context_menu', contextMenuController);
 			
-			for each (var cmData:Object in cms) {
-				var cmi:ContextMenuItem = new ContextMenuItem(cmData.title,	cmData.separator);
-				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, function(_event:ContextMenuEvent):void {
-					select();
-				});
-				cmi.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cmData.event);
-				contextMenu.customItems.push(cmi);
-			}
+			contextMenu.customItems = contextMenuController.getContextMenus();
 			
 			return contextMenu;
 		}

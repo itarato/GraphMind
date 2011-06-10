@@ -3,8 +3,11 @@ package plugins {
   import com.graphmind.ApplicationController;
   import com.graphmind.ConnectionController;
   import com.graphmind.MainMenuController;
+  import com.graphmind.NodeContextMenuController;
   import com.graphmind.NodeViewController;
   import com.graphmind.TreeMapViewController;
+  import com.graphmind.data.NodeContextMenu;
+  import com.graphmind.data.NodeContextMenuSection;
   import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.NodeType;
   import com.graphmind.display.ConfigPanelController;
@@ -24,7 +27,6 @@ package plugins {
   import flash.utils.setTimeout;
   
   import mx.collections.ArrayCollection;
-  import mx.controls.Image;
   import mx.core.Application;
   import mx.events.FlexEvent;
   
@@ -254,17 +256,18 @@ package plugins {
     /**
     * Altering a node's context menu.
     */
-    public static function alter_context_menu(cm:Array):void {
+    public static function alter_context_menu(contextMenuController:NodeContextMenuController):void {
       // Deleteing the first item: creating normal node.
-      for (var idx:* in cm) {
-        if (cm[idx]['title'] == 'Add node') {
-          delete cm[idx];
+      var section:NodeContextMenuSection = NodeContextMenuSection.getSection('default');
+      for (var idx:* in section.contextMenus) {
+        if ((section.contextMenus[idx] as NodeContextMenu).name == 'Add node') {
+          delete section.contextMenus[idx];
           break;
         }
       }
       
-      cm.push({title: 'View Details', event: onMouseClick_viewNodeActionIcon, separator: false});
-      cm.push({title: 'Create node', event: onMouseClick_addDrupalNodeIcon, separator: false});
+      contextMenuController.addItem('View details', onMouseClick_viewNodeActionIcon, 2, 'data');
+      contextMenuController.addItem('Create node', onMouseClick_addDrupalNodeIcon, 1, 'data');
     }
     
     

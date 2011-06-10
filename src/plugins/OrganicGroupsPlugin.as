@@ -3,6 +3,7 @@ package plugins {
   import com.graphmind.ApplicationController;
   import com.graphmind.ConnectionController;
   import com.graphmind.FeatureController;
+  import com.graphmind.NodeContextMenuController;
   import com.graphmind.NodeViewController;
   import com.graphmind.data.NodeDataObject;
   import com.graphmind.data.NodeType;
@@ -63,10 +64,10 @@ package plugins {
     /**
     * Alters a node's context menu.
     */
-    public static function alter_context_menu(cm:Array):void {
+    public static function alter_context_menu(contextMenuController:NodeContextMenuController):void {
       if (!nodeLoadFeatureWasEnabled) return;
       
-      cm.push({title: 'Load Drupal Item', event: onContextMenuSelect_loadDruplaItem, separator: false});
+      contextMenuController.addItem('Load Drupal item', onContextMenuSelect_loadDruplaItem, 0, 'data');
     }
     
     
