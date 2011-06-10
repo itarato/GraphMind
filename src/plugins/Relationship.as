@@ -2,6 +2,7 @@ package plugins {
   
   import com.graphmind.ApplicationController;
   import com.graphmind.ConnectionController;
+  import com.graphmind.ExportController;
   import com.graphmind.MainMenuController;
   import com.graphmind.NodeContextMenuController;
   import com.graphmind.NodeViewController;
@@ -657,7 +658,8 @@ package plugins {
     private static function autoSave():void {
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(function():void{
-        EventCenter.notify(EventCenterEvent.REQUEST_TO_SAVE);
+        var xml:String = ExportController.getFreeMindXML(TreeMapViewController.rootNode);
+        ExportController.saveFreeMindXMLToDrupalSilent(xml, ApplicationController.getHostNodeID());
       }, saveFrequency);
     }
     

@@ -2,7 +2,6 @@ package com.graphmind {
   
   import com.graphmind.event.EventCenter;
   import com.graphmind.event.EventCenterEvent;
-  import com.kitten.network.Connection;
   
   
   public class ExportController {
@@ -29,8 +28,16 @@ package com.graphmind {
     /**
      * Save work into host node
      */
-    public static function saveFreeMindXMLToDrupal(conn:Connection, xml:String, nid:uint):void {
-      conn.call('graphmind.saveGraphMind', onSaveFreemindXMLToDrupalSucceed, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
+    public static function saveFreeMindXMLToDrupal(xml:String, nid:uint):void {
+      ConnectionController.mainConnection.call('graphmind.saveGraphMind', onSaveFreemindXMLToDrupalSucceed, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
+    }
+    
+    
+    /**
+    * Save map silently.
+    */
+    public static function saveFreeMindXMLToDrupalSilent(xml:String, nid:uint):void {
+      ConnectionController.mainConnection.call('graphmind.saveGraphMind', function(e:Object):void{lastSaved = new Date().time;}, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
     }
     
     
