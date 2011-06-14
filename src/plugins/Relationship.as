@@ -306,12 +306,17 @@ package plugins {
     * Returns all the node IDs that are connected.
     */
     private static function addSubtree(parent:NodeViewController, children:Array, mapDataCache:Object):void {
-      for (var idx:* in children) {
+      var idx:*;
+      var cachedOrder:Array = [];
+      var notCached:Array = [];
+      for (idx in children) {
         var node:NodeViewController = new NodeViewController(new NodeDataObject(children[idx].node, NodeType.NODE, ConnectionController.mainConnection));
         parent.addChildNode(node);
         var nodeCachedData:Object;
         if (mapDataCache && mapDataCache['children'].hasOwnProperty(node.nodeData.drupalID)) {
           nodeCachedData = mapDataCache['children'][node.nodeData.drupalID] as Object;
+          nodeCachedData['node'] = node;
+          cachedOrder.push(nodeCachedData);
           if (nodeCachedData['cloud']) {
             node.toggleCloud();
           }
@@ -322,9 +327,21 @@ package plugins {
             node.addIcon(ApplicationController.getIconPath() + icon + '.png');
           }
           
+        } else {
+          // Node is not in the cache
+          notCached.push(node);
         }
         addSubtree(node, children[idx].children, nodeCachedData ? nodeCachedData : {});
       }
+      
+      cachedOrder.sort(function(a:Object, b:Object):int{
+        return (a['position'] < b['position']) ? -1 : 1;
+      });
+      
+      // Fix order from cache
+      parent.getChildNodeAll().removeAll();
+      for (idx in cachedOrder) {parent.getChildNodeAll().addItem(cachedOrder[idx]['node']);}
+      for (idx in notCached)   {parent.getChildNodeAll().addItem(notCached[idx]);}
     }
     
     
@@ -676,6 +693,7 @@ package plugins {
       data['collapsed'] = node.isForcedCollapsed();
       data['icons'] = node.nodeData.icons;
       data['children'] = {};
+      data['position'] = node.parent ? node.parent.getChildNodeAll().getItemIndex(node) : 0;
       for each (var child:NodeViewController in node.getChildNodeAll()) {
         data['children'][child.nodeData.drupalID] = mapDataSnapshot(child);
       }
