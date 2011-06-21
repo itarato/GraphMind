@@ -293,7 +293,7 @@ package com.graphmind {
      */
     public function onMapSaved(event:EventCenterEvent):void {
       if (event.data) {
-        OSD.show('GraphMind data is saved.');
+        OSD.show('Map is saved');
       } else {
         OSD.show('This content has been modified by another user, changes cannot be saved.', OSD.WARNING);
         // @TODO prevent later savings
