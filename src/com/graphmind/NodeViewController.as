@@ -35,6 +35,7 @@ package com.graphmind {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.ui.ContextMenu;
+	import flash.ui.ContextMenuItem;
 	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
