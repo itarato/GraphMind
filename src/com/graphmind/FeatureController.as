@@ -15,6 +15,7 @@ package com.graphmind {
     public static var CONNECTIONS:String            = 'connections';
     public static var TOOLTIPS:String               = 'tooltips';
     public static var NODE_INFO:String              = 'nodeInfo';
+    public static var REMOVE_NODE:String            = 'removeNode';
   
     /**
     * Inner feature storage.
