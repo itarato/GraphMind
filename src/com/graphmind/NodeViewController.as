@@ -35,7 +35,6 @@ package com.graphmind {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.ui.ContextMenu;
-	import flash.ui.ContextMenuItem;
 	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
@@ -390,7 +389,9 @@ package com.graphmind {
 			if (FeatureController.areFeaturesEnabled([FeatureController.LOAD_DRUPAL_NODE, FeatureController.LOAD_DRUPAL_VIEWS_LIST])) {
 			  contextMenuController.addItem('Load Drupal Views list', onContextMenuSelected_AddDrupalViews, 0, 'data');
 			}
-			contextMenuController.addItem('Remove node', onContextMenuSelected_RemoveNode, 3, 'visual');
+			if (FeatureController.isFeatureEnabled(FeatureController.REMOVE_NODE)) {
+			  contextMenuController.addItem('Remove node', onContextMenuSelected_RemoveNode, 3, 'visual');
+			}
 			contextMenuController.addItem('Expand subtree', onContextMenuSelected_OpenSubtree, 2, 'visual');
 			contextMenuController.addItem('Toggle cloud', onContextMenuSelected_ToggleCloud, 1, 'visual');
 			
