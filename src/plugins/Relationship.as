@@ -309,6 +309,17 @@ package plugins {
       var idx:*;
       var cachedOrder:Array = [];
       var notCached:Array = [];
+      
+      for each (var icon:String in mapDataCache['icons']) {
+        parent.addIcon(ApplicationController.getIconPath() + icon + '.png');
+      }
+      if (mapDataCache['collapsed']) {
+        collapseStateCache.push(parent);
+      }
+      if (mapDataCache['cloud']) {
+        parent.toggleCloud();
+      }
+      
       for (idx in children) {
         var node:NodeViewController = new NodeViewController(new NodeDataObject(children[idx].node, NodeType.NODE, ConnectionController.mainConnection));
         parent.addChildNode(node);
@@ -317,16 +328,6 @@ package plugins {
           nodeCachedData = mapDataCache['children'][node.nodeData.drupalID] as Object;
           nodeCachedData['node'] = node;
           cachedOrder.push(nodeCachedData);
-          if (nodeCachedData['cloud']) {
-            node.toggleCloud();
-          }
-          if (nodeCachedData['collapsed']) {
-            collapseStateCache.push(node);
-          }
-          for each (var icon:String in nodeCachedData['icons']) {
-            node.addIcon(ApplicationController.getIconPath() + icon + '.png');
-          }
-          
         } else {
           // Node is not in the cache
           notCached.push(node);
