@@ -111,10 +111,8 @@ package com.graphmind {
 		  // Establish connection to the Drupal site.
       ConnectionController.mainConnection = ConnectionController.createConnection(getBaseDrupalURL(), getServiceEndpoint());
       
-      ConnectionController.mainConnection.addEventListener(ConnectionEvent.CONNECTION_IS_READY, onSuccess_siteIsConnected);
       ConnectionController.mainConnection.addEventListener(ConnectionIOErrorEvent.IO_ERROR_EVENT, ConnectionController.defaultIOErrorHandler);
       ConnectionController.mainConnection.addEventListener(ConnectionNetStatusEvent.NET_STATUS_EVENT, ConnectionController.defaultNetStatusHandler);
-      ConnectionController.mainConnection.connect();
       
       EventCenter.subscribe(EventCenterEvent.REQUEST_FOR_FREEMIND_XML, onAppFormRequestForFreemindXml);
       
@@ -129,6 +127,9 @@ package com.graphmind {
       }
       
       NodeViewController.init();
+      
+      // No necessary to call system.connect. We just start with a normal call.
+      onSuccess_siteIsConnected(null);
 		}
 			
 			
@@ -169,8 +170,8 @@ package com.graphmind {
 		 */
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
-			// Get all the available features
-			ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, ConnectionController.defaultRequestErrorHandler);
+			// Views service is not ported to D7 yet.
+			//ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, ConnectionController.defaultRequestErrorHandler);
 			ConnectionController.mainConnection.call('graphmind.isNodeEditable', onSuccess_isNodeEditable, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
 		}
 		
