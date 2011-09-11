@@ -25,7 +25,7 @@ package com.graphmind {
              '<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->' +
              '<attribute_registry SHOW_ATTRIBUTES="hide"/>' + "\n" +
              node.exportToFreeMindFormat() + 
-             '</map>';
+             '</map>' + "\n";
     }
     
     
