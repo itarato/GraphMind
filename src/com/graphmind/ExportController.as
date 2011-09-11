@@ -21,7 +21,11 @@ package com.graphmind {
      * @return string
      */
     public static function getFreeMindXML(node:NodeViewController):String {
-      return '<map version="0.9.0">' + "\n" + node.exportToFreeMindFormat() + '</map>' + "\n";
+      return '<map version="0.9.0">' + "\n" +
+             '<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->' +
+             '<attribute_registry SHOW_ATTRIBUTES="hide"/>' + "\n" +
+             node.exportToFreeMindFormat() + 
+             '</map>';
     }
     
     
