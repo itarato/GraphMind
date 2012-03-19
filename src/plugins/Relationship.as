@@ -324,7 +324,7 @@ package plugins {
         var node:NodeViewController = new NodeViewController(new NodeDataObject(children[idx].node, NodeType.NODE, ConnectionController.mainConnection));
         parent.addChildNode(node);
         var nodeCachedData:Object;
-        if (mapDataCache && mapDataCache['children'].hasOwnProperty(node.nodeData.drupalID)) {
+        if (mapDataCache && mapDataCache.hasOwnProperty('children') && mapDataCache['children'].hasOwnProperty(node.nodeData.drupalID)) {
           nodeCachedData = mapDataCache['children'][node.nodeData.drupalID] as Object;
           nodeCachedData['node'] = node;
           cachedOrder.push(nodeCachedData);
