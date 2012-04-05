@@ -15,7 +15,7 @@
 	</mx:Metadata>
 		
 	<mx:Script>
-		<![CDATA[
+	  <![CDATA[
 		  import com.graphmind.event.EventCenter;
 		  import com.graphmind.event.EventCenterEvent;
 		  import com.graphmind.TreeWorkflow;
@@ -23,15 +23,15 @@
 		  import com.graphmind.IWorkflowComposite;
 		  import com.graphmind.NodeViewController;
 		  import com.graphmind.display.FuturesWheelDrawer;
-			import com.graphmind.TreeMapViewController;
-			import com.graphmind.view.NodeView;
-			import com.graphmind.display.TreeDrawer;
-			import com.graphmind.util.OSD;
-			import com.graphmind.PluginManager;
-			
-			import mx.managers.SystemManager;
-			import mx.states.State;
-			import mx.effects.easing.Linear;
+  		import com.graphmind.TreeMapViewController;
+  		import com.graphmind.view.NodeView;
+  		import com.graphmind.display.TreeDrawer;
+  		import com.graphmind.util.OSD;
+  		import com.graphmind.PluginManager;
+  		
+  		import mx.managers.SystemManager;
+  		import mx.states.State;
+  		import mx.effects.easing.Linear;
 			
 			import com.graphmind.util.Log;
 			import com.graphmind.data.DrupalViews;
