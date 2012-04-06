@@ -9,10 +9,10 @@ package com.graphmind {
 	
 	public class ImportManager {
 		
-		public static function importNodesFromDrupalResponse(response:Object):NodeViewController {
+		public static function importNodesFromDrupalResponse(response:String):NodeViewController {
 		  var rootNode:NodeViewController;
 		  var is_valid_mm_xml:Boolean = false;
-      var body:String = response['body'].hasOwnProperty(response.language) ? response.body[response.language][0]['value'].toString() : '';
+      var body:String = response;
       if (body.length > 0) {
         var xmlData:XML = new XML(body);
         var nodes:XML = xmlData.child('node')[0];
@@ -25,8 +25,7 @@ package com.graphmind {
         rootNode = importedBaseNode;
       } else {
         // New node
-        response.body = null;
-        rootNode = new NodeViewController(new NodeDataObject(response, NodeType.NODE, ConnectionController.mainConnection)); 
+        rootNode = new NodeViewController(new NodeDataObject(null, NodeType.NODE, ConnectionController.mainConnection)); 
       }
       
       return rootNode;

@@ -5,7 +5,8 @@
 	applicationComplete="{onApplicationComplete();}"
 	backgroundColor="#FFFFFF"
 	color="#333333" 
-	xmlns:components="components.*" xmlns:debugger="com.demonsters.debugger.*">
+  xmlns:debugger="com.demonsters.debugger.*"
+	xmlns:components="components.*">
 	
 	<!-- Main style for the stage -->
 	<mx:Style source="style/stage.css" />
@@ -16,26 +17,28 @@
 		
 	<mx:Script>
 	  <![CDATA[
-		  import com.graphmind.event.EventCenter;
-		  import com.graphmind.event.EventCenterEvent;
-		  import com.graphmind.TreeWorkflow;
-		  import com.graphmind.FuturesWheelWorkflow;
-		  import com.graphmind.IWorkflowComposite;
-		  import com.graphmind.NodeViewController;
-		  import com.graphmind.display.FuturesWheelDrawer;
-  		import com.graphmind.TreeMapViewController;
-  		import com.graphmind.view.NodeView;
-  		import com.graphmind.display.TreeDrawer;
-  		import com.graphmind.util.OSD;
-  		import com.graphmind.PluginManager;
-  		
-  		import mx.managers.SystemManager;
-  		import mx.states.State;
-  		import mx.effects.easing.Linear;
-			
-			import com.graphmind.util.Log;
-			import com.graphmind.data.DrupalViews;
-			import com.graphmind.ApplicationController;
+      import com.demonsters.debugger.MonsterDebugger;
+      import com.demonsters.debugger.MonsterDebuggerFlex;
+      import com.graphmind.ApplicationController;
+      import com.graphmind.FuturesWheelWorkflow;
+      import com.graphmind.IWorkflowComposite;
+      import com.graphmind.NodeViewController;
+      import com.graphmind.PluginManager;
+      import com.graphmind.TreeMapViewController;
+      import com.graphmind.TreeWorkflow;
+      import com.graphmind.data.DrupalViews;
+      import com.graphmind.display.FuturesWheelDrawer;
+      import com.graphmind.display.TreeDrawer;
+      import com.graphmind.event.EventCenter;
+      import com.graphmind.event.EventCenterEvent;
+      import com.graphmind.util.Log;
+      import com.graphmind.util.OSD;
+      import com.graphmind.view.NodeView;
+      
+      import mx.effects.easing.Linear;
+      import mx.logging.ILogger;
+      import mx.managers.SystemManager;
+      import mx.states.State;
 			
 			// 'Singleton' instance.
 			[Bindable] public static var i:GraphMind;
@@ -60,6 +63,8 @@
 			 * Triggered event when the application is ready.
 			 */
 			private function onApplicationComplete():void {
+        MonsterDebugger.initialize(this);
+        
 				Log.info('Grapmind started.');
 				
 				// Init managers
@@ -71,8 +76,6 @@
 				this.applicationController = new ApplicationController();
 				
 				OSD.show('Graphmind started.');
-				
-//				monsterDebugger.trace(this, 'Hello World', 'user1', 'label1');
 			}
 			
 		]]>

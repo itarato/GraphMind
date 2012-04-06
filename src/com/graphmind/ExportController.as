@@ -32,19 +32,35 @@ package com.graphmind {
     /**
      * Save work into host node
      */
-    public static function saveFreeMindXMLToDrupal(xml:String, nid:uint):void {
-      ConnectionController.mainConnection.call('graphmind.saveGraphMind', onSaveFreemindXMLToDrupalSucceed, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
+    public static function saveFreeMindXMLToDrupal(xml:String):void {
+      ConnectionController.mainConnection.call(
+        'graphmind.saveGraphMind', 
+        onSaveFreemindXMLToDrupalSucceed, 
+        ConnectionController.defaultRequestErrorHandler, 
+        ApplicationController.getHostEntityVID(),
+        ApplicationController.getHostEntityDelta(),
+        ApplicationController.getHostEntityFieldName(),
+        xml
+      );
     }
     
     
     /**
     * Save map silently.
     */
-    public static function saveFreeMindXMLToDrupalSilent(xml:String, nid:uint):void {
-      ConnectionController.mainConnection.call('graphmind.saveGraphMind', function(e:Object):void{
-        lastSaved = new Date().time;
-        EventCenter.notify(EventCenterEvent.MAP_SAVED_SILENTLY, e);
-      }, ConnectionController.defaultRequestErrorHandler, nid, xml, lastSaved * 0.001);
+    public static function saveFreeMindXMLToDrupalSilent(xml:String):void {
+      ConnectionController.mainConnection.call(
+        'graphmind.saveGraphMind', 
+        function(e:Object):void{
+          lastSaved = new Date().time;
+          EventCenter.notify(EventCenterEvent.MAP_SAVED_SILENTLY, e);
+        }, 
+        ConnectionController.defaultRequestErrorHandler, 
+        ApplicationController.getHostEntityVID(),
+        ApplicationController.getHostEntityDelta(),
+        ApplicationController.getHostEntityFieldName(),
+        xml
+      );
     }
     
     

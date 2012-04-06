@@ -284,7 +284,7 @@ package com.graphmind {
       if (!ApplicationController.i.isEditable()) return;
       
       var xml:String = ExportController.getFreeMindXML(rootNode);
-      ExportController.saveFreeMindXMLToDrupal(xml, ApplicationController.getHostNodeID());
+      ExportController.saveFreeMindXMLToDrupal(xml);
     }
     
     

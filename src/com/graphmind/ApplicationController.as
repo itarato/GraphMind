@@ -1,5 +1,6 @@
 package com.graphmind {
   
+	import com.demonsters.debugger.MonsterDebugger;
 	import com.graphmind.data.DrupalViews;
 	import com.graphmind.display.ConfigPanelController;
 	import com.graphmind.event.EventCenter;
@@ -155,6 +156,29 @@ package com.graphmind {
 		public static function getHostNodeID():int {
 			return Application.application.parameters.nid;
 		}
+    
+    
+    /**
+    * Get host field's vid.
+    */
+    public static function getHostEntityVID():int {
+      return Application.application.parameters.entity_vid;
+    }
+    
+    
+    /**
+    * Get host field's delta.
+    */
+    public static function getHostEntityDelta():int {
+      return Application.application.parameters.delta;
+    }
+    
+    /**
+    * Get host field's field_name.
+    */
+    public static function getHostEntityFieldName():String {
+      return Application.application.parameters.field_name;
+    }
 		
 		
 		/**
@@ -210,17 +234,18 @@ package com.graphmind {
         connectionSettingsComponent.saveButton.addEventListener(MouseEvent.CLICK, onClick_AddNewSiteConnectionButton);
       }
 		  
-		  ConnectionController.mainConnection.call('node.retrieve', onSuccess_rootNodeIsLoaded, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
+		  ConnectionController.mainConnection.call('graphmind.getMap', onSuccess_rootMapIsLoaded, ConnectionController.defaultRequestErrorHandler, getHostEntityVID(), getHostEntityDelta(), getHostEntityFieldName());
 		}
 
   
     /**
     * Root node is loaded.
     */
-    protected function onSuccess_rootNodeIsLoaded(result:Object):void {
-      Log.info("Root node is loaded: " + result.nid);
+    protected function onSuccess_rootMapIsLoaded(result:Object):void {
+      Log.info("Root node is loaded. Content lenght: " + result.toString().length);
+//      MonsterDebugger.trace(this, result);
       
-      TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result);
+      TreeMapViewController.rootNode = ImportManager.importNodesFromDrupalResponse(result.toString());
       
       // Call map to draw its contents.
       EventCenter.notify(EventCenterEvent.MAP_TREE_IS_COMPLETE);

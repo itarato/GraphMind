@@ -680,7 +680,7 @@ package plugins {
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(function():void{
         var xml:String = ExportController.getFreeMindXML(TreeMapViewController.rootNode);
-        ExportController.saveFreeMindXMLToDrupalSilent(xml, ApplicationController.getHostNodeID());
+        ExportController.saveFreeMindXMLToDrupalSilent(xml);
       }, saveFrequency);
     }
     
