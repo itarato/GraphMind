@@ -37,9 +37,11 @@ package com.graphmind {
         'graphmind.saveGraphMind', 
         onSaveFreemindXMLToDrupalSucceed, 
         ConnectionController.defaultRequestErrorHandler, 
+        ApplicationController.getHostEntityID(), 
         ApplicationController.getHostEntityVID(),
         ApplicationController.getHostEntityDelta(),
         ApplicationController.getHostEntityFieldName(),
+        ApplicationController.getHostEntityType(),
         xml
       );
     }
@@ -56,9 +58,11 @@ package com.graphmind {
           EventCenter.notify(EventCenterEvent.MAP_SAVED_SILENTLY, e);
         }, 
         ConnectionController.defaultRequestErrorHandler, 
+        ApplicationController.getHostEntityID(), 
         ApplicationController.getHostEntityVID(),
         ApplicationController.getHostEntityDelta(),
         ApplicationController.getHostEntityFieldName(),
+        ApplicationController.getHostEntityType(),
         xml
       );
     }

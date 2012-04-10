@@ -157,6 +157,12 @@ package com.graphmind {
 			return Application.application.parameters.nid;
 		}
     
+    /**
+     * Get host field's vid.
+     */
+    public static function getHostEntityID():int {
+      return Application.application.parameters.entity_id;
+    }
     
     /**
     * Get host field's vid.
@@ -164,7 +170,6 @@ package com.graphmind {
     public static function getHostEntityVID():int {
       return Application.application.parameters.entity_vid;
     }
-    
     
     /**
     * Get host field's delta.
@@ -178,6 +183,13 @@ package com.graphmind {
     */
     public static function getHostEntityFieldName():String {
       return Application.application.parameters.field_name;
+    }
+    
+    /**
+     * Get host field's entity type.
+     */
+    public static function getHostEntityType():String {
+      return Application.application.parameters.entity_type;
     }
 		
 		
