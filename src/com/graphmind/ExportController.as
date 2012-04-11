@@ -17,7 +17,8 @@ package com.graphmind {
     
     
     /**
-     * Export work to FreeMind XML format
+     * Export work to FreeMind XML format.
+     * 
      * @return string
      */
     public static function getFreeMindXML(node:NodeViewController):String {
@@ -30,7 +31,7 @@ package com.graphmind {
     
     
     /**
-     * Save work into host node
+     * Save work into host node.
      */
     public static function saveFreeMindXMLToDrupal(xml:String):void {
       ConnectionController.mainConnection.call(
