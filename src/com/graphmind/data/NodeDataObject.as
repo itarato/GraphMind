@@ -81,7 +81,7 @@ package com.graphmind.data {
 		/**
 		 * Contructor.
 		 */
-		public function NodeDataObject(_data:Object = null, _type:String = NodeType.NORMAL, _conn:Connection = null) {
+		public function NodeDataObject(_data:Object = null, _type:String = 'normal', _conn:Connection = null) {
 		  // Data.
 			updated = created = new Date().time;
 			drupalData = _data || {};

@@ -25,7 +25,9 @@ package com.graphmind {
         rootNode = importedBaseNode;
       } else {
         // New node
-        rootNode = new NodeViewController(new NodeDataObject(null, NodeType.NODE, ConnectionController.mainConnection)); 
+        var nodeDataObject:NodeDataObject = new NodeDataObject(null, NodeType.NODE, ConnectionController.mainConnection);
+        nodeDataObject.title = 'Untitled';
+        rootNode = new NodeViewController(nodeDataObject); 
       }
       
       return rootNode;
