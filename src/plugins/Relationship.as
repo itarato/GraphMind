@@ -666,6 +666,10 @@ package plugins {
     * Begin autosaving.
     */
     private static function startAutoSave():void {
+      if (!ApplicationController.i.isEditable()) {
+        return;
+      }
+      
       EventCenter.subscribe(EventCenterEvent.MAP_SAVED_SILENTLY, function(e:Event):void{
         autoSave();
       });

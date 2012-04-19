@@ -207,7 +207,7 @@ package com.graphmind {
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
 
-		  setEditMode(Application.application.parameters.update_access == '1');
+		  setEditMode(Application.application.parameters.update_access == 1);
 		  
 		  if (isEditable()) {
         MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);

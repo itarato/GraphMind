@@ -58,9 +58,9 @@ package com.graphmind {
       OSD.show(
         "Network request error:\n" +
         "Error details:\n" + 
-        "  Details: " + result['details'] + "\n  " + 
-        "  Code: " + result['code'] + "\n  " +
-        "  Description: " + result['description'] + "\n  " +
+        "  Details: " + (result['details'] || result['faultDetail']) + "\n  " + 
+        "  Code: " + (result['code'] || result['faultCode']) + "\n  " +
+        "  Description: " + (result['description'] || result['faultString']) + "\n  " +
         "  Level: " + result['level'] + "\n  " +
         "  Line: " + result['line'],
       OSD.ERROR);
