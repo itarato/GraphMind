@@ -206,29 +206,8 @@ package com.graphmind {
 		 */
 		protected function onSuccess_siteIsConnected(event:ConnectionEvent):void {
 		  Log.info("Connection to Drupal is established.");
-			// Views service is not ported to D7 yet.
-			//ConnectionController.mainConnection.call('graphmind.getViews', onSuccess_viewsListsAreLoaded, ConnectionController.defaultRequestErrorHandler);
-			ConnectionController.mainConnection.call('graphmind.isNodeEditable', onSuccess_isNodeEditable, ConnectionController.defaultRequestErrorHandler, getHostNodeID());
-		}
-		
-		
-		/**
-		 * Base site's views are loaded already
-		 */
-		protected function onSuccess_viewsListsAreLoaded(result:Object):void {
-		  Log.info("Views lists are loaded: " + (result as Array).length);
-		  // Populate Views lists.
-      for each (var data:Object in result) {
-        new DrupalViews(data, ConnectionController.mainConnection);
-      }
-		}
-		
-		
-		/**
-		 * Event callback - when edit check is back.
-		 */
-		protected function onSuccess_isNodeEditable(result:Object):void {
-		  setEditMode(result);
+
+		  setEditMode(Application.application.parameters.update_access == '1');
 		  
 		  if (isEditable()) {
         MainMenuController.createIconMenuItem(diskImage, 'Save', onClick_saveMenuItem);
