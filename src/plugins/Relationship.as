@@ -543,8 +543,8 @@ package plugins {
       var node:NodeViewController = NodeViewController.activeNode;
       var type:String = Application.application.parameters.hasOwnProperty('graphmindRelationshipDefaultCreatedNodeType') ?
         Application.application.parameters.graphmindRelationshipDefaultCreatedNodeType : '';
-	  var htmlObjectID:String = 'graphmind_map_' + Application.application.parameters.entity_id + '_' +
-		  Application.application.parameters.entity_vid + '_' + Application.application.parameters.delta;
+	    var htmlObjectID:String = 'graphmind_map_' + Application.application.parameters.entity_id + '_' +
+		    Application.application.parameters.entity_vid + '_' + Application.application.parameters.delta;
 
       ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID, type, htmlObjectID);
     }
