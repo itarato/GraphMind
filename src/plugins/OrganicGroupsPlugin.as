@@ -88,7 +88,7 @@ package plugins {
         onNodeGetSuccess,
         onNodeGetFail,
         parseInt(nodeLoadComponent.nodeIDField.text),
-        ApplicationController.getHostNodeID()
+        ApplicationController.getHostEntityID()
       );
     }
     
@@ -126,7 +126,7 @@ package plugins {
         onNodeGetSuccess,
         onNodeGetFail,
         nid,
-        ApplicationController.getHostNodeID()
+        ApplicationController.getHostEntityID()
       );
     }
     
