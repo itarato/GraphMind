@@ -270,7 +270,6 @@ package plugins {
         }
       }
       
-      contextMenuController.addItem('View details', onMouseClick_viewNodeActionIcon, 2, 'data');
       contextMenuController.addItem('Create node', onMouseClick_addDrupalNodeIcon, 1, 'data');
     }
     
@@ -546,7 +545,14 @@ package plugins {
 	    var htmlObjectID:String = 'graphmind_map_' + Application.application.parameters.entity_id + '_' +
 		    Application.application.parameters.entity_vid + '_' + Application.application.parameters.delta;
 
-      ExternalInterface.call('GraphmindRelationship.openNodeCreation', node.nodeData.drupalID, type, htmlObjectID);
+      ExternalInterface.call(
+        'GraphmindRelationship.openNodeCreation', 
+        node.nodeData.drupalID, 
+        type, 
+        Application.application.parameters.entity_id,
+        Application.application.parameters.entity_vid,
+        Application.application.parameters.delta
+      );
     }
     
     
@@ -587,18 +593,6 @@ package plugins {
           node.setColor(uint(result));
         }
       }
-    }
-    
-    
-    /**
-    * Event callback - click on the view-node-edit-page action icon.
-    */
-    private static function onMouseClick_viewNodeActionIcon(e:ContextMenuEvent):void {
-      if (!ExternalInterface.available) {
-        OSD.show('Popup window is not available.');
-      }
-      var node:NodeViewController = NodeViewController.activeNode;
-      ExternalInterface.call('GraphmindRelationship.openPopupWindow', node.nodeData.link);
     }
     
     
